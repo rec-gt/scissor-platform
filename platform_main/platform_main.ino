@@ -61,7 +61,7 @@ void loop() {
   if (detectSystem.getStatus() == STOPPED) {
     displayOLED.print(PRINT_STOPPED);
     relay.cut();
-    warningLight.bling();
+    warningLight.on();
     speaker.on();
 
     // sensor keep detection, once escape from obstacle, switch to RUNNING

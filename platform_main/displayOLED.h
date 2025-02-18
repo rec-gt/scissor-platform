@@ -84,10 +84,10 @@ public:
         break;
       case PRINT_STOPPED:
         this->plot(0, "偵測到障礙物");
-        this->plot(1, "系統暫停運作！");
+        this->plot(1, "系統暫停運作");
         break;
       case PRINT_ALLOW_10S:
-        this->plot(1, "暫時運作十秒！");
+        this->plot(1, "暫時運作十秒");
         break;
       case DEFAULT_NULL:
         break;

@@ -59,7 +59,7 @@ void loop() {
   }
 
   if (detectSystem.getStatus() == STOPPED) {
-    // displayOLED.print(PRINT_STOPPED);
+    displayOLED.print(PRINT_STOPPED);
     relay.cut();
     warningLight.on();
     speaker.on();

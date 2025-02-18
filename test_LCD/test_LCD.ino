@@ -15,4 +15,6 @@ void setup() {
 
 
 void loop() {
+  char* arr[] = { "中文", "asd", "123" };
+  displayOLED.print(arr);
 }

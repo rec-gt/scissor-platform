@@ -4,42 +4,17 @@
 #include "Wire.h"
 #include "Adafruit_GFX.h"
 
-#define SDA 20
-#define SCL 21  // SCL/SCK
-
 #define LH1 18  // Line Height or y-position
 #define LH2 36
 #define LH3 54
 
 #ifndef display_defined
 #define display_defined
-U8G2_SH1106_128X64_NONAME_F_HW_I2C u8g2(U8G2_R0, SCL, SDA, U8X8_PIN_NONE);
-// U8G2_SSD1306_128X64_NONAME_F_SW_I2C u8g2(U8G2_R0, SCL, SDA, U8X8_PIN_NONE);
-
-enum StateEnum {
-  DEFAULT_NULL,
-  PRINT_INIT,
-  PRINT_RUNNING,
-  PRINT_STOPPED,
-  PRINT_ALLOW_10S,
-};
+U8G2_SH1106_128X64_NONAME_F_HW_I2C u8g2(U8G2_R0, U8X8_PIN_NONE);
 
 class DisplayOLED {
 private:
-  StateEnum lastState = DEFAULT_NULL;
-
-  void clear() {
-    u8g2.clearBuffer();
-  }
-
-  void plot(byte lh, char* msg) {
-    u8g2.setCursor(0, lh == 0 ? LH1 : (lh == 1 ? LH2 : LH3));
-    u8g2.print(msg);
-  }
-
-  void send() {
-    u8g2.sendBuffer();
-  }
+  String lastStr;
 
   char* concatChar(char* a, char* b) {
     char* newChar = new char[strlen(a) + strlen(b) + 1];
@@ -59,44 +34,35 @@ public:
     u8g2.setFontDirection(0);
     u8g2.clearDisplay();
 
-    this->print(PRINT_INIT);
+    char* arr[] = { "1", "a", "中文" };
+    this->print(arr);
     delay(1500);
 
     return true;
   }
 
-  void print(StateEnum currState, char* addStr = "") {
-    if (this->lastState == currState) {
+  void print(char* arr[]) {
+    byte size = 3;
+    String currStr;
+
+    for (int i = 0; i < size; i++) {
+      currStr += arr[i];
+    }
+
+    if (currStr == lastStr) {
+      Serial.println(0);
       return;
+    } else {
+      lastStr = currStr;
+
+      u8g2.clearBuffer();
+      for (int i = 0; i < size; i++) {
+        u8g2.setCursor(0, 18 * i);
+        u8g2.print(arr[i]);
+      }
+      u8g2.sendBuffer();
+      Serial.println(1);
     }
-
-    this->lastState = currState;
-
-    // handle all plotting here
-    this->clear();
-
-    char* newChar;
-
-    switch (currState) {
-      case PRINT_INIT:
-        this->plot(1, "正在加載系統...");
-        break;
-      case PRINT_RUNNING:
-        this->plot(1, "系統運作中");
-        break;
-      case PRINT_STOPPED:
-        this->plot(0, "偵測到障礙物");
-        this->plot(1, "系統暫停運作");
-        break;
-      case PRINT_ALLOW_10S:
-        this->plot(1, "暫時運作十秒");
-        break;
-      default:
-        break;
-    }
-
-    this->send();
-    delete[] newChar;
   }
 };
 

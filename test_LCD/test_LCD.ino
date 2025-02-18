@@ -1,7 +1,6 @@
 #include "displayOLED.h"
 DisplayOLED displayOLED;
 
-
 byte systemStatus = 1;
 
 void setup() {

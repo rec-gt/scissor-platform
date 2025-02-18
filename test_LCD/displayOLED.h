@@ -15,13 +15,6 @@ U8G2_SH1106_128X64_NONAME_F_HW_I2C u8g2(U8G2_R0, U8X8_PIN_NONE);
 class DisplayOLED {
 private:
   String lastStr;
-
-  char* concatChar(char* a, char* b) {
-    char* newChar = new char[strlen(a) + strlen(b) + 1];
-    strcpy(newChar, a);
-    strcat(newChar, b);
-    return newChar;
-  }
 public:
   bool init() {
     if (!u8g2.begin()) {
@@ -33,7 +26,6 @@ public:
     u8g2.setFont(u8g2_font_unifont_t_chinese1);
     u8g2.setFontDirection(0);
     u8g2.clearDisplay();
-
     this->print("1", "a", "中文");
     delay(1500);
 
@@ -62,7 +54,7 @@ public:
       u8g2.setCursor(0, 54);
       u8g2.print(c);
       u8g2.sendBuffer();
-      
+
       Serial.println(1);
     }
   }

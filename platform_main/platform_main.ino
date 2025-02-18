@@ -1,5 +1,3 @@
-// change by rec & tim
-
 #include "detectSystem.h"
 // #include "pressButton.h"
 #include "pressButton2Pin.h"

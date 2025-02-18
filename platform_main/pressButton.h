@@ -12,11 +12,7 @@ public:
     digitalWrite(pin, HIGH);
   }
 
-  void normalListen() {
-    state = digitalRead(pin);
-  }
-
-  void debounceListen() {
+  void listen() {
     byte reading = digitalRead(pin);
 
     if (reading == LOW) {

@@ -90,6 +90,8 @@ public:
         this->plot(0, "系統允許暫時");
         this->plot(1, "運作十秒！");
         break;
+      case DEFAULT_NULL:
+        break;
       default:
         break;
     }

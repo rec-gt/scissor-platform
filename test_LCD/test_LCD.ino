@@ -14,4 +14,5 @@ void setup() {
 
 void loop() {
   displayOLED.print("中文", "asd", "123");
+  delay(1000);
 }

@@ -7,14 +7,14 @@ private:
 public:
   Speaker(byte pin)
     : pin(pin) {
-    pinMode(this->pin, OUTPUT);
+    pinMode(pin, OUTPUT);
   }
 
   void on() {
-    digitalWrite(this->pin, HIGH);
+    digitalWrite(pin, HIGH);
   }
 
   void off() {
-    digitalWrite(this->pin, LOW);
+    digitalWrite(pin, LOW);
   }
 };

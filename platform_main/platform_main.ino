@@ -74,7 +74,7 @@ void loop() {
   }
 
   if (detectSystem.getStatus() == ALLOW_10S) {
-    // displayOLED.print(PRINT_ALLOW_10S);
+    displayOLED.print(PRINT_ALLOW_10S);
     relay.connect();
     warningLight.off();
     speaker.off();

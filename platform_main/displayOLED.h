@@ -11,6 +11,8 @@
 #define LH2 36
 #define LH3 54
 
+#ifndef display_defined
+#define display_defined
 U8G2_SH1106_128X64_NONAME_F_HW_I2C u8g2(U8G2_R0, SCL, SDA, U8X8_PIN_NONE);
 // U8G2_SSD1306_128X64_NONAME_F_SW_I2C u8g2(U8G2_R0, SCL, SDA, U8X8_PIN_NONE);
 
@@ -89,8 +91,6 @@ public:
       case PRINT_ALLOW_10S:
         this->plot(1, "暫時運作十秒");
         break;
-      case DEFAULT_NULL:
-        break;
       default:
         break;
     }
@@ -98,3 +98,5 @@ public:
     this->send();
   }
 };
+
+#endif

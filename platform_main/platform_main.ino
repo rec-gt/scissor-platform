@@ -1,9 +1,7 @@
 #include "detectSystem.h"
-// #include "pressButton.h"
 #include "pressButton2Pin.h"
 #include "relay.h"
 #include "light.h"
-#include "warningLight.h"
 #include "speaker.h"
 #include "countdown.h"
 #include "laserSensor.h"
@@ -17,7 +15,7 @@ DisplayOLED displayOLED;
 PressButton pressButton(3);
 Relay relay(4);
 Light powerLight(6);
-WarningLight warningLight(9);
+Light warningLight(7);
 Speaker speaker(10);
 BaseThresholdSwitch baseThresholdSwitch(12);  // OK
 
@@ -50,9 +48,10 @@ void loop() {
   pressButton.debounceListen();
 
   baseThresholdSwitch.listen();
-  setBaseThreshold(baseThresholdSwitch.isOn());
+  changeBaseThreshold(baseThresholdSwitch.isOn());
 
   if (detectSystem.getStatus() == RUNNING) {
+    displayOLED.print(PRINT_RUNNING);
     relay.connect();
     warningLight.off();
     speaker.off();
@@ -61,7 +60,7 @@ void loop() {
 
   if (detectSystem.getStatus() == STOPPED) {
     relay.cut();
-    warningLight.on();
+    warningLight.bling();
     speaker.on();
 
     // sensor keep detection, once escape from obstacle, switch to RUNNING
@@ -69,8 +68,9 @@ void loop() {
 
     if (pressButton.isPressed()) {
       // Serial.println("10s Button Pressed");
-      // detectSystem.setStatus(ALLOW_10S);
-      // countdownTimer.setStart(millis());
+      detectSystem.setStatus(ALLOW_10S);
+      displayOLED.print(PRINT_ALLOW_10S);
+      countdownTimer.setStart(millis());
     }
   }
 
@@ -84,10 +84,10 @@ void loop() {
   delay(100);
 }
 
-void setBaseThreshold(bool toggle) {
+void changeBaseThreshold(bool toggle) {
   int numLaserSensors = sizeof(laserSensors) / sizeof(laserSensors[0]);
   for (int i = 0; i < numLaserSensors; i++) {
-    laserSensors[i].setBaseThreshold(toggle);  // true = 300, false = 500
+    laserSensors[i].changeBaseThreshold(toggle);  // true = 300, false = 500
   }
 }
 
@@ -98,7 +98,7 @@ void listenSensors() {
     laserSensors[i].print().byValue();
 
     if (laserSensors[i].isDetected()) {
-      Serial.println("Obstacle Detected!");
+      // Serial.println("Obstacle Detected!");
       detectSystem.setStatus(STOPPED);
       break;
     };
@@ -113,7 +113,7 @@ void dangerListenSensors() {
     laserSensors[i].print().byValue();
 
     if (!laserSensors[i].isDetected()) {
-      Serial.println("Vehicle Escaped from Obstacle!");
+      // Serial.println("Vehicle Escaped from Obstacle!");
       detectSystem.setStatus(RUNNING);
       break;
     };
@@ -121,6 +121,6 @@ void dangerListenSensors() {
 }
 
 void countDownCallback() {
-  Serial.println("Countdown Finish!");
+  // Serial.println("Countdown Finish!");
   detectSystem.setStatus(RUNNING);
 }

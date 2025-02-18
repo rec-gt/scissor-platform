@@ -17,7 +17,9 @@ U8G2_SH1106_128X64_NONAME_F_HW_I2C u8g2(U8G2_R0, SCL, SDA, U8X8_PIN_NONE);
 enum StateEnum {
   _NULL,
   INIT,
+  PRINT_RUNNING,
   PRINT_ERR,
+  PRINT_ALLOW_10S,
   PRINT_MSG,
   PRINT_WARNING,
 };
@@ -48,7 +50,7 @@ private:
 public:
   bool init() {
     if (!u8g2.begin()) {
-      Serial.println(F("SH1106 allocation failed"));
+      Serial.println("Display Failed");
       return false;
     }
 
@@ -58,6 +60,7 @@ public:
     u8g2.clearDisplay();
 
     this->print(INIT);
+    delay(3000);
 
     return true;
   }
@@ -78,6 +81,9 @@ public:
       case INIT:
         this->plot(1, "正在加載系統...");
         break;
+      case PRINT_RUNNING:
+        this->plot(1, "系統運作中");
+        break;
       case PRINT_ERR:
         newChar = concatChar("感應器", addStr);
 
@@ -85,13 +91,9 @@ public:
         this->plot(1, "偵測到障礙物");
         this->plot(2, "系統暫停運作！");
         break;
-      case PRINT_MSG:
-        newChar = concatChar("系統允許暫時", addStr);
-
-        this->plot(0, newChar);
+      case PRINT_ALLOW_10S:
+        this->plot(0, "系統允許暫時");
         this->plot(1, "運作十秒！");
-
-        delete[] newChar;
         break;
       case PRINT_WARNING:
         this->plot(0, "系統暫停運作！");
@@ -99,7 +101,7 @@ public:
       default:
         break;
     }
-
+    delete[] newChar;
     this->send();
   }
 };

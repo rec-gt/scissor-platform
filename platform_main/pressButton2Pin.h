@@ -8,32 +8,28 @@ private:
 public:
   PressButton(byte pin)
     : pin(pin) {
-    pinMode(this->pin, INPUT_PULLUP);
-    digitalWrite(this->pin, HIGH);
+    pinMode(pin, INPUT_PULLUP);
+    digitalWrite(pin, HIGH);
   }
 
   void normalListen() {
-    this->state = digitalRead(this->pin);
+    state = digitalRead(pin);
   }
 
   void debounceListen() {
-    byte reading = digitalRead(this->pin);
+    byte reading = digitalRead(pin);
 
     if (reading == LOW) {
-      if ((millis() - this->lastMillis) > 150) {
-        this->state = reading;
+      if ((millis() - lastMillis) > 150) {
+        state = reading;
       }
     } else {
-      this->state = HIGH;
-      this->lastMillis = millis();
+      state = HIGH;
+      lastMillis = millis();
     }
   }
 
-  void print() {
-    Serial.println(this->state);
-  }
-
   bool isPressed() {
-    return this->state == LOW;  // once pressed (i.e., GND), the pin become 0V
+    return state == LOW;
   }
 };

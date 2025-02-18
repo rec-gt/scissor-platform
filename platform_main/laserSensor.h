@@ -31,7 +31,7 @@ public:
     pinMode(this->pin, INPUT);
   }
 
-  void setBaseThreshold(bool toggle) {
+  void changeBaseThreshold(bool toggle) {
     this->baseThreshold = toggle ? 300 : 500;
   }
 

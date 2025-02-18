@@ -3,18 +3,33 @@
 class Light {
 private:
   byte pin;
+  byte lastState;
+  unsigned long lastMillis;
 
 public:
   Light(byte pin)
-    : pin(pin) {
-    pinMode(this->pin, OUTPUT);
+    : pin(pin), lastState(LOW), lastMillis(millis()) {
+    pinMode(pin, OUTPUT);
   }
 
   void on() {
-    digitalWrite(this->pin, HIGH);
+    digitalWrite(pin, HIGH);
   }
 
   void off() {
-    digitalWrite(this->pin, LOW);
+    digitalWrite(pin, LOW);
+  }
+
+  void bling() {
+    unsigned long currMillis = millis();
+    byte currState = digitalRead(pin);
+    if (currMillis - lastMillis > 150) {
+      lastMillis = currMillis;
+
+      if (currState == lastState) {
+        lastState = !currState;
+        digitalWrite(pin, lastState);
+      }
+    }
   }
 };

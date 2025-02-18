@@ -60,7 +60,7 @@ public:
     u8g2.clearDisplay();
 
     this->print(PRINT_INIT);
-    delay(3000);
+    delay(1500);
 
     return true;
   }
@@ -94,8 +94,9 @@ public:
       default:
         break;
     }
-    delete[] newChar;
+
     this->send();
+    delete[] newChar;
   }
 };
 

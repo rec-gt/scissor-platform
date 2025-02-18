@@ -15,18 +15,16 @@ U8G2_SH1106_128X64_NONAME_F_HW_I2C u8g2(U8G2_R0, SCL, SDA, U8X8_PIN_NONE);
 // U8G2_SSD1306_128X64_NONAME_F_SW_I2C u8g2(U8G2_R0, SCL, SDA, U8X8_PIN_NONE);
 
 enum StateEnum {
-  _NULL,
-  INIT,
+  DEFAULT_NULL,
+  PRINT_INIT,
   PRINT_RUNNING,
-  PRINT_ERR,
+  PRINT_STOPPED,
   PRINT_ALLOW_10S,
-  PRINT_MSG,
-  PRINT_WARNING,
 };
 
 class DisplayOLED {
 private:
-  StateEnum lastState = _NULL;
+  StateEnum lastState = DEFAULT_NULL;
 
   void clear() {
     u8g2.clearBuffer();
@@ -59,7 +57,7 @@ public:
     u8g2.setFontDirection(0);
     u8g2.clearDisplay();
 
-    this->print(INIT);
+    this->print(PRINT_INIT);
     delay(3000);
 
     return true;
@@ -78,25 +76,19 @@ public:
     char* newChar;
 
     switch (currState) {
-      case INIT:
+      case PRINT_INIT:
         this->plot(1, "正在加載系統...");
         break;
       case PRINT_RUNNING:
         this->plot(1, "系統運作中");
         break;
-      case PRINT_ERR:
-        newChar = concatChar("感應器", addStr);
-
-        this->plot(0, newChar);
-        this->plot(1, "偵測到障礙物");
-        this->plot(2, "系統暫停運作！");
+      case PRINT_STOPPED:
+        this->plot(0, "偵測到障礙物");
+        this->plot(1, "系統暫停運作！");
         break;
       case PRINT_ALLOW_10S:
         this->plot(0, "系統允許暫時");
         this->plot(1, "運作十秒！");
-        break;
-      case PRINT_WARNING:
-        this->plot(0, "系統暫停運作！");
         break;
       default:
         break;

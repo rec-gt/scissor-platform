@@ -12,22 +12,22 @@ public:
   }
 
   void setStart(unsigned long startMillis) {
-    this->startMillis = startMillis;
+    startMillis = startMillis;
   }
 
   void countdown(void (*callback)()) {
     unsigned long currentMillis = millis();
 
     // print countdown
-    int currentRemainingTime = (this->duration - (currentMillis - this->startMillis)) / 1000;
+    int currRemainingTime = (duration - (currentMillis - startMillis)) / 1000;
 
-    if (currentRemainingTime >= 0 && currentRemainingTime != this->remainingTime) {
-      this->remainingTime = currentRemainingTime;
-      Serial.println(int(currentRemainingTime) + 1);
+    if (currRemainingTime >= 0 && currRemainingTime != remainingTime) {
+      remainingTime = currRemainingTime;
+      Serial.println(int(currRemainingTime) + 1);
     }
 
-    if (currentMillis - startMillis >= this->duration) {
-      this->remainingTime = this->duration / 1000;
+    if (currentMillis - startMillis >= duration) {
+      remainingTime = duration / 1000;
       callback();
     }
   }

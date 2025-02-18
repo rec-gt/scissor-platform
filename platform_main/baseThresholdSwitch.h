@@ -3,19 +3,19 @@
 class BaseThresholdSwitch {
 private:
   byte pin;
-  byte status;
-  byte previousStatus;
+  byte state;
+  byte previousState;
 public:
   BaseThresholdSwitch(byte pin)
     : pin(pin) {
-    pinMode(this->pin, INPUT);
+    pinMode(pin, INPUT);
   }
 
   void listen() {
-    this->status = digitalRead(this->pin);
+    state = digitalRead(pin);
   }
 
   bool isOn() {
-    return this->status == HIGH;
+    return state == HIGH;
   }
 };

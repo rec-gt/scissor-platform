@@ -1,5 +1,5 @@
 #include "detectSystem.h"
-#include "pressButton2Pin.h"
+#include "pressButton.h"
 #include "relay.h"
 #include "light.h"
 #include "speaker.h"
@@ -59,6 +59,7 @@ void loop() {
   }
 
   if (detectSystem.getStatus() == STOPPED) {
+    displayOLED.print(PRINT_STOPPED);
     relay.cut();
     warningLight.bling();
     speaker.on();
@@ -67,14 +68,13 @@ void loop() {
     dangerListenSensors();
 
     if (pressButton.isPressed()) {
-      // Serial.println("10s Button Pressed");
       detectSystem.setStatus(ALLOW_10S);
-      displayOLED.print(PRINT_ALLOW_10S);
       countdownTimer.setStart(millis());
     }
   }
 
   if (detectSystem.getStatus() == ALLOW_10S) {
+    // displayOLED.print(PRINT_ALLOW_10S);
     relay.connect();
     warningLight.off();
     speaker.off();

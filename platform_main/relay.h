@@ -8,20 +8,14 @@ private:
 public:
   Relay(byte pin)
     : pin(pin) {
-    pinMode(this->pin, OUTPUT);
+    pinMode(pin, OUTPUT);
   }
 
   void connect() {
-    // NC
-    // COM -------|
-    // NO --------|
-    digitalWrite(this->pin, HIGH);
+    digitalWrite(pin, HIGH);
   }
 
   void cut() {
-    // NC --------|
-    // COM -------|
-    // NO
-    digitalWrite(this->pin, LOW);
+    digitalWrite(pin, LOW);
   }
 };

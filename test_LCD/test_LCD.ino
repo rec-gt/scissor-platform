@@ -13,8 +13,6 @@ void setup() {
   }
 }
 
-
 void loop() {
-  char* arr[] = { "中文", "asd", "123" };
-  displayOLED.print(arr);
+  displayOLED.print("中文", "asd", "123");
 }

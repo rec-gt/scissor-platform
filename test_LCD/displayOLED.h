@@ -34,20 +34,19 @@ public:
     u8g2.setFontDirection(0);
     u8g2.clearDisplay();
 
-    char* arr[] = { "1", "a", "中文" };
-    this->print(arr);
+    this->print("1", "a", "中文");
     delay(1500);
 
     return true;
   }
 
-  void print(char* arr[]) {
+  void print(String a, String b, String c) {
     byte size = 3;
     String currStr;
 
-    for (int i = 0; i < size; i++) {
-      currStr += arr[i];
-    }
+    currStr += a;
+    currStr += b;
+    currStr += c;
 
     if (currStr == lastStr) {
       Serial.println(0);
@@ -56,11 +55,14 @@ public:
       lastStr = currStr;
 
       u8g2.clearBuffer();
-      for (int i = 0; i < size; i++) {
-        u8g2.setCursor(0, 18 * i);
-        u8g2.print(arr[i]);
-      }
+      u8g2.setCursor(0, 18);
+      u8g2.print(a);
+      u8g2.setCursor(0, 36);
+      u8g2.print(b);
+      u8g2.setCursor(0, 54);
+      u8g2.print(c);
       u8g2.sendBuffer();
+      
       Serial.println(1);
     }
   }

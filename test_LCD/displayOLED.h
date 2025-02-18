@@ -14,7 +14,14 @@ U8G2_SH1106_128X64_NONAME_F_HW_I2C u8g2(U8G2_R0, U8X8_PIN_NONE);
 
 class DisplayOLED {
 private:
-  String lastStr;
+  char* lastStr;
+
+  char* concatChar(char* a, char* b) {
+    char* newChar = new char[strlen(a) + strlen(b) + 1];
+    strcpy(newChar, a);
+    strcat(newChar, b);
+    return newChar;
+  }
 public:
   bool init() {
     if (!u8g2.begin()) {
@@ -32,19 +39,17 @@ public:
     return true;
   }
 
-  void print(String a, String b, String c) {
+  void print(char* a, char* b, char* c) {
     byte size = 3;
-    String currStr;
 
-    currStr += a;
-    currStr += b;
-    currStr += c;
+    char* tmpChar = concatChar(a, b);
+    char* currStr = concatChar(tmpChar, c);
 
-    if (currStr == lastStr) {
+    if (strcmp(currStr, lastStr) == 0) {
       Serial.println(0);
       return;
     } else {
-      lastStr = currStr;
+      strcpy(lastStr, currStr);
 
       u8g2.clearBuffer();
       u8g2.setCursor(0, 18);
@@ -57,6 +62,9 @@ public:
 
       Serial.println(1);
     }
+
+    delete[] tmpChar;
+    delete[] currStr;
   }
 };
 

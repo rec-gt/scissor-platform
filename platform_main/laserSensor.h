@@ -5,9 +5,9 @@ private:
   byte pin;
 
   // threshold and buffer
-  float baseThreshold = 500;  // 500 (default) or 300
-  float tunningBuffer = 0;    // added when constructed, for tunning each sensors, can be +ve/-ve number
-  float dangerBuffer = 0;     // used when vehicle suddenly stop
+  int baseThreshold = 500;  // 500 (default) or 300
+  int tunningBuffer = 0;    // added when constructed, for tunning each sensors, can be +ve/-ve number
+  int dangerBuffer = 0;     // used when vehicle suddenly stop
 
   // measured distance
   float measuredDistance;
@@ -46,7 +46,7 @@ public:
 
     bool measure = this->measuredDistance <= threshold;
 
-    if (measure == true) {
+    if (measure) {
       if ((millis() - this->lastMillis) > 1000) {
         this->detected = true;
       }
@@ -64,15 +64,7 @@ public:
     return *this;
   }
 
-  void byVoltage() {
-    Serial.println(this->measuredDistance / 1023 * 5);
-  }
-
   void byValue() {
     Serial.println(this->measuredDistance);
-  }
-
-  float getDistance() {
-    return this->measuredDistance;
   }
 };

@@ -29,7 +29,7 @@ public:
     u8g2.setFont(u8g2_font_unifont_t_chinese1);
     u8g2.setFontDirection(0);
     u8g2.clearDisplay();
-    this->print("1", "a", "中文");
+    this->print("", "INIT", "");
     delay(1500);
 
     return true;

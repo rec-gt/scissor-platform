@@ -17,10 +17,10 @@ private:
   bool detected = false;
 
   float calculateDistance(float reading) {
-    float min_factor = 192;
-    float max_factor = 965;
-    float min_sensor = 0;
-    float max_sensor = 2000;
+    int min_factor = 192;
+    int max_factor = 965;
+    int min_sensor = 0;
+    int max_sensor = 2000;
 
     return ((reading - max_factor) / (min_factor - max_factor)) * (min_sensor - max_sensor) + max_sensor;
   }

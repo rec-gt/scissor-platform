@@ -40,11 +40,10 @@ void setup() {
     relay.cut();
   }
   detectSystem.setStatus(RUNNING);
+  powerLight.on();
 }
 
 void loop() {
-  powerLight.on();
-
   pressButton.listen();
 
   baseThresholdSwitch.listen();
@@ -59,7 +58,7 @@ void loop() {
   }
 
   if (detectSystem.getStatus() == STOPPED) {
-    displayOLED.print("偵測到障礙物", "系統暫停運作", "");
+    // displayOLED.print("偵測到障礙物", "系統暫停運作", "");
     relay.cut();
     warningLight.on();
     speaker.on();
@@ -74,11 +73,11 @@ void loop() {
   }
 
   if (detectSystem.getStatus() == ALLOW_10S) {
-    displayOLED.print("", "暫時運作十秒", "");
+    // displayOLED.print("", "暫時運作十秒", "");
     relay.connect();
     warningLight.off();
     speaker.off();
-    countdownTimer.countdown(countDownCallback);
+    countdownTimer.countdown(displayOLED, countDownCallback);
   }
 
   delay(100);

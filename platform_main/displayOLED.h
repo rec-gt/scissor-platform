@@ -87,8 +87,7 @@ public:
         this->plot(1, "系統暫停運作！");
         break;
       case PRINT_ALLOW_10S:
-        this->plot(0, "系統允許暫時");
-        this->plot(1, "運作十秒！");
+        this->plot(1, "暫時運作十秒！");
         break;
       case DEFAULT_NULL:
         break;

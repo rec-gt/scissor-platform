@@ -51,7 +51,7 @@ void loop() {
   changeBaseThreshold(baseThresholdSwitch.isOn());
 
   if (detectSystem.getStatus() == RUNNING) {
-    displayOLED.print(PRINT_RUNNING);
+    displayOLED.print("", "系統運作中", "");
     relay.connect();
     warningLight.off();
     speaker.off();
@@ -59,7 +59,7 @@ void loop() {
   }
 
   if (detectSystem.getStatus() == STOPPED) {
-    displayOLED.print(PRINT_STOPPED);
+    displayOLED.print("偵測到障礙物", "系統暫停運作", "");
     relay.cut();
     warningLight.on();
     speaker.on();
@@ -74,7 +74,7 @@ void loop() {
   }
 
   if (detectSystem.getStatus() == ALLOW_10S) {
-    displayOLED.print(PRINT_ALLOW_10S);
+    displayOLED.print("", "暫時運作十秒", "");
     relay.connect();
     warningLight.off();
     speaker.off();

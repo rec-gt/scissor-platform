@@ -23,9 +23,4 @@ public:
     Serial.print("System current status: ");
     Serial.println(STATUS_STR[status]);
   }
-
-  void printStatus() {
-    Serial.print("System current status: ");
-    Serial.println(STATUS_STR[status]);
-  }
 };

@@ -50,12 +50,12 @@ public:
     free(tmpChar);
     free(finalChar);
 
-    Serial.print(currStr);
-    Serial.print(" ");
-    Serial.println(lastStr);
+    // Serial.print(currStr);
+    // Serial.print(" ");
+    // Serial.println(lastStr);
 
     if (currStr == lastStr) {
-      Serial.println(0);
+      // Serial.println(0);
       return;
     } else {
       lastStr = currStr;
@@ -69,7 +69,7 @@ public:
       u8g2.print(c);
       u8g2.sendBuffer();
 
-      Serial.println(1);
+      // Serial.println(1);
     }
   }
 };

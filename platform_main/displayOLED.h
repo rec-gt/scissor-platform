@@ -37,7 +37,6 @@ public:
 
   void print(char* a, char* b, char* c, byte currState) {
     if (currState == lastState) {
-      Serial.println(0);
       return;
     } else {
       lastState = currState;

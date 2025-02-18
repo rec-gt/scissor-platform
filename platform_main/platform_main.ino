@@ -58,7 +58,7 @@ void loop() {
   }
 
   if (detectSystem.getStatus() == STOPPED) {
-    // displayOLED.print("偵測到障礙物", "系統暫停運作", "");
+    displayOLED.print("偵測到障礙物", "系統暫停運作", "");
     relay.cut();
     warningLight.on();
     speaker.on();
@@ -94,7 +94,7 @@ void listenSensors() {
   int numLaserSensors = sizeof(laserSensors) / sizeof(laserSensors[0]);
   for (int i = 0; i < numLaserSensors; i++) {
     laserSensors[i].debounceListen();
-    laserSensors[i].print().byValue();
+    laserSensors[i].print();
 
     if (laserSensors[i].isDetected()) {
       // Serial.println("Obstacle Detected!");
@@ -109,7 +109,7 @@ void dangerListenSensors() {
   for (int i = 0; i < numLaserSensors; i++) {
     laserSensors[i].setDangerBuffer(true);
     laserSensors[i].debounceListen();
-    laserSensors[i].print().byValue();
+    laserSensors[i].print();
 
     if (!laserSensors[i].isDetected()) {
       // Serial.println("Vehicle Escaped from Obstacle!");

@@ -60,11 +60,7 @@ public:
     return this->detected;
   }
 
-  LaserSensor& print() {
-    return *this;
-  }
-
-  void byValue() {
+  void print() {
     Serial.println(this->measuredDistance);
   }
 };

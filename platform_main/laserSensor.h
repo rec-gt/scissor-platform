@@ -10,13 +10,13 @@ private:
   int dangerBuffer = 0;     // used when vehicle suddenly stop
 
   // measured distance
-  float measuredDistance;
+  int measuredDistance;
 
   // for debounce
   unsigned long lastMillis;
   bool detected = false;
 
-  float calculateDistance(float reading) {
+  int calculateDistance(int reading) {
     int min_factor = 192;
     int max_factor = 965;
     int min_sensor = 0;
@@ -26,7 +26,7 @@ private:
   }
 
 public:
-  LaserSensor(byte pin, float tunningBuffer)
+  LaserSensor(byte pin, int tunningBuffer)
     : pin(pin), tunningBuffer(tunningBuffer) {
     pinMode(this->pin, INPUT);
   }
@@ -40,9 +40,9 @@ public:
   }
 
   void debounceListen() {
-    float reading = analogRead(this->pin);
+    int reading = analogRead(this->pin);
     this->measuredDistance = this->calculateDistance(reading);
-    float threshold = this->baseThreshold + this->tunningBuffer + this->dangerBuffer;
+    int threshold = this->baseThreshold + this->tunningBuffer + this->dangerBuffer;
 
     bool measure = this->measuredDistance <= threshold;
 

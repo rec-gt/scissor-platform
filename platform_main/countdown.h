@@ -26,7 +26,7 @@ public:
       remainingTime = currRemainingTime;
       
       char cstr[16];
-      displayOLED.print("", "暫時運作十秒", itoa(remainingTime+1, cstr, 10));
+      displayOLED.print("", "暫時運作", itoa(remainingTime+1, cstr, 10));
       // Serial.println(int(currRemainingTime) + 1);
     }
 

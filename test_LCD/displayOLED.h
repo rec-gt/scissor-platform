@@ -3,10 +3,7 @@
 #include "SPI.h"
 #include "Wire.h"
 #include "Adafruit_GFX.h"
-#include "Adafruit_SSD1306.h"
 
-#define SCREEN_WIDTH 128
-#define SCREEN_HEIGHT 32
 #define SDA 20
 #define SCL 21  // SCL/SCK
 
@@ -14,32 +11,46 @@
 #define LH2 36
 #define LH3 54
 
+#ifndef display_defined
+#define display_defined
 U8G2_SH1106_128X64_NONAME_F_HW_I2C u8g2(U8G2_R0, SCL, SDA, U8X8_PIN_NONE);
-// U8G2_SSD1306_128X64_NONAME_F_HW_I2C u8g2(U8G2_R0, SCL, SDA, U8X8_PIN_NONE);
+// U8G2_SSD1306_128X64_NONAME_F_SW_I2C u8g2(U8G2_R0, SCL, SDA, U8X8_PIN_NONE);
 
-// 8個中文字為上限
+enum StateEnum {
+  DEFAULT_NULL,
+  PRINT_INIT,
+  PRINT_RUNNING,
+  PRINT_STOPPED,
+  PRINT_ALLOW_10S,
+};
+
 class DisplayOLED {
 private:
-  bool allowPrint = false;
+  StateEnum lastState = DEFAULT_NULL;
 
   void clear() {
     u8g2.clearBuffer();
-    u8g2.clear();
   }
 
-  void plotMsg(byte lh, String str) {
+  void plot(byte lh, char* msg) {
     u8g2.setCursor(0, lh == 0 ? LH1 : (lh == 1 ? LH2 : LH3));
-    u8g2.print(str);
+    u8g2.print(msg);
   }
 
   void send() {
     u8g2.sendBuffer();
-    this->allowPrint = false;
+  }
+
+  char* concatChar(char* a, char* b) {
+    char* newChar = new char[strlen(a) + strlen(b) + 1];
+    strcpy(newChar, a);
+    strcat(newChar, b);
+    return newChar;
   }
 public:
   bool init() {
     if (!u8g2.begin()) {
-      Serial.println(F("SSD1306 allocation failed"));
+      Serial.println("Display Failed");
       return false;
     }
 
@@ -48,65 +59,45 @@ public:
     u8g2.setFontDirection(0);
     u8g2.clearDisplay();
 
-    // welcome msg
-    this->plotMsg(1, "正在加載保護系統...");
-    this->send();
-    delay(3000);
+    this->print(PRINT_INIT);
+    delay(1500);
 
     return true;
   }
 
-  void allowOnce() {
-    this->allowPrint = true;
-  }
-
-  void printTest() {
-    this->clear();
-    this->plotMsg(0, "123");
-    this->plotMsg(1, "456");
-    this->send();
-  }
-
-  // system message
-  void systemRunning() {
-    if (this->allowPrint) {
-      this->clear();
-      this->plotMsg(0, "系統運作中！");
-      this->send();
+  void print(StateEnum currState, char* addStr = "") {
+    if (this->lastState == currState) {
+      return;
     }
-  }
 
-  void systemStopped() {
-    this->clear();
-    this->plotMsg(0, "系統暫停運作！");
-    this->send();
-  }
+    this->lastState = currState;
 
-  void systemWaitFor() {
+    // handle all plotting here
     this->clear();
-    this->plotMsg(0, "系統允許暫時");
-    this->plotMsg(1, "運作十秒！");
-    this->send();
-  }
 
-  // sensor errors
-  void sensorDetected(String str) {
-    this->clear();
-    this->plotMsg(0, "感應器" + str);
-    this->plotMsg(1, "偵測到障礙物");
-    this->plotMsg(2, "系統暫停運作！");
-    this->send();
-  }
+    char* newChar;
 
-  void sensorFail(String str) {
-    this->clear();
-    this->plotMsg(0, "感應器 " + str + " 故障！");
-    this->send();
-  }
+    switch (currState) {
+      case PRINT_INIT:
+        this->plot(1, "正在加載系統...");
+        break;
+      case PRINT_RUNNING:
+        this->plot(1, "系統運作中");
+        break;
+      case PRINT_STOPPED:
+        this->plot(0, "偵測到障礙物");
+        this->plot(1, "系統暫停運作");
+        break;
+      case PRINT_ALLOW_10S:
+        this->plot(1, "暫時運作十秒");
+        break;
+      default:
+        break;
+    }
 
-  void wannaQuit() {
-    this->clear();
-    this->plotMsg(1, "心很累，想quit");
     this->send();
+    delete[] newChar;
   }
 };
+
+#endif

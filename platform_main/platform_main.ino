@@ -69,12 +69,12 @@ void loop() {
 
     if (pressButton.isPressed()) {
       detectSystem.setStatus(ALLOW_10S);
-      countdownTimer.setStart(millis());
+      countdownTimer.set();
     }
   }
 
   if (detectSystem.getStatus() == ALLOW_10S) {
-    displayOLED.print(PRINT_ALLOW_10S);
+    // displayOLED.print(PRINT_ALLOW_10S);
     relay.connect();
     warningLight.off();
     speaker.off();

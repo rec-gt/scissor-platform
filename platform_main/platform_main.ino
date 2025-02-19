@@ -13,7 +13,7 @@ DetectSystem detectSystem;
 DisplayOLED displayOLED;
 
 PressButton pressButton(3);
-Relay relay(4);
+Relay relay(30);
 Light powerLight(6);
 Light warningLight(7);
 Speaker speaker(10);
@@ -27,11 +27,11 @@ LaserSensor sensors[] = {
   LaserSensor(A2, 0),
   LaserSensor(A3, 0),
   LaserSensor(A4, 0),
-  // LaserSensor(A5, 0),
-  // LaserSensor(A6, 0),
-  // LaserSensor(A7, 0),
-  // LaserSensor(A8, 0),
-  // LaserSensor(A9, 0),
+  LaserSensor(A5, 0),
+  LaserSensor(A6, 0),
+  LaserSensor(A7, 0),
+  LaserSensor(A8, 0),
+  LaserSensor(A9, 0),
 };
 
 LaserSensorManager sensorsManager(sensors, sizeof(sensors) / sizeof(sensors[0]));
@@ -62,7 +62,7 @@ void loop() {
     warningLight.off();
     speaker.off();
 
-    if (sensorsManager.isDetected()) {
+    if (sensorsManager.isOneDetected()) {
       detectSystem.setStatus(STOPPED);
     }
   }
@@ -74,7 +74,7 @@ void loop() {
     speaker.on();
 
     // 1. sensor keep detection, once escape from obstacle, switch to RUNNING
-    if (sensorsManager.isEscaped()) {
+    if (sensorsManager.isAllEscaped()) {
       detectSystem.setStatus(RUNNING);
     }
 

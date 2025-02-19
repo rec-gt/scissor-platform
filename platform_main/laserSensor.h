@@ -82,9 +82,10 @@ public:
     };
   }
 
-  bool isDetected() {
+  bool isOneDetected() {
     for (int i = 0; i < this->num; i++) {
       this->laserSensors[i].listen();
+      this->laserSensors[i].print(i);
       if (this->laserSensors[i].isDetected()) {
         return true;
       }
@@ -92,16 +93,18 @@ public:
     return false;
   }
 
-  bool isEscaped() {
-    bool isSafe = false;
+  bool isAllEscaped() {
+    bool escaped = true;
+
     for (int i = 0; i < this->num; i++) {
       this->laserSensors[i].setDangerBuffer(true);
       this->laserSensors[i].listen();
-      if (!this->laserSensors[i].isDetected()) {
-        isSafe = true;
+      this->laserSensors[i].print(i);
+      if (this->laserSensors[i].isDetected()) {
+        escaped = false;
       }
     }
-    return isSafe;
+    return escaped;
   }
 
   void changeBaseThreshold(bool toggle) {

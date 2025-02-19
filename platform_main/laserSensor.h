@@ -82,7 +82,17 @@ public:
     };
   }
 
-  bool listenSensorsWhenStopped() {
+  bool isDetected() {
+    for (int i = 0; i < this->num; i++) {
+      this->laserSensors[i].listen();
+      if (this->laserSensors[i].isDetected()) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  bool isEscaped() {
     bool isSafe = false;
     for (int i = 0; i < this->num; i++) {
       this->laserSensors[i].setDangerBuffer(true);

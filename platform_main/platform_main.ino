@@ -57,7 +57,10 @@ void loop() {
     relay.connect();
     warningLight.off();
     speaker.off();
-    listenSensors();
+
+    if (laserSensorManager.isDetected()) {
+      detectSystem.setStatus(STOPPED);
+    }
   }
 
   if (detectSystem.getStatus() == STOPPED) {
@@ -67,7 +70,7 @@ void loop() {
     speaker.on();
 
     // sensor keep detection, once escape from obstacle, switch to RUNNING
-    if (laserSensorManager.listenSensorsWhenStopped()) {
+    if (laserSensorManager.isEscaped()) {
       detectSystem.setStatus(RUNNING);
     }
 
@@ -94,18 +97,6 @@ void changeBaseThreshold(bool toggle) {
   }
 }
 
-void listenSensors() {
-  int numLaserSensors = sizeof(laserSensors) / sizeof(laserSensors[0]);
-  for (int i = 0; i < numLaserSensors; i++) {
-    laserSensors[i].debounceListen();
-    laserSensors[i].print(i);
-
-    if (laserSensors[i].isDetected()) {
-      detectSystem.setStatus(STOPPED);
-      break;
-    };
-  }
-}
 
 void countDownCallback() {
   detectSystem.setStatus(RUNNING);

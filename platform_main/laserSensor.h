@@ -26,6 +26,7 @@ private:
   }
 
 public:
+  LaserSensor() {}
   LaserSensor(byte pin, int tunningBuffer)
     : pin(pin), tunningBuffer(tunningBuffer) {
     pinMode(this->pin, INPUT);
@@ -39,9 +40,8 @@ public:
     this->dangerBuffer = toggle ? 100 : 0;  // true = 100, false = 0
   }
 
-  void debounceListen() {
+  void listen() {
     int reading = analogRead(this->pin);
-    // Serial.println(reading);
     this->measuredDistance = this->calculateDistance(reading);
 
     int threshold = this->baseThreshold + this->tunningBuffer + this->dangerBuffer;
@@ -66,5 +66,31 @@ public:
     Serial.print(nth);
     Serial.print(": ");
     Serial.println(this->measuredDistance);
+  }
+};
+
+
+class LaserSensorManager {
+private:
+  LaserSensor laserSensors[10];
+  size_t num;
+public:
+  LaserSensorManager(LaserSensor laserSensors[], size_t num)
+    : num(num) {
+    for (size_t i = 0; i < num; i++) {
+      this->laserSensors[i] = laserSensors[i];
+    };
+  }
+
+  bool listenSensorsWhenStopped() {
+    bool isSafe = false;
+    for (int i = 0; i < this->num; i++) {
+      this->laserSensors[i].setDangerBuffer(true);
+      this->laserSensors[i].listen();
+      if (!this->laserSensors[i].isDetected()) {
+        isSafe = true;
+      }
+    }
+    return isSafe;
   }
 };

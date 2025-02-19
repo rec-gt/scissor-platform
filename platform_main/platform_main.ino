@@ -22,17 +22,20 @@ BaseThresholdSwitch baseThresholdSwitch(12);  // OK
 CountdownTimer countdownTimer(10);
 
 LaserSensor laserSensors[] = {
-  LaserSensor(A0, 0), //fail
+  LaserSensor(A0, 0),
   LaserSensor(A1, 0),
   LaserSensor(A2, 0),
   LaserSensor(A3, 0),
-  LaserSensor(A4, 0), //fail
+  LaserSensor(A4, 0),
   // LaserSensor(A5, 0),
   // LaserSensor(A6, 0),
   // LaserSensor(A7, 0),
   // LaserSensor(A8, 0),
   // LaserSensor(A9, 0),
 };
+
+LaserSensorManager laserSensorManager(laserSensors, sizeof(laserSensors) / sizeof(laserSensors[0]));
+
 
 void setup() {
   Serial.begin(9600);
@@ -64,7 +67,9 @@ void loop() {
     speaker.on();
 
     // sensor keep detection, once escape from obstacle, switch to RUNNING
-    dangerListenSensors();
+    if (laserSensorManager.listenSensorsWhenStopped()) {
+      detectSystem.setStatus(RUNNING);
+    }
 
     if (pressButton.isPressed()) {
       detectSystem.setStatus(ALLOW_10S);
@@ -97,20 +102,6 @@ void listenSensors() {
 
     if (laserSensors[i].isDetected()) {
       detectSystem.setStatus(STOPPED);
-      break;
-    };
-  }
-}
-
-void dangerListenSensors() {
-  int numLaserSensors = sizeof(laserSensors) / sizeof(laserSensors[0]);
-  for (int i = 0; i < numLaserSensors; i++) {
-    laserSensors[i].setDangerBuffer(true);
-    laserSensors[i].debounceListen();
-    laserSensors[i].print(i);
-
-    if (!laserSensors[i].isDetected()) {
-      detectSystem.setStatus(RUNNING);
       break;
     };
   }

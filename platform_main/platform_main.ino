@@ -73,14 +73,13 @@ void loop() {
   }
 
   if (detectSystem.getStatus() == ALLOW_10S) {
-    // displayOLED.print("", "暫時運作十秒", "");
     relay.connect();
     warningLight.off();
     speaker.off();
     countdownTimer.countdown(displayOLED, countDownCallback);
   }
 
-  delay(100);
+  delay(1000);
 }
 
 void changeBaseThreshold(bool toggle) {
@@ -94,10 +93,9 @@ void listenSensors() {
   int numLaserSensors = sizeof(laserSensors) / sizeof(laserSensors[0]);
   for (int i = 0; i < numLaserSensors; i++) {
     laserSensors[i].debounceListen();
-    laserSensors[i].print();
+    laserSensors[i].print(i);
 
     if (laserSensors[i].isDetected()) {
-      // Serial.println("Obstacle Detected!");
       detectSystem.setStatus(STOPPED);
       break;
     };
@@ -109,10 +107,9 @@ void dangerListenSensors() {
   for (int i = 0; i < numLaserSensors; i++) {
     laserSensors[i].setDangerBuffer(true);
     laserSensors[i].debounceListen();
-    laserSensors[i].print();
+    laserSensors[i].print(i);
 
     if (!laserSensors[i].isDetected()) {
-      // Serial.println("Vehicle Escaped from Obstacle!");
       detectSystem.setStatus(RUNNING);
       break;
     };
@@ -120,6 +117,5 @@ void dangerListenSensors() {
 }
 
 void countDownCallback() {
-  // Serial.println("Countdown Finish!");
   detectSystem.setStatus(RUNNING);
 }

@@ -62,7 +62,9 @@ public:
     return this->detected;
   }
 
-  void print() {
+  void print(byte nth) {
+    Serial.print(nth);
+    Serial.print(": ");
     Serial.println(this->measuredDistance);
   }
 };

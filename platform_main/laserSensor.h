@@ -32,7 +32,7 @@ public:
     pinMode(this->pin, INPUT);
   }
 
-  void changeBaseThreshold(bool toggle) {
+  void changeBaseThreshold(bool toggle) {  // true = 300, false = 500
     this->baseThreshold = toggle ? 300 : 500;
   }
 
@@ -102,5 +102,11 @@ public:
       }
     }
     return isSafe;
+  }
+
+  void changeBaseThreshold(bool toggle) {
+    for (int i = 0; i < this->num; i++) {
+      this->laserSensors[i].changeBaseThreshold(toggle);
+    }
   }
 };

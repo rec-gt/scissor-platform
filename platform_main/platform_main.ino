@@ -69,11 +69,12 @@ void loop() {
     warningLight.on();
     speaker.on();
 
-    // sensor keep detection, once escape from obstacle, switch to RUNNING
+    // 1. sensor keep detection, once escape from obstacle, switch to RUNNING
     if (laserSensorManager.isEscaped()) {
       detectSystem.setStatus(RUNNING);
     }
 
+    // 2. press button to get 10s moving time
     if (pressButton.isPressed()) {
       detectSystem.setStatus(ALLOW_10S);
       countdownTimer.set();

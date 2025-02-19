@@ -21,7 +21,7 @@ BaseThresholdSwitch baseThresholdSwitch(12);  // OK
 
 CountdownTimer countdownTimer(10);
 
-LaserSensor laserSensors[] = {
+LaserSensor sensors[] = {
   LaserSensor(A0, 0),
   LaserSensor(A1, 0),
   LaserSensor(A2, 0),
@@ -34,7 +34,7 @@ LaserSensor laserSensors[] = {
   // LaserSensor(A9, 0),
 };
 
-LaserSensorManager laserSensorManager(laserSensors, sizeof(laserSensors) / sizeof(laserSensors[0]));
+LaserSensorManager sensorsManager(sensors, sizeof(sensors) / sizeof(sensors[0]));
 
 
 void setup() {
@@ -54,7 +54,7 @@ void loop() {
 
   baseThresholdSwitch.listen();
 
-  laserSensorManager.changeBaseThreshold(baseThresholdSwitch.isOn());
+  sensorsManager.changeBaseThreshold(baseThresholdSwitch.isOn());
 
   if (detectSystem.getStatus() == RUNNING) {
     displayOLED.print("", "系統運作中", "", 2);
@@ -62,7 +62,7 @@ void loop() {
     warningLight.off();
     speaker.off();
 
-    if (laserSensorManager.isDetected()) {
+    if (sensorsManager.isDetected()) {
       detectSystem.setStatus(STOPPED);
     }
   }
@@ -74,7 +74,7 @@ void loop() {
     speaker.on();
 
     // 1. sensor keep detection, once escape from obstacle, switch to RUNNING
-    if (laserSensorManager.isEscaped()) {
+    if (sensorsManager.isEscaped()) {
       detectSystem.setStatus(RUNNING);
     }
 

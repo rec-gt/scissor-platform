@@ -22,11 +22,11 @@ BaseThresholdSwitch baseThresholdSwitch(12);  // OK
 CountdownTimer countdownTimer(10);
 
 LaserSensor laserSensors[] = {
-  LaserSensor(A0, 0),
-  // LaserSensor(A1, 0),
-  // LaserSensor(A2, 0),
-  // LaserSensor(A3, 0),
-  // LaserSensor(A4, 0),
+  LaserSensor(A0, 0), //fail
+  LaserSensor(A1, 0),
+  LaserSensor(A2, 0),
+  LaserSensor(A3, 0),
+  LaserSensor(A4, 0), //fail
   // LaserSensor(A5, 0),
   // LaserSensor(A6, 0),
   // LaserSensor(A7, 0),

@@ -16,7 +16,7 @@ private:
   unsigned long lastMillis;
   bool detected = false;
 
-  int calculateDistance(int reading) {
+  float calculateDistance(float reading) {
     float min_factor = 192;
     float max_factor = 965;
     float min_sensor = 0;
@@ -41,8 +41,8 @@ public:
 
   void debounceListen() {
     int reading = analogRead(this->pin);
+    // Serial.println(reading);
     this->measuredDistance = this->calculateDistance(reading);
-    Serial.println(this->measuredDistance);
 
     int threshold = this->baseThreshold + this->tunningBuffer + this->dangerBuffer;
 

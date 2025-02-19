@@ -16,16 +16,16 @@ public:
     byte reading = digitalRead(pin);
 
     if (reading == LOW) {
-      if ((millis() - lastMillis) > 150) {
-        state = reading;
+      if ((millis() - this->lastMillis) > 150) {
+        this->state = reading;
       }
     } else {
-      state = HIGH;
-      lastMillis = millis();
+      this->state = HIGH;
+      this->lastMillis = millis();
     }
   }
 
   bool isPressed() {
-    return state == LOW;
+    return this->state == LOW;
   }
 };

@@ -4,7 +4,6 @@ class BaseThresholdSwitch {
 private:
   byte pin;
   byte state;
-  byte previousState;
 public:
   BaseThresholdSwitch(byte pin)
     : pin(pin) {
@@ -12,10 +11,10 @@ public:
   }
 
   void listen() {
-    state = digitalRead(pin);
+    this->state = digitalRead(this->pin);
   }
 
   bool isOn() {
-    return state == HIGH;
+    return this->state == HIGH;
   }
 };

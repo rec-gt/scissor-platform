@@ -39,10 +39,13 @@ LaserSensorManager laserSensorManager(laserSensors, sizeof(laserSensors) / sizeo
 
 void setup() {
   Serial.begin(9600);
+
   if (!displayOLED.init()) {
     relay.cut();
   }
+
   detectSystem.setStatus(RUNNING);
+
   powerLight.on();
 }
 
@@ -50,7 +53,8 @@ void loop() {
   pressButton.listen();
 
   baseThresholdSwitch.listen();
-  changeBaseThreshold(baseThresholdSwitch.isOn());
+
+  laserSensorManager.changeBaseThreshold(baseThresholdSwitch.isOn());
 
   if (detectSystem.getStatus() == RUNNING) {
     displayOLED.print("", "系統運作中", "", 2);
@@ -90,14 +94,6 @@ void loop() {
 
   delay(1000);
 }
-
-void changeBaseThreshold(bool toggle) {
-  int numLaserSensors = sizeof(laserSensors) / sizeof(laserSensors[0]);
-  for (int i = 0; i < numLaserSensors; i++) {
-    laserSensors[i].changeBaseThreshold(toggle);  // true = 300, false = 500
-  }
-}
-
 
 void countDownCallback() {
   detectSystem.setStatus(RUNNING);

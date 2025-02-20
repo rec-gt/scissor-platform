@@ -12,12 +12,6 @@ class DisplayOLED {
 private:
   byte lastState = 0;
 
-  char* concatChar(char* a, char* b) {
-    char* newChar = new char[strlen(a) + strlen(b) + 1];
-    strcpy(newChar, a);
-    strcat(newChar, b);
-    return newChar;
-  }
 public:
   bool init() {
     if (!u8g2.begin()) {
@@ -33,6 +27,19 @@ public:
     delay(1500);
 
     return true;
+  }
+
+  char* concatChar(char* a, char* b) {
+    char* newChar = new char[strlen(a) + strlen(b) + 1];
+    strcpy(newChar, a);
+    strcat(newChar, b);
+    return newChar;
+  }
+
+  char* num2Char(int num) {
+    char cstr[16];
+    char* newChar = itoa(num, cstr, 10);
+    return newChar;
   }
 
   void print(char* a, char* b, char* c, byte currState) {

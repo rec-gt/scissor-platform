@@ -12,8 +12,8 @@ DetectSystem detectSystem;
 
 DisplayOLED displayOLED;
 
-PressButton pressButton(3);
 Relay relay(30);
+PressButton pressButton(28);
 Light powerLight(6);
 Light warningLight(7);
 Speaker speaker(10);
@@ -92,7 +92,7 @@ void loop() {
     countdownTimer.countdown(displayOLED, countDownCallback);
   }
 
-  delay(1000);
+  delay(500);
 }
 
 void countDownCallback() {

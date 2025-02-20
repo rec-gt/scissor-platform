@@ -25,8 +25,9 @@ public:
     if (currRemainingTime >= 0 && currRemainingTime != remainingTime) {
       remainingTime = currRemainingTime;
 
-      char cstr[16];
-      displayOLED.print("", "暫時運作", itoa(remainingTime + 1, cstr, 10), remainingTime + 1);
+      char* c1 = displayOLED.concatChar("暫時運作", displayOLED.num2Char(remainingTime + 1));
+      char* c2 = displayOLED.concatChar(c1, );
+      displayOLED.print("", newChar, "", remainingTime + 1);
     }
 
     if (currMillis - startMillis >= duration) {

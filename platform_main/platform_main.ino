@@ -15,8 +15,8 @@ DisplayOLED displayOLED;
 Relay relay(30);
 PressButton pressButton(28);
 BaseThresholdSwitch baseThresholdSwitch(26);
-Light powerLight(6);
-Light warningLight(7);
+Light powerLight(24);
+Light warningLight(22);
 Speaker speaker(10);
 
 CountdownTimer countdownTimer(10);

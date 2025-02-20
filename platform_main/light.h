@@ -11,10 +11,10 @@ public:
   }
 
   void on() {
-    digitalWrite(pin, HIGH);
+    digitalWrite(pin, LOW);
   }
 
   void off() {
-    digitalWrite(pin, LOW);
+    digitalWrite(pin, HIGH);
   }
 };

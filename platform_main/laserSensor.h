@@ -63,6 +63,9 @@ public:
   }
 
   void print(byte nth) {
+    Serial.print("Threshold: ");
+    Serial.print(this->baseThreshold);
+    Serial.print(", ");
     Serial.print(nth);
     Serial.print(": ");
     Serial.println(this->measuredDistance);

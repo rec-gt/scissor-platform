@@ -3,18 +3,30 @@
 class BaseThresholdSwitch {
 private:
   byte pin;
-  byte state;
+  byte state = HIGH;
+  byte lastState = HIGH;
+  unsigned long lastMillis;
 public:
   BaseThresholdSwitch(byte pin)
     : pin(pin) {
-    pinMode(pin, INPUT);
+    pinMode(this->pin, INPUT_PULLUP);
+    digitalWrite(this->pin, HIGH);
   }
 
   void listen() {
-    this->state = digitalRead(this->pin);
+    byte reading = digitalRead(this->pin);
+
+    if (reading != this->lastState) {
+      if ((millis() - this->lastMillis) > 50) {
+        this->state = reading;
+        this->lastState = reading;
+      }
+    } else {
+      this->lastMillis = millis();
+    }
   }
 
-  bool isOn() {
+  bool is500() {
     return this->state == HIGH;
   }
 };

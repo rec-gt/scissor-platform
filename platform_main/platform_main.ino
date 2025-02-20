@@ -14,10 +14,10 @@ DisplayOLED displayOLED;
 
 Relay relay(30);
 PressButton pressButton(28);
+BaseThresholdSwitch baseThresholdSwitch(26);
 Light powerLight(6);
 Light warningLight(7);
 Speaker speaker(10);
-BaseThresholdSwitch baseThresholdSwitch(12);  // OK
 
 CountdownTimer countdownTimer(10);
 
@@ -54,7 +54,7 @@ void loop() {
 
   baseThresholdSwitch.listen();
 
-  sensorsManager.changeBaseThreshold(baseThresholdSwitch.isOn());
+  sensorsManager.changeBaseThreshold(baseThresholdSwitch.is500());
 
   if (detectSystem.getStatus() == RUNNING) {
     displayOLED.print("", "系統運作中", "", 2);
@@ -92,7 +92,7 @@ void loop() {
     countdownTimer.countdown(displayOLED, countDownCallback);
   }
 
-  delay(500);
+  delay(100);
 }
 
 void countDownCallback() {

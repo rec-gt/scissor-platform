@@ -26,7 +26,7 @@ public:
     }
   }
 
-  bool is500() {
+  bool is800() {
     return this->state == HIGH;
   }
 };

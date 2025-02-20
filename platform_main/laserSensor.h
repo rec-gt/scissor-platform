@@ -5,7 +5,7 @@ private:
   byte pin;
 
   // threshold and buffer
-  int baseThreshold = 500;  // 500 (default) or 300
+  int baseThreshold = 800;  // 800 (default) or 500
   int tunningBuffer = 0;    // added when constructed, for tunning each sensors, can be +ve/-ve number
   int dangerBuffer = 0;     // used when vehicle suddenly stop
 
@@ -32,12 +32,12 @@ public:
     pinMode(this->pin, INPUT);
   }
 
-  void changeBaseThreshold(bool toggle) {  // true = 300, false = 500
-    this->baseThreshold = toggle ? 300 : 500;
+  void changeBaseThreshold(bool toggle) {  // true = 500, false = 800
+    this->baseThreshold = toggle ? 500 : 800;
   }
 
   void setDangerBuffer(bool toggle) {
-    this->dangerBuffer = toggle ? 100 : 0;  // true = 100, false = 0
+    this->dangerBuffer = toggle ? 200 : 0;  // true = 100, false = 0
   }
 
   void listen() {

@@ -54,7 +54,7 @@ void loop() {
 
   baseThresholdSwitch.listen();
 
-  sensorsManager.changeBaseThreshold(baseThresholdSwitch.is500());
+  sensorsManager.changeBaseThreshold(baseThresholdSwitch.is800());
 
   if (detectSystem.getStatus() == RUNNING) {
     displayOLED.print("", "系統運作中", "", 2);

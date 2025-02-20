@@ -88,7 +88,7 @@ public:
   bool isOneDetected() {
     for (int i = 0; i < this->num; i++) {
       this->laserSensors[i].listen();
-      this->laserSensors[i].print(i);
+      // this->laserSensors[i].print(i);
       if (this->laserSensors[i].isDetected()) {
         return true;
       }
@@ -102,7 +102,7 @@ public:
     for (int i = 0; i < this->num; i++) {
       this->laserSensors[i].setDangerBuffer(true);
       this->laserSensors[i].listen();
-      this->laserSensors[i].print(i);
+      // this->laserSensors[i].print(i);
       if (this->laserSensors[i].isDetected()) {
         escaped = false;
       }

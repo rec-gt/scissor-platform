@@ -2,7 +2,6 @@
 #include "pressButton.h"
 #include "relay.h"
 #include "light.h"
-#include "speaker.h"
 #include "countdown.h"
 #include "laserSensor.h"
 #include "baseThresholdSwitch.h"
@@ -17,7 +16,6 @@ PressButton pressButton(28);
 BaseThresholdSwitch baseThresholdSwitch(26);
 Light powerLight(24);
 Light warningLight(22);
-Speaker speaker(10);
 
 CountdownTimer countdownTimer(10);
 
@@ -40,6 +38,9 @@ LaserSensorManager sensorsManager(sensors, sizeof(sensors) / sizeof(sensors[0]))
 void setup() {
   Serial.begin(9600);
 
+  warningLight.off();
+  relay.cut();
+
   if (!displayOLED.init()) {
     relay.cut();
   }
@@ -60,7 +61,6 @@ void loop() {
     displayOLED.print("", "系統運作中", "", 2);
     relay.connect();
     warningLight.off();
-    speaker.off();
 
     if (sensorsManager.isOneDetected()) {
       detectSystem.setStatus(STOPPED);
@@ -71,7 +71,6 @@ void loop() {
     displayOLED.print("偵測到障礙物", "系統暫停運作", "", 3);
     relay.cut();
     warningLight.on();
-    speaker.on();
 
     // 1. sensor keep detection, once escape from obstacle, switch to RUNNING
     if (sensorsManager.isAllEscaped()) {
@@ -88,11 +87,10 @@ void loop() {
   if (detectSystem.getStatus() == ALLOW_10S) {
     relay.connect();
     warningLight.off();
-    speaker.off();
     countdownTimer.countdown(displayOLED, countDownCallback);
   }
 
-  delay(1000);
+  delay(60);
 }
 
 void countDownCallback() {

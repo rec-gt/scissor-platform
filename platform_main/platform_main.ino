@@ -92,7 +92,7 @@ void loop() {
     countdownTimer.countdown(displayOLED, countDownCallback);
   }
 
-  delay(100);
+  delay(1000);
 }
 
 void countDownCallback() {

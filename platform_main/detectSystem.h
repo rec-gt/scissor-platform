@@ -1,19 +1,20 @@
 #include "Arduino.h"
 
 enum SystemStatus {
-  STOPPED,
+  INIT,
   RUNNING,
+  STOPPED,
   ALLOW_10S,
   FAILURE
 };
 
-const char* STATUS_STR[] = { "STOPPED", "RUNNING", "ALLOW_10S", "FAILURE" };
+const char* STATUS_STR[] = { "INIT", "RUNNING", "STOPPED", "ALLOW_10S", "FAILURE" };
 
 
 class DetectSystem {
 private:
-  SystemStatus status = RUNNING;
-  SystemStatus lastStatus = RUNNING;
+  SystemStatus status = INIT;
+  SystemStatus lastStatus = INIT;
 
 public:
   SystemStatus getStatus() {
@@ -24,7 +25,7 @@ public:
     if (status == this->lastStatus) {
       return;
     }
-    
+
     this->lastStatus = status;
     this->status = status;
 

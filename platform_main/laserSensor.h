@@ -44,6 +44,8 @@ public:
 
   void listen() {
     int reading = analogRead(this->pin);
+    Serial.println(reading);
+
     this->measuredDistance = this->calculateDistance(reading);
 
     int threshold = this->baseThreshold + this->tunningBuffer + this->dangerBuffer;
@@ -97,7 +99,6 @@ public:
   bool isOneDetected() {
     for (int i = 0; i < this->num; i++) {
       this->laserSensors[i].listen();
-      // this->laserSensors[i].print(i);
       if (this->laserSensors[i].isDetected()) {
         return true;
       }
@@ -111,7 +112,6 @@ public:
     for (int i = 0; i < this->num; i++) {
       this->laserSensors[i].setDangerBuffer(true);
       this->laserSensors[i].listen();
-      // this->laserSensors[i].print(i);
       if (this->laserSensors[i].isDetected()) {
         escaped = false;
       }
@@ -128,11 +128,11 @@ public:
   bool areAllHealthy(DisplayOLED displayOLED) {
     for (int i = 0; i < this->num; i++) {
       if (this->laserSensors[i].healthCheck() == false) {
-        
+
         char* c1 = displayOLED.concatChar("感應器 ", displayOLED.num2Char(i + 1));
         char* c2 = displayOLED.concatChar(c1, " 故障");
         displayOLED.print("", c2, "", 404);
-        
+
         return false;
       }
     }

@@ -15,7 +15,7 @@ Relay relay(30);
 PressButton pressButton(28);
 BaseThresholdSwitch baseThresholdSwitch(26);
 Light powerLight(24);
-Light warningLight(22);
+Light warningSystem(22);
 
 CountdownTimer countdownTimer(10);
 
@@ -38,7 +38,7 @@ LaserSensorManager sensorsManager(sensors, sizeof(sensors) / sizeof(sensors[0]))
 void setup() {
   Serial.begin(9600);
 
-  warningLight.off();
+  warningSystem.off();
   relay.cut();
 
   if (!displayOLED.init()) {
@@ -60,7 +60,7 @@ void loop() {
   if (detectSystem.getStatus() == RUNNING) {
     displayOLED.print("", "系統運作中", "", 2);
     relay.connect();
-    warningLight.off();
+    warningSystem.off();
 
     if (sensorsManager.isOneDetected()) {
       detectSystem.setStatus(STOPPED);
@@ -70,10 +70,10 @@ void loop() {
   if (detectSystem.getStatus() == STOPPED) {
     displayOLED.print("偵測到障礙物", "系統暫停運作", "", 3);
     relay.cut();
-    warningLight.on();
+    warningSystem.on();
 
     // 1. sensor keep detection, once escape from obstacle, switch to RUNNING
-    if (sensorsManager.isAllEscaped()) {
+    if (sensorsManager.areAllEscaped()) {
       detectSystem.setStatus(RUNNING);
     }
 
@@ -86,11 +86,21 @@ void loop() {
 
   if (detectSystem.getStatus() == ALLOW_10S) {
     relay.connect();
-    warningLight.off();
+    warningSystem.off();
     countdownTimer.countdown(displayOLED, countDownCallback);
   }
 
-  delay(60);
+  if (detectSystem.getStatus() == FAILURE) {
+    relay.cut();
+    warningSystem.on();
+  }
+
+  // sensor health check
+  if (!sensorsManager.areAllHealthy(displayOLED)) {
+    detectSystem.setStatus(FAILURE);
+  }
+
+  delay(1000);
 }
 
 void countDownCallback() {

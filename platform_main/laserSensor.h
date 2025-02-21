@@ -27,6 +27,7 @@ private:
 
 public:
   LaserSensor() {}
+
   LaserSensor(byte pin, int tunningBuffer)
     : pin(pin), tunningBuffer(tunningBuffer) {
     pinMode(this->pin, INPUT);
@@ -60,6 +61,13 @@ public:
 
   bool isDetected() {
     return this->detected;
+  }
+
+  bool healthCheck() {
+    if (analogRead(this->pin) < 50) {  // normal sensor reading should be 200+, if sensor fails, reading drops to ~0
+      return false;
+    }
+    return true;
   }
 
   void print(byte nth) {
@@ -96,7 +104,7 @@ public:
     return false;
   }
 
-  bool isAllEscaped() {
+  bool areAllEscaped() {
     bool escaped = true;
 
     for (int i = 0; i < this->num; i++) {
@@ -114,5 +122,14 @@ public:
     for (int i = 0; i < this->num; i++) {
       this->laserSensors[i].changeBaseThreshold(toggle);
     }
+  }
+
+  void areAllHealthy(DisplayOLED displayOLED) {
+    for (int i = 0; i < this->num; i++) {
+      if (this->laserSensors[i].healthCheck() == false) {
+        return false;
+      }
+    }
+    return true;
   }
 };

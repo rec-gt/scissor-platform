@@ -4,9 +4,10 @@ enum SystemStatus {
   STOPPED,
   RUNNING,
   ALLOW_10S,
+  FAILURE
 };
 
-const char* STATUS_STR[] = { "STOPPED", "RUNNING", "ALLOW_10S" };
+const char* STATUS_STR[] = { "STOPPED", "RUNNING", "ALLOW_10S", "FAILURE" };
 
 
 class DetectSystem {

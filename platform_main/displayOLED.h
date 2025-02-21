@@ -13,6 +13,8 @@ private:
   byte lastState = 0;
 
 public:
+  DisplayOLED() {}
+  
   bool init() {
     if (!u8g2.begin()) {
       Serial.println("Display Failed");

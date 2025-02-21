@@ -65,9 +65,10 @@ void loop() {
     if (sensorsManager.isOneDetected()) {
       detectSystem.setStatus(STOPPED);
     }
-  }
-
-  if (detectSystem.getStatus() == STOPPED) {
+    if (!sensorsManager.areAllHealthy(displayOLED)) {
+      detectSystem.setStatus(FAILURE);
+    }
+  } else if (detectSystem.getStatus() == STOPPED) {
     displayOLED.print("偵測到障礙物", "系統暫停運作", "", 3);
     relay.cut();
     warningSystem.on();
@@ -82,22 +83,17 @@ void loop() {
       detectSystem.setStatus(ALLOW_10S);
       countdownTimer.set();
     }
-  }
-
-  if (detectSystem.getStatus() == ALLOW_10S) {
+  } else if (detectSystem.getStatus() == ALLOW_10S) {
     relay.connect();
     warningSystem.off();
     countdownTimer.countdown(displayOLED, countDownCallback);
-  }
-
-  if (detectSystem.getStatus() == FAILURE) {
+  } else if (detectSystem.getStatus() == FAILURE) {
     relay.cut();
     warningSystem.on();
-  }
 
-  // sensor health check
-  if (!sensorsManager.areAllHealthy(displayOLED)) {
-    detectSystem.setStatus(FAILURE);
+    if (sensorsManager.areAllHealthy(displayOLED)) {
+      detectSystem.setStatus(RUNNING);
+    }
   }
 
   delay(1000);

@@ -11,19 +11,19 @@ private:
   int dangerBuffer = 0;     // used when vehicle suddenly stop
 
   // measured distance
-  int measuredDistance;
+  float measuredDistance;
 
   // for debounce
   unsigned long lastMillis;
   bool detected = false;
 
   float calculateDistance(float reading) {
-    float min_factor = 192;
-    float max_factor = 965;
+    float min_reading = 220;
+    float max_reading = 1023;
     float min_sensor = 0;
     float max_sensor = 2000;
 
-    return ((reading - max_factor) / (min_factor - max_factor)) * (min_sensor - max_sensor) + max_sensor;
+    return ((reading - max_reading) / (min_reading - max_reading)) * (min_sensor - max_sensor) + max_sensor;
   }
 
 public:
@@ -44,11 +44,20 @@ public:
 
   void listen() {
     int reading = analogRead(this->pin);
-    Serial.println(reading);
 
     this->measuredDistance = this->calculateDistance(reading);
 
     int threshold = this->baseThreshold + this->tunningBuffer + this->dangerBuffer;
+
+
+    Serial.print(this->pin);
+    Serial.print(": ");
+    Serial.print(reading);
+    Serial.print(", ");
+    Serial.print(this->measuredDistance);
+    Serial.print(", ");
+    Serial.println(threshold);
+
 
     bool measure = this->measuredDistance <= threshold;
 

@@ -20,16 +20,16 @@ Light warningSystem(22);
 CountdownTimer countdownTimer(10);
 
 LaserSensor sensors[] = {
-  LaserSensor(A0, 0),
-  LaserSensor(A1, 0),
-  LaserSensor(A2, 0),
-  LaserSensor(A3, 0),
-  LaserSensor(A4, 0),
-  LaserSensor(A5, 0),
-  LaserSensor(A6, 0),
-  LaserSensor(A7, 0),
-  LaserSensor(A8, 0),
-  LaserSensor(A9, 0),
+  LaserSensor(A0, 220),
+  LaserSensor(A1, 220),
+  LaserSensor(A2, 220),
+  LaserSensor(A3, 220),
+  LaserSensor(A4, 220),
+  LaserSensor(A5, 220),
+  LaserSensor(A6, 235),
+  LaserSensor(A7, 220),
+  LaserSensor(A8, 220),
+  LaserSensor(A9, 220),
 };
 
 LaserSensorManager sensorsManager(sensors, sizeof(sensors) / sizeof(sensors[0]));
@@ -96,7 +96,8 @@ void loop() {
     }
   }
 
-  delay(100);
+  sensors[2].print(2);
+  delay(10);
 }
 
 void countDownCallback() {

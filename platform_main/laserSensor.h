@@ -6,9 +6,9 @@ private:
   byte pin;
 
   // threshold and buffer
-  int baseThreshold = 800;  // 800 (default) or 500
-  int tunningBuffer = 0;    // added when constructed, for tunning each sensors, can be +ve/-ve number
-  int dangerBuffer = 0;     // used when vehicle suddenly stop
+  int baseThreshold = 800;    // 800 (default) or 500
+  int tunningMinReading = 0;  // added when constructed, for tunning each sensors, can be +ve/-ve number
+  int dangerBuffer = 0;       // used when vehicle suddenly stop
 
   // measured distance
   float measuredDistance;
@@ -18,19 +18,19 @@ private:
   bool detected = false;
 
   float calculateDistance(float reading) {
-    float min_reading = 220;
-    float max_reading = 1023;
-    float min_sensor = 0;
-    float max_sensor = 1750;
+    float minReading = this->tunningMinReading;
+    float maxReading = 1023;
+    float minSensor = 0;
+    float maxSensor = 1750;
 
-    return ((reading - max_reading) / (min_reading - max_reading)) * (min_sensor - max_sensor) + max_sensor;
+    return ((reading - maxReading) / (minReading - maxReading)) * (minSensor - maxSensor) + maxSensor;
   }
 
 public:
   LaserSensor() {}
 
-  LaserSensor(byte pin, int tunningBuffer)
-    : pin(pin), tunningBuffer(tunningBuffer) {
+  LaserSensor(byte pin, int tunningMinReading)
+    : pin(pin), tunningMinReading(tunningMinReading) {
     pinMode(this->pin, INPUT);
   }
 
@@ -47,17 +47,15 @@ public:
 
     this->measuredDistance = this->calculateDistance(reading);
 
-    int threshold = this->baseThreshold + this->tunningBuffer + this->dangerBuffer;
+    int threshold = this->baseThreshold + this->dangerBuffer;
 
-
-    Serial.print(this->pin);
-    Serial.print(": ");
-    Serial.print(reading);
-    Serial.print(", ");
-    Serial.print(this->measuredDistance);
-    Serial.print(", ");
-    Serial.println(threshold);
-
+    // Serial.print(this->pin);
+    // Serial.print(": ");
+    // Serial.print(reading);
+    // Serial.print(", ");
+    // Serial.print(this->measuredDistance);
+    // Serial.print(", ");
+    // Serial.println(threshold);
 
     bool measure = this->measuredDistance <= threshold;
 
@@ -71,6 +69,7 @@ public:
     }
   }
 
+
   bool isDetected() {
     return this->detected;
   }
@@ -83,12 +82,11 @@ public:
   }
 
   void print(byte nth) {
-    Serial.print("Threshold: ");
-    Serial.print(this->baseThreshold);
+    // Serial.print("Threshold: ");
+    // Serial.print(this->baseThreshold);
+    Serial.print(analogRead(this->pin));
     Serial.print(", ");
-    Serial.print(nth);
-    Serial.print(": ");
-    Serial.println(this->measuredDistance);
+    Serial.println(this->calculateDistance(analogRead(this->pin)));
   }
 };
 

@@ -17,6 +17,10 @@ private:
   unsigned long lastMillis;
   bool detected = false;
 
+  // for calibration
+  float averageReading = 0;
+  float averageCount = 0;
+
   float calculateDistance(float reading) {
     float minReading = this->tunningMinReading;
     float maxReading = 1023;
@@ -81,9 +85,15 @@ public:
     return true;
   }
 
+  void calibrate() {
+    int reading = analogRead(this->pin);
+    this->averageReading += reading;
+    this->averageCount++;
+    Serial.print("Min. Reading: ");
+    Serial.println(this->averageReading / this->averageCount);
+  }
+
   void print(byte nth) {
-    // Serial.print("Threshold: ");
-    // Serial.print(this->baseThreshold);
     Serial.print(analogRead(this->pin));
     Serial.print(", ");
     Serial.println(this->calculateDistance(analogRead(this->pin)));

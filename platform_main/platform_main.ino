@@ -20,16 +20,16 @@ Light warningSystem(22);
 CountdownTimer countdownTimer(10);
 
 LaserSensor sensors[] = {
-  LaserSensor(A0, 220),
-  LaserSensor(A1, 220),
-  LaserSensor(A2, 220),
-  LaserSensor(A3, 220),
-  LaserSensor(A4, 220),
-  LaserSensor(A5, 220),
-  LaserSensor(A6, 235),
-  LaserSensor(A7, 220),
-  LaserSensor(A8, 220),
-  LaserSensor(A9, 220),
+  LaserSensor(A0, 219),
+  LaserSensor(A1, 216),
+  LaserSensor(A2, 215),
+  LaserSensor(A3, 232),
+  LaserSensor(A4, 222),
+  LaserSensor(A5, 216),
+  LaserSensor(A6, 234),
+  LaserSensor(A7, 229),
+  LaserSensor(A8, 227),
+  LaserSensor(A9, 222),
 };
 
 LaserSensorManager sensorsManager(sensors, sizeof(sensors) / sizeof(sensors[0]));
@@ -51,6 +51,8 @@ void setup() {
 }
 
 void loop() {
+  // sensors[8].calibrate();
+
   pressButton.listen();
 
   baseThresholdSwitch.listen();
@@ -90,14 +92,11 @@ void loop() {
   } else if (detectSystem.getStatus() == FAILURE) {
     relay.cut();
     warningSystem.on();
-
     if (sensorsManager.areAllHealthy(displayOLED)) {
       detectSystem.setStatus(RUNNING);
+      displayOLED.print("", "系統運作中", "", 2);
     }
   }
-
-  sensors[2].print(2);
-  delay(10);
 }
 
 void countDownCallback() {

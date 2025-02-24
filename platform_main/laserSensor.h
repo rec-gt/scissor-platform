@@ -21,7 +21,7 @@ private:
     float min_reading = 220;
     float max_reading = 1023;
     float min_sensor = 0;
-    float max_sensor = 2000;
+    float max_sensor = 1750;
 
     return ((reading - max_reading) / (min_reading - max_reading)) * (min_sensor - max_sensor) + max_sensor;
   }
@@ -62,7 +62,7 @@ public:
     bool measure = this->measuredDistance <= threshold;
 
     if (measure) {
-      if ((millis() - this->lastMillis) > 1000) {
+      if ((millis() - this->lastMillis) > 750) {
         this->detected = true;
       }
     } else {
@@ -116,16 +116,23 @@ public:
   }
 
   bool areAllEscaped() {
-    bool escaped = true;
+    bool allEscaped = true;
 
     for (int i = 0; i < this->num; i++) {
       this->laserSensors[i].setDangerBuffer(true);
       this->laserSensors[i].listen();
       if (this->laserSensors[i].isDetected()) {
-        escaped = false;
+        allEscaped = false;
       }
     }
-    return escaped;
+
+    if (allEscaped) {
+      for (int i = 0; i < this->num; i++) {
+        this->laserSensors[i].setDangerBuffer(false);
+      }
+    }
+
+    return allEscaped;
   }
 
   void changeBaseThreshold(bool toggle) {

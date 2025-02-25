@@ -6,6 +6,8 @@
 #include "laserSensor.h"
 #include "baseThresholdSwitch.h"
 #include "displayOLED.h"
+#include "warningSystem.h"
+#include "trafficLight.h"
 
 DetectSystem detectSystem;
 
@@ -14,13 +16,14 @@ DisplayOLED displayOLED;
 Relay relay(30);
 PressButton pressButton(28);
 BaseThresholdSwitch baseThresholdSwitch(26);
-Light powerLight(24);
-Light warningSystem(22);
+
+Light powerLight(22);
+WarningSystem warningSystem(24);
 
 CountdownTimer countdownTimer(10);
 
 LaserSensor sensors[] = {
-  LaserSensor(A0, 219),
+  LaserSensor(A0, 213),
   LaserSensor(A1, 216),
   LaserSensor(A2, 215),
   LaserSensor(A3, 232),
@@ -51,7 +54,7 @@ void setup() {
 }
 
 void loop() {
-  // sensors[8].calibrate();
+  sensors[8].print(0);
 
   pressButton.listen();
 

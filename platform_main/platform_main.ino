@@ -19,6 +19,7 @@ BaseThresholdSwitch baseThresholdSwitch(26);
 
 Light powerLight(22);
 WarningSystem warningSystem(24);
+TrafficLight trafficLight(14, 16, 18);
 
 CountdownTimer countdownTimer(10);
 
@@ -54,13 +55,13 @@ void setup() {
 }
 
 void loop() {
-  sensors[8].print(0);
-
   pressButton.listen();
 
   baseThresholdSwitch.listen();
 
   sensorsManager.changeBaseThreshold(baseThresholdSwitch.is800());
+
+  trafficLight.listen(sensorsManager.getMinDistance());
 
   if (detectSystem.getStatus() == RUNNING) {
     displayOLED.print("", "系統運作中", "", 2);

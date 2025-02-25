@@ -73,6 +73,9 @@ public:
     }
   }
 
+  float getDistance() {
+    return this->measuredDistance;
+  }
 
   bool isDetected() {
     return this->detected;
@@ -161,5 +164,16 @@ public:
       }
     }
     return true;
+  }
+
+  int getMinDistance() {
+    int minDistance = this->laserSensors[0].getDistance();
+    for (int i = 0; i < this->num; i++) {
+      float distance = this->laserSensors[i].getDistance();
+      if (distance < minDistance) {
+        minDistance = distance;
+      }
+    }
+    return minDistance;
   }
 };

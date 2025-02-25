@@ -53,48 +53,24 @@ public:
   }
 
   void listen(int distance) {
-    unsigned long currMillis = millis();
 
-    if (distance <= 500) {  // enter the RED signal range
-      if (this->lastStatus != RED) {
-        if (millis() - this->lastMillis > 500) {
-          this->lastStatus = RED;  // change to RED status
-          this->red();
-        }
+    if (distance <= 500 && this->lastStatus != RED) {  // enter the RED signal range
+      if (millis() - this->lastMillis > 500) {
+        this->lastStatus = RED;  // change to RED status
+        this->red();
       }
+    } else if ((500 < distance && distance <= 800) && this->lastStatus != YELLOW) {  // enter the YELLOW signal range
+      if (millis() - this->lastMillis > 500) {
+        this->lastStatus = YELLOW;  // change to YELLOW status
+        this->yellow();
+      }
+    } else if (800 < distance && this->lastStatus != GREEN) {  // enter the GREEN signal range
+      if (millis() - this->lastMillis > 500) {
+        this->lastStatus = GREEN;  // change to GREEN status
+        this->green();
+      }
+    } else {
       this->lastMillis = millis();
     }
-
-    if (500 < distance && distance <= 800) {  // enter the YELLOW signal range
-      if (this->lastStatus != YELLOW) {
-        if (millis() - this->lastMillis > 500) {
-          this->lastStatus = YELLOW;  // change to YELLOW status
-          this->yellow();
-        }
-      }
-      this->lastMillis = millis();
-    }
-
-
-    if (800 < distance) {  // enter the GREEN signal range
-      if (this->lastStatus != GREEN) {
-        if (millis() - this->lastMillis > 500) {
-          this->lastStatus = GREEN;  // change to GREEN status
-          this->green();
-        }
-      }
-      this->lastMillis = millis();
-    }
-
-    //   Serial.print(this->lastStatus);
-    //   Serial.print(", ");
-    //   Serial.println(distance);
-    //   if (distance < 500) {
-    //     this->red();
-    //   } else if (distance < 800) {
-    //     this->yellow();
-    //   } else if (distance < 1200) {
-    //     this->green();
-    //   }
   }
 };

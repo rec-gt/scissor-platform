@@ -64,7 +64,6 @@ void loop() {
   trafficLight.listen(sensorsManager.getMinDistance());
 
   if (detectSystem.getStatus() == RUNNING) {
-    displayOLED.print("", "系統運作中", "", 2);
     relay.connect();
     warningSystem.off();
 
@@ -75,7 +74,6 @@ void loop() {
       detectSystem.setStatus(FAILURE);
     }
   } else if (detectSystem.getStatus() == STOPPED) {
-    displayOLED.print("偵測到障礙物", "系統暫停運作", "", 3);
     relay.cut();
     warningSystem.on();
 
@@ -92,13 +90,12 @@ void loop() {
   } else if (detectSystem.getStatus() == ALLOW_10S) {
     relay.connect();
     warningSystem.off();
-    countdownTimer.countdown(displayOLED, countDownCallback);
+    countdownTimer.countdown(countDownCallback);
   } else if (detectSystem.getStatus() == FAILURE) {
     relay.cut();
     warningSystem.on();
     if (sensorsManager.areAllHealthy(displayOLED)) {
       detectSystem.setStatus(RUNNING);
-      displayOLED.print("", "系統運作中", "", 2);
     }
   }
 

@@ -15,10 +15,10 @@ private:
 public:
   DisplayOLED() {}
 
-  bool init() {
+  void init() {
     if (!u8g2.begin()) {
       Serial.println("Display Failed");
-      return false;
+      while (1) {}  // Block the whole process
     }
 
     u8g2.enableUTF8Print();
@@ -27,8 +27,6 @@ public:
     u8g2.clearDisplay();
     this->print("", "正在加載", "", 1);
     delay(1500);
-
-    return true;
   }
 
   char* concatChar(char* a, char* b) {

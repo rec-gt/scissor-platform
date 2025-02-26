@@ -2,14 +2,14 @@
 #define SystemEnums_h
 
 enum SystemStatus {
-  INIT,
-  RUNNING,
-  STOPPED,
-  ALLOW_10S,
-  FAILURE
+  SYS_INIT,
+  SYS_RUNNING,
+  SYS_STOPPED,
+  SYS_ALLOW_10S,
+  SYS_FAILURE
 };
 
-const char* STATUS_STR[] = { "INIT", "RUNNING", "STOPPED", "ALLOW_10S", "FAILURE" };
+const char* STATUS_STR[] = { "SYS_INIT", "SYS_RUNNING", "SYS_STOPPED", "SYS_ALLOW_10S", "SYS_FAILURE" };
 
 enum TrafficStatus {
   RED,

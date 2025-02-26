@@ -4,8 +4,8 @@
 
 class DetectSystem {
 private:
-  SystemStatus status = INIT;
-  SystemStatus lastStatus = INIT;
+  SystemStatus status = SYS_INIT;
+  SystemStatus lastStatus = SYS_INIT;
 
 public:
   SystemStatus getStatus() {
@@ -18,10 +18,10 @@ public:
     }
 
     switch (status) {
-      case RUNNING:
+      case SYS_RUNNING:
         displayOLED.print("", "系統運作中", "", 2);
         break;
-      case STOPPED:
+      case SYS_STOPPED:
         displayOLED.print("偵測到障礙物", "系統暫停運作", "", 3);
         break;
     }

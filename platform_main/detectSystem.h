@@ -1,15 +1,5 @@
 #include "Arduino.h"
-
-enum SystemStatus {
-  INIT,
-  RUNNING,
-  STOPPED,
-  ALLOW_10S,
-  FAILURE
-};
-
-const char* STATUS_STR[] = { "INIT", "RUNNING", "STOPPED", "ALLOW_10S", "FAILURE" };
-
+#include "SystemEnums.h"
 
 class DetectSystem {
 private:

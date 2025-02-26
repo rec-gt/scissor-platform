@@ -45,6 +45,9 @@ public:
   }
 
   void print(char* a, char* b, char* c, int currState) {
+
+    Serial.println(lastState);
+
     if (currState == lastState) {
       return;
     } else {
@@ -60,6 +63,8 @@ public:
       u8g2.sendBuffer();
     }
   }
+
+  ~DisplayOLED() {}
 };
 
 #endif

@@ -1,4 +1,5 @@
 #include "Arduino.h"
+#include "SystemEnums.h"
 
 
 // because of 5v relay, LOW == connect, HIGH == cut
@@ -7,12 +8,6 @@ private:
   byte redPin;
   byte yellowPin;
   byte greenPin;
-
-  enum TrafficStatus {
-    RED,
-    YELLOW,
-    GREEN
-  };
 
   TrafficStatus status = GREEN;
   TrafficStatus lastStatus = GREEN;

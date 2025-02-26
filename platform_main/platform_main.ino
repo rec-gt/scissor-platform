@@ -70,7 +70,7 @@ void loop() {
     if (sensorsManager.isOneDetected()) {
       detectSystem.setStatus(STOPPED);
     }
-    if (!sensorsManager.areAllHealthy(displayOLED)) {
+    if (!sensorsManager.areAllHealthy()) {
       detectSystem.setStatus(FAILURE);
     }
   } else if (detectSystem.getStatus() == STOPPED) {
@@ -94,7 +94,7 @@ void loop() {
   } else if (detectSystem.getStatus() == FAILURE) {
     relay.cut();
     warningSystem.on();
-    if (sensorsManager.areAllHealthy(displayOLED)) {
+    if (sensorsManager.areAllHealthy()) {
       detectSystem.setStatus(RUNNING);
     }
   }

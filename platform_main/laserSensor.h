@@ -152,7 +152,7 @@ public:
     }
   }
 
-  bool areAllHealthy(DisplayOLED displayOLED) {
+  bool areAllHealthy() {
     for (int i = 0; i < this->num; i++) {
       if (this->laserSensors[i].healthCheck() == false) {
 

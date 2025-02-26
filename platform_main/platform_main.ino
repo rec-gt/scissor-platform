@@ -7,7 +7,7 @@
 #include "baseThresholdSwitch.h"
 #include "DisplayOLED.h"
 #include "warningSystem.h"
-#include "trafficLight.h"
+#include "TrafficLight.h"
 
 DetectSystem detectSystem;
 

@@ -6,7 +6,7 @@
 #include "laserSensor.h"
 #include "baseThresholdSwitch.h"
 #include "DisplayOLED.h"
-#include "warningSystem.h"
+#include "WarningSystem.h"
 #include "TrafficLight.h"
 
 DetectSystem detectSystem;

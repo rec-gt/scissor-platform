@@ -1,7 +1,6 @@
 #include "Arduino.h"
 #include "SystemEnums.h"
 
-// because of 5v relay, LOW == connect, HIGH == cut
 class TrafficLight {
 private:
   byte redPin;
@@ -40,7 +39,7 @@ public:
     digitalWrite(yellowPin, HIGH);
   }
 
-  void off() {
+  void off() {  // because of 5v relay, LOW == connect, HIGH == cut
     digitalWrite(redPin, HIGH);
     digitalWrite(yellowPin, HIGH);
     digitalWrite(greenPin, HIGH);

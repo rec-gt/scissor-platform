@@ -17,7 +17,7 @@ public:
     startMillis = millis();
   }
 
-  void countdown( void (*callback)()) {
+  void countdown(DisplayOLED displayOLED, void (*callback)()) {
     unsigned long currMillis = millis();
 
     int remainingTime = (duration - (currMillis - startMillis)) / 1000;

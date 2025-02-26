@@ -67,6 +67,4 @@ public:
   ~DisplayOLED() {}
 };
 
-extern DisplayOLED displayOLED;
-
 #endif

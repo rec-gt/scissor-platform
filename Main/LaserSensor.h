@@ -9,7 +9,7 @@ private:
   // threshold and buffer
   int baseThreshold = CONST_LONGER_THRESHOLED;
   int tunningMinReading = 0;  // added when constructed, for tunning each sensors, can be +ve/-ve number
-  int dangerBuffer = 0;       // used when vehicle suddenly stop
+  int escapeBuffer = 0;       // used when vehicle suddenly stop
 
   // measured distance
   float measuredDistance;
@@ -43,8 +43,8 @@ public:
     this->baseThreshold = toggle ? CONST_SHORTER_THRESHOLED : CONST_LONGER_THRESHOLED;
   }
 
-  void setDangerBuffer(bool toggle) {
-    this->dangerBuffer = toggle ? CONST_ESCAPE_BUFFER : 0;
+  void setEscapeBuffer(bool toggle) {
+    this->escapeBuffer = toggle ? CONST_ESCAPE_BUFFER : 0;
   }
 
   void listen() {
@@ -52,7 +52,7 @@ public:
 
     this->measuredDistance = this->calculateDistance(reading);
 
-    int threshold = this->baseThreshold + this->dangerBuffer;
+    int threshold = this->baseThreshold + this->escapeBuffer;
 
     bool measure = this->measuredDistance <= threshold;
 
@@ -123,7 +123,7 @@ public:
     bool allEscaped = true;
 
     for (int i = 0; i < this->num; i++) {
-      this->laserSensors[i].setDangerBuffer(true);
+      this->laserSensors[i].setEscapeBuffer(true);
       this->laserSensors[i].listen();
       if (this->laserSensors[i].isDetected()) {
         allEscaped = false;
@@ -132,7 +132,7 @@ public:
 
     if (allEscaped) {
       for (int i = 0; i < this->num; i++) {
-        this->laserSensors[i].setDangerBuffer(false);
+        this->laserSensors[i].setEscapeBuffer(false);
       }
     }
 

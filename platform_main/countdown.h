@@ -1,5 +1,5 @@
 #include "Arduino.h"
-#include "displayOLED.h"
+#include "DisplayOLED.h"
 
 #ifndef countdown_h
 #define countdown_h
@@ -17,7 +17,7 @@ public:
     startMillis = millis();
   }
 
-  void countdown(DisplayOLED displayOLED, void (*callback)()) {
+  void countdown( void (*callback)()) {
     unsigned long currMillis = millis();
 
     int remainingTime = (duration - (currMillis - startMillis)) / 1000;
@@ -27,7 +27,7 @@ public:
 
       // slow update
       if (remainingTime >= 0) {
-        char* c1 = displayOLED.concatChar("允許暫時運作", displayOLED.num2Char(remainingTime + 1));
+        char* c1 = displayOLED.concatChar("允許運作", displayOLED.num2Char(remainingTime + 1));
         char* c2 = displayOLED.concatChar(c1, "秒");
         displayOLED.print("", c2, "", 301);
       }

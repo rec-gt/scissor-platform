@@ -5,13 +5,12 @@
 #include "countdown.h"
 #include "laserSensor.h"
 #include "baseThresholdSwitch.h"
-#include "displayOLED.h"
+#include "DisplayOLED.h"
 #include "warningSystem.h"
 #include "trafficLight.h"
 
 DetectSystem detectSystem;
 
-DisplayOLED displayOLED;
 
 Relay relay(30);
 PressButton pressButton(28);
@@ -92,7 +91,7 @@ void loop() {
   } else if (detectSystem.getStatus() == ALLOW_10S) {
     relay.connect();
     warningSystem.off();
-    countdownTimer.countdown(displayOLED, countDownCallback);
+    countdownTimer.countdown( countDownCallback);
   } else if (detectSystem.getStatus() == FAILURE) {
     relay.cut();
     warningSystem.on();

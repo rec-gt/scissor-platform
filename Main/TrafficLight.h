@@ -1,7 +1,6 @@
 #include "Arduino.h"
 #include "SystemEnums.h"
 
-
 // because of 5v relay, LOW == connect, HIGH == cut
 class TrafficLight {
 private:

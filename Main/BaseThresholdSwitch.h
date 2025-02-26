@@ -26,7 +26,7 @@ public:
     }
   }
 
-  bool is800() {
+  bool on() { // on = longer threshold
     return this->state == HIGH;
   }
 };

@@ -38,7 +38,6 @@ LaserSensor sensors[] = {
 
 LaserSensorManager sensorsManager(sensors, sizeof(sensors) / sizeof(sensors[0]));
 
-
 void setup() {
   Serial.begin(9600);
 
@@ -57,7 +56,7 @@ void loop() {
 
   baseThresholdSwitch.listen();
 
-  sensorsManager.changeBaseThreshold(baseThresholdSwitch.is800());
+  sensorsManager.changeBaseThreshold(baseThresholdSwitch.on());
 
   trafficLight.listen(sensorsManager.getMinDistance());
 

@@ -53,14 +53,6 @@ public:
 
     int threshold = this->baseThreshold + this->dangerBuffer;
 
-    // Serial.print(this->pin);
-    // Serial.print(": ");
-    // Serial.print(reading);
-    // Serial.print(", ");
-    // Serial.print(this->measuredDistance);
-    // Serial.print(", ");
-    // Serial.println(threshold);
-
     bool measure = this->measuredDistance <= threshold;
 
     if (measure) {

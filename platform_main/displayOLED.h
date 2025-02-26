@@ -45,9 +45,6 @@ public:
   }
 
   void print(char* a, char* b, char* c, int currState) {
-
-    Serial.println(lastState);
-
     if (currState == lastState) {
       return;
     } else {

@@ -12,7 +12,7 @@ public:
     return this->status;
   }
 
-  void setStatus(SystemStatus status) {
+  void set(SystemStatus status) {
     if (status == this->lastStatus) {
       return;
     }
@@ -31,5 +31,9 @@ public:
 
     Serial.print("System current status: ");
     Serial.println(STATUS_STR[status]);
+  }
+
+  bool is(SystemStatus targetStatus) {
+    return this->status == targetStatus;
   }
 };

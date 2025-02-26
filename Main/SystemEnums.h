@@ -12,9 +12,9 @@ enum SystemStatus {
 const char* STATUS_STR[] = { "SYS_INIT", "SYS_RUNNING", "SYS_STOPPED", "SYS_ALLOW_10S", "SYS_FAILURE" };
 
 enum TrafficStatus {
-  RED,
-  YELLOW,
-  GREEN
+  TRAFFIC_RED,
+  TRAFFIC_YELLOW,
+  TRAFFIC_GREEN
 };
 
 #endif

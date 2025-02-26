@@ -9,8 +9,8 @@ private:
   byte yellowPin;
   byte greenPin;
 
-  TrafficStatus status = GREEN;
-  TrafficStatus lastStatus = GREEN;
+  TrafficStatus status = TRAFFIC_GREEN;
+  TrafficStatus lastStatus = TRAFFIC_GREEN;
 
   unsigned long lastMillis;
 
@@ -49,19 +49,19 @@ public:
 
   void listen(int distance) {
 
-    if (distance <= 500 && this->lastStatus != RED) {  // enter the RED signal range
+    if (distance <= 500 && this->lastStatus != TRAFFIC_RED) {  // enter the RED signal range
       if (millis() - this->lastMillis > 500) {
-        this->lastStatus = RED;  // change to RED status
+        this->lastStatus = TRAFFIC_RED;  // change to RED status
         this->red();
       }
-    } else if ((500 < distance && distance <= 800) && this->lastStatus != YELLOW) {  // enter the YELLOW signal range
+    } else if ((500 < distance && distance <= 800) && this->lastStatus != TRAFFIC_YELLOW) {  // enter the YELLOW signal range
       if (millis() - this->lastMillis > 500) {
-        this->lastStatus = YELLOW;  // change to YELLOW status
+        this->lastStatus = TRAFFIC_YELLOW;  // change to YELLOW status
         this->yellow();
       }
-    } else if (800 < distance && this->lastStatus != GREEN) {  // enter the GREEN signal range
+    } else if (800 < distance && this->lastStatus != TRAFFIC_GREEN) {  // enter the GREEN signal range
       if (millis() - this->lastMillis > 500) {
-        this->lastStatus = GREEN;  // change to GREEN status
+        this->lastStatus = TRAFFIC_GREEN;  // change to GREEN status
         this->green();
       }
     } else {

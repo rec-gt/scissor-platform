@@ -42,12 +42,12 @@ LaserSensorManager sensorsManager(sensors, sizeof(sensors) / sizeof(sensors[0]))
 void setup() {
   Serial.begin(9600);
 
+  powerLight.off();
   warningSystem.off();
   relay.cut();
 
   displayOLED.init();
-
-  detectSystem.setStatus(SYS_RUNNING);
+  detectSystem.set(SYS_RUNNING);
 
   powerLight.on();
 }
@@ -61,39 +61,39 @@ void loop() {
 
   trafficLight.listen(sensorsManager.getMinDistance());
 
-  if (detectSystem.getStatus() == SYS_RUNNING) {
+  if (detectSystem.is(SYS_RUNNING)) {
     relay.connect();
     warningSystem.off();
 
     if (sensorsManager.isOneDetected()) {
-      detectSystem.setStatus(SYS_STOPPED);
+      detectSystem.set(SYS_STOPPED);
     }
     if (!sensorsManager.areAllHealthy()) {
-      detectSystem.setStatus(SYS_FAILURE);
+      detectSystem.set(SYS_FAILURE);
     }
-  } else if (detectSystem.getStatus() == SYS_STOPPED) {
+  } else if (detectSystem.is(SYS_STOPPED)) {
     relay.cut();
     warningSystem.on();
 
     // 1. sensor keep detection, once escape from obstacle, switch to RUNNING
     if (sensorsManager.areAllEscaped()) {
-      detectSystem.setStatus(SYS_RUNNING);
+      detectSystem.set(SYS_RUNNING);
     }
 
     // 2. press button to get 10s moving time
     if (pressButton.isPressed()) {
-      detectSystem.setStatus(SYS_ALLOW_10S);
+      detectSystem.set(SYS_ALLOW_10S);
       countdownTimer.set();
     }
-  } else if (detectSystem.getStatus() == SYS_ALLOW_10S) {
+  } else if (detectSystem.is(SYS_ALLOW_10S)) {
     relay.connect();
     warningSystem.off();
     countdownTimer.countdown(countDownCallback);
-  } else if (detectSystem.getStatus() == SYS_FAILURE) {
+  } else if (detectSystem.is(SYS_FAILURE)) {
     relay.cut();
     warningSystem.on();
     if (sensorsManager.areAllHealthy()) {
-      detectSystem.setStatus(SYS_RUNNING);
+      detectSystem.set(SYS_RUNNING);
     }
   }
 
@@ -101,5 +101,5 @@ void loop() {
 }
 
 void countDownCallback() {
-  detectSystem.setStatus(SYS_RUNNING);
+  detectSystem.set(SYS_RUNNING);
 }

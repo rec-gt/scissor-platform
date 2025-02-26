@@ -151,7 +151,7 @@ public:
 
         char* c1 = displayOLED.concatChar("感應器 ", displayOLED.num2Char(i + 1));
         char* c2 = displayOLED.concatChar(c1, " 故障");
-        displayOLED.print("", c2, "", SYS_FAILURE);
+        displayOLED.print("", c2, "", 500);
 
         return false;
       }

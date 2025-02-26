@@ -44,10 +44,10 @@ public:
   }
 
   void print(char* a, char* b, char* c, int currState) {
-    if (currState == lastState) {
+    if (currState == this->lastState) {
       return;
     } else {
-      lastState = currState;
+      this->lastState = currState;
 
       u8g2.clearBuffer();
       u8g2.setCursor(0, 18);

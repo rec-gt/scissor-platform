@@ -21,10 +21,10 @@ Light powerLight(22);
 WarningSystem warningSystem(24);
 TrafficLight trafficLight(14, 16, 18);
 
-CountdownTimer countdownTimer(10);
+CountdownTimer countdownTimer;
 
 LaserSensor sensors[] = {
-  LaserSensor(A0, 213),
+  LaserSensor(A0, 213),  //遮擋鏡頭測試
   LaserSensor(A1, 216),
   LaserSensor(A2, 215),
   LaserSensor(A3, 232),
@@ -101,6 +101,8 @@ void loop() {
       displayOLED.print("", "系統運作中", "", 2);
     }
   }
+
+  delay(10);
 }
 
 void countDownCallback() {

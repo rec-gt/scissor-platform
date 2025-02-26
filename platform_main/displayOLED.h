@@ -4,17 +4,17 @@
 #include "Wire.h"
 #include "Adafruit_GFX.h"
 
-#ifndef display_defined
-#define display_defined
+#ifndef displayOLED_h
+#define displayOLED_h
 U8G2_SH1106_128X64_NONAME_F_HW_I2C u8g2(U8G2_R0, U8X8_PIN_NONE);
 
 class DisplayOLED {
 private:
-  byte lastState = 0;
+  int lastState = 0;
 
 public:
   DisplayOLED() {}
-  
+
   bool init() {
     if (!u8g2.begin()) {
       Serial.println("Display Failed");
@@ -44,7 +44,7 @@ public:
     return newChar;
   }
 
-  void print(char* a, char* b, char* c, byte currState) {
+  void print(char* a, char* b, char* c, int currState) {
     if (currState == lastState) {
       return;
     } else {

@@ -75,6 +75,7 @@ public:
   }
 
   bool healthCheck() {
+    Serial.println(analogRead(this->pin));
     if (analogRead(this->pin) < 50) {  // normal sensor reading should be 200+, if sensor fails, reading drops to ~0
       return false;
     }

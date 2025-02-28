@@ -149,9 +149,9 @@ public:
     for (int i = 0; i < this->num; i++) {
       if (this->laserSensors[i].healthCheck() == false) {
 
-        char* c1 = utils.concatChar("感應器 ", utils.num2Char(i + 1));
-        char* c2 = utils.concatChar(c1, " 故障");
-        displayOLED.print("", c2, "", 500);
+        char* cArr[] = { "感應器 ", utils.num2Char(i + 1), " 故障" };
+        char* c = utils.concatCharN(cArr, 3);
+        displayOLED.print("", c, "", 500);
 
         return false;
       }

@@ -8,10 +8,12 @@
 #include "DisplayOLED.h"
 #include "WarningSystem.h"
 #include "TrafficLight.h"
+#include "Utils.h"
 
 DetectSystem detectSystem;
 
 DisplayOLED displayOLED;
+Utils utils;
 
 Relay relay(30);
 PressButton pressButton(28);
@@ -24,7 +26,7 @@ TrafficLight trafficLight(14, 16, 18);
 CountdownTimer countdownTimer;
 
 LaserSensor sensors[] = {
-  LaserSensor(A0, 213),  //遮擋鏡頭測試
+  LaserSensor(A0, 213),  // 現場或工廠fine-tune，遮擋鏡頭做測試
   LaserSensor(A1, 216),
   LaserSensor(A2, 215),
   LaserSensor(A3, 232),
@@ -96,7 +98,7 @@ void loop() {
     }
   }
 
-  delay(1000);
+  delay(10);
 }
 
 void countDownCallback() {

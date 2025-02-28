@@ -3,6 +3,7 @@
 #include "SPI.h"
 #include "Wire.h"
 #include "Adafruit_GFX.h"
+#include "Utils.h"
 
 #ifndef displayOLED_h
 #define displayOLED_h
@@ -26,7 +27,7 @@ public:
     u8g2.setFont(u8g2_font_unifont_t_chinese1);
     u8g2.setFontDirection(0);
     u8g2.clearDisplay();
-    this->print("", "正在加載", "", 1);
+    this->print("正在加載", "正在加載", "正在加載", 1);
     delay(1500);
   }
 
@@ -34,12 +35,6 @@ public:
     char* newChar = new char[strlen(a) + strlen(b) + 1];
     strcpy(newChar, a);
     strcat(newChar, b);
-    return newChar;
-  }
-
-  char* num2Char(int num) {
-    char cstr[16];
-    char* newChar = itoa(num, cstr, 10);
     return newChar;
   }
 
@@ -52,9 +47,9 @@ public:
       u8g2.clearBuffer();
       u8g2.setCursor(0, 18);
       u8g2.print(a);
-      u8g2.setCursor(0, 36);
+      u8g2.setCursor(0, 40);
       u8g2.print(b);
-      u8g2.setCursor(0, 54);
+      u8g2.setCursor(0, 62);
       u8g2.print(c);
       u8g2.sendBuffer();
     }

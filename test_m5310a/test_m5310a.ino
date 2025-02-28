@@ -1,21 +1,91 @@
-String uid = "e56277d3116647938af97cda298b066e";  //用户私钥，巴法云控制台获取
-String myTopic = "test123";                       //用户主题，巴法云控制台创建
+#include <SoftwareSerial.h>
+
+SoftwareSerial mySerial(13, 12);  // RX, TX  通过软串口连接esp8266，
+
+
+/******************************************************************************/
+String ssid = "newhtc";                           //WIFI名称
+String password = "qq123456";                     //WIFI密码
+String uid = "e56277d3116647938af97cda298b066e";  // 用户私钥，巴法云控制台获取
+String topic = "mqtt123";                          //推送消息的主题，即往哪个主题推送
+
 
 
 void setup() {
-  Serial.begin(9600);
+  // Open serial communications and wait for port to open:
+  Serial.begin(115200);
+  while (!Serial) {
+    ;  // wait for serial port to connect. Needed for native USB port only
+  }
+
+  mySerial.begin(115200);
+  mySerial.println("AT+RST");  // 初始化重启一次esp8266
+  delay(1500);
+  echo();
+  mySerial.println("AT");
+  echo();
+  delay(500);
+  mySerial.println("AT+CWMODE=3");  // 设置Wi-Fi模式
+  echo();
+  mySerial.println("AT+CWJAP=\"" + ssid + "\",\"" + password + "\"");  // 连接Wi-Fi
+  echo();
+  delay(10000);
 }
 
 void loop() {
-  Serial.println("data1001");
-  void check_msg(String myMsg) {
-    if ((myMsg.indexOf("&msg=on") >= 0)) {          //如果检测到开灯指令
-      turnOnLed();                                  //执行开灯函数
-    } else if ((myMsg.indexOf("&msg=off") >= 0)) {  //如果检测到关灯指令
-      turnOffLed();                                 //执行关灯函数
-    } else if (myMsg.indexOf("SOCLI") >= 0) {       //检测到断开服务器连接，重新连接
-      InitNBIOT();                                  //创建TCP连接，并且订阅巴法云
-    }
+
+  if (mySerial.available()) {
+    Serial.write(mySerial.read());
   }
+  if (Serial.available()) {
+    mySerial.write(Serial.read());
+  }
+  post();
+}
+
+void echo() {
+  delay(50);
+  while (mySerial.available()) {
+    Serial.write(mySerial.read());
+  }
+}
+
+void post() {
+
+
+  /*****************获取到的传感器数值*****************/
+  //为了演示，定义了多种类型的数据，可根据自己传感器自行选择
+  int data1 = 32;
+  float data2 = 27.8;
+  unsigned int data3 = 45;
+  unsigned char data4 = 26;
+  double data5 = 99.12;
+  String data6 = "ON";
+
+  /*********************数据上传*******************/
+  String msg = "";
+  //数据用#号包裹，方便app端根据#号做字符串切割，不理解的百度=C语言split分割字符串
+  msg = "#" + String(data1) + "#" + String(data2) + "#" + String(data3) + "#" + String(data4) + "#" + String(data5) + "#" + data6 + "#";
+
+  String postData;
+  //Post Data
+  postData = "uid=" + uid + "&topic=" + topic + "&msg=" + msg;
+  mySerial.println("AT+CIPMODE=1");
+  echo();
+  mySerial.println("AT+CIPSTART=\"TCP\",\"api.bemfa.com\",80");  // 连接服务器的80端口
   delay(1000);
+  echo();
+  mySerial.println("AT+CIPSEND");  // 进入TCP透传模式，接下来发送的所有消息都会发送给服务器
+  echo();
+  mySerial.print("POST /api/device/v1/data/1/");                                                                                                 // 开始发送post请求
+  mySerial.print(" HTTP/1.1\r\nHost: api.bemfa.com\r\nContent-Type: application/x-www-form-urlencoded\r\nConnection:close\r\nContent-Length:");  // post请求的报文格式
+  mySerial.print(postData.length());                                                                                                             // 需要计算post请求的数据长度
+  mySerial.print("\r\n\r\n");
+  mySerial.println(postData);  // 结束post请求
+  delay(3000);
+  echo();
+  mySerial.print("+++");  // 退出tcp透传模式，用println会出错
+  postData = "";
+  msg = "";
+  delay(2000);
 }

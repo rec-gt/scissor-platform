@@ -31,12 +31,7 @@ public:
     delay(1500);
   }
 
-  char* concatChar(char* a, char* b) {
-    char* newChar = new char[strlen(a) + strlen(b) + 1];
-    strcpy(newChar, a);
-    strcat(newChar, b);
-    return newChar;
-  }
+
 
   void print(char* a, char* b, char* c, int currState) {
     if (currState == this->lastState) {

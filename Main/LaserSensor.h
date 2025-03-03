@@ -133,17 +133,15 @@ public:
       orientation = "後方";
     }
 
-    char* numChar = utils.num2Char(i);
-
     char* charArr[] = {
       orientation,
       "感應器 ",
-      numChar
+      utils.num2Char(i + 0)
     };
 
-    char* c = utils.concatCharN(charArr, sizeof(charArr) / sizeof(charArr[0]));
+    char* c = utils.concatCharN(charArr, 3);
 
-    displayOLED.print(c, "偵測到障礙物", "系統暫停運作", 100 + i);
+    displayOLED.print(c, "偵測到障礙物", "", 100 + i);
   }
 
   bool areAllEscaped() {

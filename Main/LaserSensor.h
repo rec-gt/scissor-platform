@@ -124,8 +124,25 @@ public:
   }
 
   void printOneDetected(byte i) {
-    char* charArr[] = { "感應器", utils.num2Char(i) };
-    char* c = utils.concatCharN(charArr, 2);
+    char* orientation;
+    if (i <= 1) {
+      orientation = "前方";
+    } else if (i <= 7) {
+      orientation = "上方";
+    } else if (i <= 9) {
+      orientation = "後方";
+    }
+
+    char* numChar = utils.num2Char(i);
+
+    char* charArr[] = {
+      orientation,
+      "感應器 ",
+      numChar
+    };
+
+    char* c = utils.concatCharN(charArr, sizeof(charArr) / sizeof(charArr[0]));
+
     displayOLED.print(c, "偵測到障礙物", "系統暫停運作", 100 + i);
   }
 

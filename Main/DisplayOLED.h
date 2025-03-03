@@ -27,7 +27,7 @@ public:
     u8g2.setFont(u8g2_font_unifont_t_chinese1);
     u8g2.setFontDirection(0);
     u8g2.clearDisplay();
-    this->print("正在加載", "正在加載", "正在加載", 1);
+    this->print("", "正在加載", "", 1);
     delay(1500);
   }
 

@@ -22,6 +22,9 @@ private:
   float averageReading = 0;
   float averageCount = 0;
 
+  // for detected senson
+  byte detectedNum;
+
   float calculateDistance(float reading) {
     float minReading = this->tunningMinReading;
     float maxReading = 1023;
@@ -99,7 +102,7 @@ public:
 
 class LaserSensorManager {
 private:
-  LaserSensor laserSensors[10];
+  LaserSensor laserSensors[20];
   size_t num;
 public:
   LaserSensorManager(LaserSensor laserSensors[], size_t num)
@@ -113,10 +116,17 @@ public:
     for (int i = 0; i < this->num; i++) {
       this->laserSensors[i].listen();
       if (this->laserSensors[i].isDetected()) {
+        this->printOneDetected(i);
         return true;
       }
     }
     return false;
+  }
+
+  void printOneDetected(byte i) {
+    char* charArr[] = { "感應器", utils.num2Char(i) };
+    char* c = utils.concatCharN(charArr, 2);
+    displayOLED.print(c, "偵測到障礙物", "系統暫停運作", 100 + i);
   }
 
   bool areAllEscaped() {
@@ -168,5 +178,14 @@ public:
       }
     }
     return minDistance;
+  }
+
+  void printAll() {
+    for (int i = 0; i < this->num; i++) {
+      float distance = this->laserSensors[i].getDistance();
+      Serial.print(i);
+      Serial.print(", ");
+      Serial.println(distance);
+    }
   }
 };

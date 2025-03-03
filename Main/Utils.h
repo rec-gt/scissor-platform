@@ -5,7 +5,7 @@ class Utils {
 public:
   Utils(void){};
 
-  char* concatCharN(char* charArr[], size_t arrSize) {
+  char* concatCharN(char** charArr, size_t arrSize) {
     int totalCharLen = 0;
     for (size_t i = 0; i < arrSize; i++) {
       totalCharLen += strlen(charArr[i]);

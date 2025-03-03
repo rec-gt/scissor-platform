@@ -126,22 +126,22 @@ public:
   void printOneDetected(byte i) {
     char* orientation;
     if (i <= 1) {
-      orientation = "前方";
+      orientation = "前方 ";
     } else if (i <= 7) {
-      orientation = "上方";
+      orientation = "上方 ";
     } else if (i <= 9) {
-      orientation = "後方";
+      orientation = "後方 ";
     }
 
     char* charArr[] = {
       orientation,
-      "感應器 ",
-      utils.num2Char(i + 0)
+      utils.num2Char(i + 0),
+      " 號感應器",
     };
 
     char* c = utils.concatCharN(charArr, 3);
 
-    displayOLED.print(c, "偵測到障礙物", "", 100 + i);
+    displayOLED.print(c, "檢測到障礙物", "", 100 + i);
   }
 
   bool areAllEscaped() {
@@ -174,8 +174,8 @@ public:
     for (int i = 0; i < this->num; i++) {
       if (this->laserSensors[i].healthCheck() == false) {
 
-        char* cArr[] = { "感應器 ", utils.num2Char(i + 1), " 故障" };
-        char* c = utils.concatCharN(cArr, 3);
+        char* charArr[] = { "感應器 ", utils.num2Char(i + 1), " 故障" };
+        char* c = utils.concatCharN(charArr, sizeof(charArr) / sizeof(charArr[0]));
         displayOLED.print("", c, "", 500);
 
         return false;

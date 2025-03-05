@@ -10,16 +10,17 @@ private:
   byte pin;
 
   int tunningMinReading = 0;     // added when constructed, for tunning sensor, can be +ve/-ve number
-  int installationHeight = 500;  // 需要在安裝後初始化/重新定義一次
+  int installationHeight = 717;  // 需要在安裝後初始化/重新定義一次
 
   bool isLiftUp = false;
-  
+
   // for measuring downward distance
   float measuredDistance;
 
   // for calibration
-  float averageReading = 0;
-  float averageCount = 0;
+  float totalCalReading = 0;
+  float totalCalDistance = 0;
+  float totalCalCount = 0;
 
 
   float calculateDistance(float reading) {
@@ -45,7 +46,7 @@ public:
       this->isLiftUp = false;
     }
 
-    if (this->measuredDistance >= this->installationHeight + 200) {
+    if (this->measuredDistance >= this->installationHeight + 300) {
       this->isLiftUp = true;
     }
   }
@@ -59,12 +60,20 @@ public:
     return this->measuredDistance;
   }
 
-  void calibrate() {
+  void calibrateReading() {
     int reading = analogRead(this->pin);
-    this->averageReading += reading;
-    this->averageCount++;
+    this->totalCalReading += reading;
+    this->totalCalCount++;
     Serial.print("Min. Reading: ");
-    Serial.println(this->averageReading / this->averageCount);
+    Serial.println(this->totalCalReading / this->totalCalCount);
+  }
+
+  void calibrateDistance() {
+    int reading = analogRead(this->pin);
+    this->totalCalDistance += this->calculateDistance(reading);
+    this->totalCalCount++;
+    Serial.print("Cal. Distance: ");
+    Serial.println(this->totalCalDistance / this->totalCalCount);
   }
 
 

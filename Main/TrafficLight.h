@@ -7,8 +7,8 @@ private:
   byte yellowPin;
   byte greenPin;
 
-  TrafficStatus status = TRAFFIC_OFF;
-  TrafficStatus lastStatus = TRAFFIC_OFF;
+  TrafficStatus status = TRAFFIC_GREEN;
+  TrafficStatus lastStatus = TRAFFIC_GREEN;
 
   unsigned long lastMillis;
 
@@ -22,21 +22,30 @@ public:
   }
 
   void red() {
-    digitalWrite(redPin, LOW);
-    digitalWrite(yellowPin, HIGH);
-    digitalWrite(greenPin, HIGH);
+    if (this->lastStatus != TRAFFIC_RED) {
+      this->lastStatus = TRAFFIC_RED;
+      digitalWrite(redPin, LOW);
+      digitalWrite(yellowPin, HIGH);
+      digitalWrite(greenPin, HIGH);
+    }
   }
 
   void yellow() {
-    digitalWrite(yellowPin, LOW);
-    digitalWrite(redPin, HIGH);
-    digitalWrite(greenPin, HIGH);
+    if (this->lastStatus != TRAFFIC_YELLOW) {
+      this->lastStatus = TRAFFIC_YELLOW;
+      digitalWrite(yellowPin, LOW);
+      digitalWrite(redPin, HIGH);
+      digitalWrite(greenPin, HIGH);
+    }
   }
 
   void green() {
-    digitalWrite(greenPin, LOW);
-    digitalWrite(redPin, HIGH);
-    digitalWrite(yellowPin, HIGH);
+    if (this->lastStatus != TRAFFIC_GREEN) {
+      this->lastStatus = TRAFFIC_GREEN;
+      digitalWrite(greenPin, LOW);
+      digitalWrite(redPin, HIGH);
+      digitalWrite(yellowPin, HIGH);
+    }
   }
 
   void off() {  // because of 5v relay, LOW == connect, HIGH == cut
@@ -49,19 +58,16 @@ public:
   }
 
   void listen(int distance) {
-    if (distance <= 500 && this->lastStatus != TRAFFIC_RED) {  // enter the RED signal range
+    if (distance <= 500) {  // enter the RED signal range
       if (millis() - this->lastMillis > 500) {
-        this->lastStatus = TRAFFIC_RED;  // change to RED status
         this->red();
       }
-    } else if ((500 < distance && distance <= 800) && this->lastStatus != TRAFFIC_YELLOW) {  // enter the YELLOW signal range
+    } else if ((500 < distance && distance <= 800)) {  // enter the YELLOW signal range
       if (millis() - this->lastMillis > 500) {
-        this->lastStatus = TRAFFIC_YELLOW;  // change to YELLOW status
         this->yellow();
       }
-    } else if (800 < distance && this->lastStatus != TRAFFIC_GREEN) {  // enter the GREEN signal range
+    } else if (800 < distance) {  // enter the GREEN signal range
       if (millis() - this->lastMillis > 500) {
-        this->lastStatus = TRAFFIC_GREEN;  // change to GREEN status
         this->green();
       }
     } else {

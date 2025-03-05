@@ -45,7 +45,7 @@ LaserSensor sensors[] = {
   LaserSensor(A9, 222),
 };
 
-DownwardSensor downwardSensor = DownwardSensor(A10, 222);
+DownwardSensor downwardSensor = DownwardSensor(A10, 216);
 
 LaserSensorManager sensorsManager(sensors, sizeof(sensors) / sizeof(sensors[0]));
 
@@ -77,7 +77,6 @@ void loop() {
   downwardSensor.listen();
 
   if (downwardSensor.isUp()) {
-    Serial.println("isUp");
     trafficLight.listen(sensorsManager.getMinDistance());
   } else {
     trafficLight.off();
@@ -121,9 +120,10 @@ void loop() {
   // ========= debugging =========
   // sensorsManager.printAll();
   // sensorsManager.calibrate();
-  // downwardSensor.calibrate();
+  // downwardSensor.calibrateReading();
+  // downwardSensor.calibrateDistance();
 
-  delay(1000);
+  delay(10);
 }
 
 void countDownCallback() {

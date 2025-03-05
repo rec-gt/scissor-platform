@@ -4,23 +4,30 @@
 #include "Light.h"
 #include "Countdown.h"
 #include "LaserSensor.h"
+#include "DownwardSensor.h"
 #include "BaseThresholdSwitch.h"
 #include "DisplayOLED.h"
 #include "WarningSystem.h"
 #include "TrafficLight.h"
 #include "Utils.h"
 
+
 DetectSystem detectSystem;
 
 DisplayOLED displayOLED;
+
 Utils utils;
 
 Relay relay(30);
+
 PressButton pressButton(28);
+
 BaseThresholdSwitch baseThresholdSwitch(26);
 
 Light powerLight(22);
+
 WarningSystem warningSystem(24);
+
 TrafficLight trafficLight(14, 16, 18);
 
 CountdownTimer countdownTimer;
@@ -38,7 +45,7 @@ LaserSensor sensors[] = {
   LaserSensor(A9, 222),
 };
 
-LaserSensor downwardSensor = LaserSensor(A10, 222);
+DownwardSensor downwardSensor = DownwardSensor(A10, 222);
 
 LaserSensorManager sensorsManager(sensors, sizeof(sensors) / sizeof(sensors[0]));
 
@@ -46,6 +53,7 @@ void setup() {
   Serial.begin(9600);
 
   powerLight.off();
+  trafficLight.off();
   warningSystem.off();
   relay.cut();
 
@@ -56,14 +64,26 @@ void setup() {
 }
 
 void loop() {
+  // ========= handling press button =========
   pressButton.listen();
 
-  baseThresholdSwitch.listen();
 
+  // ========= handling threshold switch =========
+  baseThresholdSwitch.listen();
   sensorsManager.changeBaseThreshold(baseThresholdSwitch.on());
 
-  trafficLight.listen(sensorsManager.getMinDistance());
 
+  // ========= controlling traffic light =========
+  downwardSensor.listen();
+
+  if (downwardSensor.isUp()) {
+    Serial.println("isUp");
+    trafficLight.listen(sensorsManager.getMinDistance());
+  } else {
+    trafficLight.off();
+  }
+
+  // ========= controlling detection system =========
   if (detectSystem.is(SYS_RUNNING)) {
     relay.connect();
     warningSystem.off();
@@ -78,13 +98,11 @@ void loop() {
     relay.cut();
     warningSystem.on();
 
-    // 1. sensor keep detection, once escape from obstacle, switch to RUNNING
-    if (sensorsManager.areAllEscaped()) {
+    if (sensorsManager.areAllEscaped()) {  // 1. sensor keep detection, once escape from obstacle, switch to RUNNING
       detectSystem.set(SYS_RUNNING);
     }
 
-    // 2. press button to get 10s moving time
-    if (pressButton.isPressed()) {
+    if (pressButton.isPressed()) {  // 2. press button to get 10s moving time
       detectSystem.set(SYS_ALLOW_10S);
       countdownTimer.set();
     }
@@ -100,7 +118,10 @@ void loop() {
     }
   }
 
-  sensorsManager.printAll();
+  // ========= debugging =========
+  // sensorsManager.printAll();
+  // sensorsManager.calibrate();
+  // downwardSensor.calibrate();
 
   delay(1000);
 }

@@ -7,8 +7,8 @@ private:
   byte yellowPin;
   byte greenPin;
 
-  TrafficStatus status = TRAFFIC_GREEN;
-  TrafficStatus lastStatus = TRAFFIC_GREEN;
+  TrafficStatus status = TRAFFIC_OFF;
+  TrafficStatus lastStatus = TRAFFIC_OFF;
 
   unsigned long lastMillis;
 
@@ -40,13 +40,15 @@ public:
   }
 
   void off() {  // because of 5v relay, LOW == connect, HIGH == cut
-    digitalWrite(redPin, HIGH);
-    digitalWrite(yellowPin, HIGH);
-    digitalWrite(greenPin, HIGH);
+    if (this->lastStatus != TRAFFIC_OFF) {
+      this->lastStatus = TRAFFIC_OFF;
+      digitalWrite(redPin, HIGH);
+      digitalWrite(yellowPin, HIGH);
+      digitalWrite(greenPin, HIGH);
+    }
   }
 
   void listen(int distance) {
-
     if (distance <= 500 && this->lastStatus != TRAFFIC_RED) {  // enter the RED signal range
       if (millis() - this->lastMillis > 500) {
         this->lastStatus = TRAFFIC_RED;  // change to RED status

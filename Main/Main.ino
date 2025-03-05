@@ -35,8 +35,10 @@ LaserSensor sensors[] = {
   LaserSensor(A6, 234),
   LaserSensor(A7, 229),
   LaserSensor(A8, 227),
-  LaserSensor(A9, 222)
+  LaserSensor(A9, 222),
 };
+
+LaserSensor downwardSensor = LaserSensor(A10, 222);
 
 LaserSensorManager sensorsManager(sensors, sizeof(sensors) / sizeof(sensors[0]));
 
@@ -68,7 +70,6 @@ void loop() {
 
     if (sensorsManager.isOneDetected()) {
       detectSystem.set(SYS_STOPPED);
-      
     }
     if (!sensorsManager.areAllHealthy()) {
       detectSystem.set(SYS_FAILURE);
@@ -99,9 +100,9 @@ void loop() {
     }
   }
 
-  // sensorsManager.printAll();
+  sensorsManager.printAll();
 
-  delay(10);
+  delay(1000);
 }
 
 void countDownCallback() {

@@ -1,4 +1,3 @@
-#include <SoftwareSerial.h>
 #define NBIOT Serial1
 
 /***********************需要修改的地方************************/
@@ -15,7 +14,11 @@ int errorFlag = 0;  //记录错误次数，错误次数过多，执行重启
 
 void (*resetFunc)(void) = 0;  //重启函数
 
+// class NBIOT() {
+// };
+
 void sendCMD(String cmd) {
+  String res = "";
   NBIOT.println(cmd);
   delay(1000);
   while (NBIOT.available()) {
@@ -36,6 +39,8 @@ void setup() {
 }
 
 void loop() {
+  sendCMD("AT+NATSPEED=9600,30,0,0");
+
   sendCMD("AT");
 
   sendCMD("AT+CIMI");
@@ -44,7 +49,21 @@ void loop() {
 
   sendCMD("AT+CEREG?");
 
+  sendCMD("AT+CEREG=1");
+
   sendCMD("AT+CGATT?");
+
+  sendCMD("AT+CGSN=1");
+
+  sendCMD("AT+MQTTDISC");
+
+  sendCMD("AT+MQTTDEL");
+
+  sendCMD("AT+MQTTCFG=\"aiotrak.rec-gt.com\",1880,\"869976034806621\",60,\"tswh\",\"1Wo=[6vA0m\",1");
+
+  // sendCMD("AT+MQTTOPEN=1,1,1,0,1,\"rgt/869976034806621/dev\",\"gone\"");
+
+  // sendCMD("AT+MQTTPUB=\"rgt/869976034806621/in\",1,0,0,0,");
 
   // String IncomingString = "";                   //用于接收串口发来的数据
   // bool StringReady = false;                     //接收到串口数据的标志
@@ -76,6 +95,9 @@ void loop() {
   //   errorFlag = 0;
   // }
 }
+
+
+
 
 bool SendCommand(String cmd, String ack, int timeout) {
   NBIOT.println(cmd);           // 向软串口发送指令

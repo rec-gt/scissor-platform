@@ -15,7 +15,15 @@ int errorFlag = 0;  //记录错误次数，错误次数过多，执行重启
 
 void (*resetFunc)(void) = 0;  //重启函数
 
-void sendCMD() {
+void sendCMD(String cmd) {
+  NBIOT.println(cmd);
+  delay(1000);
+  while (NBIOT.available()) {
+    String response = NBIOT.readString();
+    Serial.print(cmd + ": ");
+    Serial.println(response);
+  }
+  while (NBIOT.read() >= 0) {}
 }
 
 void setup() {
@@ -28,38 +36,15 @@ void setup() {
 }
 
 void loop() {
-  NBIOT.println("AT");
-  delay(1000);
-  while (NBIOT.available()) {
-    String response = NBIOT.readString();
-    Serial.print("AT: ");
-    Serial.println(response);
-  }
+  sendCMD("AT");
 
+  sendCMD("AT+CIMI");
 
-  NBIOT.println("AT+CIMI");
-  delay(1000);
-  while (NBIOT.available()) {
-    String response = NBIOT.readString();
-    Serial.print("AT+CIMI: ");
-    Serial.println(response);
-  }
+  sendCMD("AT+CSQ");
 
-  NBIOT.println("AT+CSQ");
-  delay(1000);
-  while (NBIOT.available()) {
-    String response = NBIOT.readString();
-    Serial.print("AT+CSQ: ");
-    Serial.println(response);
-  }
+  sendCMD("AT+CEREG?");
 
-  NBIOT.println("AT+CEREG?");
-  delay(1000);
-  while (NBIOT.available()) {
-    String response = NBIOT.readString();
-    Serial.print("AT+CEREG?: ");
-    Serial.println(response);
-  }
+  sendCMD("AT+CGATT?");
 
   // String IncomingString = "";                   //用于接收串口发来的数据
   // bool StringReady = false;                     //接收到串口数据的标志

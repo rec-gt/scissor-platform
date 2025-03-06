@@ -1,91 +1,150 @@
 #include <SoftwareSerial.h>
+#define NBIOT Serial1
 
-SoftwareSerial mySerial(13, 12);  // RX, TX  通过软串口连接esp8266，
-
-
-/******************************************************************************/
-String ssid = "newhtc";                           //WIFI名称
-String password = "qq123456";                     //WIFI密码
-String uid = "e56277d3116647938af97cda298b066e";  // 用户私钥，巴法云控制台获取
-String topic = "mqtt123";                          //推送消息的主题，即往哪个主题推送
+/***********************需要修改的地方************************/
+String uid = "e56277d3116647938af97cda298b066e";
+String myTopic = "test123";
 
 
+int socketid = 1;                 //socket端口编号
+#define KEEPALIVEATIME 30 * 1000  //心跳间隔，默认30秒发一次心跳
+unsigned long preHeartTick = 0;   //心跳时间
+#define TIMEOUT 3000              //接收esp8266反馈的超时时间
+
+int errorFlag = 0;  //记录错误次数，错误次数过多，执行重启
+
+void (*resetFunc)(void) = 0;  //重启函数
+
+void sendCMD() {
+}
 
 void setup() {
-  // Open serial communications and wait for port to open:
-  Serial.begin(115200);
-  while (!Serial) {
-    ;  // wait for serial port to connect. Needed for native USB port only
-  }
-
-  mySerial.begin(115200);
-  mySerial.println("AT+RST");  // 初始化重启一次esp8266
-  delay(1500);
-  echo();
-  mySerial.println("AT");
-  echo();
-  delay(500);
-  mySerial.println("AT+CWMODE=3");  // 设置Wi-Fi模式
-  echo();
-  mySerial.println("AT+CWJAP=\"" + ssid + "\",\"" + password + "\"");  // 连接Wi-Fi
-  echo();
-  delay(10000);
+  delay(1000);
+  Serial.begin(9600);
+  NBIOT.begin(9600);
+  while (NBIOT.read() >= 0) {}
+  delay(8000);
+  Serial.println("Entering Loop");
 }
 
 void loop() {
-
-  if (mySerial.available()) {
-    Serial.write(mySerial.read());
-  }
-  if (Serial.available()) {
-    mySerial.write(Serial.read());
-  }
-  post();
-}
-
-void echo() {
-  delay(50);
-  while (mySerial.available()) {
-    Serial.write(mySerial.read());
-  }
-}
-
-void post() {
-
-
-  /*****************获取到的传感器数值*****************/
-  //为了演示，定义了多种类型的数据，可根据自己传感器自行选择
-  int data1 = 32;
-  float data2 = 27.8;
-  unsigned int data3 = 45;
-  unsigned char data4 = 26;
-  double data5 = 99.12;
-  String data6 = "ON";
-
-  /*********************数据上传*******************/
-  String msg = "";
-  //数据用#号包裹，方便app端根据#号做字符串切割，不理解的百度=C语言split分割字符串
-  msg = "#" + String(data1) + "#" + String(data2) + "#" + String(data3) + "#" + String(data4) + "#" + String(data5) + "#" + data6 + "#";
-
-  String postData;
-  //Post Data
-  postData = "uid=" + uid + "&topic=" + topic + "&msg=" + msg;
-  mySerial.println("AT+CIPMODE=1");
-  echo();
-  mySerial.println("AT+CIPSTART=\"TCP\",\"api.bemfa.com\",80");  // 连接服务器的80端口
+  NBIOT.println("AT");
   delay(1000);
-  echo();
-  mySerial.println("AT+CIPSEND");  // 进入TCP透传模式，接下来发送的所有消息都会发送给服务器
-  echo();
-  mySerial.print("POST /api/device/v1/data/1/");                                                                                                 // 开始发送post请求
-  mySerial.print(" HTTP/1.1\r\nHost: api.bemfa.com\r\nContent-Type: application/x-www-form-urlencoded\r\nConnection:close\r\nContent-Length:");  // post请求的报文格式
-  mySerial.print(postData.length());                                                                                                             // 需要计算post请求的数据长度
-  mySerial.print("\r\n\r\n");
-  mySerial.println(postData);  // 结束post请求
-  delay(3000);
-  echo();
-  mySerial.print("+++");  // 退出tcp透传模式，用println会出错
-  postData = "";
-  msg = "";
+  while (NBIOT.available()) {
+    String response = NBIOT.readString();
+    Serial.print("AT: ");
+    Serial.println(response);
+  }
+
+
+  NBIOT.println("AT+CIMI");
+  delay(1000);
+  while (NBIOT.available()) {
+    String response = NBIOT.readString();
+    Serial.print("AT+CIMI: ");
+    Serial.println(response);
+  }
+
+  NBIOT.println("AT+CSQ");
+  delay(1000);
+  while (NBIOT.available()) {
+    String response = NBIOT.readString();
+    Serial.print("AT+CSQ: ");
+    Serial.println(response);
+  }
+
+  NBIOT.println("AT+CEREG?");
+  delay(1000);
+  while (NBIOT.available()) {
+    String response = NBIOT.readString();
+    Serial.print("AT+CEREG?: ");
+    Serial.println(response);
+  }
+
+  // String IncomingString = "";                   //用于接收串口发来的数据
+  // bool StringReady = false;                     //接收到串口数据的标志
+  // while (NBIOT.available()) {             //如果接收到esp8266的数据
+  //   IncomingString = NBIOT.readString();  //获取esp8266反馈的数据，及esp8266收到远程服务器发来的数据
+  //   StringReady = true;                         //接收到数据的标志
+  // }
+
+  // if (StringReady) {                                       //如果有数据发来，检查接收到的数据
+  //   Serial.println("Received String: " + IncomingString);  //串口打印显示收到的数据
+  //   check_msg(IncomingString);                             //调用检查数据函数，进行检查数据
+  // }
+
+  // if (millis() - preHeartTick >= KEEPALIVEATIME) {                                                        //定时函数，用于保持心跳，30秒检测一次（现在时间减去上次时间是否大于或等于30s）
+  //   preHeartTick = millis();                                                                              //获取现在时间，用于下次计算
+  //   while (SendCommand("AT+NSOSD=" + String(socketid) + ",1,\"cmd=0&msg=keep\\r\\n\",,4", "OK", 1500)) {  //发送心跳
+  //     delay(2000);                                                                                        //如果发送失败，延迟2秒后继续发送
+  //     errorFlag++;                                                                                        //累加错误次数
+  //     if (errorFlag >= 2) {                                                                               //如果错误达到2次
+  //       errorFlag = 0;                                                                                    //清空错误次数
+  //       NBIOT.println("AT+NSOCL=" + String(socketid));                                              //创建TCP连接
+  //       socketid++;
+  //       if (socketid >= 7) {
+  //         socketid = 1;
+  //       }
+  //       InitNBIOT();  //重新连接网络
+  //     }
+  //   }
+  //   errorFlag = 0;
+  // }
+}
+
+bool SendCommand(String cmd, String ack, int timeout) {
+  NBIOT.println(cmd);           // 向软串口发送指令
+  Serial.println(cmd);          // 串口调试助手打印指令信息
+  if (!echoFind(ack, timeout))  // 如果超时或者错误响应
+  {
+    return true;  // 返回真，说明指令发送失败
+  } else {
+    return false;  //指令发送成功
+  }
+}
+
+bool echoFind(String keyword, int TimeOut) {
+  long deadline = millis() + TimeOut;  //设置超时时间
+  String get_msg = "";                 //用于接收软串口数据
+  while (millis() < deadline) {        //设置检测软串口时间
+    if (NBIOT.available()) {           //如果软串口有数据
+      get_msg = NBIOT.readString();    //读取软串口数据
+    }
+  }
+  if (get_msg != "") {                             //如果接收到数据
+    Serial.println(get_msg);                       //串口打印收到的数据
+    int keyword_index = get_msg.indexOf(keyword);  //获取关键字所在字符串位置
+    if (keyword_index >= 0) {                      //如果接收到的字符串有期待接收到的关键字
+      return true;                                 //返回真
+    }
+  }
+  return false;  // 超时或无检测数据
+}
+
+/*
+ * 初始化M5310
+ * 创建TCP连接，并且订阅巴法云
+ */
+void InitNBIOT(void) {
+  delay(500);
+  while (NBIOT.read() >= 0) {}                 //清空软串口数据，等待下次接收
+  NBIOT.println("AT+NSOCR=\"STREAM\",6,0,2");  //创建TCP连接
   delay(2000);
+
+  while (SendCommand("AT+CIPSTART=TCP,bemfa.com,8344", "CONNECT", 3500)) {  //连接巴法云服务器
+    delay(2000);
+    Serial.println("init error");  //如果错误返回，等待1秒重新发送AT
+    errorFlag++;                   //记录错误次数
+    if (errorFlag >= 3) {          //如果连续错误5次，执行重启
+      NBIOT.println("AT+NRB");     //M5310重启指令，重启NB模块，适用于海思系列模块
+      delay(200);
+      resetFunc();  //重启函数，执行重启arduino
+    }
+  }
+  errorFlag = 0;                //错误次数清零
+  while (NBIOT.read() >= 0) {}  //清空软串口数据，等待下次接收
+  delay(1000);
+  NBIOT.println("AT+NSOCFG=" + String(socketid) + ",0,0");  //设置字符串传输模式，1代表socket1,第一个0代表字符串模式接收，第二个0代表转义字符模式发送
+  delay(300);
+  // 发送订阅指令，如需订阅多个多个主题，可延迟一秒后继续发送订阅
 }

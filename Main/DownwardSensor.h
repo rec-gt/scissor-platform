@@ -55,7 +55,6 @@ public:
     return this->isLiftUp;
   }
 
-
   float getDistance() {
     return this->measuredDistance;
   }

@@ -1,9 +1,4 @@
-#define NBIOT Serial1
-
-/***********************需要修改的地方************************/
-String uid = "e56277d3116647938af97cda298b066e";
-String myTopic = "test123";
-
+#define NBIoTModule Serial1
 
 int socketid = 1;                 //socket端口编号
 #define KEEPALIVEATIME 30 * 1000  //心跳间隔，默认30秒发一次心跳
@@ -14,52 +9,71 @@ int errorFlag = 0;  //记录错误次数，错误次数过多，执行重启
 
 void (*resetFunc)(void) = 0;  //重启函数
 
-// class NBIOT() {
-// };
+class NBIoT {
+private:
+  String response = "";  // 這個設計是爲了節省空間
 
-void sendCMD(String cmd) {
-  String res = "";
-  NBIOT.println(cmd);
-  delay(1000);
-  while (NBIOT.available()) {
-    String response = NBIOT.readString();
-    Serial.print(cmd + ": ");
-    Serial.println(response);
+  void clearBuffer() {
+    while (NBIoTModule.read() >= 0) {}
   }
-  while (NBIOT.read() >= 0) {}
-}
+
+
+
+public:
+  NBIoT() {
+    NBIoTModule.begin(9600);
+    this->clearBuffer();
+    delay(8000);
+  };
+
+  bool sendCMD(String cmd) {
+    unsigned long deadline = millis() + 1000;
+    NBIoTModule.println(cmd);
+
+    while (millis() < deadline) {
+      if (NBIoTModule.available()) {
+        this->response = NBIoTModule.readString();
+        Serial.print(cmd + ": ");
+        Serial.println(response);
+        return true;
+      }
+    }
+    this->clearBuffer();
+    return false;
+  }
+
+  ~NBIoT(){};
+};
+
+NBIoT nbiot;
 
 void setup() {
-  delay(1000);
   Serial.begin(9600);
-  NBIOT.begin(9600);
-  while (NBIOT.read() >= 0) {}
-  delay(8000);
   Serial.println("Entering Loop");
 }
 
 void loop() {
-  sendCMD("AT+NATSPEED=9600,30,0,0");
+  nbiot.sendCMD("AT+NATSPEED=9600,30,0,0");
 
-  sendCMD("AT");
+  nbiot.sendCMD("AT");
 
-  sendCMD("AT+CIMI");
+  nbiot.sendCMD("AT+CIMI");
 
-  sendCMD("AT+CSQ");
+  nbiot.sendCMD("AT+CSQ");
 
-  sendCMD("AT+CEREG?");
+  nbiot.sendCMD("AT+CEREG?");
 
-  sendCMD("AT+CEREG=1");
+  nbiot.sendCMD("AT+CEREG=1");
 
-  sendCMD("AT+CGATT?");
+  nbiot.sendCMD("AT+CGATT?");
 
-  sendCMD("AT+CGSN=1");
+  nbiot.sendCMD("AT+CGSN=1");
 
-  sendCMD("AT+MQTTDISC");
+  nbiot.sendCMD("AT+MQTTDISC");
 
-  sendCMD("AT+MQTTDEL");
+  nbiot.sendCMD("AT+MQTTDEL");
 
-  sendCMD("AT+MQTTCFG=\"aiotrak.rec-gt.com\",1880,\"869976034806621\",60,\"tswh\",\"1Wo=[6vA0m\",1");
+  nbiot.sendCMD("AT+MQTTCFG=\"aiotrak.rec-gt.com\",1880,\"869976034806621\",60,\"tswh\",\"1Wo=[6vA0m\",1");
 
   // sendCMD("AT+MQTTOPEN=1,1,1,0,1,\"rgt/869976034806621/dev\",\"gone\"");
 
@@ -67,8 +81,8 @@ void loop() {
 
   // String IncomingString = "";                   //用于接收串口发来的数据
   // bool StringReady = false;                     //接收到串口数据的标志
-  // while (NBIOT.available()) {             //如果接收到esp8266的数据
-  //   IncomingString = NBIOT.readString();  //获取esp8266反馈的数据，及esp8266收到远程服务器发来的数据
+  // while (NBIoTModule.available()) {             //如果接收到esp8266的数据
+  //   IncomingString = NBIoTModule.readString();  //获取esp8266反馈的数据，及esp8266收到远程服务器发来的数据
   //   StringReady = true;                         //接收到数据的标志
   // }
 
@@ -84,7 +98,7 @@ void loop() {
   //     errorFlag++;                                                                                        //累加错误次数
   //     if (errorFlag >= 2) {                                                                               //如果错误达到2次
   //       errorFlag = 0;                                                                                    //清空错误次数
-  //       NBIOT.println("AT+NSOCL=" + String(socketid));                                              //创建TCP连接
+  //       NBIoTModule.println("AT+NSOCL=" + String(socketid));                                              //创建TCP连接
   //       socketid++;
   //       if (socketid >= 7) {
   //         socketid = 1;
@@ -100,7 +114,7 @@ void loop() {
 
 
 bool SendCommand(String cmd, String ack, int timeout) {
-  NBIOT.println(cmd);           // 向软串口发送指令
+  NBIoTModule.println(cmd);     // 向软串口发送指令
   Serial.println(cmd);          // 串口调试助手打印指令信息
   if (!echoFind(ack, timeout))  // 如果超时或者错误响应
   {
@@ -111,11 +125,11 @@ bool SendCommand(String cmd, String ack, int timeout) {
 }
 
 bool echoFind(String keyword, int TimeOut) {
-  long deadline = millis() + TimeOut;  //设置超时时间
-  String get_msg = "";                 //用于接收软串口数据
-  while (millis() < deadline) {        //设置检测软串口时间
-    if (NBIOT.available()) {           //如果软串口有数据
-      get_msg = NBIOT.readString();    //读取软串口数据
+  long deadline = millis() + TimeOut;      //设置超时时间
+  String get_msg = "";                     //用于接收软串口数据
+  while (millis() < deadline) {            //设置检测软串口时间
+    if (NBIoTModule.available()) {         //如果软串口有数据
+      get_msg = NBIoTModule.readString();  //读取软串口数据
     }
   }
   if (get_msg != "") {                             //如果接收到数据
@@ -134,24 +148,24 @@ bool echoFind(String keyword, int TimeOut) {
  */
 void InitNBIOT(void) {
   delay(500);
-  while (NBIOT.read() >= 0) {}                 //清空软串口数据，等待下次接收
-  NBIOT.println("AT+NSOCR=\"STREAM\",6,0,2");  //创建TCP连接
+  while (NBIoTModule.read() >= 0) {}                 //清空软串口数据，等待下次接收
+  NBIoTModule.println("AT+NSOCR=\"STREAM\",6,0,2");  //创建TCP连接
   delay(2000);
 
   while (SendCommand("AT+CIPSTART=TCP,bemfa.com,8344", "CONNECT", 3500)) {  //连接巴法云服务器
     delay(2000);
-    Serial.println("init error");  //如果错误返回，等待1秒重新发送AT
-    errorFlag++;                   //记录错误次数
-    if (errorFlag >= 3) {          //如果连续错误5次，执行重启
-      NBIOT.println("AT+NRB");     //M5310重启指令，重启NB模块，适用于海思系列模块
+    Serial.println("init error");     //如果错误返回，等待1秒重新发送AT
+    errorFlag++;                      //记录错误次数
+    if (errorFlag >= 3) {             //如果连续错误5次，执行重启
+      NBIoTModule.println("AT+NRB");  //M5310重启指令，重启NB模块，适用于海思系列模块
       delay(200);
       resetFunc();  //重启函数，执行重启arduino
     }
   }
-  errorFlag = 0;                //错误次数清零
-  while (NBIOT.read() >= 0) {}  //清空软串口数据，等待下次接收
+  errorFlag = 0;                      //错误次数清零
+  while (NBIoTModule.read() >= 0) {}  //清空软串口数据，等待下次接收
   delay(1000);
-  NBIOT.println("AT+NSOCFG=" + String(socketid) + ",0,0");  //设置字符串传输模式，1代表socket1,第一个0代表字符串模式接收，第二个0代表转义字符模式发送
+  NBIoTModule.println("AT+NSOCFG=" + String(socketid) + ",0,0");  //设置字符串传输模式，1代表socket1,第一个0代表字符串模式接收，第二个0代表转义字符模式发送
   delay(300);
   // 发送订阅指令，如需订阅多个多个主题，可延迟一秒后继续发送订阅
 }

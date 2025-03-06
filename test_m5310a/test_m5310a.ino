@@ -17,8 +17,6 @@ private:
     while (NBIoTModule.read() >= 0) {}
   }
 
-
-
 public:
   NBIoT(){};
 
@@ -26,6 +24,22 @@ public:
     NBIoTModule.begin(9600);
     this->clearBuffer();
     delay(8000);
+  }
+
+  char* concatCharN(char** charArr, size_t arrSize) {
+    int totalCharLen = 0;
+    for (size_t i = 0; i < arrSize; i++) {
+      totalCharLen += strlen(charArr[i]);
+    }
+    char* newChar = new char[totalCharLen + 1];
+
+    newChar[0] = '\0';
+
+    for (size_t i = 0; i < arrSize; i++) {
+      strcat(newChar, charArr[i]);
+    }
+
+    return newChar;
   }
 
   bool sendCMD(String cmd) {
@@ -36,12 +50,12 @@ public:
       if (NBIoTModule.available()) {
         this->response = NBIoTModule.readString();
         Serial.print(cmd + ": ");
-        Serial.println(response);
+        Serial.println(this->response);
+        this->clearBuffer();
         return true;
       }
     }
     this->clearBuffer();
-    Serial.print(cmd + " sended ");
     return false;
   }
 
@@ -53,10 +67,9 @@ NBIoT nbiot;
 void setup() {
   Serial.begin(9600);
   Serial.println("Entering Loop");
+  
   nbiot.init();
-}
-
-void loop() {
+  
   nbiot.sendCMD("AT+NATSPEED=9600,30,0,0");
 
   nbiot.sendCMD("AT");
@@ -80,10 +93,16 @@ void loop() {
   nbiot.sendCMD("AT+MQTTCFG=\"aiotrak.rec-gt.com\",1880,\"869976034806621\",60,\"tswh\",\"1Wo=[6vA0m\",1");
 
   nbiot.sendCMD("AT+MQTTOPEN=1,1,1,0,1,\"rgt/869976034806621/dev\",\"gone\"");
+}
 
-  nbiot.sendCMD("AT+MQTTPUB=\"rgt/869976034806621/sys\",1,0,0,0,\"\"");
 
-  nbiot.sendCMD("{\"code\":\"R2-ADC10\"\t,\"imsi\":\"454003068932540\"\t}");
+void loop() {
+
+
+  nbiot.sendCMD("AT+MQTTPUB=\"rgt/869976034806621/sys\",1,0,0,0,\"{\"code\":\"R2-ADC10\"\t,\"imsi\":\"454003068932540\"\t}\"");
+
+  nbiot.sendCMD("AT+MQTTSUB=\"rgt/869976034806621/out\",1,0");
+
 
   // String IncomingString = "";                   //用于接收串口发来的数据
   // bool StringReady = false;                     //接收到串口数据的标志

@@ -14,7 +14,7 @@ void setup() {
 
 
 void loop() {
-  nbiot.sendCMD("AT+MQTTPUB=\"rgt/869976034806621/sys\",1,0,0,0,\"{\"code\":\"Tim-Test\"\t,\"sensors\":[1700,1700,1700,1700,1700,1700,1700,1700,1700,1700,1700]\t}\"", 1000, 10 * 60 * 1000);
+  nbiot.sendCMD("AT+MQTTPUB=\"rgt/869976034806621/sys\",1,0,0,0,\"{\"code\":\"Tim-Test\"\t,\"sensors\":[1700,1700,1700,1700,1700,1700,1700,1700,1700,1700,1700]\t}\"");
   // String IncomingString = "";                   //用于接收串口发来的数据
   // bool StringReady = false;                     //接收到串口数据的标志
   // while (NBIoTModule.available()) {             //如果接收到esp8266的数据

@@ -15,7 +15,9 @@ private:
   }
 
   void parseIMEI() {
-    this->IMEI = this->response.substring(6, 15);
+    byte RN = 2;
+    this->IMEI = this->response.substring(RN + 6, RN + 6 + 15);
+    Serial.println(this->IMEI);
   }
 
   void errHook(bool add) {
@@ -127,7 +129,7 @@ public:
     while (1) {
       this->sendCMD("AT+MQTTDISC");
       this->sendCMD("AT+MQTTDEL");
-      this->sendCMD("AT+MQTTCFG=\"iot.rec-gt.com\",1880,\"869976034806621\",60,\"tswh\",\"1Wo=[6vA0m\",1");
+      this->sendCMD("AT+MQTTCFG=\"iot.rec-gt.com\",1880,\"" + this->IMEI + "\",60,\"tswh\",\"1Wo=[6vA0m\",1");
       if (!this->resContain("ERROR")) {
         break;
       } else {
@@ -137,7 +139,7 @@ public:
     }
 
     while (1) {
-      this->sendCMD("AT+MQTTOPEN=1,1,1,0,1,\"rgt/869976034806621/dev\",\"gone\"");
+      this->sendCMD("AT+MQTTOPEN=1,1,1,0,1,\"rgt/" + this->IMEI + "/dev\",\"gone\"");
       if (!this->resContain("ERROR")) {
         break;
       } else {
@@ -149,28 +151,11 @@ public:
     Serial.println("MQTT Init Finished");
   }
 
-  char* concatCharN(char** charArr, size_t arrSize) {
-    int totalCharLen = 0;
-    for (size_t i = 0; i < arrSize; i++) {
-      totalCharLen += strlen(charArr[i]);
-    }
-    char* newChar = new char[totalCharLen + 1];
+  bool sendCMD(String cmd, uint32_t timeout = 3000) {
+    delay(1000);
 
-    newChar[0] = '\0';
-
-    for (size_t i = 0; i < arrSize; i++) {
-      strcat(newChar, charArr[i]);
-    }
-
-    return newChar;
-  }
-
-  bool sendCMD(String cmd, uint32_t timeout = 5000, uint32_t delayMS = 0) {
-    delay(delayMS);
     unsigned long deadline = millis() + timeout;  // max = 24*60*60*1000 (86400000 / 1day), default 1s
     NBIoTModule.println(cmd);
-
-    delay(3000);
 
     while (millis() < deadline) {
       if (NBIoTModule.available()) {

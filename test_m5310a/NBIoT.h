@@ -44,7 +44,8 @@ private:
   }
 
   void parseIMEI() {
-    this->IMEI = this->selectChar(this->res, 0, 15);
+    byte RN = 2;
+    this->IMEI = this->selectChar(this->res, RN + 6, RN + 6 + 15);
     Serial.println(this->IMEI);
   }
 
@@ -197,6 +198,7 @@ public:
     delay(300);
     unsigned long deadline = millis() + timeout;  // max = 24*60*60*1000 (86400000 / 1day), default 1s
     NBIoTModule.println(cmd);
+    delay(300);
 
     while (millis() < deadline) {
       if (NBIoTModule.available()) {

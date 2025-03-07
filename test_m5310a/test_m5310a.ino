@@ -1,20 +1,20 @@
 #define NBIoTModule Serial1
 
-int socketid = 1;                 //socket端口编号
-#define KEEPALIVEATIME 30 * 1000  //心跳间隔，默认30秒发一次心跳
-unsigned long preHeartTick = 0;   //心跳时间
-#define TIMEOUT 3000              //接收esp8266反馈的超时时间
-
-int errorFlag = 0;  //记录错误次数，错误次数过多，执行重启
-
-void (*resetFunc)(void) = 0;  //重启函数
+// int socketid = 1;                 //socket端口编号
+// #define KEEPALIVEATIME 30 * 1000  //心跳间隔，默认30秒发一次心跳
+// unsigned long preHeartTick = 0;   //心跳时间
+// #define TIMEOUT 3000              //接收esp8266反馈的超时时间
 
 class NBIoT {
 private:
+  byte errCount = 0;
   String response = "";  // 這個設計是爲了節省空間
 
   void clearBuffer() {
     while (NBIoTModule.read() >= 0) {}
+  }
+
+  void connectToNetwork() {
   }
 
 public:
@@ -23,7 +23,7 @@ public:
   void init() {
     NBIoTModule.begin(9600);
     this->clearBuffer();
-    delay(8000);
+    this->connectToNetwork();
   }
 
   char* concatCharN(char** charArr, size_t arrSize) {
@@ -42,7 +42,7 @@ public:
     return newChar;
   }
 
-  bool sendCMD(String cmd) {
+  bool sendCMD(String cmd, int timeout) {
     unsigned long deadline = millis() + 1000;
     NBIoTModule.println(cmd);
 
@@ -67,9 +67,9 @@ NBIoT nbiot;
 void setup() {
   Serial.begin(9600);
   Serial.println("Entering Loop");
-  
+
   nbiot.init();
-  
+
   nbiot.sendCMD("AT+NATSPEED=9600,30,0,0");
 
   nbiot.sendCMD("AT");
@@ -90,20 +90,18 @@ void setup() {
 
   nbiot.sendCMD("AT+MQTTDEL");
 
-  nbiot.sendCMD("AT+MQTTCFG=\"aiotrak.rec-gt.com\",1880,\"869976034806621\",60,\"tswh\",\"1Wo=[6vA0m\",1");
+  nbiot.sendCMD("AT+MQTTCFG=\"iot.rec-gt.com\",1880,\"869976034806621\",60,\"tswh\",\"1Wo=[6vA0m\",1");
 
   nbiot.sendCMD("AT+MQTTOPEN=1,1,1,0,1,\"rgt/869976034806621/dev\",\"gone\"");
 }
 
 
 void loop() {
+  nbiot.sendCMD("AT+MQTTPUB=\"rgt/869976034806621/sys\",1,0,0,0,\"{\"code\":\"Tim-Test\"\t,\"sensors\":[1700,1700,1700,1700,1700,1700,1700,1700,1700,1700,1700]\t}\"");
 
+  // nbiot.sendCMD("AT+MQTTSUB=\"rgt/869976034806621/out\",1,0");
 
-  nbiot.sendCMD("AT+MQTTPUB=\"rgt/869976034806621/sys\",1,0,0,0,\"{\"code\":\"R2-ADC10\"\t,\"imsi\":\"454003068932540\"\t}\"");
-
-  nbiot.sendCMD("AT+MQTTSUB=\"rgt/869976034806621/out\",1,0");
-
-
+  delay(10 * 60 * 1000);
   // String IncomingString = "";                   //用于接收串口发来的数据
   // bool StringReady = false;                     //接收到串口数据的标志
   // while (NBIoTModule.available()) {             //如果接收到esp8266的数据
@@ -138,59 +136,59 @@ void loop() {
 
 
 
-bool SendCommand(String cmd, String ack, int timeout) {
-  NBIoTModule.println(cmd);     // 向软串口发送指令
-  Serial.println(cmd);          // 串口调试助手打印指令信息
-  if (!echoFind(ack, timeout))  // 如果超时或者错误响应
-  {
-    return true;  // 返回真，说明指令发送失败
-  } else {
-    return false;  //指令发送成功
-  }
-}
+// bool SendCommand(String cmd, String ack, int timeout) {
+//   NBIoTModule.println(cmd);     // 向软串口发送指令
+//   Serial.println(cmd);          // 串口调试助手打印指令信息
+//   if (!echoFind(ack, timeout))  // 如果超时或者错误响应
+//   {
+//     return true;  // 返回真，说明指令发送失败
+//   } else {
+//     return false;  //指令发送成功
+//   }
+// }
 
-bool echoFind(String keyword, int TimeOut) {
-  long deadline = millis() + TimeOut;      //设置超时时间
-  String get_msg = "";                     //用于接收软串口数据
-  while (millis() < deadline) {            //设置检测软串口时间
-    if (NBIoTModule.available()) {         //如果软串口有数据
-      get_msg = NBIoTModule.readString();  //读取软串口数据
-    }
-  }
-  if (get_msg != "") {                             //如果接收到数据
-    Serial.println(get_msg);                       //串口打印收到的数据
-    int keyword_index = get_msg.indexOf(keyword);  //获取关键字所在字符串位置
-    if (keyword_index >= 0) {                      //如果接收到的字符串有期待接收到的关键字
-      return true;                                 //返回真
-    }
-  }
-  return false;  // 超时或无检测数据
-}
+// bool echoFind(String keyword, int TimeOut) {
+//   long deadline = millis() + TimeOut;      //设置超时时间
+//   String get_msg = "";                     //用于接收软串口数据
+//   while (millis() < deadline) {            //设置检测软串口时间
+//     if (NBIoTModule.available()) {         //如果软串口有数据
+//       get_msg = NBIoTModule.readString();  //读取软串口数据
+//     }
+//   }
+//   if (get_msg != "") {                             //如果接收到数据
+//     Serial.println(get_msg);                       //串口打印收到的数据
+//     int keyword_index = get_msg.indexOf(keyword);  //获取关键字所在字符串位置
+//     if (keyword_index >= 0) {                      //如果接收到的字符串有期待接收到的关键字
+//       return true;                                 //返回真
+//     }
+//   }
+//   return false;  // 超时或无检测数据
+// }
 
 /*
  * 初始化M5310
  * 创建TCP连接，并且订阅巴法云
  */
-void InitNBIOT(void) {
-  delay(500);
-  while (NBIoTModule.read() >= 0) {}                 //清空软串口数据，等待下次接收
-  NBIoTModule.println("AT+NSOCR=\"STREAM\",6,0,2");  //创建TCP连接
-  delay(2000);
+// void InitNBIOT(void) {
+//   delay(500);
+//   while (NBIoTModule.read() >= 0) {}                 //清空软串口数据，等待下次接收
+//   NBIoTModule.println("AT+NSOCR=\"STREAM\",6,0,2");  //创建TCP连接
+//   delay(2000);
 
-  while (SendCommand("AT+CIPSTART=TCP,bemfa.com,8344", "CONNECT", 3500)) {  //连接巴法云服务器
-    delay(2000);
-    Serial.println("init error");     //如果错误返回，等待1秒重新发送AT
-    errorFlag++;                      //记录错误次数
-    if (errorFlag >= 3) {             //如果连续错误5次，执行重启
-      NBIoTModule.println("AT+NRB");  //M5310重启指令，重启NB模块，适用于海思系列模块
-      delay(200);
-      resetFunc();  //重启函数，执行重启arduino
-    }
-  }
-  errorFlag = 0;                      //错误次数清零
-  while (NBIoTModule.read() >= 0) {}  //清空软串口数据，等待下次接收
-  delay(1000);
-  NBIoTModule.println("AT+NSOCFG=" + String(socketid) + ",0,0");  //设置字符串传输模式，1代表socket1,第一个0代表字符串模式接收，第二个0代表转义字符模式发送
-  delay(300);
-  // 发送订阅指令，如需订阅多个多个主题，可延迟一秒后继续发送订阅
-}
+//   while (SendCommand("AT+CIPSTART=TCP,bemfa.com,8344", "CONNECT", 3500)) {  //连接巴法云服务器
+//     delay(2000);
+//     Serial.println("init error");     //如果错误返回，等待1秒重新发送AT
+//     errorFlag++;                      //记录错误次数
+//     if (errorFlag >= 3) {             //如果连续错误5次，执行重启
+//       NBIoTModule.println("AT+NRB");  //M5310重启指令，重启NB模块，适用于海思系列模块
+//       delay(200);
+//       resetFunc();  //重启函数，执行重启arduino
+//     }
+//   }
+//   errorFlag = 0;                      //错误次数清零
+//   while (NBIoTModule.read() >= 0) {}  //清空软串口数据，等待下次接收
+//   delay(1000);
+//   NBIoTModule.println("AT+NSOCFG=" + String(socketid) + ",0,0");  //设置字符串传输模式，1代表socket1,第一个0代表字符串模式接收，第二个0代表转义字符模式发送
+//   delay(300);
+//   // 发送订阅指令，如需订阅多个多个主题，可延迟一秒后继续发送订阅
+// }

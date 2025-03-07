@@ -8,10 +8,8 @@
 class NBIoT {
 private:
   byte errCount = 0;
-  bool received = false;
   String response = "";  // 節省空間
   char* res = "";        // 節省空間
-  bool canGoNext = false;
 
   void clearBuffer() {
     while (NBIoTModule.read() >= 0) {}
@@ -33,36 +31,32 @@ private:
     return false;
   }
 
-  bool parseResponse(char* res) {
-    return this->resContain("OK");
-  }
-
   void str2Char() {
     this->res = const_cast<char*>(this->response.c_str());
   }
 
-  void tryComm(void (*callback)(), bool (*breakCondition)(), uint32_t interval = 3000) {
-    while (true) {
-      callback();
-      if (breakCondition()) {
-        break;
-      }
-      delay(interval);
+  void errHook(bool add) {
+    if (add) {
+      ++this->errCount;
+    }
+
+    if (this->errCount >= 10) {
+      Serial.println("MQTT init failed");
     }
   }
 
   void connectToNetwork() {
     this->clearBuffer();
 
-    bool goNext = false;
-
     // ask for 9600 baud rate
     while (1) {
       this->sendCMD("AT+NATSPEED=9600,30,0,0");
       if (this->resContain("OK")) {
         break;
+      } else {
+        errCount++;
+        delay(3000);
       }
-      delay(3000);
     }
 
     // check communication success
@@ -123,16 +117,17 @@ private:
       delay(3000);
     }
 
-  
+    this->sendCMD("AT+MQTTDISC");
+    this->sendCMD("AT+MQTTDEL");
+    while (1) {
+      this->sendCMD("AT+MQTTCFG=\"iot.rec-gt.com\",1880,\"869976034806621\",60,\"tswh\",\"1Wo=[6vA0m\",1");
+      if (this->resContain("OK")) {
+        break;
+      }
+      delay(3000);
+    }
 
-
-    // nbiot.sendCMD("AT+MQTTDISC");
-
-    // nbiot.sendCMD("AT+MQTTDEL");
-
-    // nbiot.sendCMD("AT+MQTTCFG=\"iot.rec-gt.com\",1880,\"869976034806621\",60,\"tswh\",\"1Wo=[6vA0m\",1");
-
-    // nbiot.sendCMD("AT+MQTTOPEN=1,1,1,0,1,\"rgt/869976034806621/dev\",\"gone\"");
+    Serial.println("MQTT Init Finished");
   }
 
 public:
@@ -191,9 +186,7 @@ void setup() {
 
 
 void loop() {
-  // nbiot.sendCMD("AT+MQTTPUB=\"rgt/869976034806621/sys\",1,0,0,0,\"{\"code\":\"Tim-Test\"\t,\"sensors\":[1700,1700,1700,1700,1700,1700,1700,1700,1700,1700,1700]\t}\"");
-
-  // nbiot.sendCMD("AT+MQTTSUB=\"rgt/869976034806621/out\",1,0");
+  nbiot.sendCMD("AT+MQTTPUB=\"rgt/869976034806621/sys\",1,0,0,0,\"{\"code\":\"Tim-Test\"\t,\"sensors\":[1700,1700,1700,1700,1700,1700,1700,1700,1700,1700,1700]\t}\"");
 
   delay(10 * 60 * 1000);
   // String IncomingString = "";                   //用于接收串口发来的数据

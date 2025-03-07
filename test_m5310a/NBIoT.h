@@ -3,63 +3,19 @@
 class NBIoT {
 private:
   byte errCount = 0;
-  String response = "";  // 節省空間
-  char* IMEI = "";
-
-  // response management
-  char* res = NULL;
-  int resIdx = 0;
-
+  String IMEI;
+  String response;
 
   void clearBuffer() {
     while (NBIoTModule.read() >= 0) {}
   }
 
-  char handleGetRes() {
-    free(this->res);
-    this->res = (char*)malloc(NBIoTModule.available() + 1);
-    this->resIdx = 0;
-
-    while (NBIoTModule.available() > 0) {
-      char c = NBIoTModule.read();
-      this->res[this->resIdx++] = c;
-    }
-    this->res[this->resIdx] = '\0';
-
-    Serial.println(this->res);
-  }
-
-  bool resContain(const char* target) {
-    for (int i = 0; this->res[i] != '\0'; i++) {
-      bool found = true;
-      for (int j = 0; target[j] != '\0'; j++) {
-        if (this->res[i + j] != target[j]) {
-          found = false;
-          break;
-        }
-      }
-      if (found) {
-        return true;
-      }
-    }
-    return false;
-  }
-
-  char* selectChar(char* str, byte start, byte length) {
-    length += 2;  // idk why
-    char* newStr = new char[length + 1];
-    strncpy(newStr, str + start, length);
-    newStr[length] = '\0';
-    return newStr;
-  }
-
-  void parseCIMI() {
-    Serial.println(this->selectChar(this->res, 0, 15));
+  bool resContain(char* target) {
+    return this->response.indexOf(target) != -1;
   }
 
   void parseIMEI() {
-    this->IMEI = this->selectChar(this->res, 8, 15);
-    Serial.println(this->IMEI);
+    this->IMEI = this->response.substring(6, 15);
   }
 
   void errHook(bool add) {
@@ -81,10 +37,12 @@ public:
     NBIoTModule.begin(9600);
     this->clearBuffer();
 
+    this->sendCMD("AT+CLAC");
+
     // ask for 9600 baud rate
     while (1) {
       this->sendCMD("AT+NATSPEED=9600,30,0,0");
-      if (this->resContain("OK")) {
+      if (!this->resContain("ERROR")) {
         break;
       } else {
         errHook(true);
@@ -95,7 +53,7 @@ public:
     // check communication success
     while (1) {
       this->sendCMD("AT");
-      if (this->resContain("OK")) {
+      if (!this->resContain("ERROR")) {
         break;
       } else {
         errHook(true);
@@ -106,7 +64,7 @@ public:
     // get cimi
     while (1) {
       this->sendCMD("AT+CIMI");
-      if (this->resContain("OK")) {
+      if (!this->resContain("ERROR")) {
         break;
       } else {
         errHook(true);
@@ -116,7 +74,7 @@ public:
 
     while (1) {
       this->sendCMD("AT+CSQ");
-      if (this->resContain("OK")) {
+      if (!this->resContain("ERROR")) {
         break;
       } else {
         errHook(true);
@@ -126,7 +84,7 @@ public:
 
     while (1) {
       this->sendCMD("AT+CEREG?");
-      if (this->resContain("OK")) {
+      if (!this->resContain("ERROR")) {
         break;
       } else {
         errHook(true);
@@ -136,7 +94,7 @@ public:
 
     while (1) {
       this->sendCMD("AT+CEREG=1");
-      if (this->resContain("OK")) {
+      if (!this->resContain("ERROR")) {
         break;
       } else {
         errHook(true);
@@ -146,7 +104,7 @@ public:
 
     while (1) {
       this->sendCMD("AT+CGATT?");
-      if (this->resContain("OK")) {
+      if (!this->resContain("ERROR")) {
         break;
       } else {
         errHook(true);
@@ -156,7 +114,7 @@ public:
 
     while (1) {
       this->sendCMD("AT+CGSN=1");
-      if (this->resContain("OK")) {
+      if (!this->resContain("ERROR")) {
         break;
       } else {
         errHook(true);
@@ -170,7 +128,7 @@ public:
       this->sendCMD("AT+MQTTDISC");
       this->sendCMD("AT+MQTTDEL");
       this->sendCMD("AT+MQTTCFG=\"iot.rec-gt.com\",1880,\"869976034806621\",60,\"tswh\",\"1Wo=[6vA0m\",1");
-      if (this->resContain("OK")) {
+      if (!this->resContain("ERROR")) {
         break;
       } else {
         errHook(true);
@@ -180,7 +138,7 @@ public:
 
     while (1) {
       this->sendCMD("AT+MQTTOPEN=1,1,1,0,1,\"rgt/869976034806621/dev\",\"gone\"");
-      if (this->resContain("OK")) {
+      if (!this->resContain("ERROR")) {
         break;
       } else {
         errHook(true);
@@ -207,15 +165,18 @@ public:
     return newChar;
   }
 
-  bool sendCMD(String cmd, uint32_t timeout = 1000, uint32_t delayMS = 0) {
+  bool sendCMD(String cmd, uint32_t timeout = 5000, uint32_t delayMS = 0) {
     delay(delayMS);
     unsigned long deadline = millis() + timeout;  // max = 24*60*60*1000 (86400000 / 1day), default 1s
     NBIoTModule.println(cmd);
 
+    delay(3000);
+
     while (millis() < deadline) {
       if (NBIoTModule.available()) {
-        Serial.print(cmd + ": ");
-        this->handleGetRes();
+        this->response = NBIoTModule.readString();
+        Serial.println(cmd + ": ");
+        Serial.println(this->response);
         this->clearBuffer();
         return true;
       }

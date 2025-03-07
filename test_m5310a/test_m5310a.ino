@@ -41,62 +41,90 @@ private:
     this->res = const_cast<char*>(this->response.c_str());
   }
 
+  void tryComm(void (*callback)(), bool (*breakCondition)(), uint32_t interval = 3000) {
+    while (true) {
+      callback();
+      if (breakCondition()) {
+        break;
+      }
+      delay(interval);
+    }
+  }
+
   void connectToNetwork() {
     this->clearBuffer();
 
     bool goNext = false;
 
-    while (true) {
+    // ask for 9600 baud rate
+    while (1) {
       this->sendCMD("AT+NATSPEED=9600,30,0,0");
-
       if (this->resContain("OK")) {
         break;
       }
-
       delay(3000);
     }
 
-    while (true) {
-      this->received = this->sendCMD("AT");
-
+    // check communication success
+    while (1) {
+      this->sendCMD("AT");
       if (this->resContain("OK")) {
         break;
       }
-
       delay(3000);
     }
 
-    while (true) {
-      this->received = this->sendCMD("AT+CIMI");
-
+    // get cimi
+    while (1) {
+      this->sendCMD("AT+CIMI");
       if (this->resContain("OK")) {
         break;
       }
-
       delay(3000);
     }
 
-    while (true) {
-      this->received = this->sendCMD("AT+CIMI");
-
+    while (1) {
+      this->sendCMD("AT+CSQ");
       if (this->resContain("OK")) {
         break;
       }
-
       delay(3000);
     }
 
-    // nbiot.sendCMD("AT+CIMI");
+    while (1) {
+      this->sendCMD("AT+CEREG?");
+      if (this->resContain("OK")) {
+        break;
+      }
+      delay(3000);
+    }
 
-    // nbiot.sendCMD("AT+CSQ");
+    while (1) {
+      this->sendCMD("AT+CEREG=1");
+      if (this->resContain("OK")) {
+        break;
+      }
+      delay(3000);
+    }
 
-    // nbiot.sendCMD("AT+CEREG?");
+    while (1) {
+      this->sendCMD("AT+CGATT?");
+      if (this->resContain("OK")) {
+        break;
+      }
+      delay(3000);
+    }
 
-    // nbiot.sendCMD("AT+CEREG=1");
+    while (1) {
+      this->sendCMD("AT+CGSN=1");
+      if (this->resContain("OK")) {
+        break;
+      }
+      delay(3000);
+    }
 
-    // nbiot.sendCMD("AT+CGATT?");
+  
 
-    // nbiot.sendCMD("AT+CGSN=1");
 
     // nbiot.sendCMD("AT+MQTTDISC");
 

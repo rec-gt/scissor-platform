@@ -4,11 +4,29 @@ class NBIoT {
 private:
   byte errCount = 0;
   String response = "";  // 節省空間
-  char* res = "";        // 節省空間
   char* IMEI = "";
+
+  // response management
+  char* res = NULL;
+  int resIdx = 0;
+
 
   void clearBuffer() {
     while (NBIoTModule.read() >= 0) {}
+  }
+
+  char handleGetRes() {
+    free(this->res);
+    this->res = (char*)malloc(NBIoTModule.available() + 1);
+    this->resIdx = 0;
+
+    while (NBIoTModule.available() > 0) {
+      char c = NBIoTModule.read();
+      this->res[this->resIdx++] = c;
+    }
+    this->res[this->resIdx] = '\0';
+
+    Serial.println(this->res);
   }
 
   bool resContain(const char* target) {
@@ -27,10 +45,6 @@ private:
     return false;
   }
 
-  void str2Char() {
-    this->res = const_cast<char*>(this->response.c_str());
-  }
-
   char* selectChar(char* str, byte start, byte length) {
     length += 2;  // idk why
     char* newStr = new char[length + 1];
@@ -44,7 +58,7 @@ private:
   }
 
   void parseIMEI() {
-    this->IMEI = this->selectChar(this->res, 0, 15);
+    this->IMEI = this->selectChar(this->res, 8, 15);
     Serial.println(this->IMEI);
   }
 
@@ -200,10 +214,8 @@ public:
 
     while (millis() < deadline) {
       if (NBIoTModule.available()) {
-        this->response = NBIoTModule.readString();
-        this->str2Char();
         Serial.print(cmd + ": ");
-        Serial.println(this->response);
+        this->handleGetRes();
         this->clearBuffer();
         return true;
       }

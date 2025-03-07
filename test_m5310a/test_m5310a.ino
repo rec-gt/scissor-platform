@@ -8,13 +8,103 @@
 class NBIoT {
 private:
   byte errCount = 0;
-  String response = "";  // 這個設計是爲了節省空間
+  bool received = false;
+  String response = "";  // 節省空間
+  char* res = "";        // 節省空間
+  bool canGoNext = false;
 
   void clearBuffer() {
     while (NBIoTModule.read() >= 0) {}
   }
 
+  bool resContain(const char* target) {
+    for (int i = 0; this->res[i] != '\0'; i++) {
+      bool found = true;
+      for (int j = 0; target[j] != '\0'; j++) {
+        if (this->res[i + j] != target[j]) {
+          found = false;
+          break;
+        }
+      }
+      if (found) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  bool parseResponse(char* res) {
+    return this->resContain("OK");
+  }
+
+  void str2Char() {
+    this->res = const_cast<char*>(this->response.c_str());
+  }
+
   void connectToNetwork() {
+    this->clearBuffer();
+
+    bool goNext = false;
+
+    while (true) {
+      this->sendCMD("AT+NATSPEED=9600,30,0,0");
+
+      if (this->resContain("OK")) {
+        break;
+      }
+
+      delay(3000);
+    }
+
+    while (true) {
+      this->received = this->sendCMD("AT");
+
+      if (this->resContain("OK")) {
+        break;
+      }
+
+      delay(3000);
+    }
+
+    while (true) {
+      this->received = this->sendCMD("AT+CIMI");
+
+      if (this->resContain("OK")) {
+        break;
+      }
+
+      delay(3000);
+    }
+
+    while (true) {
+      this->received = this->sendCMD("AT+CIMI");
+
+      if (this->resContain("OK")) {
+        break;
+      }
+
+      delay(3000);
+    }
+
+    // nbiot.sendCMD("AT+CIMI");
+
+    // nbiot.sendCMD("AT+CSQ");
+
+    // nbiot.sendCMD("AT+CEREG?");
+
+    // nbiot.sendCMD("AT+CEREG=1");
+
+    // nbiot.sendCMD("AT+CGATT?");
+
+    // nbiot.sendCMD("AT+CGSN=1");
+
+    // nbiot.sendCMD("AT+MQTTDISC");
+
+    // nbiot.sendCMD("AT+MQTTDEL");
+
+    // nbiot.sendCMD("AT+MQTTCFG=\"iot.rec-gt.com\",1880,\"869976034806621\",60,\"tswh\",\"1Wo=[6vA0m\",1");
+
+    // nbiot.sendCMD("AT+MQTTOPEN=1,1,1,0,1,\"rgt/869976034806621/dev\",\"gone\"");
   }
 
 public:
@@ -22,7 +112,6 @@ public:
 
   void init() {
     NBIoTModule.begin(9600);
-    this->clearBuffer();
     this->connectToNetwork();
   }
 
@@ -42,13 +131,14 @@ public:
     return newChar;
   }
 
-  bool sendCMD(String cmd, int timeout) {
-    unsigned long deadline = millis() + 1000;
+  bool sendCMD(String cmd, uint32_t timeout = 1000) {
+    unsigned long deadline = millis() + timeout;  // max = 24*60*60*1000 (86400000 / 1day), default 1s
     NBIoTModule.println(cmd);
 
     while (millis() < deadline) {
       if (NBIoTModule.available()) {
         this->response = NBIoTModule.readString();
+        this->str2Char();
         Serial.print(cmd + ": ");
         Serial.println(this->response);
         this->clearBuffer();
@@ -69,35 +159,11 @@ void setup() {
   Serial.println("Entering Loop");
 
   nbiot.init();
-
-  nbiot.sendCMD("AT+NATSPEED=9600,30,0,0");
-
-  nbiot.sendCMD("AT");
-
-  nbiot.sendCMD("AT+CIMI");
-
-  nbiot.sendCMD("AT+CSQ");
-
-  nbiot.sendCMD("AT+CEREG?");
-
-  nbiot.sendCMD("AT+CEREG=1");
-
-  nbiot.sendCMD("AT+CGATT?");
-
-  nbiot.sendCMD("AT+CGSN=1");
-
-  nbiot.sendCMD("AT+MQTTDISC");
-
-  nbiot.sendCMD("AT+MQTTDEL");
-
-  nbiot.sendCMD("AT+MQTTCFG=\"iot.rec-gt.com\",1880,\"869976034806621\",60,\"tswh\",\"1Wo=[6vA0m\",1");
-
-  nbiot.sendCMD("AT+MQTTOPEN=1,1,1,0,1,\"rgt/869976034806621/dev\",\"gone\"");
 }
 
 
 void loop() {
-  nbiot.sendCMD("AT+MQTTPUB=\"rgt/869976034806621/sys\",1,0,0,0,\"{\"code\":\"Tim-Test\"\t,\"sensors\":[1700,1700,1700,1700,1700,1700,1700,1700,1700,1700,1700]\t}\"");
+  // nbiot.sendCMD("AT+MQTTPUB=\"rgt/869976034806621/sys\",1,0,0,0,\"{\"code\":\"Tim-Test\"\t,\"sensors\":[1700,1700,1700,1700,1700,1700,1700,1700,1700,1700,1700]\t}\"");
 
   // nbiot.sendCMD("AT+MQTTSUB=\"rgt/869976034806621/out\",1,0");
 

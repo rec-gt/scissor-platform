@@ -5,6 +5,7 @@ private:
   byte errCount = 0;
   String response = "";  // 節省空間
   char* res = "";        // 節省空間
+  char* IMEI = "";
 
   void clearBuffer() {
     while (NBIoTModule.read() >= 0) {}
@@ -30,6 +31,23 @@ private:
     this->res = const_cast<char*>(this->response.c_str());
   }
 
+  char* selectChar(char* str, byte start, byte length) {
+    length += 2;  // idk why
+    char* newStr = new char[length + 1];
+    strncpy(newStr, str + start, length);
+    newStr[length] = '\0';
+    return newStr;
+  }
+
+  void parseCIMI() {
+    Serial.println(this->selectChar(this->res, 0, 15));
+  }
+
+  void parseIMEI() {
+    this->IMEI = this->selectChar(this->res, 0, 15);
+    Serial.println(this->IMEI);
+  }
+
   void errHook(bool add) {
     if (add) {
       ++this->errCount;
@@ -44,6 +62,8 @@ public:
   NBIoT(){};
 
   void init() {
+    Serial.println("Initiating MQTT Module");
+
     NBIoTModule.begin(9600);
     this->clearBuffer();
 
@@ -129,10 +149,12 @@ public:
         delay(3000);
       }
     }
+    this->parseIMEI();
 
-    this->sendCMD("AT+MQTTDISC");
-    this->sendCMD("AT+MQTTDEL");
+
     while (1) {
+      this->sendCMD("AT+MQTTDISC");
+      this->sendCMD("AT+MQTTDEL");
       this->sendCMD("AT+MQTTCFG=\"iot.rec-gt.com\",1880,\"869976034806621\",60,\"tswh\",\"1Wo=[6vA0m\",1");
       if (this->resContain("OK")) {
         break;
@@ -171,7 +193,8 @@ public:
     return newChar;
   }
 
-  bool sendCMD(String cmd, uint32_t timeout = 1000) {
+  bool sendCMD(String cmd, uint32_t timeout = 1000, uint32_t delayMS = 0) {
+    delay(delayMS);
     unsigned long deadline = millis() + timeout;  // max = 24*60*60*1000 (86400000 / 1day), default 1s
     NBIoTModule.println(cmd);
 

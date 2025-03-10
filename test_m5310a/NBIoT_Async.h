@@ -2,19 +2,22 @@
 
 class NBIoT {
 private:
-  bool NBIOT_AVAILABLE = false;
-  enum NBIOT_STATUS {
+
+  enum NBIOTStatus {
     // allow when NBIOT_AVAILABLE = false
+    IOT_VOID,
     IOT_INIT_CLAC,
     IOT_INIT_9600,
     IOT_INIT_AT,
-    IOT_INIT_CIMI,
     IOT_INIT_CSQ,
     IOT_INIT_CEREG,
-    IOT_INIT_CSQ,
-    IOT_INIT_CSQ,
-    IOT_INIT_CSQ,
-    IOT_INIT_CSQ,
+    IOT_INIT_CGATT,
+    IOT_INIT_CIMI,
+    IOT_INIT_CGSN,
+    IOT_INIT_MQTTDISC,
+    IOT_INIT_MQTTDEL,
+    IOT_INIT_MQTTCFG,
+    IOT_INIT_MQTTOPEN,
 
     // allow when NBIOT_AVAILABLE = true
     IOT_SYS_RUNNING,
@@ -22,6 +25,15 @@ private:
     IOT_SYS_LIFTUP,
     IOT_SYS_FAILURE
   };
+
+  NBIOTStatus NBIOT_STATUS = IOT_VOID;
+  NBIOTStatus LAST_NBIOT_STATUS = IOT_VOID;
+  bool NBIOT_AVAILABLE = false;
+
+  unsigned long deadline;
+
+  bool isSentCMD = false;
+  bool isReceived = false;
 
   byte errCount = 0;
   byte RN = 2;
@@ -73,142 +85,93 @@ private:
     }
   }
 
-  void connectNetwork() {}
-
 public:
-  NBIoT(){};
+  NBIoT() {
+    NBIoTModule.begin(9600);
+  };
 
-  bool sendCMD(String cmd, uint32_t timeout = 3000) {
-    delay(300);
-    unsigned long deadline = millis() + timeout;  // max = 24*60*60*1000 (86400000 / 1day), default 1s
-    NBIoTModule.println(cmd);
-    delay(300);
-
-    while (millis() < deadline) {
-      if (NBIoTModule.available()) {
-        this->response = NBIoTModule.readString();
-        Serial.println("CMD: " + cmd);
-        Serial.println(this->response);
-        this->clearBuffer();
-        return true;
-      }
-    }
-    this->clearBuffer();
-    return false;
+  void setStatus() {
+    this->LAST_NBIOT_STATUS = this->NBIOT_STATUS = IOT_VOID;
   }
 
-  void init() {
-    Serial.println("Initiating MQTT Module");
+  void resetSendReceive() {
+    this->isSentCMD = false;
+    this->isReceived = false;
+  }
 
-    NBIoTModule.begin(9600);
+  void setDeadline(int time) {
+    this->deadline = millis() + time;
+  }
 
-    this->clearBuffer();
-
-    this->sendCMD("AT+CLAC");
-
-    // ask for 9600 baud rate
-    while (1) {
-      this->sendCMD("AT+NATSPEED=9600,30,0,0");
-      if (!this->resContain("ERROR")) {
-        break;
-      } else {
-        this->errHook(true);
-        delay(3000);
-      }
+  void sendCommand(String cmd) {
+    if (!this->isSentCMD) {  // ensure send once
+      this->isSentCMD = true;
+      NBIoTModule.println(cmd);
+      delay(300);
     }
 
-    // check communication success
-    while (1) {
-      this->sendCMD("AT");
-      if (!this->resContain("ERROR")) {
-        break;
-      } else {
-        this->errHook(true);
-        delay(3000);
+    if (millis() > this->deadline) {  // run in main loop, check for timesup
+      this->NBIOT_STATUS = IOT_VOID;
+    }
+  }
+
+  void waitForResponse() {  // run in main loop, always wait for response
+    if (NBIoTModule.available()) {
+      this->isReceived = false;
+      this->response = NBIoTModule.readString();
+      Serial.println(this->response);
+      this->clearBuffer();
+    }
+  }
+
+  void handleAT() {
+    if (this->NBIOT_STATUS == IOT_INIT_AT) {
+      if (this->LAST_NBIOT_STATUS != this->NBIOT_STATUS) {  // delta change is detected
+        Serial.println("Send AT");
+        this->LAST_NBIOT_STATUS = this->NBIOT_STATUS;
+        this->resetSendReceive();
+        this->setDeadline(9000);
+      } else {  // delta change is not detected, still in main loop
+        this->sendCommand("AT");
+        this->waitForResponse();
+        // business logic & change status
+        if (this->isReceived) {
+          if (this->resContain("OK") && !this->resContain("ERROR")) {
+            this->NBIOT_STATUS = IOT_INIT_CIMI;
+          } else {
+            this->NBIOT_STATUS = IOT_VOID;
+          }
+        }
       }
     }
+  }
 
-    while (1) {
-      this->sendCMD("AT+CSQ");
-      if (!this->resContain("ERROR")) {
-        break;
-      } else {
-        this->errHook(true);
-        delay(3000);
+  void handleCIMI() {
+    if (this->NBIOT_STATUS == IOT_INIT_CIMI) {
+      if (this->LAST_NBIOT_STATUS != this->NBIOT_STATUS) {  // delta change is detected
+        Serial.println("Send CIMI");
+        this->LAST_NBIOT_STATUS = this->NBIOT_STATUS;
+        this->resetSendReceive();
+        this->setDeadline(3000);
+      } else {  // delta change is not detected, still in main loop
+        this->sendCommand("CIMI");
+        this->waitForResponse();
+        // business logic & change status
+        if (this->resContain("OK") && !this->resContain("ERROR")) {
+          this->parseCIMI();
+          this->NBIOT_STATUS = IOT_VOID;
+        }
       }
     }
-    this->parseCSQ();
+  }
 
-    while (1) {
-      this->sendCMD("AT+CEREG?");
-      if (!this->resContain("ERROR")) {
-        break;
-      } else {
-        this->errHook(true);
-        delay(3000);
-      }
+  void listen() {
+    if (this->NBIOT_STATUS == IOT_VOID) {
+      this->NBIOT_STATUS = IOT_INIT_AT;
     }
 
-    while (1) {
-      this->sendCMD("AT+CGATT?");
-      if (!this->resContain("ERROR")) {
-        break;
-      } else {
-        this->errHook(true);
-        delay(3000);
-      }
-    }
-
-    // get cimi
-    while (1) {
-      this->sendCMD("AT+CIMI");
-      if (!this->resContain("ERROR")) {
-        break;
-      } else {
-        this->errHook(true);
-        delay(3000);
-      }
-    }
-    this->parseCIMI();
-
-
-
-    while (1) {
-      this->sendCMD("AT+CGSN=1");
-      if (!this->resContain("ERROR")) {
-        break;
-      } else {
-        this->errHook(true);
-        delay(3000);
-      }
-    }
-    this->parseIMEI();
-
-
-    while (1) {
-      this->sendCMD("AT+MQTTDISC");
-      this->sendCMD("AT+MQTTDEL");
-      this->sendCMD("AT+MQTTCFG=\"iot.rec-gt.com\",1880,\"" + this->IMEI + "\",60,\"tswh\",\"1Wo=[6vA0m\",1");
-      if (!this->resContain("ERROR")) {
-        break;
-      } else {
-        this->errHook(true);
-        delay(3000);
-      }
-    }
-
-    while (1) {
-      this->sendCMD("AT+MQTTOPEN=1,1,1,0,1,\"rgt/" + this->IMEI + "/dev\",\"gone\"");
-      if (!this->resContain("ERROR")) {
-        break;
-      } else {
-        this->errHook(true);
-        delay(3000);
-      }
-    }
-
-    this->resetErrorCount();
-    Serial.println("MQTT Init Finished");
+    this->handleAT();
+    this->handleCIMI();
   }
 
   ~NBIoT(){};

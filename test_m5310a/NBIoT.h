@@ -83,7 +83,7 @@ public:
 
     this->clearBuffer();
 
-    this->sendCMD("AT+CLAC");
+    // this->sendCMD("AT+CLAC");
 
     // ask for 9600 baud rate
     while (1) {

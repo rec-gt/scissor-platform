@@ -31,21 +31,29 @@ private:
     this->res = const_cast<char*>(this->response.c_str());
   }
 
-  char* selectChar(char* str, byte start, byte length) {
-    length += 2;  // idk why
-    char* newStr = new char[length + 1];
-    strncpy(newStr, str + start, length);
-    newStr[length] = '\0';
-    return newStr;
+  char* selectChar(const char* str, byte start, byte length) {
+    char* dest = (char*)malloc(length + 1);
+    if (dest == NULL) {
+      return NULL;
+    }
+    strncpy(dest, str + start, length);
+    dest[length] = '\0';
+    return dest;
   }
 
   void parseCIMI() {
-    Serial.println(this->selectChar(this->res, 0, 15));
+    byte RN = 2;
+    Serial.println(this->selectChar(this->res, RN + 0, 15));
+  }
+
+  void parseCSQ() {
+    byte RN = 2;
+    Serial.println(this->selectChar(this->res, RN + 5, 2));
   }
 
   void parseIMEI() {
     byte RN = 2;
-    this->IMEI = this->selectChar(this->res, RN + 6, RN + 6 + 15);
+    this->IMEI = this->selectChar(this->res, RN + 6, 15);
     Serial.println(this->IMEI);
   }
 
@@ -100,6 +108,7 @@ public:
         delay(3000);
       }
     }
+    parseCIMI();
 
     while (1) {
       this->sendCMD("AT+CSQ");
@@ -110,6 +119,8 @@ public:
         delay(3000);
       }
     }
+
+    parseCSQ();
 
     while (1) {
       this->sendCMD("AT+CEREG?");

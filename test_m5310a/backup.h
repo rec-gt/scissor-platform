@@ -3,6 +3,9 @@
 class NBIoT {
 private:
   byte errCount = 0;
+  byte RN = 2;
+  String CIMI;
+  String CSQ;
   String IMEI;
   String response;
 
@@ -14,9 +17,18 @@ private:
     return this->response.indexOf(target) != -1;
   }
 
+  void parseCIMI() {
+    this->CIMI = this->response.substring(this->RN + 0, this->RN + 15);
+    Serial.println(this->CIMI);
+  }
+
+  void parseCSQ() {
+    this->CSQ = this->response.substring(this->RN + 5, this->RN + 5 + 2);
+    Serial.println(this->CSQ);
+  }
+
   void parseIMEI() {
-    byte RN = 2;
-    this->IMEI = this->response.substring(RN + 6, RN + 6 + 15);
+    this->IMEI = this->response.substring(this->RN + 6, this->RN + 6 + 15);
     Serial.println(this->IMEI);
   }
 
@@ -33,10 +45,31 @@ private:
 public:
   NBIoT(){};
 
+  bool sendCMD(String cmd, uint32_t timeout = 3000) {
+    delay(300);
+    unsigned long deadline = millis() + timeout;  // max = 24*60*60*1000 (86400000 / 1day), default 1s
+    NBIoTModule.println(cmd);
+    delay(300);
+
+    while (millis() < deadline) {
+      if (NBIoTModule.available()) {
+        this->response = NBIoTModule.readString();
+        Serial.println("CMD: " + cmd);
+        Serial.println(this->response);
+        this->clearBuffer();
+        return true;
+      }
+    }
+    this->clearBuffer();
+    return false;
+  }
+
+
   void init() {
     Serial.println("Initiating MQTT Module");
 
     NBIoTModule.begin(9600);
+
     this->clearBuffer();
 
     this->sendCMD("AT+CLAC");
@@ -73,6 +106,7 @@ public:
         delay(3000);
       }
     }
+    this->parseCIMI();
 
     while (1) {
       this->sendCMD("AT+CSQ");
@@ -83,6 +117,7 @@ public:
         delay(3000);
       }
     }
+    this->parseCSQ();
 
     while (1) {
       this->sendCMD("AT+CEREG?");
@@ -151,24 +186,6 @@ public:
     Serial.println("MQTT Init Finished");
   }
 
-  bool sendCMD(String cmd, uint32_t timeout = 3000) {
-    delay(1000);
-
-    unsigned long deadline = millis() + timeout;  // max = 24*60*60*1000 (86400000 / 1day), default 1s
-    NBIoTModule.println(cmd);
-
-    while (millis() < deadline) {
-      if (NBIoTModule.available()) {
-        this->response = NBIoTModule.readString();
-        Serial.println(cmd + ": ");
-        Serial.println(this->response);
-        this->clearBuffer();
-        return true;
-      }
-    }
-    this->clearBuffer();
-    return false;
-  }
 
   ~NBIoT(){};
 };

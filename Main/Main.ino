@@ -7,6 +7,7 @@
 #include "DownwardSensor.h"
 #include "BaseThresholdSwitch.h"
 #include "DisplayOLED.h"
+#include "NBIoT.h"
 #include "WarningSystem.h"
 #include "TrafficLight.h"
 #include "Utils.h"
@@ -28,9 +29,11 @@ Light powerLight(22);
 
 WarningSystem warningSystem(24);
 
-TrafficLight trafficLight(14, 16, 18);
+TrafficLight trafficLight(14, 15, 16);
 
 CountdownTimer countdownTimer;
+
+NBIoT nbIot;
 
 LaserSensor sensors[] = {
   LaserSensor(A0, 203),  // 現場或工廠fine-tune，遮擋鏡頭做測試
@@ -59,6 +62,8 @@ void setup() {
 
   displayOLED.init();
   detectSystem.set(SYS_RUNNING);
+
+  nbIot.init();
 
   powerLight.on();
 }
@@ -116,6 +121,9 @@ void loop() {
       detectSystem.set(SYS_RUNNING);
     }
   }
+
+  // ========= NB-IoT =========
+  nbIot.publish(sensorsManager.getSensors8Status(), sensorsManager.getSensors2Status(), detectSystem.getStatus(),);
 
   // ========= debugging =========
   // sensorsManager.printAll();

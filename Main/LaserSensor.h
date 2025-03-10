@@ -203,4 +203,23 @@ public:
       Serial.println(distance);
     }
   }
+
+  byte getSensors8Status() {
+    byte res = 255;
+
+    for (int i = 7; i >= 0; i--) {
+      if (this->laserSensors[i].isDetected) { res -= pow(2, i); }
+    }
+
+    return res;
+  }
+
+  byte getSensors3Status() {
+    byte res = 255;
+
+    for (int i = 11; i >= 8; i--) {
+      if (this->laserSensors[i].isDetected) { res -= pow(2, i); }
+    }
+    return res;
+  }
 };

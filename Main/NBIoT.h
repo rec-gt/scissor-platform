@@ -12,17 +12,10 @@ private:
   String IMEI;
   String response;
 
+  unsigned long previousMillis = 0;
+
   void clearBuffer() {
     while (NBIoTModule.read() >= 0) {}
-  }
-
-  void resetErrorCount() {
-    this->errCount = 0;
-  }
-
-  void resetModule() {
-    // cut power
-    // connect after 5s
   }
 
   bool resContain(char* target) {
@@ -51,7 +44,6 @@ private:
 
     if (this->errCount >= 10) {
       Serial.println("MQTT init failed");
-      this->resetModule();
     }
   }
 
@@ -83,7 +75,7 @@ public:
     this->clearBuffer();
   }
 
-  void init() {
+  bool init() {
     NBIoTModule.begin(9600);
 
     this->clearBuffer();
@@ -189,8 +181,23 @@ public:
       }
     }
 
-    this->resetErrorCount();
     Serial.println("MQTT Init Finished");
+
+    if (this->errCount > 10) {
+      return false;
+    }
+    return true;
+  }
+
+  void publish(byte sensors8Status, byte sensors3Status, SystemStatus systemStatus, bool isLiftedUp) {
+    // Digital Input + Output = sensorsStatus
+    // Analog Input[0] : 1 = RUNNING, ...
+    // Analog Input[1] : 0 = not lifted up, 1 = lifted up
+
+    if (millis() - previousMillis >= 30 * 1000) {
+      previousMillis = millis();
+      this->sendCMDFast("AT+MQTTPUB=\"rgt/" + String(this->IMEI) + "/in\",1,0,0,0,\"{\"seq\":1,\"csq\":" + String(this->CSQ) + ",\"sw\":0,\"din\":" + String(sensors8Status) + ",\"dout\":" + String(sensors3Status) + ",\"ain\":[" + String(systemStatus) + "," + String(isLiftedUp) + ",0,0],\"aout\":[0,0,0,0]}\"");
+    }
   }
 
   ~NBIoT(){};

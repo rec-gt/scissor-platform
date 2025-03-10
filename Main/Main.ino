@@ -61,9 +61,10 @@ void setup() {
   relay.cut();
 
   displayOLED.init();
-  detectSystem.set(SYS_RUNNING);
 
   nbIot.init();
+
+  detectSystem.set(SYS_RUNNING);
 
   powerLight.on();
 }
@@ -123,7 +124,7 @@ void loop() {
   }
 
   // ========= NB-IoT =========
-  nbIot.publish(sensorsManager.getSensors8Status(), sensorsManager.getSensors2Status(), detectSystem.getStatus(),);
+  nbIot.publish(sensorsManager.getSensors8Status(), sensorsManager.getSensors3Status(), detectSystem.getStatus(), downwardSensor.isUp());
 
   // ========= debugging =========
   // sensorsManager.printAll();

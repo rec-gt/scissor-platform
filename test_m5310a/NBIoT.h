@@ -57,11 +57,11 @@ private:
 public:
   NBIoT(){};
 
-  bool sendCMD(String cmd, uint32_t timeout = 3000) {
-    delay(300);
+  bool sendCMD(String cmd, uint32_t timeout = 1000) {
+    delay(100);
     unsigned long deadline = millis() + timeout;  // max = 24*60*60*1000 (86400000 / 1day), default 1s
     NBIoTModule.println(cmd);
-    delay(300);
+    delay(100);
 
     while (millis() < deadline) {
       if (NBIoTModule.available()) {
@@ -74,6 +74,12 @@ public:
     }
     this->clearBuffer();
     return false;
+  }
+
+  void sendCMDFast(String cmd) {
+    Serial.println("CMD: " + cmd);
+    NBIoTModule.println(cmd);
+    this->clearBuffer();
   }
 
   void init() {
@@ -92,7 +98,7 @@ public:
         break;
       } else {
         this->errHook(true);
-        delay(3000);
+        delay(1000);
       }
     }
 
@@ -103,7 +109,7 @@ public:
         break;
       } else {
         this->errHook(true);
-        delay(3000);
+        delay(1000);
       }
     }
 
@@ -113,7 +119,7 @@ public:
         break;
       } else {
         this->errHook(true);
-        delay(3000);
+        delay(1000);
       }
     }
     this->parseCSQ();
@@ -124,7 +130,7 @@ public:
         break;
       } else {
         this->errHook(true);
-        delay(3000);
+        delay(1000);
       }
     }
 
@@ -134,7 +140,7 @@ public:
         break;
       } else {
         this->errHook(true);
-        delay(3000);
+        delay(1000);
       }
     }
 
@@ -145,7 +151,7 @@ public:
         break;
       } else {
         this->errHook(true);
-        delay(3000);
+        delay(1000);
       }
     }
     this->parseCIMI();
@@ -158,7 +164,7 @@ public:
         break;
       } else {
         this->errHook(true);
-        delay(3000);
+        delay(1000);
       }
     }
     this->parseIMEI();
@@ -172,7 +178,7 @@ public:
         break;
       } else {
         this->errHook(true);
-        delay(3000);
+        delay(1000);
       }
     }
 
@@ -182,14 +188,13 @@ public:
         break;
       } else {
         this->errHook(true);
-        delay(3000);
+        delay(1000);
       }
     }
 
     this->resetErrorCount();
     Serial.println("MQTT Init Finished");
   }
-
 
   ~NBIoT(){};
 };

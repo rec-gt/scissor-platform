@@ -194,7 +194,7 @@ public:
     // Analog Input[0] : 1 = RUNNING, ...
     // Analog Input[1] : 0 = not lifted up, 1 = lifted up
 
-    if (millis() - previousMillis >= 30 * 1000) {
+    if (millis() - previousMillis >= 10 * 1000) {
       previousMillis = millis();
       this->sendCMDFast("AT+MQTTPUB=\"rgt/" + String(this->IMEI) + "/in\",1,0,0,0,\"{\"seq\":1,\"csq\":" + String(this->CSQ) + ",\"sw\":0,\"din\":" + String(sensors8Status) + ",\"dout\":" + String(sensors3Status) + ",\"ain\":[" + String(systemStatus) + "," + String(isLiftedUp) + ",0,0],\"aout\":[0,0,0,0]}\"");
     }

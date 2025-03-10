@@ -218,7 +218,7 @@ public:
     byte res = 255;
 
     for (int i = 11; i >= 8; i--) {
-      if (this->laserSensors[i].isDetected()) { res -= pow(2, i); }
+      if (this->laserSensors[i].isDetected()) { res -= pow(2, (i - 8)); }
     }
     return res;
   }

@@ -3,32 +3,57 @@
 class NBIoT {
 private:
   byte errCount = 0;
-  byte RN = 2;
-  String CIMI;
-  String CSQ;
-  String IMEI;
-  String response;
+  String response = "";  // 節省空間
+  char* res = "";        // 節省空間
+  char* IMEI = "";
 
   void clearBuffer() {
     while (NBIoTModule.read() >= 0) {}
   }
 
-  bool resContain(char* target) {
-    return this->response.indexOf(target) != -1;
+  bool resContain(const char* target) {
+    for (int i = 0; this->res[i] != '\0'; i++) {
+      bool found = true;
+      for (int j = 0; target[j] != '\0'; j++) {
+        if (this->res[i + j] != target[j]) {
+          found = false;
+          break;
+        }
+      }
+      if (found) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  void str2Char() {
+    this->res = const_cast<char*>(this->response.c_str());
+  }
+
+  char* selectChar(const char* str, byte start, byte length) {
+    char* dest = (char*)malloc(length + 1);
+    if (dest == NULL) {
+      return NULL;
+    }
+    strncpy(dest, str + start, length);
+    dest[length] = '\0';
+    return dest;
   }
 
   void parseCIMI() {
-    this->CIMI = this->response.substring(this->RN + 0, this->RN + 15);
-    Serial.println(this->CIMI);
+    byte RN = 2;
+    Serial.println(this->selectChar(this->res, RN + 0, 15));
   }
 
   void parseCSQ() {
-    this->CSQ = this->response.substring(this->RN + 5, this->RN + 5 + 2);
-    Serial.println(this->CSQ);
+    byte RN = 2;
+    Serial.println(this->selectChar(this->res, RN + 5, 2));
   }
 
   void parseIMEI() {
-    this->IMEI = this->response.substring(this->RN + 6, this->RN + 6 + 15);
+    byte RN = 2;
+    this->IMEI = this->selectChar(this->res, RN + 6, 15);
     Serial.println(this->IMEI);
   }
 
@@ -45,39 +70,16 @@ private:
 public:
   NBIoT(){};
 
-  bool sendCMD(String cmd, uint32_t timeout = 3000) {
-    delay(300);
-    unsigned long deadline = millis() + timeout;  // max = 24*60*60*1000 (86400000 / 1day), default 1s
-    NBIoTModule.println(cmd);
-    delay(300);
-
-    while (millis() < deadline) {
-      if (NBIoTModule.available()) {
-        this->response = NBIoTModule.readString();
-        Serial.println("CMD: " + cmd);
-        Serial.println(this->response);
-        this->clearBuffer();
-        return true;
-      }
-    }
-    this->clearBuffer();
-    return false;
-  }
-
-
   void init() {
     Serial.println("Initiating MQTT Module");
 
     NBIoTModule.begin(9600);
-
     this->clearBuffer();
-
-    this->sendCMD("AT+CLAC");
 
     // ask for 9600 baud rate
     while (1) {
       this->sendCMD("AT+NATSPEED=9600,30,0,0");
-      if (!this->resContain("ERROR")) {
+      if (this->resContain("OK")) {
         break;
       } else {
         errHook(true);
@@ -88,7 +90,7 @@ public:
     // check communication success
     while (1) {
       this->sendCMD("AT");
-      if (!this->resContain("ERROR")) {
+      if (this->resContain("OK")) {
         break;
       } else {
         errHook(true);
@@ -99,29 +101,30 @@ public:
     // get cimi
     while (1) {
       this->sendCMD("AT+CIMI");
-      if (!this->resContain("ERROR")) {
+      if (this->resContain("OK")) {
         break;
       } else {
         errHook(true);
         delay(3000);
       }
     }
-    this->parseCIMI();
+    parseCIMI();
 
     while (1) {
       this->sendCMD("AT+CSQ");
-      if (!this->resContain("ERROR")) {
+      if (this->resContain("OK")) {
         break;
       } else {
         errHook(true);
         delay(3000);
       }
     }
-    this->parseCSQ();
+
+    parseCSQ();
 
     while (1) {
       this->sendCMD("AT+CEREG?");
-      if (!this->resContain("ERROR")) {
+      if (this->resContain("OK")) {
         break;
       } else {
         errHook(true);
@@ -131,7 +134,7 @@ public:
 
     while (1) {
       this->sendCMD("AT+CEREG=1");
-      if (!this->resContain("ERROR")) {
+      if (this->resContain("OK")) {
         break;
       } else {
         errHook(true);
@@ -141,7 +144,7 @@ public:
 
     while (1) {
       this->sendCMD("AT+CGATT?");
-      if (!this->resContain("ERROR")) {
+      if (this->resContain("OK")) {
         break;
       } else {
         errHook(true);
@@ -151,7 +154,7 @@ public:
 
     while (1) {
       this->sendCMD("AT+CGSN=1");
-      if (!this->resContain("ERROR")) {
+      if (this->resContain("OK")) {
         break;
       } else {
         errHook(true);
@@ -164,8 +167,8 @@ public:
     while (1) {
       this->sendCMD("AT+MQTTDISC");
       this->sendCMD("AT+MQTTDEL");
-      this->sendCMD("AT+MQTTCFG=\"iot.rec-gt.com\",1880,\"" + this->IMEI + "\",60,\"tswh\",\"1Wo=[6vA0m\",1");
-      if (!this->resContain("ERROR")) {
+      this->sendCMD("AT+MQTTCFG=\"iot.rec-gt.com\",1880,\"869976034806621\",60,\"tswh\",\"1Wo=[6vA0m\",1");
+      if (this->resContain("OK")) {
         break;
       } else {
         errHook(true);
@@ -174,8 +177,8 @@ public:
     }
 
     while (1) {
-      this->sendCMD("AT+MQTTOPEN=1,1,1,0,1,\"rgt/" + this->IMEI + "/dev\",\"gone\"");
-      if (!this->resContain("ERROR")) {
+      this->sendCMD("AT+MQTTOPEN=1,1,1,0,1,\"rgt/869976034806621/dev\",\"gone\"");
+      if (this->resContain("OK")) {
         break;
       } else {
         errHook(true);
@@ -186,6 +189,41 @@ public:
     Serial.println("MQTT Init Finished");
   }
 
+  char* concatCharN(char** charArr, size_t arrSize) {
+    int totalCharLen = 0;
+    for (size_t i = 0; i < arrSize; i++) {
+      totalCharLen += strlen(charArr[i]);
+    }
+    char* newChar = new char[totalCharLen + 1];
+
+    newChar[0] = '\0';
+
+    for (size_t i = 0; i < arrSize; i++) {
+      strcat(newChar, charArr[i]);
+    }
+
+    return newChar;
+  }
+
+  bool sendCMD(String cmd, uint32_t timeout = 1000) {
+    delay(300);
+    unsigned long deadline = millis() + timeout;  // max = 24*60*60*1000 (86400000 / 1day), default 1s
+    NBIoTModule.println(cmd);
+    delay(300);
+
+    while (millis() < deadline) {
+      if (NBIoTModule.available()) {
+        this->response = NBIoTModule.readString();
+        this->str2Char();
+        Serial.print(cmd + ": ");
+        Serial.println(this->response);
+        this->clearBuffer();
+        return true;
+      }
+    }
+    this->clearBuffer();
+    return false;
+  }
 
   ~NBIoT(){};
 };

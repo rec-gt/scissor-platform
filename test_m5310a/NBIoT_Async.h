@@ -2,6 +2,27 @@
 
 class NBIoT {
 private:
+  bool NBIOT_AVAILABLE = false;
+  enum NBIOT_STATUS {
+    // allow when NBIOT_AVAILABLE = false
+    IOT_INIT_CLAC,
+    IOT_INIT_9600,
+    IOT_INIT_AT,
+    IOT_INIT_CIMI,
+    IOT_INIT_CSQ,
+    IOT_INIT_CEREG,
+    IOT_INIT_CSQ,
+    IOT_INIT_CSQ,
+    IOT_INIT_CSQ,
+    IOT_INIT_CSQ,
+
+    // allow when NBIOT_AVAILABLE = true
+    IOT_SYS_RUNNING,
+    IOT_SYS_STOPPED,
+    IOT_SYS_LIFTUP,
+    IOT_SYS_FAILURE
+  };
+
   byte errCount = 0;
   byte RN = 2;
   String CIMI;
@@ -189,7 +210,6 @@ public:
     this->resetErrorCount();
     Serial.println("MQTT Init Finished");
   }
-
 
   ~NBIoT(){};
 };

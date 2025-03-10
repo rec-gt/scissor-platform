@@ -1,11 +1,11 @@
-#include "backup.h";
-// #include "NBIoT.h";
+#include "NBIoT.h";
 
 NBIoT nbiot;
 
 void setup() {
   Serial.begin(9600);
   nbiot.init();
+  nbiot.sendCMD("AT+MQTTPUB=\"rgt/869976034806621/chirpstack\",1,0,0,0,\"{\"code\":\"Tim-Test\"\t,\"sensors\":[1700,1700,1700,1700,1700,1700,1700,1700,1700,1700,1700]\t}\"");
 }
 
 void loop() {

@@ -124,7 +124,7 @@ void loop() {
   }
 
   // ========= NB-IoT =========
-  nbIot.publish(sensorsManager.getSensors8Status(), sensorsManager.getSensors3Status(), detectSystem.getStatus(), downwardSensor.isUp());
+  nbIot.publish(sensorsManager.getSensors8Status(), sensorsManager.getSensors2Status(), detectSystem.getStatus(), downwardSensor.isUp());
 
   // ========= debugging =========
   // sensorsManager.printAll();

@@ -215,10 +215,9 @@ public:
   }
 
   byte getSensors2Status() {
-    byte res = 252;
-
+    byte res = 0;
     for (int i = 10; i >= 8; i--) {
-      if (this->laserSensors[i].isDetected()) { res -= pow(2, (i - 8)); }
+      if (this->laserSensors[i].isDetected()) { res += pow(2, (i - 8)); }
     }
     return res;
   }

@@ -34,8 +34,9 @@ CountdownTimer countdownTimer;
 NBIoT nbiot;
 
 LaserSensor sensors[] = {
-  LaserSensor(A0, 800, 500, 203),  // 工廠fine-tune，遮擋鏡頭做測試
-  LaserSensor(A1, 800, 500, 216),
+  // (longer threshold, shorter threshold, fine tune)
+  LaserSensor(A0, 1200, 500, 203),  // 工廠fine-tune，遮擋鏡頭做測試
+  LaserSensor(A1, 1200, 500, 216),
   LaserSensor(A2, 800, 500, 215),
   LaserSensor(A3, 800, 500, 232),
   LaserSensor(A4, 800, 500, 222),
@@ -58,7 +59,7 @@ void setup() {
 
   displayOLED.init();
 
-  nbiot.init();
+  // nbiot.init();
 
   detectSystem.set(SYS_RUNNING);
 
@@ -87,6 +88,7 @@ void loop() {
     if (sensorsManager.isOneDetected()) {
       detectSystem.set(SYS_STOPPED);
     }
+
     if (!sensorsManager.areAllHealthy()) {
       detectSystem.set(SYS_FAILURE);
     }
@@ -118,7 +120,8 @@ void loop() {
   nbiot.publish(sensorsManager.getSensors8Status(), sensorsManager.getSensors2Status(), detectSystem.getStatus(), 0);
 
   // ========= debugging =========
-  sensorsManager.printAll();
+  sensorsManager.print(0);
+  // sensorsManager.printAll();
   // sensorsManager.calibrate();
 
   delay(1000);

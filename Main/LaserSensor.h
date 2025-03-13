@@ -8,6 +8,8 @@ private:
 
   // threshold and buffer
   int baseThreshold = CONST_LONGER_THRESHOLED;
+  int longerThreshold = CONST_LONGER_THRESHOLED;
+  int shorterThreshold = CONST_SHORTER_THRESHOLED;
   int tunningMinReading = 0;  // added when constructed, for tunning each sensors, can be +ve/-ve number
   int escapeBuffer = 0;       // used when vehicle suddenly stop
 
@@ -37,8 +39,8 @@ private:
 public:
   LaserSensor() {}
 
-  LaserSensor(byte pin, int tunningMinReading)
-    : pin(pin), tunningMinReading(tunningMinReading) {
+  LaserSensor(byte pin, int longerThreshold, int shorterThreshold, int tunningMinReading)
+    : pin(pin), longerThreshold(longerThreshold), shorterThreshold(shorterThreshold), tunningMinReading(tunningMinReading) {
     pinMode(this->pin, INPUT);
   }
 
@@ -174,7 +176,7 @@ public:
     for (int i = 0; i < this->num; i++) {
       if (this->laserSensors[i].healthCheck() == false) {
 
-        char* charArr[] = { utils.num2Char(i), "號感應器故障" };
+        char* charArr[] = { " ", utils.num2Char(i), " 號感應器故障" };
         char* c = utils.concatCharN(charArr, sizeof(charArr) / sizeof(charArr[0]));
         displayOLED.print("", c, "", 500);
 
@@ -197,6 +199,7 @@ public:
 
   void printAll() {
     for (int i = 0; i < this->num; i++) {
+      this->laserSensors[i].listen();
       float distance = this->laserSensors[i].getDistance();
       Serial.print(i);
       Serial.print(", ");

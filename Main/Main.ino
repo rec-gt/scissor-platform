@@ -34,16 +34,16 @@ CountdownTimer countdownTimer;
 NBIoT nbIot;
 
 LaserSensor sensors[] = {
-  LaserSensor(A0, 203),  // 現場或工廠fine-tune，遮擋鏡頭做測試
-  LaserSensor(A1, 216),
-  LaserSensor(A2, 215),
-  LaserSensor(A3, 232),
-  LaserSensor(A4, 222),
-  LaserSensor(A5, 216),
-  LaserSensor(A6, 234),
-  LaserSensor(A7, 229),
-  LaserSensor(A8, 227),
-  LaserSensor(A9, 222),
+  LaserSensor(A0, 800, 500, 203),  // 工廠fine-tune，遮擋鏡頭做測試
+  LaserSensor(A1, 800, 500, 216),
+  LaserSensor(A2, 800, 500, 215),
+  LaserSensor(A3, 800, 500, 232),
+  LaserSensor(A4, 800, 500, 222),
+  LaserSensor(A5, 800, 500, 216),
+  LaserSensor(A6, 800, 500, 234),
+  LaserSensor(A7, 800, 500, 229),
+  LaserSensor(A8, 800, 500, 227),
+  LaserSensor(A9, 800, 500, 222),
 };
 
 LaserSensorManager sensorsManager(sensors, sizeof(sensors) / sizeof(sensors[0]));
@@ -118,7 +118,7 @@ void loop() {
   nbIot.publish(sensorsManager.getSensors8Status(), sensorsManager.getSensors2Status(), detectSystem.getStatus(), 0);
 
   // ========= debugging =========
-  // sensorsManager.printAll();
+  sensorsManager.printAll();
   // sensorsManager.calibrate();
 
   delay(10);

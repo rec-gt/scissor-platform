@@ -35,16 +35,16 @@ NBIoT nbiot;
 
 LaserSensor sensors[] = {
   // (longer threshold, shorter threshold, fine tune)
-  LaserSensor(A0, 1200, 500, 203),  // 工廠fine-tune，遮擋鏡頭做測試
-  LaserSensor(A1, 1200, 500, 216),
-  LaserSensor(A2, 800, 500, 215),
-  LaserSensor(A3, 800, 500, 232),
-  LaserSensor(A4, 800, 500, 222),
-  LaserSensor(A5, 800, 500, 216),
-  LaserSensor(A6, 800, 500, 234),
-  LaserSensor(A7, 800, 500, 229),
-  LaserSensor(A8, 800, 500, 227),
-  LaserSensor(A9, 800, 500, 222),
+  LaserSensor(A0, 1200, 800, 203),  // 工廠fine-tune，遮擋鏡頭做測試
+  // LaserSensor(A1, 800, 500, 216),
+  // LaserSensor(A2, 800, 500, 215),
+  // LaserSensor(A3, 800, 500, 232),
+  // LaserSensor(A4, 800, 500, 222),
+  // LaserSensor(A5, 800, 500, 216),
+  // LaserSensor(A6, 800, 500, 234),
+  // LaserSensor(A7, 800, 500, 229),
+  // LaserSensor(A8, 800, 500, 227),
+  // LaserSensor(A9, 800, 500, 222),
 };
 
 LaserSensorManager sensorsManager(sensors, sizeof(sensors) / sizeof(sensors[0]));
@@ -73,7 +73,7 @@ void loop() {
 
   // ========= handling threshold switch =========
   baseThresholdSwitch.listen();
-  sensorsManager.changeBaseThreshold(baseThresholdSwitch.on());
+  sensorsManager.changeAllBaseThreshold(baseThresholdSwitch.on());
 
 
   // ========= controlling traffic light =========
@@ -120,7 +120,7 @@ void loop() {
   // nbiot.publish(sensorsManager.getSensors8Status(), sensorsManager.getSensors2Status(), detectSystem.getStatus(), 0);
 
   // ========= debugging =========
-  sensorsManager.print(1);
+  sensorsManager.print(0);
   // sensorsManager.printAll();
   // sensorsManager.calibrate();
 

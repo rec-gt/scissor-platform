@@ -111,16 +111,15 @@ public:
   bool isOneDetected() {
     for (int i = 0; i < this->num; i++) {
       this->laserSensors[i].listen();
-      Serial.print(this->laserSensors[i].isDetected());
       if (this->laserSensors[i].isDetected()) {
-        this->printOneDetected(i);
+        this->showOneDetected(i);
         return true;
       }
     }
     return false;
   }
 
-  void printOneDetected(byte i) {
+  void showOneDetected(byte i) {
     char* orientation;
     if (i <= 1) {
       orientation = "前方 ";
@@ -161,7 +160,7 @@ public:
     return allEscaped;
   }
 
-  void changeBaseThreshold(bool toggle) {
+  void changeAllBaseThreshold(bool toggle) {
     for (int i = 0; i < this->num; i++) {
       this->laserSensors[i].changeBaseThreshold(toggle);
     }
@@ -195,7 +194,7 @@ public:
   void print(byte i) {
     Serial.print(i);
     Serial.print(", ");
-    Serial.println(this->laserSensors[i].getDistance());
+    Serial.print(this->laserSensors[i].getDistance());
     Serial.print(", ");
     Serial.println(this->laserSensors[i].isDetected());
   }

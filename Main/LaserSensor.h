@@ -44,14 +44,6 @@ public:
     pinMode(this->pin, INPUT);
   }
 
-  void changeBaseThreshold(bool toggle) {
-    this->baseThreshold = toggle ? this->shorterThreshold : this->longerThreshold;
-  }
-
-  void setEscapeBuffer(bool toggle) {
-    this->escapeBuffer = toggle ? CONST_ESCAPE_BUFFER : 0;
-  }
-
   void listen() {
     int reading = analogRead(this->pin);
 
@@ -69,6 +61,14 @@ public:
       this->detected = false;
       this->lastMillis = millis();
     }
+  }
+
+  void changeBaseThreshold(bool toggle) {
+    this->baseThreshold = toggle ? this->shorterThreshold : this->longerThreshold;
+  }
+
+  void setEscapeBuffer(bool toggle) {
+    this->escapeBuffer = toggle ? CONST_ESCAPE_BUFFER : 0;
   }
 
   float getDistance() {
@@ -92,17 +92,6 @@ public:
     this->averageCount++;
     Serial.print("Min. Reading: ");
     Serial.println(this->averageReading / this->averageCount);
-  }
-
-  void print() {
-    // Serial.print(analogRead(this->pin));
-    if (this->isDetected()) {
-      Serial.print("detected");
-    } else {
-      Serial.print("not detected");
-    }
-    Serial.print(", ");
-    Serial.println(this->calculateDistance(analogRead(this->pin)));
   }
 };
 
@@ -204,7 +193,11 @@ public:
   }
 
   void print(byte i) {
-    Serial.print(this->laserSensors[i].isDetected());
+    Serial.print(i);
+    Serial.print(", ");
+    Serial.println(this->laserSensors[i].getDistance());
+    Serial.print(", ");
+    Serial.println(this->laserSensors[i].isDetected());
   }
 
   void printAll() {

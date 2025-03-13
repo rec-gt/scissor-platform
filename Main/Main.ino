@@ -117,10 +117,10 @@ void loop() {
   }
 
   // ========= NB-IoT =========
-  nbiot.publish(sensorsManager.getSensors8Status(), sensorsManager.getSensors2Status(), detectSystem.getStatus(), 0);
+  // nbiot.publish(sensorsManager.getSensors8Status(), sensorsManager.getSensors2Status(), detectSystem.getStatus(), 0);
 
   // ========= debugging =========
-  sensorsManager.print(0);
+  sensorsManager.print(1);
   // sensorsManager.printAll();
   // sensorsManager.calibrate();
 

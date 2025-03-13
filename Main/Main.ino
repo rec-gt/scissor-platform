@@ -31,7 +31,7 @@ TrafficLight trafficLight(14, 15, 16);
 
 CountdownTimer countdownTimer;
 
-NBIoT nbIot;
+NBIoT nbiot;
 
 LaserSensor sensors[] = {
   LaserSensor(A0, 800, 500, 203),  // 工廠fine-tune，遮擋鏡頭做測試
@@ -58,7 +58,7 @@ void setup() {
 
   displayOLED.init();
 
-  nbIot.init();
+  nbiot.init();
 
   detectSystem.set(SYS_RUNNING);
 
@@ -115,7 +115,7 @@ void loop() {
   }
 
   // ========= NB-IoT =========
-  nbIot.publish(sensorsManager.getSensors8Status(), sensorsManager.getSensors2Status(), detectSystem.getStatus(), 0);
+  nbiot.publish(sensorsManager.getSensors8Status(), sensorsManager.getSensors2Status(), detectSystem.getStatus(), 0);
 
   // ========= debugging =========
   sensorsManager.printAll();

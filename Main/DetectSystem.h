@@ -1,6 +1,7 @@
 #include "Arduino.h"
 #include "SystemEnums.h"
 #include "DisplayOLED.h"
+#include "NBIoT.h"
 
 class DetectSystem {
 private:
@@ -13,6 +14,7 @@ public:
   }
 
   void set(SystemStatus status) {
+
     if (status == this->lastStatus) {
       return;
     }

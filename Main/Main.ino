@@ -4,14 +4,12 @@
 #include "Light.h"
 #include "Countdown.h"
 #include "LaserSensor.h"
-#include "DownwardSensor.h"
 #include "BaseThresholdSwitch.h"
 #include "DisplayOLED.h"
 #include "NBIoT.h"
 #include "WarningSystem.h"
 #include "TrafficLight.h"
 #include "Utils.h"
-
 
 DetectSystem detectSystem;
 
@@ -48,8 +46,6 @@ LaserSensor sensors[] = {
   LaserSensor(A9, 222),
 };
 
-DownwardSensor downwardSensor = DownwardSensor(A10, 216);
-
 LaserSensorManager sensorsManager(sensors, sizeof(sensors) / sizeof(sensors[0]));
 
 void setup() {
@@ -62,7 +58,7 @@ void setup() {
 
   displayOLED.init();
 
-  nbIot.init();
+  // nbIot.init();
 
   detectSystem.set(SYS_RUNNING);
 
@@ -80,13 +76,8 @@ void loop() {
 
 
   // ========= controlling traffic light =========
-  downwardSensor.listen();
+  trafficLight.listen(sensorsManager.getMinDistance());
 
-  if (downwardSensor.isUp()) {
-    trafficLight.listen(sensorsManager.getMinDistance());
-  } else {
-    trafficLight.off();
-  }
 
   // ========= controlling detection system =========
   if (detectSystem.is(SYS_RUNNING)) {
@@ -124,13 +115,11 @@ void loop() {
   }
 
   // ========= NB-IoT =========
-  nbIot.publish(sensorsManager.getSensors8Status(), sensorsManager.getSensors2Status(), detectSystem.getStatus(), downwardSensor.isUp());
+  nbIot.publish(sensorsManager.getSensors8Status(), sensorsManager.getSensors2Status(), detectSystem.getStatus(), 0);
 
   // ========= debugging =========
   // sensorsManager.printAll();
   // sensorsManager.calibrate();
-  // downwardSensor.calibrateReading();
-  // downwardSensor.calibrateDistance();
 
   delay(10);
 }

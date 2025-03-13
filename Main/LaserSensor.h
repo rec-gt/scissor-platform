@@ -174,7 +174,7 @@ public:
     for (int i = 0; i < this->num; i++) {
       if (this->laserSensors[i].healthCheck() == false) {
 
-        char* charArr[] = { "感應器 ", utils.num2Char(i + 1), " 故障" };
+        char* charArr[] = { utils.num2Char(i), "號感應器故障" };
         char* c = utils.concatCharN(charArr, sizeof(charArr) / sizeof(charArr[0]));
         displayOLED.print("", c, "", 500);
 

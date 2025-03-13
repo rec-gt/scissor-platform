@@ -58,7 +58,7 @@ void setup() {
 
   displayOLED.init();
 
-  // nbIot.init();
+  nbIot.init();
 
   detectSystem.set(SYS_RUNNING);
 
@@ -121,7 +121,7 @@ void loop() {
   sensorsManager.printAll();
   // sensorsManager.calibrate();
 
-  delay(10);
+  delay(1000);
 }
 
 void countDownCallback() {

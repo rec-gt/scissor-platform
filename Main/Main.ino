@@ -59,7 +59,7 @@ void setup() {
 
   displayOLED.init();
 
-  // nbiot.init();
+  nbiot.init();
 
   detectSystem.set(SYS_RUNNING);
 
@@ -117,7 +117,7 @@ void loop() {
   }
 
   // ========= NB-IoT =========
-  // nbiot.publish(sensorsManager.getSensors8Status(), sensorsManager.getSensors2Status(), detectSystem.getStatus(), 0);
+  nbiot.publish(sensorsManager.getSensors8Status(), sensorsManager.getSensors2Status(), detectSystem.getStatus(), 0);
 
   // ========= debugging =========
   sensorsManager.print(0);

@@ -6,34 +6,17 @@ class LaserSensor {
 private:
   byte pin;
 
-  // threshold and buffer
-  int baseThreshold = CONST_LONGER_THRESHOLED;
-  int longerThreshold = CONST_LONGER_THRESHOLED;
-  int shorterThreshold = CONST_SHORTER_THRESHOLED;
-  int tunningMinReading = 0;  // added when constructed, for tunning each sensors, can be +ve/-ve number
-  int escapeBuffer = 0;       // used when vehicle suddenly stop
-
-  // measured distance
   float measuredDistance;
-
-  // for debounce
-  unsigned long lastMillis;
-  bool detected = false;
-
-  // for calibration
   float averageReading = 0;
   float averageCount = 0;
-
-  // for detected senson
-  byte detectedNum;
 
   float calculateDistance(float reading) {
     float minReading = this->tunningMinReading;
     float maxReading = 1023;
-    float minSensor = 0;
-    float maxSensor = 1750;
+    float minDistance = 0;
+    float maxDistance = 1750;
 
-    return ((reading - maxReading) / (minReading - maxReading)) * (minSensor - maxSensor) + maxSensor;
+    return ((reading - maxReading) / (minReading - maxReading)) * (minDistance - maxDistance) + maxDistance;
   }
 
 public:

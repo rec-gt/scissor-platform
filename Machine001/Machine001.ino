@@ -23,7 +23,7 @@ BaseThresholdSwitch baseThresholdSwitch(12);
 
 Relay relay(25);
 
-Light TenSecondLight(26);
+Light tenSecondLight(26);
 
 Light powerLight(27);
 
@@ -102,6 +102,7 @@ void loop() {
   } else if (detectSystem.is(SYS_ALLOW_10S)) {
     relay.connect();
     warningSystem.off();
+    tenSecondLight.on();
     countdownTimer.countdown(countDownCallback);
   } else if (detectSystem.is(SYS_FAILURE)) {
     relay.cut();
@@ -121,4 +122,5 @@ void loop() {
 
 void countDownCallback() {
   detectSystem.set(SYS_RUNNING);
+  tenSecondLight.off();
 }

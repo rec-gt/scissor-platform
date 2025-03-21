@@ -21,9 +21,9 @@ PressButton pressButton(12);
 
 BaseThresholdSwitch baseThresholdSwitch(12);
 
-Relay relay(25);
+Relay relay(26);
 
-Light tenSecondLight(26);
+Light tenSecondLight(25);
 
 Light powerLight(27);
 
@@ -114,10 +114,10 @@ void loop() {
 
   // ========= debugging =========
   // sensorsManager.print(0);
-  sensorsManager.printAll();
+  // sensorsManager.printAll();
   // sensorsManager.calibrate();
 
-  delay(1000);
+  delay(10);
 }
 
 void countDownCallback() {

@@ -19,7 +19,7 @@ Utils utils;
 
 PressButton pressButton(12);
 
-BaseThresholdSwitch baseThresholdSwitch(12);
+BaseThresholdSwitch baseThresholdSwitch(14);
 
 Relay relay(26);
 
@@ -53,6 +53,8 @@ LaserSensorManager sensorsManager(sensors, sizeof(sensors) / sizeof(sensors[0]))
 
 void setup() {
   Serial.begin(9600);
+
+  trafficLight.off();
 
   displayOLED.init();
 
@@ -90,6 +92,7 @@ void loop() {
   } else if (detectSystem.is(SYS_STOPPED)) {
     relay.cut();
     warningSystem.on();
+    tenSecondLight.on();
 
     if (sensorsManager.areAllEscaped()) {  // 1. sensor keep detection, once escape from obstacle, switch to RUNNING
       detectSystem.set(SYS_RUNNING);
@@ -102,7 +105,7 @@ void loop() {
   } else if (detectSystem.is(SYS_ALLOW_10S)) {
     relay.connect();
     warningSystem.off();
-    tenSecondLight.on();
+    tenSecondLight.off();
     countdownTimer.countdown(countDownCallback);
   } else if (detectSystem.is(SYS_FAILURE)) {
     relay.cut();
@@ -114,13 +117,12 @@ void loop() {
 
   // ========= debugging =========
   // sensorsManager.print(0);
-  // sensorsManager.printAll();
+  sensorsManager.printAll();
   // sensorsManager.calibrate();
 
-  delay(10);
+  delay(1000);
 }
 
 void countDownCallback() {
   detectSystem.set(SYS_RUNNING);
-  tenSecondLight.off();
 }

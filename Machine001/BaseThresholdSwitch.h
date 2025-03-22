@@ -15,6 +15,7 @@ public:
 
   void listen() {
     byte reading = digitalRead(this->pin);
+    Serial.println(reading);
 
     if (reading != this->lastState) {
       if ((millis() - this->lastMillis) > 50) {
@@ -26,7 +27,7 @@ public:
     }
   }
 
-  bool on() { // on = longer threshold
+  bool on() {  // on = longer threshold
     return this->state == HIGH;
   }
 };

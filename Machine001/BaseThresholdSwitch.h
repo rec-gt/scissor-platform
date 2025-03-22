@@ -15,8 +15,7 @@ public:
 
   void listen() {
     byte reading = digitalRead(this->pin);
-    Serial.println(reading);
-
+    
     if (reading != this->lastState) {
       if ((millis() - this->lastMillis) > 50) {
         this->state = reading;

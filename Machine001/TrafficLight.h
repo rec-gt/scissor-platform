@@ -59,15 +59,15 @@ public:
 
   void listen(int distance) {
     if (distance <= 500) {  // enter the RED signal range
-      if (millis() - this->lastMillis > 500) {
+      if (millis() - this->lastMillis > 1000) {
         this->red();
       }
     } else if ((500 < distance && distance <= 800)) {  // enter the YELLOW signal range
-      if (millis() - this->lastMillis > 500) {
+      if (millis() - this->lastMillis > 1000) {
         this->yellow();
       }
     } else if (800 < distance) {  // enter the GREEN signal range
-      if (millis() - this->lastMillis > 500) {
+      if (millis() - this->lastMillis > 1000) {
         this->green();
       }
     } else {

@@ -36,8 +36,8 @@ CountdownTimer countdownTimer;
 NBIoT nbiot;
 
 LaserSensor sensors[] = {
-  // (longer threshold, shorter threshold, fine tune)
-  LaserSensor(A0, 800, 500, 203),  // 工廠fine-tune，遮擋鏡頭做測試
+  // format: (pin, longer_threshold, shorter_threshold, fine_tune)
+  LaserSensor(A0, 800, 500, 203),
   LaserSensor(A1, 800, 500, 216),
   LaserSensor(A2, 800, 500, 215),
   LaserSensor(A3, 800, 500, 232),
@@ -81,6 +81,7 @@ void loop() {
   if (detectSystem.is(SYS_RUNNING)) {
     relay.connect();
     warningSystem.off();
+    tenSecondLight.off();
 
     if (sensorsManager.isOneDetected()) {
       detectSystem.set(SYS_STOPPED);
@@ -117,10 +118,10 @@ void loop() {
 
   // ========= debugging =========
   // sensorsManager.print(0);
-  sensorsManager.printAll();
+  // sensorsManager.printAll();
   // sensorsManager.calibrate();
 
-  delay(1000);
+  delay(50);
 }
 
 void countDownCallback() {

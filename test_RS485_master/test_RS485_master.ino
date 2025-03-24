@@ -1,14 +1,13 @@
-#define RS485_SERIAL Serial3
-#define RS485_CTRL_PIN 31
+#include "RS485.h"
+
+RS485 rs485(31);
 
 void setup() {
   Serial.begin(9600);
-  RS485_SERIAL.begin(9600);
-  pinMode(RS485_CTRL_PIN, OUTPUT);
-  digitalWrite(RS485_CTRL_PIN, HIGH);
+  rs485.mode(1);
 }
 
 void loop() {
-  RS485_SERIAL.print("HI");
+  rs485.sendMsg(String(random(300)));
   delay(1000);
 }

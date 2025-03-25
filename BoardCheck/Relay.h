@@ -1,6 +1,5 @@
 #include "Arduino.h"
 
-// Relay default is LOW, and is NC, LOW=NC, HIGH=NO
 class Relay {
 private:
   byte pin;

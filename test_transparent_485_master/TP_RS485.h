@@ -1,20 +1,20 @@
 #include "Arduino.h"
 
-#ifndef RS485_h
-#define RS485_h
+#ifndef TP_RS485_h
+#define TP_RS485_h
 
-#define RS485_Serial Serial1
+#define TP_RS485_Serial Serial1
 
-class RS485 {
+class TP_RS485 {
 private:
   byte pin;  // DE & DR pin
   String lastSendStr = "";
   String receivedStr = "";
 
 public:
-  RS485(byte pin)
+  TP_RS485(byte pin)
     : pin(pin) {
-    RS485_Serial.begin(9600);
+    TP_RS485_Serial.begin(9600);
     pinMode(this->pin, OUTPUT);
   }
 
@@ -24,7 +24,7 @@ public:
 
   void sendMsg(String sendStr) {
     if (this->lastSendStr != sendStr) {
-      RS485_Serial.print(sendStr);
+      TP_RS485_Serial.print(sendStr);
       this->lastSendStr == sendStr;
 
       Serial.print("Send, ");
@@ -34,8 +34,8 @@ public:
 
   void waitForMsg() {
     this->receivedStr = "";
-    while (RS485_Serial.available()) {
-      receivedStr += (char)RS485_Serial.read();
+    while (TP_RS485_Serial.available()) {
+      receivedStr += (char)TP_RS485_Serial.read();
     }
   }
 
@@ -43,9 +43,9 @@ public:
     return this->receivedStr;
   }
 
-  ~RS485() {}
+  ~TP_RS485() {}
 };
 
-extern RS485;
+extern TP_RS485;
 
 #endif

@@ -8,6 +8,12 @@ void setup() {
 }
 
 void loop() {
-  rs485.sendMsg(String(random(300)));
-  delay(1000);
+  rs485.mode(1);
+  rs485.sendMsg("[FPCP69445800CD39]");
+  delay(500);
+
+  rs485.mode(0);
+  rs485.waitForMsg();
+  Serial.print(rs485.getMsg());
+  delay(500);
 }

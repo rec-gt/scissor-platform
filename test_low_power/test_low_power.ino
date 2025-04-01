@@ -4,11 +4,11 @@
 #include "PressButton.h"
 #include "ContactLine.h"
 
-ContactLine line1("line1", 8);
-ContactLine line2("line2", 9);
-ContactLine line3("line3", 10);
-ContactLine line4("line4", 11);
-ContactLine line5("line5", 12);
+ContactLine line1("line1", 2);
+ContactLine line2("line2", 3);
+ContactLine line3("line3", 4);
+ContactLine line4("line4", 5);
+ContactLine line5("line5", 6);
 
 ContactLine lines[] = {
   line1,
@@ -43,7 +43,7 @@ void setWatchDog() {
 
 
 void setup() {
-  wdt_enable(WDTO_8S);
+  wdt_enable(WDTO_4S);
   Serial.begin(9600);
   Serial.println("Program Start");
   checkLines();

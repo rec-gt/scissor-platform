@@ -12,17 +12,10 @@ private:
   String IMEI;
   String response;
 
+  unsigned long previousMillis = 0;
+
   void clearBuffer() {
     while (NBIoTModule.read() >= 0) {}
-  }
-
-  void resetErrorCount() {
-    this->errCount = 0;
-  }
-
-  void resetModule() {
-    // cut power
-    // connect after 5s
   }
 
   bool resContain(char* target) {
@@ -51,7 +44,6 @@ private:
 
     if (this->errCount >= 10) {
       Serial.println("MQTT init failed");
-      this->resetModule();
     }
   }
 
@@ -83,7 +75,7 @@ public:
     this->clearBuffer();
   }
 
-  void init() {
+  bool init() {
     NBIoTModule.begin(9600);
 
     this->clearBuffer();
@@ -189,8 +181,12 @@ public:
       }
     }
 
-    this->resetErrorCount();
     Serial.println("MQTT Init Finished");
+
+    if (this->errCount > 10) {
+      return false;
+    }
+    return true;
   }
 
   ~NBIoT(){};

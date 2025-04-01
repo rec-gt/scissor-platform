@@ -20,7 +20,11 @@ public:
     return this->name;
   }
 
+  byte getState() {
+    return this->state;
+  }
+
   bool isBreaked() {
-    return this->state == LOW;
+    return this->state == HIGH;
   }
 };

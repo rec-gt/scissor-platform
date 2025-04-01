@@ -18,29 +18,60 @@ ContactLine lines[] = {
   line5
 };
 
-int wdt = 1;
+const size_t lines_num = sizeof(lines) / sizeof(lines[0]);
+
+volatile byte wdCntSeconds = 0;
+
+ISR(WDT_vect) {
+  wdCntSeconds++;
+}
+
+void setWatchDog() {
+  cli();
+  // pat dog
+  wdt_reset();
+  // reset watchdog reset flag only
+  MCUSR &= ~(1 << WDRF);
+  // enable watchdog and enable change watchdog
+  WDTCSR |= (1 << WDCE) | (1 << WDE);
+  // set time 8s
+  WDTCSR = (1 << WDP2) | (1 << WDP1);
+  // enable watchdog interupt
+  WDTCSR |= (1 << WDIE);
+  sei();
+}
+
 
 void setup() {
   Serial.begin(9600);
-  Serial.println("Reseting...");
-
-  wdt_enable(WDTO_4S);
+  Serial.println("Program Start");
+  delay(100);
+  set_sleep_mode(SLEEP_MODE_PWR_DOWN);
+  sleep_enable();
+  sleep_cpu();
 }
 
 void loop() {
-  for (size_t i; i < 5; i++) {
-    lines[i].listen();
-  }
+  setWatchDog();
 
-  for (size_t i; i < 5; i++) {
-    if (lines[i].isBreak()) {
+  if (wdCntSeconds % 5 == 0) {
+    checkLines();
+  }
+  delay(10);
+}
+
+void checkLines(void) {
+  for (size_t i = 0; i < lines_num; i++) {
+    lines[i].listen();
+    Serial.print(lines[i].getState());
+  }
+  Serial.println();
+  for (size_t i = 0; i < lines_num; i++) {
+    if (lines[i].isBreaked()) {
+      wdt_disable();
       Serial.print(lines[i].getName());
-      Serial.println(" breaked")
+      Serial.println(" breaked");
       // send MQTT signal to iot platform
     }
   }
-
-  delay(1000);
-
-  wdt_reset();
 }

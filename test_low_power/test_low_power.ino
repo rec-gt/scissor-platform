@@ -43,8 +43,10 @@ void setWatchDog() {
 
 
 void setup() {
+  wdt_enable(WDTO_8S);
   Serial.begin(9600);
   Serial.println("Program Start");
+  checkLines();
   delay(100);
   set_sleep_mode(SLEEP_MODE_PWR_DOWN);
   sleep_enable();
@@ -52,12 +54,6 @@ void setup() {
 }
 
 void loop() {
-  setWatchDog();
-
-  if (wdCntSeconds % 5 == 0) {
-    checkLines();
-  }
-  delay(10);
 }
 
 void checkLines(void) {
@@ -68,7 +64,6 @@ void checkLines(void) {
   Serial.println();
   for (size_t i = 0; i < lines_num; i++) {
     if (lines[i].isBreaked()) {
-      wdt_disable();
       Serial.print(lines[i].getName());
       Serial.println(" breaked");
       // send MQTT signal to iot platform

@@ -57,6 +57,7 @@ void setup() {
   trafficLight.off();
 
   displayOLED.init();
+  Serial.println(3);
 
   detectSystem.set(SYS_RUNNING);
 
@@ -64,6 +65,8 @@ void setup() {
 }
 
 void loop() {
+  Serial.println(123);
+
   // ========= handling press button =========
   pressButton.listen();
 
@@ -117,9 +120,8 @@ void loop() {
   }
 
   // ========= debugging =========
-  // sensorsManager.print(0);
-  // sensorsManager.printAll();
-  // sensorsManager.calibrate();
+  sensorsManager.print(0);
+  sensorsManager.printAll();
 
   delay(50);
 }

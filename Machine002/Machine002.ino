@@ -12,24 +12,25 @@
 #include "TrafficLight.h"
 #include "Utils.h"
 
-
 DetectSystem detectSystem;
 
 DisplayOLED displayOLED;
 
 Utils utils;
 
-Relay relay(30);
+PressButton pressButton(12);
 
-PressButton pressButton(28);
+BaseThresholdSwitch baseThresholdSwitch(14);
 
-BaseThresholdSwitch baseThresholdSwitch(26);
+Relay relay(26);
 
-Light powerLight(22);
+Light tenSecondLight(25);
 
-WarningSystem warningSystem(24);
+Light powerLight(27);
 
-TrafficLight trafficLight(14, 15, 16);
+WarningSystem warningSystem(28);
+
+TrafficLight trafficLight(31, 30, 29);
 
 CountdownTimer countdownTimer;
 
@@ -51,7 +52,7 @@ LaserSensor sensors[] = {
 
 LaserSensorManager sensorsManager(sensors, sizeof(sensors) / sizeof(sensors[0]));
 
-DownwardSensor downwardSensor(11, 200);
+DownwardSensor downwardSensor(A11, 200);
 
 void setup() {
   Serial.begin(9600);

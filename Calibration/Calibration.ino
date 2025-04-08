@@ -18,7 +18,7 @@ LaserSensor sensors[] = {
 
 LaserSensorManager manager(sensors, sizeof(sensors) / sizeof(sensors[0]));
 
-DownwardSensor downwardSensor(11, 200);
+DownwardSensor downwardSensor(A11, 305);
 
 void setup() {
   Serial.begin(9600);
@@ -31,6 +31,6 @@ void setup() {
 }
 
 void loop() {
-  Serial.println(downwardSensor.getReading());
+  downwardSensor.print();
   delay(300);
 };

@@ -1,4 +1,6 @@
 #include "Arduino.h"
+#include "DisplayOLED.h"
+#include "SystemEnums.h"
 
 #ifndef downwardSensor_h
 #define downwardSensor_h
@@ -23,9 +25,9 @@ private:
 
   float calculateDistance(float reading) {
     float minReading = this->tunningMinReading;
-    float maxReading = 1023;
+    float maxReading = 816;
     float minSensor = 0;
-    float maxSensor = 2000;
+    float maxSensor = 3000;
 
     return ((reading - maxReading) / (minReading - maxReading)) * (minSensor - maxSensor) + maxSensor;
   }
@@ -62,26 +64,11 @@ public:
   }
 
   void calibrateReading() {
-    for (int i = 0; i < 300; i++) {
-      if (i < 50) {
-        Serial.println("Reject first 50 sampling");
-        int reading = analogRead(this->pin);
-        this->totalCalReading += reading;
-        this->totalCalCount++;
-        Serial.print("Min. Reading: ");
-        Serial.println(this->totalCalReading / this->totalCalCount);
-        continue;  // reject first 50 reading
-      } else {
-        Serial.print("Iteration: ");
-        Serial.println(i);
-        int reading = analogRead(this->pin);
-        this->totalCalReading += reading;
-        this->totalCalCount++;
-        Serial.print("Min. Reading: ");
-        Serial.println(this->totalCalReading / this->totalCalCount);
-        delay(10);
-      }
-    }
+    int reading = analogRead(this->pin);
+    this->totalCalReading += reading;
+    this->totalCalCount++;
+    Serial.print("Min. Reading: ");
+    Serial.println(this->totalCalReading / this->totalCalCount);
   }
 
   void calibrateDistance() {
@@ -94,7 +81,7 @@ public:
 
 
   void print() {
-    int reading =analogRead(this->pin);
+    int reading = analogRead(this->pin);
     Serial.print(reading);
     Serial.print(", ");
     Serial.println(this->calculateDistance(reading));

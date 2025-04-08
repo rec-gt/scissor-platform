@@ -1,5 +1,6 @@
 #include "Arduino.h"
 #include "LaserSensor.h"
+#include "DownwardSensor.h"
 
 // 工廠fine-tune, 把所有sensors蓋住，然後測試0cm reading
 LaserSensor sensors[] = {
@@ -17,10 +18,19 @@ LaserSensor sensors[] = {
 
 LaserSensorManager manager(sensors, sizeof(sensors) / sizeof(sensors[0]));
 
+DownwardSensor downwardSensor(11, 200);
+
 void setup() {
   Serial.begin(9600);
-  manager.calibrateAllReading();  // 第一步，然後更新上面的reading，再進行第二步
+  // === 10 Sensors ===
+  // manager.calibrateAllReading();  // 第一步，然後更新上面的reading，再進行第二步
   // manager.calibrateAllDistance();  // 第二步，誤差在+-10mm都可以
+
+  // === Downward Sensors ===
+  // downwardSensor.calibrateReading();
 }
 
-void loop(){};
+void loop() {
+  Serial.println(downwardSensor.getReading());
+  delay(300);
+};

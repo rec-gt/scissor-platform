@@ -4,6 +4,7 @@
 #include "Light.h"
 #include "Countdown.h"
 #include "LaserSensor.h"
+#include "DownwardSensor.h"
 #include "BaseThresholdSwitch.h"
 #include "DisplayOLED.h"
 #include "NBIoT.h"
@@ -34,7 +35,7 @@ CountdownTimer countdownTimer;
 NBIoT nbiot;
 
 LaserSensor sensors[] = {
-  // (longer threshold, shorter threshold, fine tune)
+  // (pin, longer threshold, shorter threshold, fine tune)
   LaserSensor(A0, 800, 500, 203),  // 工廠fine-tune，遮擋鏡頭做測試
   LaserSensor(A1, 800, 500, 216),
   LaserSensor(A2, 800, 500, 215),
@@ -49,6 +50,8 @@ LaserSensor sensors[] = {
 
 LaserSensorManager sensorsManager(sensors, sizeof(sensors) / sizeof(sensors[0]));
 
+DownwardSensor downwardSensor(11, 200);
+
 void setup() {
   Serial.begin(9600);
 
@@ -59,11 +62,13 @@ void setup() {
 
   displayOLED.init();
 
-  nbiot.init();
+  // nbiot.init();
 
   detectSystem.set(SYS_RUNNING);
 
   powerLight.on();
+
+  Serial.println();
 }
 
 void loop() {
@@ -123,6 +128,10 @@ void loop() {
   // sensorsManager.print(0);
   // sensorsManager.printAll();
   // sensorsManager.calibrate();
+
+  Serial.print(downwardSensor.getReading());
+  Serial.print(", ");
+  downwardSensor.print();
 
   delay(1000);
 }

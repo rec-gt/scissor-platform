@@ -3,6 +3,9 @@
 #include <avr/wdt.h>
 #include "PressButton.h"
 #include "ContactLine.h"
+#include "NBIoT.h"
+
+NBIoT nbiot;
 
 ContactLine line1("line1", 2);
 ContactLine line2("line2", 3);
@@ -43,11 +46,12 @@ void setWatchDog() {
 
 
 void setup() {
-  wdt_enable(WDTO_4S);
   Serial.begin(9600);
+  // nbiot.init();…
   Serial.println("Program Start");
   checkLines();
   delay(100);
+  wdt_enable(WDTO_8S);
   set_sleep_mode(SLEEP_MODE_PWR_DOWN);
   sleep_enable();
   sleep_cpu();

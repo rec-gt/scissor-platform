@@ -9,6 +9,7 @@ public:
   Relay(byte pin)
     : pin(pin) {
     pinMode(pin, OUTPUT);
+    this->cut();
   }
 
   void connect() {

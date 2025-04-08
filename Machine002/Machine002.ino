@@ -18,15 +18,15 @@ DisplayOLED displayOLED;
 
 Utils utils;
 
-PressButton pressButton(12);
+PressButton pressButton(5);
 
 BaseThresholdSwitch baseThresholdSwitch(14);
 
-Relay relay(26);
+Relay relay(24);
 
 Light tenSecondLight(25);
 
-Light powerLight(27);
+Light powerLight(26);
 
 WarningSystem warningSystem(28);
 
@@ -58,6 +58,7 @@ void setup() {
   Serial.begin(9600);
 
   powerLight.off();
+  tenSecondLight.off();
   trafficLight.off();
   warningSystem.off();
   relay.cut();
@@ -89,6 +90,7 @@ void loop() {
   if (detectSystem.is(SYS_RUNNING)) {
     relay.connect();
     warningSystem.off();
+    tenSecondLight.off();
 
     if (sensorsManager.isOneDetected()) {
       detectSystem.set(SYS_STOPPED);
@@ -100,6 +102,7 @@ void loop() {
   } else if (detectSystem.is(SYS_STOPPED)) {
     relay.cut();
     warningSystem.on();
+    tenSecondLight.on();
 
     if (sensorsManager.areAllEscaped()) {  // 1. sensor keep detection, once escape from obstacle, switch to RUNNING
       detectSystem.set(SYS_RUNNING);
@@ -112,6 +115,7 @@ void loop() {
   } else if (detectSystem.is(SYS_ALLOW_10S)) {
     relay.connect();
     warningSystem.off();
+    tenSecondLight.off();
     countdownTimer.countdown(countDownCallback);
   } else if (detectSystem.is(SYS_FAILURE)) {
     relay.cut();
@@ -126,10 +130,7 @@ void loop() {
 
   // ========= debugging =========
   // sensorsManager.print(0);
-  // sensorsManager.printAll();
-  // sensorsManager.calibrate();
-
-  downwardSensor.print();
+  sensorsManager.printAll();
 
   delay(1000);
 }

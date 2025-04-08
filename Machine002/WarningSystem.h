@@ -8,13 +8,14 @@ public:
   WarningSystem(byte pin)
     : pin(pin) {
     pinMode(pin, OUTPUT);
+    this->off();
   }
 
   void on() {
-    digitalWrite(pin, LOW);
+    digitalWrite(pin, HIGH);
   }
 
   void off() {
-    digitalWrite(pin, HIGH);
+    digitalWrite(pin, LOW);
   }
 };

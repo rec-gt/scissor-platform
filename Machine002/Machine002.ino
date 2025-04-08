@@ -24,9 +24,9 @@ BaseThresholdSwitch baseThresholdSwitch(14);
 
 Relay relay(24);
 
-Light tenSecondLight(25);
+Light powerLight(25);
 
-Light powerLight(26);
+Light tenSecondLight(26);
 
 WarningSystem warningSystem(28);
 

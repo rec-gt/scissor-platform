@@ -201,6 +201,7 @@ public:
     Serial.print(reading);
     Serial.print(", Distance:");
     Serial.print(this->laserSensors[i].calculateDistance(reading));
+    Serial.println();
   }
 
   void printAll() {

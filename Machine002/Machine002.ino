@@ -129,8 +129,8 @@ void loop() {
   nbiot.publish(sensorsManager.getSensors8Status(), sensorsManager.getSensors2Status(), detectSystem.getStatus(), 0);
 
   // ========= debugging =========
-  // sensorsManager.print(0);
-  sensorsManager.printAll();
+  sensorsManager.print(0);
+  // sensorsManager.printAll();
 
   delay(100);
 }

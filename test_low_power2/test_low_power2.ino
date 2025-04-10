@@ -60,9 +60,9 @@ void setup() {
 }
 
 void loop() {
-  // if (f_wdt >= 2) { //唤醒后是会运行loop的，这时候检查唤醒达到多少次了，然后执行自己的代码即可
-  //   digitalWrite(LED_PIN, HIGH); delay(300); digitalWrite(LED_PIN, LOW); //闪灯
-  //   f_wdt = 0;//重置唤醒次数计数
-  // }
+  if (f_wdt >= 2) { //唤醒后是会运行loop的，这时候检查唤醒达到多少次了，然后执行自己的代码即可
+    digitalWrite(LED_PIN, HIGH); delay(300); digitalWrite(LED_PIN, LOW); //闪灯
+    f_wdt = 0;//重置唤醒次数计数
+  }
   lowpower();  //再次进入休眠
 }

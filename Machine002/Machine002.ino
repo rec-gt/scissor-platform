@@ -38,21 +38,21 @@ NBIoT nbiot;
 
 LaserSensor sensors[] = {
   // (pin, longer threshold, shorter threshold, fine tune)
-  LaserSensor(A0, 800, 500, 300),  // 工廠fine-tune，遮擋鏡頭做測試
-  LaserSensor(A1, 800, 500, 300),
-  LaserSensor(A2, 800, 500, 300),
-  LaserSensor(A3, 800, 500, 300),
-  LaserSensor(A4, 800, 500, 300),
-  LaserSensor(A5, 800, 500, 300),
-  LaserSensor(A6, 800, 500, 300),
-  LaserSensor(A7, 800, 500, 300),
-  LaserSensor(A8, 800, 500, 300),
-  LaserSensor(A9, 800, 500, 300),
+  LaserSensor(A0, 800, 500, 220),  // 工廠fine-tune，遮擋鏡頭做測試
+  LaserSensor(A1, 800, 500, 282),
+  LaserSensor(A2, 800, 500, 330),
+  LaserSensor(A3, 800, 500, 330),
+  LaserSensor(A4, 800, 500, 330),
+  LaserSensor(A5, 800, 500, 330),
+  LaserSensor(A6, 800, 500, 330),
+  LaserSensor(A7, 800, 500, 330),
+  LaserSensor(A8, 800, 500, 330),
+  LaserSensor(A9, 800, 500, 330),
 };
 
 LaserSensorManager sensorsManager(sensors, sizeof(sensors) / sizeof(sensors[0]));
 
-DownwardSensor downwardSensor(A11, 200);
+// DownwardSensor downwardSensor(A11, 200);
 
 void setup() {
   Serial.begin(9600);
@@ -65,7 +65,7 @@ void setup() {
 
   displayOLED.init();
 
-  nbiot.init();
+  // nbiot.init();
 
   detectSystem.set(SYS_RUNNING);
 
@@ -129,10 +129,10 @@ void loop() {
   nbiot.publish(sensorsManager.getSensors8Status(), sensorsManager.getSensors2Status(), detectSystem.getStatus(), 0);
 
   // ========= debugging =========
-  sensorsManager.print(0);
-  // sensorsManager.printAll();
+  // sensorsManager.printOne(0);
+  sensorsManager.printAll();
 
-  delay(100);
+  delay(1000);
 }
 
 void countDownCallback() {

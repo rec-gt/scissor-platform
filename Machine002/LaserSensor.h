@@ -71,6 +71,7 @@ public:
   }
 
   int getReading() {
+    analogRead(this->pin);
     return analogRead(this->pin);
   }
 
@@ -194,23 +195,19 @@ public:
     return minDistance;
   }
 
-  void print(byte i) {
+  void printOne(byte i) {
     int reading = this->laserSensors[i].getReading();
     Serial.print(i);
     Serial.print(", Reading: ");
     Serial.print(reading);
-    Serial.print(", Distance:");
+    Serial.print(", Distance: ");
     Serial.print(this->laserSensors[i].calculateDistance(reading));
     Serial.println();
   }
 
   void printAll() {
     for (int i = 0; i < this->num; i++) {
-      this->laserSensors[i].listen();
-      float distance = this->laserSensors[i].getDistance();
-      Serial.print(i);
-      Serial.print(", ");
-      Serial.println(distance);
+      this->printOne(i);
     }
   }
 
@@ -231,29 +228,5 @@ public:
       if (this->laserSensors[i].isDetected()) { res -= pow(2, (i - 8)); }
     }
     return res;
-  }
-
-  // ===== for dubugging =====
-
-  void calibrateAll() {
-    for (int i = 0; i < 1000; i++) {
-      if (i < 100) {
-        Serial.println("Reject first 100 sampling");
-        continue;  // reject first 100 reading
-      } else {
-        Serial.println("Calibrate all");
-        for (size_t i = 0; i < this->num; i++) {
-          this->laserSensors[i].getReading();
-
-          // if (this->laserSensors[i].healthCheck() == false) {
-          //   char* charArr[] = { " ", utils.num2Char(i), " 號感應器故障" };
-          //   char* c = utils.concatCharN(charArr, sizeof(charArr) / sizeof(charArr[0]));
-          //   displayOLED.print("", c, "", 500);
-
-          //   return false;
-          // }
-        }
-      }
-    }
   }
 };

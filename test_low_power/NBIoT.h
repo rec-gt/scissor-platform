@@ -15,7 +15,7 @@ private:
   unsigned long previousMillis = 0;
 
   void clearBuffer() {
-    while (NBIoTModule.read() >= 0) {}
+    while (NBIoTModule.read() >= 0) { delay(100); }
   }
 
   bool resContain(char* target) {
@@ -50,11 +50,11 @@ private:
 public:
   NBIoT(){};
 
-  bool sendCMD(String cmd, uint32_t timeout = 1000) {
-    delay(100);
+  bool sendCMD(String cmd, uint32_t timeout = 10000) {
+    delay(1000);
     unsigned long deadline = millis() + timeout;  // max = 24*60*60*1000 (86400000 / 1day), default 1s
     NBIoTModule.println(cmd);
-    delay(100);
+    delay(1000);
 
     while (millis() < deadline) {
       if (NBIoTModule.available()) {
@@ -64,6 +64,7 @@ public:
         this->clearBuffer();
         return true;
       }
+      delay(100);
     }
     this->clearBuffer();
     return false;
@@ -72,6 +73,7 @@ public:
   void sendCMDFast(String cmd) {
     Serial.println("CMD: " + cmd);
     NBIoTModule.println(cmd);
+    delay(1000);
     this->clearBuffer();
   }
 
@@ -187,6 +189,10 @@ public:
       return false;
     }
     return true;
+  }
+
+  void publish() {
+    this->sendCMDFast("AT+MQTTPUB=\"rgt/" + String(this->IMEI) + "/in\",1,0,0,0,\"{\"seq\":1,\"csq\":" + String(this->CSQ) + ",\"sw\":0,\"din\":249 ,\"dout\":250 ,\"ain\":[1,2,3,4],\"aout\":[0,0,0,0]}\"");
   }
 
   ~NBIoT(){};

@@ -212,10 +212,17 @@ public:
   }
 
   byte getSensors8Status() {
+    byte result = 0;
+
     byte res = 255;
 
     for (int i = 7; i >= 0; i--) {
-      if (this->laserSensors[i].isDetected()) { res -= pow(2, i); }
+      if (this->laserSensors[i].isDetected()) {
+        res -= pow(2, i);
+        
+        // === bitwise operation === 
+        result |= 1 << i;
+      }
     }
 
     return res;

@@ -7,11 +7,11 @@
 
 NBIoT nbiot;
 
-ContactLine line1("line1", 7);
-ContactLine line2("line2", 9);
-ContactLine line3("line3", 10);
-ContactLine line4("line4", 11);
-ContactLine line5("line5", 12);
+ContactLine line1("line1", 3);
+ContactLine line2("line2", 5);
+ContactLine line3("line3", 7);
+ContactLine line4("line4", 9);
+ContactLine line5("line5", 10);
 
 ContactLine lines[] = {
   line1,
@@ -28,6 +28,8 @@ volatile int f_wdt = 0;
 void setup() {
   Serial.begin(9600);
   Serial.println("Program Start");
+
+  nbiot.init();
 
   delay(100);
   wdt_setup(9);
@@ -58,7 +60,11 @@ void checkLines(void) {
     if (lines[i].isBreaked()) {
       Serial.print(lines[i].getName());
       Serial.println(" breaked");
+
       // send MQTT signal to iot platform
+      nbiot.publish();
+      delay(1000);
+      break;
     }
   }
   delay(100);

@@ -28,6 +28,8 @@ public:
   LaserSensor(byte pin, int longerThreshold, int shorterThreshold, int tunningMinReading)
     : pin(pin), longerThreshold(longerThreshold), shorterThreshold(shorterThreshold), tunningMinReading(tunningMinReading) {
     pinMode(this->pin, INPUT);
+    // analogReference(EXTERNAL);
+    analogReference(DEFAULT);
   }
 
   float calculateDistance(float reading) {
@@ -40,16 +42,24 @@ public:
   }
 
   float overSamplingRead() {
-    float average = 0;
+    float avg = 0;
     for (int i = 0; i < 64; i++) {
-      average += analogRead(this->pin);
+      avg += analogRead(this->pin);
     };
-    average = (average + 8) / 16;
-    return average;
+    avg = (avg + 8) / 16;
+    return avg;
+  }
+
+  float averageRead() {
+    long avg = 0;
+    for (size_t i = 0; i < 64; i++) {
+      avg += analogRead(this->pin);
+    };
+    return avg / 64.;
   }
 
   void listen() {
-    float reading = this->overSamplingRead();
+    float reading = this->averageRead();
     // int reading = analogRead(this->pin);
 
     this->measuredDistance = this->calculateDistance(reading);
@@ -194,7 +204,8 @@ public:
   }
 
   void printOne(byte i) {
-    int reading = this->laserSensors[i].getReading();
+    // int reading = this->laserSensors[i].getReading();
+    float reading = this->laserSensors[i].averageRead();
     Serial.print(i);
     Serial.print(", Reading: ");
     Serial.print(reading);

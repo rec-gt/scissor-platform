@@ -63,9 +63,9 @@ void setup() {
   warningSystem.off();
   relay.cut();
 
-  displayOLED.init();
+  nbiot.init();
 
-  // nbiot.init();
+  displayOLED.init();
 
   detectSystem.set(SYS_RUNNING);
 

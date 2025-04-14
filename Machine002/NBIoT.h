@@ -15,7 +15,9 @@ private:
   unsigned long previousMillis = 0;
 
   void clearBuffer() {
-    while (NBIoTModule.read() >= 0) {}
+    while (NBIoTModule.read() > 0) {
+      delay(30);
+    }
   }
 
   bool resContain(char* target) {
@@ -54,7 +56,7 @@ public:
     delay(100);
     unsigned long deadline = millis() + timeout;  // max = 24*60*60*1000 (86400000 / 1day), default 1s
     NBIoTModule.println(cmd);
-    delay(100);
+    delay(600);
 
     while (millis() < deadline) {
       if (NBIoTModule.available()) {
@@ -76,6 +78,7 @@ public:
   }
 
   bool init() {
+    delay(1000);
     NBIoTModule.begin(9600);
 
     this->clearBuffer();

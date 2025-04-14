@@ -15,7 +15,7 @@ private:
   unsigned long previousMillis = 0;
 
   void clearBuffer() {
-    while (NBIoTModule.read() >= 0) { delay(100); }
+    while (NBIoTModule.read() > 0) { delay(100); }
   }
 
   bool resContain(char* target) {
@@ -51,21 +51,23 @@ public:
   NBIoT(){};
 
   bool sendCMD(String cmd, uint32_t timeout = 10000) {
-    delay(1000);
+    delay(300);
     unsigned long deadline = millis() + timeout;  // max = 24*60*60*1000 (86400000 / 1day), default 1s
     NBIoTModule.println(cmd);
-    delay(1000);
+    delay(300);
 
     while (millis() < deadline) {
       if (NBIoTModule.available()) {
         this->response = NBIoTModule.readString();
         Serial.println("CMD: " + cmd);
+        delay(100);
         Serial.println(this->response);
         this->clearBuffer();
         return true;
       }
-      delay(100);
+      delay(10);
     }
+
     this->clearBuffer();
     return false;
   }

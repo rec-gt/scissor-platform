@@ -63,23 +63,6 @@ public:
     return this->measuredDistance;
   }
 
-  void calibrateReading() {
-    int reading = analogRead(this->pin);
-    this->totalCalReading += reading;
-    this->totalCalCount++;
-    Serial.print("Min. Reading: ");
-    Serial.println(this->totalCalReading / this->totalCalCount);
-  }
-
-  void calibrateDistance() {
-    int reading = analogRead(this->pin);
-    this->totalCalDistance += this->calculateDistance(reading);
-    this->totalCalCount++;
-    Serial.print("Cal. Distance: ");
-    Serial.println(this->totalCalDistance / this->totalCalCount);
-  }
-
-
   void print() {
     int reading = analogRead(this->pin);
     Serial.print(reading);

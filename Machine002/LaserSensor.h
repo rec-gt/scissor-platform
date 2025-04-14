@@ -20,10 +20,6 @@ private:
   unsigned long lastMillis;
   bool detected = false;
 
-  // for calibration
-  float averageReading = 0;
-  float averageCount = 0;
-
   // for detected senson
   byte detectedNum;
 public:
@@ -90,13 +86,6 @@ public:
     return true;
   }
 
-  void calibrate() {
-    int reading = analogRead(this->pin);
-    this->averageReading += reading;
-    this->averageCount++;
-    Serial.print("Min. Reading: ");
-    Serial.println(this->averageReading / this->averageCount);
-  }
 };
 
 

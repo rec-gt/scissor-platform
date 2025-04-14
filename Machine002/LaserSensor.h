@@ -39,8 +39,18 @@ public:
     return ((reading - maxReading) / (minReading - maxReading)) * (minSensor - maxSensor) + maxSensor;
   }
 
+  void overSamplingRead() {
+    float average = 0;
+    for (int i = 0; i < 64; i++) {
+      average += analogRead(this->pin);
+    };
+    average = (average + 8) / 16;
+    return average;
+  }
+
   void listen() {
-    int reading = analogRead(this->pin);
+    int reading = this->overSamplingRead();
+    // int reading = analogRead(this->pin);
 
     this->measuredDistance = this->calculateDistance(reading);
 
@@ -85,7 +95,6 @@ public:
     }
     return true;
   }
-
 };
 
 
@@ -208,8 +217,8 @@ public:
     for (int i = 7; i >= 0; i--) {
       if (this->laserSensors[i].isDetected()) {
         res -= pow(2, i);
-        
-        // === bitwise operation === 
+
+        // === bitwise operation ===
         result |= 1 << i;
       }
     }

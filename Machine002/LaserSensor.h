@@ -39,7 +39,7 @@ public:
     return ((reading - maxReading) / (minReading - maxReading)) * (minSensor - maxSensor) + maxSensor;
   }
 
-  void overSamplingRead() {
+  float overSamplingRead() {
     float average = 0;
     for (int i = 0; i < 64; i++) {
       average += analogRead(this->pin);
@@ -49,7 +49,7 @@ public:
   }
 
   void listen() {
-    int reading = this->overSamplingRead();
+    float reading = this->overSamplingRead();
     // int reading = analogRead(this->pin);
 
     this->measuredDistance = this->calculateDistance(reading);

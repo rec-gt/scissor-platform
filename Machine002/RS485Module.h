@@ -1,17 +1,17 @@
 #include "Arduino.h"
-#ifndef RS485_h
-#define RS485_h
-#define RS485_Serial Serial2
+#ifndef RS485Module_h
+#define RS485Module_h
+#define RS485Module_Serial Serial2
 
-class RS485 {
+class RS485Module {
 private:
   byte pin = 12;  // DE & DR pin, hardcoded here
   String lastSendStr = "";
   String receivedStr = "";
+  
 public:
-
-  RS485() {
-    RS485_Serial.begin(9600);
+  RS485Module() {
+    RS485Module_Serial.begin(9600);
     pinMode(this->pin, OUTPUT);
     this->mode(HIGH);
   }
@@ -22,14 +22,14 @@ public:
 
   void waitForMsg() {
     this->receivedStr = "";
-    while (RS485_Serial.available()) {
-      receivedStr += (char)RS485_Serial.read();
+    while (RS485Module_Serial.available()) {
+      receivedStr += (char)RS485Module_Serial.read();
     }
   }
 
   void sendMsg(String sendStr) {
     if (this->lastSendStr != sendStr) {
-      RS485_Serial.print(sendStr);
+      RS485Module_Serial.print(sendStr);
       this->lastSendStr == sendStr;
 
       Serial.print("Send, ");
@@ -37,9 +37,9 @@ public:
     }
   }
 
-  ~RS485() {}
+  ~RS485Module() {}
 };
 
-extern RS485;
+extern RS485Module;
 
 #endif

@@ -16,7 +16,6 @@ private:
 
   void clearBuffer() {
     while (NBIoTModule.read() >= 0) {}
-    NBIoTModule.read();
   }
 
   bool resContain(char* target) {
@@ -50,7 +49,6 @@ private:
 
 public:
   NBIoT(){};
-  // TODO: turn-off M5310 省電
   bool sendCMD(String cmd, uint32_t timeout = 1000) {
     delay(100);
     unsigned long deadline = millis() + timeout;  // max = 24*60*60*1000 (86400000 / 1day), default 1s
@@ -71,10 +69,10 @@ public:
   }
 
   void sendCMDFast(String cmd) {
+    this->clearBuffer();
     Serial.println("CMD: " + cmd);
     NBIoTModule.println(cmd);
     delay(300);
-    this->clearBuffer();
   }
 
   bool init() {
@@ -173,7 +171,7 @@ public:
     }
 
     while (1) {
-      this->sendCMD("AT+MQTTOPEN=1,1,1,0,1,\"rgt/" + this->IMEI + "/dev\",\"gone\"");
+      this->sendCMD("AT+MQTTOPEN=1,1,1,0,1,\"rgt/" + this->IMEI + "/in\",\"gone\"");
       if (!this->resContain("ERROR")) {
         break;
       } else {

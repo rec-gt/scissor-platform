@@ -3,7 +3,7 @@
 #ifndef RS485_h
 #define RS485_h
 
-#define RS485_Serial Serial1
+#define RS485_Serial Serial2
 
 class RS485 {
 private:

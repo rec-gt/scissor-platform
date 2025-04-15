@@ -134,9 +134,10 @@ void loop() {
 
   // ========= Debugging =========
   // sensorsManager.printOne(0);
-  // sensorsManager.printAll();
+  Serial.println();
+  sensorsManager.printAll();
 
-  rs485.waitForMsg();
+  // rs485.waitForMsg();
 
   delay(1000);
 }

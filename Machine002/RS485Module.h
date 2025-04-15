@@ -8,7 +8,7 @@ private:
   byte pin = 12;  // DE & DR pin, hardcoded here
   String lastSendStr = "";
   String receivedStr = "";
-  
+
 public:
   RS485Module() {
     RS485Module_Serial.begin(9600);
@@ -18,6 +18,7 @@ public:
 
   void mode(bool m) {  // m == true => sender-mode (HIGH) | m == false => receiver-mode (LOW)
     digitalWrite(this->pin, m ? HIGH : LOW);
+    digitalWrite(12, LOW);
   }
 
   void waitForMsg() {

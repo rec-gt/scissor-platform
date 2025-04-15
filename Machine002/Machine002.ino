@@ -11,6 +11,7 @@
 #include "WarningSystem.h"
 #include "TrafficLight.h"
 #include "Utils.h"
+#include "RS485.h"
 
 DetectSystem detectSystem;
 
@@ -53,6 +54,9 @@ LaserSensor sensors[] = {
 LaserSensorManager sensorsManager(sensors, sizeof(sensors) / sizeof(sensors[0]));
 
 // DownwardSensor downwardSensor(A11, 200);
+
+RS485 rs485;
+
 
 void setup() {
   Serial.begin(9600);
@@ -128,9 +132,11 @@ void loop() {
   // ========= NB-IoT =========
   nbiot.publish(sensorsManager.getSensors8Status(), sensorsManager.getSensors2Status(), detectSystem.getStatus(), 0);
 
-  // ========= debugging =========
+  // ========= Debugging =========
   // sensorsManager.printOne(0);
-  sensorsManager.printAll();
+  // sensorsManager.printAll();
+
+  rs485.waitForMsg();
 
   delay(1000);
 }

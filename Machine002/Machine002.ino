@@ -4,7 +4,7 @@
 #include "Light.h"
 #include "Countdown.h"
 #include "LaserSensor.h"
-#include "DownwardSensor.h"
+// #include "DownwardSensor.h"
 #include "BaseThresholdSwitch.h"
 #include "DisplayOLED.h"
 #include "NBIoT.h"
@@ -135,8 +135,8 @@ void loop() {
 
   // ========= Debugging =========
   // sensorsManager.printOne(0);
-  Serial.println();
-  sensorsManager.printAll();
+  // Serial.println();
+  // sensorsManager.printAll();
 
   // rs485.waitForMsg();
 

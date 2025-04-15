@@ -13,7 +13,7 @@ public:
   RS485Module() {
     RS485Module_Serial.begin(9600);
     pinMode(this->pin, OUTPUT);
-    this->mode(HIGH);
+    this->mode(LOW);
   }
 
   void mode(bool m) {  // m == true => sender-mode (HIGH) | m == false => receiver-mode (LOW)

@@ -170,24 +170,15 @@ public:
   // === checker ===
 
   void showOneDetected(byte i) {
-    char* orientation;
-    if (i <= 1) {
-      orientation = "前方 ";
-    } else if (i <= 7) {
-      orientation = "上方 ";
-    } else if (i <= 9) {
-      orientation = "後方 ";
-    }
-
     char* charArr[] = {
-      orientation,
+      " ",
       utils.num2Char(i + 0),
       " 號感應器",
     };
 
     char* c = utils.concatCharN(charArr, 3);
 
-    displayOLED.print(c, "檢測到障礙物", "", 100 + i);
+    displayOLED.print("", c, "檢測到障礙物", 100 + i);
   }
 
   void showOneUnhealthy(byte i) {

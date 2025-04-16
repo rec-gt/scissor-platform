@@ -114,6 +114,8 @@ public:
     };
   }
 
+  // === checker ===
+
   bool isOneDetected() {
     for (int i = 0; i < this->num; i++) {
       this->laserSensors[i].listen();
@@ -123,27 +125,6 @@ public:
       }
     }
     return false;
-  }
-
-  void showOneDetected(byte i) {
-    char* orientation;
-    if (i <= 1) {
-      orientation = "前方 ";
-    } else if (i <= 7) {
-      orientation = "上方 ";
-    } else if (i <= 9) {
-      orientation = "後方 ";
-    }
-
-    char* charArr[] = {
-      orientation,
-      utils.num2Char(i + 0),
-      " 號感應器",
-    };
-
-    char* c = utils.concatCharN(charArr, 3);
-
-    displayOLED.print(c, "檢測到障礙物", "", 100 + i);
   }
 
   bool areAllEscaped() {
@@ -166,23 +147,6 @@ public:
     return allEscaped;
   }
 
-  void setAllBaseThreshold(bool toggle) {
-    for (int i = 0; i < this->num; i++) {
-      this->laserSensors[i].setBaseThreshold(toggle);
-    }
-  }
-
-  int getMinDistance() {
-    float minDistance = this->laserSensors[0].getDistance();
-    for (int i = 0; i < this->num; i++) {
-      float distance = this->laserSensors[i].getDistance();
-      if (distance < minDistance) {
-        minDistance = distance;
-      }
-    }
-    return minDistance;
-  }
-
   bool areAllHealthy() {
     for (int i = 0; i < this->num; i++) {
       if (this->laserSensors[i].healthCheck() == false) {
@@ -193,6 +157,37 @@ public:
       }
     }
     return true;
+  }
+
+  // === Setter ===
+
+  void setAllBaseThreshold(bool toggle) {
+    for (int i = 0; i < this->num; i++) {
+      this->laserSensors[i].setBaseThreshold(toggle);
+    }
+  }
+
+  // === checker ===
+
+  void showOneDetected(byte i) {
+    char* orientation;
+    if (i <= 1) {
+      orientation = "前方 ";
+    } else if (i <= 7) {
+      orientation = "上方 ";
+    } else if (i <= 9) {
+      orientation = "後方 ";
+    }
+
+    char* charArr[] = {
+      orientation,
+      utils.num2Char(i + 0),
+      " 號感應器",
+    };
+
+    char* c = utils.concatCharN(charArr, 3);
+
+    displayOLED.print(c, "檢測到障礙物", "", 100 + i);
   }
 
   void showOneNotHealthy(byte i) {
@@ -207,20 +202,17 @@ public:
     displayOLED.print("", c, "", 500);
   }
 
-  void printOne(byte i) {
-    Serial.print("Sensor: ");
-    Serial.print(i);
-    Serial.print(", Reading: ");
-    Serial.print(this->laserSensors[i].getReading());
-    Serial.print(", Distance: ");
-    Serial.print(this->laserSensors[i].getDistance());
-    Serial.println();
-  }
+  // === getter ===
 
-  void printAll() {
+  float getMinDistance() {
+    float minDistance = this->laserSensors[0].getDistance();
     for (int i = 0; i < this->num; i++) {
-      this->printOne(i);
+      float distance = this->laserSensors[i].getDistance();
+      if (distance < minDistance) {
+        minDistance = distance;
+      }
     }
+    return minDistance;
   }
 
   byte getSensors8Status() {
@@ -247,5 +239,23 @@ public:
       if (this->laserSensors[i].isDetected()) { res -= pow(2, (i - 8)); }
     }
     return res;
+  }
+
+  // === debug ===
+
+  void printOne(byte i) {
+    Serial.print("Sensor: ");
+    Serial.print(i);
+    Serial.print(", Reading: ");
+    Serial.print(this->laserSensors[i].getReading());
+    Serial.print(", Distance: ");
+    Serial.print(this->laserSensors[i].getDistance());
+    Serial.println();
+  }
+
+  void printAll() {
+    for (int i = 0; i < this->num; i++) {
+      this->printOne(i);
+    }
   }
 };

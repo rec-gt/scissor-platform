@@ -75,7 +75,8 @@ public:
   }
 
   bool init() {
-    delay(1000);
+    delay(100);
+
     NBIoTModule.begin(9600);
 
     this->clearBuffer();

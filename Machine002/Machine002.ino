@@ -68,8 +68,8 @@ void setup() {
   warningSystem.off();
   displayOLED.init();
   nbiot.init();
-  detectSystem.set(SYS_RUNNING);
   powerLight.on();
+  detectSystem.set(SYS_RUNNING);
 
   delay(500);
 }

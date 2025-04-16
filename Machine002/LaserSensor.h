@@ -14,6 +14,7 @@ private:
   int escapeBuffer = 0;       // used when vehicle suddenly stop
 
   // measured distance
+  float reading;
   float measuredDistance;
 
   // for debounce
@@ -32,30 +33,10 @@ public:
     analogReference(DEFAULT);
   }
 
-  float calculateDistance(float reading) {
-    float minReading = this->tunningMinReading;
-    float maxReading = 1023;
-    float minSensor = 0;
-    float maxSensor = 1750;
-
-    return ((reading - maxReading) / (minReading - maxReading)) * (minSensor - maxSensor) + maxSensor;
-  }
-
-
-
-  float averageRead() {
-    long avg = 0;
-    for (size_t i = 0; i < 64; i++) {
-      avg += analogRead(this->pin);
-    };
-    return avg / 64.;
-  }
-
   void listen() {
-    float reading = this->averageRead();
-    // int reading = analogRead(this->pin);
+    this->reading = this->avgRead();
 
-    this->measuredDistance = this->calculateDistance(reading);
+    this->measuredDistance = this->calculateDistance();
 
     int threshold = this->baseThreshold + this->escapeBuffer;
 
@@ -70,6 +51,25 @@ public:
       this->lastMillis = millis();
     }
   }
+
+  float avgRead() {
+    unsigned long avg = 0;
+    for (size_t i = 0; i < 32; i++) {
+      avg += analogRead(this->pin);
+    };
+    return avg / 32.;
+  }
+
+  float calculateDistance() {
+    float pinReading = this->reading;
+    float minReading = this->tunningMinReading;
+    float maxReading = 1023;
+    float minSensor = 0;
+    float maxSensor = 1750;
+
+    return ((pinReading - maxReading) / (minReading - maxReading)) * (minSensor - maxSensor) + maxSensor;
+  }
+
 
   void changeBaseThreshold(bool toggle) {
     this->baseThreshold = toggle ? this->shorterThreshold : this->longerThreshold;
@@ -98,6 +98,8 @@ public:
     }
     return true;
   }
+
+  ~LaserSensor(){};
 };
 
 
@@ -106,10 +108,10 @@ private:
   LaserSensor laserSensors[20];
   size_t num;
 public:
-  LaserSensorManager(LaserSensor laserSensors[], size_t num)
+  LaserSensorManager(LaserSensor sensors[], size_t num)
     : num(num) {
-    for (size_t i = 0; i < num; i++) {
-      this->laserSensors[i] = laserSensors[i];
+    for (size_t i = 0; i < this->num; i++) {
+      this->laserSensors[i] = sensors[i];
     };
   }
 
@@ -198,12 +200,12 @@ public:
 
   void printOne(byte i) {
     // int reading = this->laserSensors[i].getReading();
-    float reading = this->laserSensors[i].averageRead();
+    float reading = this->laserSensors[i].avgRead();
     Serial.print(i);
     Serial.print(", Reading: ");
     Serial.print(reading);
     Serial.print(", Distance: ");
-    Serial.print(this->laserSensors[i].calculateDistance(reading));
+    Serial.print(this->laserSensors[i].calculateDistance());
     Serial.println();
   }
 

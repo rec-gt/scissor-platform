@@ -187,7 +187,7 @@ public:
   }
 
   int getMinDistance() {
-    int minDistance = this->laserSensors[0].getDistance();
+    float minDistance = this->laserSensors[0].getDistance();
     for (int i = 0; i < this->num; i++) {
       float distance = this->laserSensors[i].getDistance();
       if (distance < minDistance) {
@@ -198,10 +198,10 @@ public:
   }
 
   void printOne(byte i) {
-    float reading = this->laserSensors[i].getReading();
+    Serial.print("Sensor: ");
     Serial.print(i);
     Serial.print(", Reading: ");
-    Serial.print(reading);
+    Serial.print(this->laserSensors[i].getReading());
     Serial.print(", Distance: ");
     Serial.print(this->laserSensors[i].getDistance());
     Serial.println();

@@ -134,8 +134,8 @@ void loop() {
   }
 
   // === Debugging ===
-  sensorsManager.printOne(0);
-  // sensorsManager.pr intAll();
+  // sensorsManager.printOne(0);
+  sensorsManager.printAll();
 
   // rs485.waitForMsg();
 

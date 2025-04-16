@@ -198,13 +198,12 @@ public:
   }
 
   void printOne(byte i) {
-    // int reading = this->laserSensors[i].getReading();
-    float reading = this->laserSensors[i].avgRead();
+    float reading = this->laserSensors[i].getReading();
     Serial.print(i);
     Serial.print(", Reading: ");
     Serial.print(reading);
     Serial.print(", Distance: ");
-    Serial.print(this->laserSensors[i].calcDistance());
+    Serial.print(this->laserSensors[i].getDistance());
     Serial.println();
   }
 

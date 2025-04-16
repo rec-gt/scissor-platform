@@ -28,7 +28,7 @@ public:
     u8g2.setFontDirection(0);
     u8g2.clearDisplay();
 
-    this->print("", "正在加載", "", 1);
+    this->print("", "正在加載...", "", 1);
     delay(1000);
   }
 

@@ -139,11 +139,10 @@ void loop() {
 
   // === Debugging ===
   // sensorsManager.printOne(0);
-  sensorsManager.printAll();
-
+  // sensorsManager.printAll();
   // rs485.waitForMsg();
 
-  delay(1000);
+  delay(200);
 }
 
 void countDownCallback() {

@@ -209,6 +209,17 @@ public:
     }
   }
 
+  void quickSend(byte sensors8Status, byte sensors2Status, SystemStatus systemStatus, bool isLiftedUp = 0) {
+    this->sendCMDFast(
+      "AT+MQTTPUB=\"rgt/"
+      + String(this->IMEI) + "/in\",1,0,0,0,\"{\"seq\":1,\"csq\":"
+      + String(this->CSQ) + ",\"sw\":0,\"din\":"
+      + String(sensors8Status) + ",\"dout\":"
+      + String(sensors2Status) + ",\"ain\":["
+      + String(systemStatus) + ","
+      + String(isLiftedUp) + ",0,0],\"aout\":[0,0,0,0]}\"");
+  }
+
   void publishPlain() {
     if (millis() - this->lastMillis >= 5 * 1000) {
       this->lastMillis = millis();

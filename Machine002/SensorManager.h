@@ -31,7 +31,7 @@ public:
     for (int i = 0; i < this->num; i++) {
       if (this->laserSensors[i].isDetected()) {
         this->showOneDetected(i);
-        // nbiot.quickSend();
+        nbiot.quickSend(this->getSensors8Status(), this->getSensors2Status(), detectSystem.getStatus(), 0);
         return true;
       }
     }

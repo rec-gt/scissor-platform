@@ -114,11 +114,16 @@ public:
     };
   }
 
+  void listenAll() {
+    for (int i = 0; i < this->num; i++) {
+      this->laserSensors[i].listen();
+    }
+  }
+
   // === checker ===
 
   bool isOneDetected() {
     for (int i = 0; i < this->num; i++) {
-      this->laserSensors[i].listen();
       if (this->laserSensors[i].isDetected()) {
         this->showOneDetected(i);
         return true;
@@ -132,7 +137,6 @@ public:
 
     for (int i = 0; i < this->num; i++) {
       this->laserSensors[i].setEscapeBuffer(true);
-      this->laserSensors[i].listen();
       if (this->laserSensors[i].isDetected()) {
         allEscaped = false;
       }
@@ -213,15 +217,29 @@ public:
 
     for (int i = 7; i >= 0; i--) {
       if (this->laserSensors[i].isDetected()) {
-        res -= pow(2, i);
-
-        // === bitwise operation ===
         result |= 1 << i;
       }
     }
 
     return res;
   }
+
+  // byte getSensors8Status() {
+  //   byte result = 0;
+
+  //   byte res = 255;
+
+  //   for (int i = 7; i >= 0; i--) {
+  //     if (this->laserSensors[i].isDetected()) {
+  //       res -= pow(2, i);
+
+  //       // === bitwise operation ===
+  //       result |= 1 << i;
+  //     }
+  //   }
+
+  //   return res;
+  // }
 
   byte getSensors2Status() {
     byte res = 207;  // 11001111

@@ -31,9 +31,7 @@ public:
     delay(1500);
   }
 
-
-
-  void print(char* a, char* b, char* c, int currState) {
+  void print(char* line1, char* line2, char* line3, int currState) {
     if (currState == this->lastState) {
       return;
     } else {
@@ -41,11 +39,11 @@ public:
 
       u8g2.clearBuffer();
       u8g2.setCursor(0, 18);
-      u8g2.print(a);
+      u8g2.print(line1);
       u8g2.setCursor(0, 40);
-      u8g2.print(b);
+      u8g2.print(line2);
       u8g2.setCursor(0, 62);
-      u8g2.print(c);
+      u8g2.print(line3);
       u8g2.sendBuffer();
     }
   }

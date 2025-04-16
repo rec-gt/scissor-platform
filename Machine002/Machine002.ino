@@ -4,6 +4,7 @@
 #include "Light.h"
 #include "Countdown.h"
 #include "LaserSensor.h"
+#include "SensorManager.h"
 // #include "DownwardSensor.h"
 #include "BaseThresholdSwitch.h"
 #include "DisplayOLED.h"

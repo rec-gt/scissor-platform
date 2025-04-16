@@ -11,18 +11,18 @@ private:
   unsigned long duration = 10 * 1000;
 
 public:
-  CountdownTimer() {}
+  CountdownTimer(){};
 
   void set() {
-    startMillis = millis();
+    this->startMillis = millis();
   }
 
   void countdown(void (*callback)()) {
     unsigned long currMillis = millis();
 
-    int remainingTime = (duration - (currMillis - startMillis)) / 1000;
+    int remainingTime = (this->duration - (currMillis - this->startMillis)) / 1000;
 
-    if (remainingTime != lastRemainingTime) {
+    if (remainingTime != this->lastRemainingTime) {
       this->lastRemainingTime = remainingTime;
 
       // slow update
@@ -37,11 +37,13 @@ public:
       }
     }
 
-    if (currMillis - startMillis >= duration) {
+    if (currMillis - this->startMillis >= this->duration) {
       this->lastRemainingTime = 10;
       callback();
     }
   }
+
+  ~CountdownTimer(){};
 };
 
 #endif

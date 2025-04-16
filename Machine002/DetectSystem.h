@@ -18,7 +18,7 @@ public:
       return;
     }
 
-    if (this->is(SYS_RUNNING)) {
+    if (status == SYS_RUNNING) {
       displayOLED.print("", "系統運作中", "", 200);
     }
 

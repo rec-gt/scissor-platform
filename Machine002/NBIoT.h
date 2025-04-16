@@ -43,7 +43,7 @@ private:
       ++this->errCount;
     }
 
-    if (this->errCount >= 10) {
+    if (this->errCount >= 20) {
       Serial.println("MQTT init failed");
     }
   }

@@ -1,3 +1,4 @@
+#include "DisplayOLED.h"
 
 #ifndef NBIoT_h
 #define NBIoT_h
@@ -75,6 +76,8 @@ public:
   }
 
   bool init() {
+    displayOLED.print("", "正在加載IoT...", "", 2);
+
     delay(100);
 
     NBIoTModule.begin(9600);

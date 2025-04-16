@@ -134,7 +134,6 @@ void loop() {
     if (sensorsManager.areAllHealthy()) {
       detectSystem.set(SYS_RUNNING);
     }
-    
   }
 
   // === Debugging ===

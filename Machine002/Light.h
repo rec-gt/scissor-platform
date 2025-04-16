@@ -18,4 +18,8 @@ public:
   void off() {
     digitalWrite(pin, LOW);
   }
+
+  void blink() {
+    
+  }
 };

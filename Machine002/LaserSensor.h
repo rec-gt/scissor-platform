@@ -21,8 +21,6 @@ private:
   unsigned long lastMillis;
   bool detected = false;
 
-  // for detected senson
-  byte detectedNum;
 public:
   LaserSensor() {}
 
@@ -36,7 +34,7 @@ public:
   void listen() {
     this->reading = this->avgRead();
 
-    this->measuredDistance = this->calculateDistance();
+    this->measuredDistance = this->calcDistance();
 
     int threshold = this->baseThreshold + this->escapeBuffer;
 
@@ -60,12 +58,12 @@ public:
     return avg / 32.;
   }
 
-  float calculateDistance() {
+  float calcDistance() {
     float pinReading = this->reading;
     float minReading = this->tunningMinReading;
-    float maxReading = 1023;
-    float minSensor = 0;
-    float maxSensor = 1750;
+    float maxReading = 1023.;
+    float minSensor = 0.;
+    float maxSensor = 1750.;
 
     return ((pinReading - maxReading) / (minReading - maxReading)) * (minSensor - maxSensor) + maxSensor;
   }
@@ -205,7 +203,7 @@ public:
     Serial.print(", Reading: ");
     Serial.print(reading);
     Serial.print(", Distance: ");
-    Serial.print(this->laserSensors[i].calculateDistance());
+    Serial.print(this->laserSensors[i].calcDistance());
     Serial.println();
   }
 

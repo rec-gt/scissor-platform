@@ -193,10 +193,16 @@ public:
   //   // Analog Input[0] : 1 = RUNNING, ...
   //   // Analog Input[1] : 0 = not lifted up, 1 = lifted up
 
-  //   if (millis() - lastMillis >= 10 * 1000) {
-  //     Serial.println(millis() - lastMillis);
-  //     lastMillis = millis();
-  //     this->sendCMDFast("AT+MQTTPUB=\"rgt/" + String(this->IMEI) + "/in\",1,0,0,0,\"{\"seq\":1,\"csq\":" + String(this->CSQ) + ",\"sw\":0,\"din\":" + String(sensors8Status) + ",\"dout\":" + String(sensors2Status) + ",\"ain\":[" + String(systemStatus) + "," + String(isLiftedUp) + ",0,0],\"aout\":[0,0,0,0]}\"");
+  //   if (millis() - this->lastMillis >= 10 * 1000) {  // send every 10s
+  //     this->lastMillis = millis();
+  //     this->sendCMDFast(
+  //       "AT+MQTTPUB=\"rgt/"
+  //       + String(this->IMEI) + "/in\",1,0,0,0,\"{\"seq\":1,\"csq\":"
+  //       + String(this->CSQ) + ",\"sw\":0,\"din\":"
+  //       + String(sensors8Status) + ",\"dout\":"
+  //       + String(sensors2Status) + ",\"ain\":["
+  //       + String(systemStatus) + ","
+  //       + String(isLiftedUp) + ",0,0],\"aout\":[0,0,0,0]}\"");
   //   }
   // }
 
@@ -204,8 +210,6 @@ public:
     if (millis() - this->lastMillis >= 5 * 1000) {
       this->lastMillis = millis();
       this->sendCMDFast("AT+MQTTPUB=\"rgt/869976034806621/in\",1,0,0,0,\"{\"seq\":1,\"csq\":21,\"sw\":0,\"din\":255,\"dout\":207,\"ain\":[4,0,0,0],\"aout\":[0,0,0,0]}\"");
-    } else {
-      // Serial.println("********");
     }
   }
 

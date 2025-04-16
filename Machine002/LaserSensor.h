@@ -135,6 +135,7 @@ public:
   bool areAllEscaped() {
     bool allEscaped = true;
 
+    // see if all are escaped
     for (int i = 0; i < this->num; i++) {
       this->laserSensors[i].setEscapeBuffer(true);
       if (this->laserSensors[i].isDetected()) {
@@ -142,6 +143,7 @@ public:
       }
     }
 
+    // if all are escaped, remove escape-buffer
     if (allEscaped) {
       for (int i = 0; i < this->num; i++) {
         this->laserSensors[i].setEscapeBuffer(false);
@@ -154,9 +156,7 @@ public:
   bool areAllHealthy() {
     for (int i = 0; i < this->num; i++) {
       if (this->laserSensors[i].healthCheck() == false) {
-
         this->showOneUnhealthy(i);
-
         return false;
       }
     }

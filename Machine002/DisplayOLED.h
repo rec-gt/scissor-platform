@@ -27,14 +27,13 @@ public:
     u8g2.setFont(u8g2_font_unifont_t_chinese1);
     u8g2.setFontDirection(0);
     u8g2.clearDisplay();
-    this->print("", "正在加載", "", 1);
-    delay(1500);
+
+    this->print("", "", "正在加載", 1);
+    delay(1000);
   }
 
   void print(char* line1, char* line2, char* line3, int currState) {
-    if (currState == this->lastState) {
-      return;
-    } else {
+    if (currState != this->lastState) {
       this->lastState = currState;
 
       u8g2.clearBuffer();

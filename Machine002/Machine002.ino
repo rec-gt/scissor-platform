@@ -11,7 +11,7 @@
 #include "WarningSystem.h"
 #include "TrafficLight.h"
 #include "Utils.h"
-#include "RS485Module.h"
+// #include "RS485Module.h"
 
 DetectSystem detectSystem;
 
@@ -55,7 +55,7 @@ LaserSensorManager sensorsManager(sensors, sizeof(sensors) / sizeof(sensors[0]))
 
 // DownwardSensor downwardSensor(A11, 200);
 
-RS485Module rs485;
+// RS485Module rs485;
 
 
 void setup() {

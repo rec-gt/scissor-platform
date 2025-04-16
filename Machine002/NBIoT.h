@@ -15,7 +15,7 @@ private:
   unsigned long lastMillis = 0;
 
   void clearBuffer() {
-    while (NBIoTModule.read() > 0) { delay(10); }
+    while (NBIoTModule.read() > 0) { delay(1); }
   }
 
   bool resContain(char* target) {
@@ -49,30 +49,29 @@ private:
 
 public:
   NBIoT(){};
-  bool sendCMD(String cmd, uint32_t timeout = 1000) {
-    delay(100);
-    unsigned long deadline = millis() + timeout;  // max = 24*60*60*1000 (86400000 / 1day), default 1s
-    NBIoTModule.println(cmd);
-    delay(600);
 
-    while (millis() < deadline) {
-      if (NBIoTModule.available()) {
-        this->response = NBIoTModule.readString();
-        Serial.println("CMD: " + cmd);
-        Serial.println(this->response);
-        this->clearBuffer();
-        return true;
-      }
-    }
+  bool sendCMD(String cmd) {
     this->clearBuffer();
-    return false;
+    Serial.println("CMD: " + cmd);
+    NBIoTModule.println(cmd);
+    delay(500);  // wait at least 300ms
+
+    if (NBIoTModule.available()) {
+      this->response = NBIoTModule.readString();
+      Serial.println(this->response);
+      this->clearBuffer();
+      return true;
+    } else {
+      this->clearBuffer();
+      return false;
+    }
   }
 
   void sendCMDFast(String cmd) {
     this->clearBuffer();
     Serial.println("CMD: " + cmd);
     NBIoTModule.println(cmd);
-    delay(600);
+    delay(300);
   }
 
   bool init() {
@@ -203,7 +202,7 @@ public:
   void publish() {
     if (millis() - this->lastMillis >= 5 * 1000) {
       this->lastMillis = millis();
-      this->sendCMD("AT+MQTTPUB=\"rgt/869976034806621/in\",1,0,0,0,\"{\"seq\":1,\"csq\":21,\"sw\":0,\"din\":255,\"dout\":207,\"ain\":[4,0,0,0],\"aout\":[0,0,0,0]}\"");
+      this->sendCMDFast("AT+MQTTPUB=\"rgt/869976034806621/in\",1,0,0,0,\"{\"seq\":1,\"csq\":21,\"sw\":0,\"din\":255,\"dout\":207,\"ain\":[4,0,0,0],\"aout\":[0,0,0,0]}\"");
     } else {
       // Serial.println("********");
     }

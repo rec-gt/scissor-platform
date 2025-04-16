@@ -41,14 +41,7 @@ public:
     return ((reading - maxReading) / (minReading - maxReading)) * (minSensor - maxSensor) + maxSensor;
   }
 
-  float overSamplingRead() {
-    float avg = 0;
-    for (int i = 0; i < 64; i++) {
-      avg += analogRead(this->pin);
-    };
-    avg = (avg + 8) / 16;
-    return avg;
-  }
+
 
   float averageRead() {
     long avg = 0;

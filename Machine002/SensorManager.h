@@ -1,6 +1,8 @@
 #include "Arduino.h"
 #include "DisplayOLED.h"
 #include "SystemEnums.h"
+#include "NBIoT.h"
+#include "DetectSystem.h"
 
 #ifndef sensorManager_h
 #define sensorManager_h
@@ -29,6 +31,7 @@ public:
     for (int i = 0; i < this->num; i++) {
       if (this->laserSensors[i].isDetected()) {
         this->showOneDetected(i);
+        nbiot.publish(this->getSensors8Status(), this->getSensors2Status(), detectSystem.getStatus(), 0);
         return true;
       }
     }

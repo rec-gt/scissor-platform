@@ -1,7 +1,9 @@
 #include "Arduino.h"
 #include "SystemEnums.h"
 #include "DisplayOLED.h"
-#include "NBIoT.h"
+
+#ifndef detectSystem_h
+#define detectSystem_h
 
 class DetectSystem {
 private:
@@ -33,3 +35,7 @@ public:
     return this->status == targetStatus;
   }
 };
+
+extern DetectSystem detectSystem;
+
+#endif

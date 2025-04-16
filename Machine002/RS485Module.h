@@ -1,4 +1,5 @@
 #include "Arduino.h"
+
 #ifndef RS485Module_h
 #define RS485Module_h
 #define RS485Module_Serial Serial2

@@ -27,10 +27,12 @@ public:
 
       // slow update
       if (remainingTime >= 0) {
-        char* cArr[] = { "允許運作",
-                         utils.num2Char(remainingTime + 1),
-                         "秒" };
-        char* c = utils.concatCharN(cArr, (sizeof(cArr) / sizeof(cArr[0])));
+        char* cArr[] = {
+          "允許運作",
+          utils.num2Char(remainingTime + 1),
+          "秒"
+        };
+        char* c = utils.concatCharN(cArr, 3);
         displayOLED.print("", c, "", (300 + remainingTime));
       }
     }

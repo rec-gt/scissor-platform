@@ -50,7 +50,7 @@ public:
     }
   }
 
-  ~DisplayOLED() {}
+  ~DisplayOLED(){};
 };
 
 extern DisplayOLED displayOLED;

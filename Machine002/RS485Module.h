@@ -38,9 +38,9 @@ public:
     }
   }
 
-  ~RS485Module() {}
+  ~RS485Module(){};
 };
 
-extern RS485Module;
+extern RS485Module rs485module;
 
 #endif

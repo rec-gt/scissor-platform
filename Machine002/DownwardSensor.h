@@ -69,8 +69,10 @@ public:
     Serial.print(", ");
     Serial.println(this->calculateDistance(reading));
   }
+
+  ~DownwardSensor(){};
 };
 
-extern DownwardSensor;
+extern DownwardSensor downwardSensor;
 
 #endif

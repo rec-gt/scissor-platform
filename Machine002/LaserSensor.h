@@ -151,7 +151,7 @@ public:
     for (int i = 0; i < this->num; i++) {
       if (this->laserSensors[i].healthCheck() == false) {
 
-        this->showOneNotHealthy(i);
+        this->showOneUnhealthy(i);
 
         return false;
       }
@@ -190,7 +190,7 @@ public:
     displayOLED.print(c, "檢測到障礙物", "", 100 + i);
   }
 
-  void showOneNotHealthy(byte i) {
+  void showOneUnhealthy(byte i) {
     char* charArr[] = {
       " ",
       utils.num2Char(i),

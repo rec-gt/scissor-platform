@@ -84,7 +84,7 @@ void loop() {
 
   // === handling threshold switch ===
   baseThresholdSwitch.listen();
-  sensorsManager.changeAllBaseThreshold(baseThresholdSwitch.on());
+  sensorsManager.setAllBaseThreshold(baseThresholdSwitch.on());
 
   // === controlling traffic light ===
   trafficLight.listen(sensorsManager.getMinDistance());

@@ -166,24 +166,10 @@ public:
     return allEscaped;
   }
 
-  void changeAllBaseThreshold(bool toggle) {
+  void setAllBaseThreshold(bool toggle) {
     for (int i = 0; i < this->num; i++) {
       this->laserSensors[i].setBaseThreshold(toggle);
     }
-  }
-
-  bool areAllHealthy() {
-    for (int i = 0; i < this->num; i++) {
-      if (this->laserSensors[i].healthCheck() == false) {
-
-        char* charArr[] = { " ", utils.num2Char(i), " 號感應器故障" };
-        char* c = utils.concatCharN(charArr, sizeof(charArr) / sizeof(charArr[0]));
-        displayOLED.print("", c, "", 500);
-
-        return false;
-      }
-    }
-    return true;
   }
 
   int getMinDistance() {
@@ -195,6 +181,30 @@ public:
       }
     }
     return minDistance;
+  }
+
+  bool areAllHealthy() {
+    for (int i = 0; i < this->num; i++) {
+      if (this->laserSensors[i].healthCheck() == false) {
+
+        this->showOneNotHealthy(i);
+
+        return false;
+      }
+    }
+    return true;
+  }
+
+  void showOneNotHealthy(byte i) {
+    char* charArr[] = {
+      " ",
+      utils.num2Char(i),
+      " 號感應器故障",
+    };
+
+    char* c = utils.concatCharN(charArr, 3);
+
+    displayOLED.print("", c, "", 500);
   }
 
   void printOne(byte i) {

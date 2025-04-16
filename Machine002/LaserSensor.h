@@ -68,8 +68,9 @@ public:
     return ((pinReading - maxReading) / (minReading - maxReading)) * (minSensor - maxSensor) + maxSensor;
   }
 
+  // === setter ===
 
-  void changeBaseThreshold(bool toggle) {
+  void setBaseThreshold(bool toggle) {
     this->baseThreshold = toggle ? this->shorterThreshold : this->longerThreshold;
   }
 
@@ -77,24 +78,24 @@ public:
     this->escapeBuffer = toggle ? CONST_ESCAPE_BUFFER : 0;
   }
 
-  int getReading() {
-    analogRead(this->pin);
-    return analogRead(this->pin);
+  // === getter ===
+
+  bool isDetected() {
+    return this->detected;
+  }
+
+  float getReading() {
+    return this->reading;
   }
 
   float getDistance() {
     return this->measuredDistance;
   }
 
-  bool isDetected() {
-    return this->detected;
-  }
+  // === utils ===
 
   bool healthCheck() {
-    if (analogRead(this->pin) < 50) {  // normal sensor reading should be 200+, if sensor fails, reading drops to ~0
-      return false;
-    }
-    return true;
+    return analogRead(this->pin) > 50;  // normal sensor reading should be 200+, if sensor fails, reading drops to ~0
   }
 
   ~LaserSensor(){};
@@ -167,7 +168,7 @@ public:
 
   void changeAllBaseThreshold(bool toggle) {
     for (int i = 0; i < this->num; i++) {
-      this->laserSensors[i].changeBaseThreshold(toggle);
+      this->laserSensors[i].setBaseThreshold(toggle);
     }
   }
 

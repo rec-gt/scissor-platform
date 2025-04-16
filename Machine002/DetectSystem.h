@@ -18,13 +18,8 @@ public:
       return;
     }
 
-    switch (status) {
-      case SYS_RUNNING:
-        displayOLED.print("", "系統運作中", "", 200);
-        break;
-      case SYS_STOPPED:
-        // displayOLED.print("偵測到障礙物", "系統暫停運作", "", 100);
-        break;
+    if (this->is(SYS_RUNNING)) {
+      displayOLED.print("", "系統運作中", "", 200);
     }
 
     this->lastStatus = status;

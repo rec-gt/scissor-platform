@@ -117,16 +117,12 @@ public:
   }
 
   byte getSensors8Status() {
-    byte result = 0;
-
     byte res = 255;
-
-    for (int i = 7; i >= 0; i--) {
+    for (size_t i = 0; i < 8; i++) {
       if (this->laserSensors[i].isDetected()) {
-        result |= 1 << i;
+        res &= ~(1 << i);
       }
     }
-
     return res;
   }
 

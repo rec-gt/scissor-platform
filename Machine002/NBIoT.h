@@ -40,14 +40,23 @@ private:
     }
 
     if (this->errCount >= 15) {
-      displayOLED.print("IoT SIM Card", "Not Found", "", 401);
+      if (this->CSQ > 30) {
+        displayOLED.print("", "IoT SIM Card", "Not Found", 401);
+      } else {
+        displayOLED.print("", "IoT SIM Card", "Not Found", 402);
+      }
       Serial.println("MQTT init failed");
+      while (1) {};
     }
   }
 
 public:
   String CIMI;
+  byte CIMIErrCnt = 0;
+
   String CSQ;
+  byte CSQErrCnt = 0;
+
   String IMEI;
 
   NBIoT(){};

@@ -40,6 +40,7 @@ private:
     }
 
     if (this->errCount >= 15) {
+      Serial.print(this->CSQ.toInt());
       if (this->CSQ.toInt() > 30) {
         displayOLED.print("", "IoT 訊號不佳", "", 401);
       } else {

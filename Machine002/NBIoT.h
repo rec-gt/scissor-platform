@@ -40,7 +40,7 @@ private:
     }
 
     if (this->errCount >= 15) {
-      if (this->CSQ > 30) {
+      if (this->CSQ.toInt() > 30) {
         displayOLED.print("", "IoT SIM Card", "Not Found", 401);
       } else {
         displayOLED.print("", "IoT SIM Card", "Not Found", 402);

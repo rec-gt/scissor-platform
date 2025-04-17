@@ -1,3 +1,4 @@
+#include "DetectSystem.h"
 #include "DisplayOLED.h"
 
 #ifndef NBIoT_h
@@ -14,6 +15,9 @@ private:
   String response;
 
   unsigned long lastMillis = 0;
+
+  byte sensorStatusX8 = 0;
+  byte sensorStatusX2 = 0;
 
   void clearBuffer() {
     while (NBIoTModule.read() > 0) { delay(1); }
@@ -191,7 +195,8 @@ public:
     return true;
   }
 
-  void publish(byte sensors8Status, byte sensors2Status, SystemStatus systemStatus, bool isLiftedUp = 0) {
+  void publish() {
+    // void publish(byte sensors8Status, byte sensors2Status, SystemStatus systemStatus, bool isLiftedUp = 0) {
     // Digital Input + Output = sensorsStatus
     // Analog Input[0] : 1 = RUNNING, ...
     // Analog Input[1] : 0 = not lifted up, 1 = lifted up
@@ -202,22 +207,22 @@ public:
         "AT+MQTTPUB=\"rgt/"
         + String(this->IMEI) + "/in\",1,0,0,0,\"{\"seq\":1,\"csq\":"
         + String(this->CSQ) + ",\"sw\":0,\"din\":"
-        + String(sensors8Status) + ",\"dout\":"
-        + String(sensors2Status) + ",\"ain\":["
-        + String(systemStatus) + ","
-        + String(isLiftedUp) + ",0,0],\"aout\":[0,0,0,0]}\"");
+        + String(this->sensorStatusX8) + ",\"dout\":"
+        + String(this->sensorStatusX2) + ",\"ain\":["
+        + String(detectSystem.getStatus()) + ","
+        + 0 + ",0,0],\"aout\":[0,0,0,0]}\"");
     }
   }
 
-  void quickSend(byte sensors8Status, byte sensors2Status, SystemStatus systemStatus, bool isLiftedUp = 0) {
+  void quickSend() {
     this->sendCMDFast(
       "AT+MQTTPUB=\"rgt/"
       + String(this->IMEI) + "/in\",1,0,0,0,\"{\"seq\":1,\"csq\":"
       + String(this->CSQ) + ",\"sw\":0,\"din\":"
-      + String(sensors8Status) + ",\"dout\":"
-      + String(sensors2Status) + ",\"ain\":["
-      + String(systemStatus) + ","
-      + String(isLiftedUp) + ",0,0],\"aout\":[0,0,0,0]}\"");
+      + String(this->sensorStatusX8) + ",\"dout\":"
+      + String(this->sensorStatusX2) + ",\"ain\":["
+      + String(detectSystem.getStatus()) + ","
+      + 0 + ",0,0],\"aout\":[0,0,0,0]}\"");
   }
 
   void publishPlain() {

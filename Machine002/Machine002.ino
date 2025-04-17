@@ -78,10 +78,7 @@ void setup() {
 void loop() {
   // === handling sensors ===
   sensorsManager.listenAll();
-
-  // === handling NB-IoT ===
-  nbiot.publish();
-  // nbiot.publishPlain();
+  sensorsManager.publish();
 
   // === handling press button ===
   pressButton.listen();

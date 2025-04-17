@@ -9,9 +9,6 @@ class NBIoT {
 private:
   byte errCount = 0;
   byte RN = 2;
-  String CIMI;
-  String CSQ;
-  String IMEI;
   String response;
 
   void clearBuffer() {
@@ -48,6 +45,10 @@ private:
   }
 
 public:
+  String CIMI;
+  String CSQ;
+  String IMEI;
+
   NBIoT(){};
 
   bool sendCMD(String cmd) {

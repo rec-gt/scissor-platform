@@ -1,5 +1,6 @@
 #include "Arduino.h"
-
+#ifndef baseThresholdSwitch_h
+#define baseThresholdSwitch_h
 class BaseThresholdSwitch {
 private:
   byte pin;
@@ -26,7 +27,9 @@ public:
     }
   }
 
-  bool on() { // on = longer threshold
+  bool on() {  // on = longer threshold
     return this->state == HIGH;
   }
 };
+
+#endif

@@ -11,6 +11,8 @@ class LaserSensorManager {
 private:
   LaserSensor laserSensors[20];
   size_t num;
+
+  unsigned long lastMillis = 0;
 public:
   byte sensorStatusX8 = 0;
   byte sensorStatusX2 = 0;
@@ -147,24 +149,17 @@ public:
 
     if (millis() - this->lastMillis >= 10 * 1000) {  // send every 10s
       this->lastMillis = millis();
-      this->sendCMDFast(
-        "AT+MQTTPUB=\"rgt/"
-        + String(this->IMEI) + "/in\",1,0,0,0,\"{\"seq\":1,\"csq\":"
-        + String(this->CSQ) + ",\"sw\":0,\"din\":"
-        + String(sensorManager.sensorStatusX8) + ",\"dout\":"
-        + String(sensorManager.sensorStatusX2) + ",\"ain\":["
-        + String(detectSystem.getStatus()) + ","
-        + 0 + ",0,0],\"aout\":[0,0,0,0]}\"");
+      this->quickSend();
     }
   }
 
   void quickSend() {
-    this->sendCMDFast(
+    nbiot.sendCMDFast(
       "AT+MQTTPUB=\"rgt/"
-      + String(this->IMEI) + "/in\",1,0,0,0,\"{\"seq\":1,\"csq\":"
-      + String(this->CSQ) + ",\"sw\":0,\"din\":"
-      + String(sensorManager.sensorStatusX8) + ",\"dout\":"
-      + String(sensorManager.sensorStatusX2) + ",\"ain\":["
+      + String(nbiot.IMEI) + "/in\",1,0,0,0,\"{\"seq\":1,\"csq\":"
+      + String(nbiot.CSQ) + ",\"sw\":0,\"din\":"
+      + String(this->sensorStatusX8) + ",\"dout\":"
+      + String(this->sensorStatusX2) + ",\"ain\":["
       + String(detectSystem.getStatus()) + ","
       + 0 + ",0,0],\"aout\":[0,0,0,0]}\"");
   }
@@ -188,6 +183,6 @@ public:
   }
 };
 
-extern LaserSensorManager sensorManager
+extern LaserSensorManager sensorManager;
 
 #endif

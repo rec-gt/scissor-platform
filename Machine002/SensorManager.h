@@ -12,6 +12,9 @@ private:
   LaserSensor laserSensors[20];
   size_t num;
 public:
+  byte sensorStatusX8 = 0;
+  byte sensorStatusX2 = 0;
+
   LaserSensorManager(LaserSensor sensors[], size_t num)
     : num(num) {
     for (size_t i = 0; i < this->num; i++) {
@@ -31,7 +34,7 @@ public:
     for (int i = 0; i < this->num; i++) {
       if (this->laserSensors[i].isDetected()) {
         this->showOneDetected(i);
-        nbiot.quickSend(this->getSensors8Status(), this->getSensors2Status(), detectSystem.getStatus(), 0);
+        nbiot.quickSend();
         return true;
       }
     }
@@ -116,40 +119,24 @@ public:
     return minDistance;
   }
 
-  byte getSensors8Status() {
-    byte res = 255;
+  void getSensorsStatus() {
+    byte resX8 = 255;
     for (size_t i = 0; i < 8; i++) {
       if (this->laserSensors[i].isDetected()) {
-        res &= ~(1 << i);
+        resX8 &= ~(1 << i);
       }
     }
-    return res;
-  }
 
-  // byte getSensors8Status() {
-  //   byte result = 0;
+    this->sensorStatusX8 = resX8;
 
-  //   byte res = 255;
-
-  //   for (int i = 7; i >= 0; i--) {
-  //     if (this->laserSensors[i].isDetected()) {
-  //       res -= pow(2, i);
-
-  //       // === bitwise operation ===
-  //       result |= 1 << i;
-  //     }
-  //   }
-
-  //   return res;
-  // }
-
-  byte getSensors2Status() {
-    byte res = 207;  // 11001111
-
-    for (int i = 10; i >= 8; i--) {
-      if (this->laserSensors[i].isDetected()) { res -= pow(2, (i - 8)); }
+    byte resX2 = 255;
+    for (size_t i = 8; i < 2; i++) {
+      if (this->laserSensors[i].isDetected()) {
+        resX2 &= ~(1 << i);
+      }
     }
-    return res;
+
+    this->sensorStatusX2 = resX2;
   }
 
   // === debug ===

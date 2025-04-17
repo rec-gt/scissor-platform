@@ -80,7 +80,7 @@ void loop() {
   sensorsManager.listenAll();
 
   // === handling NB-IoT ===
-  nbiot.publish(sensorsManager.getSensors8Status(), sensorsManager.getSensors2Status(), detectSystem.getStatus(), 0);
+  nbiot.publish();
   // nbiot.publishPlain();
 
   // === handling press button ===

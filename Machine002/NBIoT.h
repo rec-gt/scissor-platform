@@ -1,5 +1,6 @@
 #include "DetectSystem.h"
 #include "DisplayOLED.h"
+#include "NBIoT.h"
 
 #ifndef NBIoT_h
 #define NBIoT_h
@@ -15,9 +16,6 @@ private:
   String response;
 
   unsigned long lastMillis = 0;
-
-  byte sensorStatusX8 = 0;
-  byte sensorStatusX2 = 0;
 
   void clearBuffer() {
     while (NBIoTModule.read() > 0) { delay(1); }
@@ -207,8 +205,8 @@ public:
         "AT+MQTTPUB=\"rgt/"
         + String(this->IMEI) + "/in\",1,0,0,0,\"{\"seq\":1,\"csq\":"
         + String(this->CSQ) + ",\"sw\":0,\"din\":"
-        + String(this->sensorStatusX8) + ",\"dout\":"
-        + String(this->sensorStatusX2) + ",\"ain\":["
+        + String(nbiot.sensorStatusX8) + ",\"dout\":"
+        + String(nbiot.sensorStatusX2) + ",\"ain\":["
         + String(detectSystem.getStatus()) + ","
         + 0 + ",0,0],\"aout\":[0,0,0,0]}\"");
     }
@@ -219,8 +217,8 @@ public:
       "AT+MQTTPUB=\"rgt/"
       + String(this->IMEI) + "/in\",1,0,0,0,\"{\"seq\":1,\"csq\":"
       + String(this->CSQ) + ",\"sw\":0,\"din\":"
-      + String(this->sensorStatusX8) + ",\"dout\":"
-      + String(this->sensorStatusX2) + ",\"ain\":["
+      + String(nbiot.sensorStatusX8) + ",\"dout\":"
+      + String(nbiot.sensorStatusX2) + ",\"ain\":["
       + String(detectSystem.getStatus()) + ","
       + 0 + ",0,0],\"aout\":[0,0,0,0]}\"");
   }

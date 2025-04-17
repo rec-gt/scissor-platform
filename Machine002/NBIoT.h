@@ -39,7 +39,8 @@ private:
       ++this->errCount;
     }
 
-    if (this->errCount >= 20) {
+    if (this->errCount >= 15) {
+      displayOLED.print("IoT SIM Card", "Not Found", "", 401);
       Serial.println("MQTT init failed");
     }
   }
@@ -190,13 +191,6 @@ public:
     }
     return true;
   }
-
-  // void publishPlain() {
-  //   if (millis() - this->lastMillis >= 5 * 1000) {
-  //     this->lastMillis = millis();
-  //     this->sendCMDFast("AT+MQTTPUB=\"rgt/869976034806621/in\",1,0,0,0,\"{\"seq\":1,\"csq\":21,\"sw\":0,\"din\":255,\"dout\":207,\"ain\":[4,0,0,0],\"aout\":[0,0,0,0]}\"");
-  //   }
-  // }
 
   ~NBIoT(){};
 };

@@ -142,7 +142,7 @@ public:
   }
 
   // === NBIoT ===
-  void publish() {
+  void publishStatus() {
     // Digital Input + Output = sensorsStatus
     // Analog Input[0] : 1 = RUNNING, ...
     // Analog Input[1] : 0 = not lifted up, 1 = lifted up
@@ -154,6 +154,7 @@ public:
   }
 
   void quickSend() {
+    this->getSensorsStatus();
     nbiot.sendCMDFast(
       "AT+MQTTPUB=\"rgt/"
       + String(nbiot.IMEI) + "/in\",1,0,0,0,\"{\"seq\":1,\"csq\":"

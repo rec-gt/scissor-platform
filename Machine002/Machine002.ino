@@ -78,7 +78,7 @@ void setup() {
 void loop() {
   // === handling sensors ===
   sensorsManager.listenAll();
-  sensorsManager.publish();
+  sensorsManager.publishStatus();
 
   // === handling press button ===
   pressButton.listen();

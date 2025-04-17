@@ -34,7 +34,7 @@ public:
     for (int i = 0; i < this->num; i++) {
       if (this->laserSensors[i].isDetected()) {
         this->showOneDetected(i);
-        nbiot.quickSend();
+        this->quickSend();
         return true;
       }
     }
@@ -139,6 +139,36 @@ public:
     this->sensorStatusX2 = resX2;
   }
 
+  // === NBIoT ===
+  void publish() {
+    // Digital Input + Output = sensorsStatus
+    // Analog Input[0] : 1 = RUNNING, ...
+    // Analog Input[1] : 0 = not lifted up, 1 = lifted up
+
+    if (millis() - this->lastMillis >= 10 * 1000) {  // send every 10s
+      this->lastMillis = millis();
+      this->sendCMDFast(
+        "AT+MQTTPUB=\"rgt/"
+        + String(this->IMEI) + "/in\",1,0,0,0,\"{\"seq\":1,\"csq\":"
+        + String(this->CSQ) + ",\"sw\":0,\"din\":"
+        + String(sensorManager.sensorStatusX8) + ",\"dout\":"
+        + String(sensorManager.sensorStatusX2) + ",\"ain\":["
+        + String(detectSystem.getStatus()) + ","
+        + 0 + ",0,0],\"aout\":[0,0,0,0]}\"");
+    }
+  }
+
+  void quickSend() {
+    this->sendCMDFast(
+      "AT+MQTTPUB=\"rgt/"
+      + String(this->IMEI) + "/in\",1,0,0,0,\"{\"seq\":1,\"csq\":"
+      + String(this->CSQ) + ",\"sw\":0,\"din\":"
+      + String(sensorManager.sensorStatusX8) + ",\"dout\":"
+      + String(sensorManager.sensorStatusX2) + ",\"ain\":["
+      + String(detectSystem.getStatus()) + ","
+      + 0 + ",0,0],\"aout\":[0,0,0,0]}\"");
+  }
+
   // === debug ===
 
   void printOne(byte i) {
@@ -157,5 +187,7 @@ public:
     }
   }
 };
+
+extern LaserSensorManager sensorManager
 
 #endif

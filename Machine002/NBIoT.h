@@ -39,9 +39,9 @@ private:
       ++this->errCount;
     }
 
-    if (this->errCount >= 15) {
+    if (this->errCount >= 5) {
       Serial.print(this->CSQ.toInt());
-      if (this->CSQ.toInt() > 30) {
+      if (this->CSQ.toInt() <= 30) {
         displayOLED.print("", "IoT 訊號不佳", "", 401);
       } else {
         displayOLED.print("", "IoT SIM卡問題", "", 402);

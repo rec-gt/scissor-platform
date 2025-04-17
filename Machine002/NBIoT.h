@@ -41,9 +41,9 @@ private:
 
     if (this->errCount >= 15) {
       if (this->CSQ.toInt() > 30) {
-        displayOLED.print("", "IoT SIM Card", "Not Found", 401);
+        displayOLED.print("", "IoT 訊號不佳", "", 401);
       } else {
-        displayOLED.print("", "IoT SIM Card", "Not Found", 402);
+        displayOLED.print("", "IoT SIM卡問題", "", 402);
       }
       Serial.println("MQTT init failed");
       while (1) {};

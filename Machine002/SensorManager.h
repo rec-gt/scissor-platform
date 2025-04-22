@@ -132,11 +132,18 @@ public:
     this->sensorStatusX8 = resX8;
 
     byte resX2 = 255;
-    for (size_t i = 8; i < 2; i++) {
-      if (this->laserSensors[i].isDetected()) {
-        resX2 &= ~(1 << i);
-      }
+    if (this->laserSensors[8].isDetected()) {
+      resX2 &= ~(1 << 2);
     }
+    if (this->laserSensors[9].isDetected()) {
+      resX2 &= ~(1 << 1);
+    }
+
+    // for (size_t i = 8; i < 10; i++) {
+    //   if (this->laserSensors[i].isDetected()) {
+    //     resX2 &= ~(1 << (10 - i));
+    //   }
+    // }
 
     this->sensorStatusX2 = resX2;
   }

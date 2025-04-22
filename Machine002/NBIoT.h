@@ -98,7 +98,7 @@ public:
       NBIoTModule.println("AT+CSQ");
     }
 
-    if (millis() - this->prevSendMillis > 1 * 500) {
+    if (millis() - this->prevSendMillis > 1 * 1000) {
       if (NBIoTModule.available()) {
         this->response = NBIoTModule.readString();
         this->parseCSQ();

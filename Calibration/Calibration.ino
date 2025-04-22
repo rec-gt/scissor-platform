@@ -22,8 +22,9 @@ DownwardSensor downwardSensor(A11, 305);
 
 void setup() {
   Serial.begin(9600);
+  analogReference(EXTERNAL);
   // === 10 Sensors ===
-  // manager.calibrateAllReading();  // 第一步，然後更新上面的reading，再進行第二步
+  manager.calibrateAllReading();  // 第一步，然後更新上面的reading，再進行第二步
   // manager.calibrateAllDistance();  // 第二步，誤差在+-10mm都可以
 
   // === Downward Sensors ===
@@ -31,6 +32,6 @@ void setup() {
 }
 
 void loop() {
-  downwardSensor.print();
+  // downwardSensor.print();
   delay(300);
 };

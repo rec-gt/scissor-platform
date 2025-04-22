@@ -80,7 +80,7 @@ void loop() {
   sensorsManager.listenAll();
   sensorsManager.publishStatus();
   nbiot.updateCSQ();
-  
+
   // === handling press button ===
   pressButton.listen();
 
@@ -140,7 +140,7 @@ void loop() {
   // sensorsManager.printAll();
   // rs485.waitForMsg();
 
-  delay(1000);
+  delay(300);
 }
 
 void countDownCallback() {

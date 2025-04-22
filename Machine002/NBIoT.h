@@ -21,17 +21,14 @@ private:
 
   void parseCIMI() {
     this->CIMI = this->response.substring(this->RN + 0, this->RN + 15);
-    Serial.println(this->CIMI);
   }
 
   void parseCSQ() {
     this->CSQ = this->response.substring(this->RN + 5, this->RN + 5 + 2);
-    Serial.println(this->CSQ);
   }
 
   void parseIMEI() {
     this->IMEI = this->response.substring(this->RN + 6, this->RN + 6 + 15);
-    Serial.println(this->IMEI);
   }
 
   void errHook(bool add) {

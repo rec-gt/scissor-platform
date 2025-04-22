@@ -15,7 +15,7 @@ private:
   unsigned long lastMillis = 0;
 public:
   byte sensorStatusX8 = 0;
-  byte sensorStatusX2 = 0;
+  byte sensorStatusX4 = 0;
 
   LaserSensorManager(LaserSensor sensors[], size_t num)
     : num(num) {
@@ -133,19 +133,17 @@ public:
 
     byte resX2 = 255;
     if (this->laserSensors[8].isDetected()) {
-      resX2 &= ~(1 << 0); // idk why, ask Viki System's Keith
+      resX2 &= ~(1 << 0);  // idk why, ask Viki System's Keith
     }
     if (this->laserSensors[9].isDetected()) {
       resX2 &= ~(1 << 1);
     }
 
-    // for (size_t i = 8; i < 10; i++) {
-    //   if (this->laserSensors[i].isDetected()) {
-    //     resX2 &= ~(1 << (10 - i));
-    //   }
-    // }
+    if (detectSystem.getStatus() == 2) {
+      resX2 &= ~(1 << 3);
+    }
 
-    this->sensorStatusX2 = resX2;
+    this->sensorStatusX4 = resX2;
   }
 
   // === NBIoT ===
@@ -167,7 +165,7 @@ public:
       + String(nbiot.IMEI) + "/in\",1,0,0,0,\"{\"seq\":1,\"csq\":"
       + String(nbiot.getCSQ()) + ",\"sw\":0,\"din\":"
       + String(this->sensorStatusX8) + ",\"dout\":"
-      + String(this->sensorStatusX2) + ",\"ain\":["
+      + String(this->sensorStatusX4) + ",\"ain\":["
       + String(detectSystem.getStatus()) + ","
       + 0 + ",0,0],\"aout\":[0,0,0,0]}\"");
   }

@@ -155,14 +155,23 @@ public:
 
   void quickSend() {
     this->getSensorsStatus();
-    nbiot.sendCMDFast(
-      "AT+MQTTPUB=\"rgt/"
-      + String(nbiot.IMEI) + "/in\",1,0,0,0,\"{\"seq\":1,\"csq\":"
-      + String(nbiot.CSQ) + ",\"sw\":0,\"din\":"
-      + String(this->sensorStatusX8) + ",\"dout\":"
-      + String(this->sensorStatusX2) + ",\"ain\":["
-      + String(detectSystem.getStatus()) + ","
-      + 0 + ",0,0],\"aout\":[0,0,0,0]}\"");
+    String callbackCMD = "AT+MQTTPUB=\"rgt/"
+                         + String(nbiot.IMEI) + "/in\",1,0,0,0,\"{\"seq\":1,\"csq\":"
+                         + String(nbiot.CSQ) + ",\"sw\":0,\"din\":"
+                         + String(this->sensorStatusX8) + ",\"dout\":"
+                         + String(this->sensorStatusX2) + ",\"ain\":["
+                         + String(detectSystem.getStatus()) + ","
+                         + 0 + ",0,0],\"aout\":[0,0,0,0]}\"";
+    // nbiot.sendCMDFast(
+    //   "AT+MQTTPUB=\"rgt/"
+    //   + String(nbiot.IMEI) + "/in\",1,0,0,0,\"{\"seq\":1,\"csq\":"
+    //   + String(nbiot.CSQ) + ",\"sw\":0,\"din\":"
+    //   + String(this->sensorStatusX8) + ",\"dout\":"
+    //   + String(this->sensorStatusX2) + ",\"ain\":["
+    //   + String(detectSystem.getStatus()) + ","
+    //   + 0 + ",0,0],\"aout\":[0,0,0,0]}\"");
+
+    nbiot.sendCMDAsync("AT+CSQ", callbackCMD);
   }
 
   // === debug ===

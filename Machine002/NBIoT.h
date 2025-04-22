@@ -91,10 +91,9 @@ public:
   }
 
   void updateCSQ() {
-    if (millis() - this->prevSendMillis > 1000) {
+    if (millis() - this->prevSendMillis > 5000) {
       this->prevSendMillis = millis();
       this->clearBuffer();
-      Serial.println("UPDATE CSQ");
       NBIoTModule.println("AT+CSQ");
     }
 
@@ -102,8 +101,8 @@ public:
       this->prevRecvMillis = millis();
       if (NBIoTModule.available()) {
         this->response = NBIoTModule.readString();
-        Serial.println(this->response);
         this->parseCSQ();
+        Serial.println(this->CSQ);
       }
       this->clearBuffer();
     }

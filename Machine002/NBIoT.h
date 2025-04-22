@@ -87,11 +87,12 @@ public:
     this->clearBuffer();
     Serial.println("CMD: " + cmd);
     NBIoTModule.println(cmd);
-    delay(300);
+
+    this->prevSendMillis = millis();
   }
 
   void updateCSQ() {
-    if (millis() - this->prevSendMillis > 9 * 1000) {
+    if (millis() - this->prevSendMillis > 5 * 1000) {
       this->prevSendMillis = millis();
       this->clearBuffer();
       NBIoTModule.println("AT+CSQ");

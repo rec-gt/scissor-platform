@@ -40,16 +40,16 @@ NBIoT nbiot;
 
 LaserSensor sensors[] = {
   // (pin, longer threshold, shorter threshold, fine tune)
-  LaserSensor(A0, 800, 500, 139),  // 工廠fine-tune，遮擋鏡頭做測試
-  LaserSensor(A1, 800, 500, 139),
-  LaserSensor(A2, 800, 500, 139),
-  LaserSensor(A3, 800, 500, 139),
-  LaserSensor(A4, 800, 500, 139),
-  LaserSensor(A5, 800, 500, 139),
-  LaserSensor(A6, 800, 500, 139),
-  LaserSensor(A7, 800, 500, 139),
-  LaserSensor(A8, 800, 500, 139),
-  LaserSensor(A9, 800, 500, 139),
+  LaserSensor(A0, 800, 500, 210),  // 工廠fine-tune，遮擋鏡頭做測試
+  LaserSensor(A1, 800, 500, 210),
+  LaserSensor(A2, 800, 500, 210),
+  LaserSensor(A3, 800, 500, 210),
+  LaserSensor(A4, 800, 500, 210),
+  LaserSensor(A5, 800, 500, 210),
+  LaserSensor(A6, 800, 500, 210),
+  LaserSensor(A7, 800, 500, 210),
+  LaserSensor(A8, 800, 500, 210),
+  LaserSensor(A9, 800, 500, 210),
 };
 
 LaserSensorManager sensorsManager(sensors, sizeof(sensors) / sizeof(sensors[0]));
@@ -61,6 +61,8 @@ LaserSensorManager sensorsManager(sensors, sizeof(sensors) / sizeof(sensors[0]))
 
 void setup() {
   Serial.begin(9600);
+  // analogReference(DEFAULT);
+  // analogReference(EXTERNAL);
 
   // === System Starting ===
   relay.cut();
@@ -68,7 +70,7 @@ void setup() {
   trafficLight.off();
   warningSystem.off();
   displayOLED.init();
-  nbiot.init();
+  // nbiot.init();
   powerLight.on();
   detectSystem.set(SYS_RUNNING);
 

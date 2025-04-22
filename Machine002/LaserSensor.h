@@ -30,12 +30,11 @@ public:
   LaserSensor(byte pin, int longerThreshold, int shorterThreshold, int tunningMinReading)
     : pin(pin), longerThreshold(longerThreshold), shorterThreshold(shorterThreshold), tunningMinReading(tunningMinReading) {
     pinMode(this->pin, INPUT);
-    // analogReference(EXTERNAL);
-    analogReference(DEFAULT);
   }
 
   void listen() {
-    this->reading = this->avgRead();
+    // this->reading = this->avgRead();
+    this->reading = analogRead(this->pin);
 
     this->measuredDistance = this->calcDistance();
 

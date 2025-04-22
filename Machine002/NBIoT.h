@@ -65,7 +65,7 @@ public:
 
   bool sendCMD(String cmd) {
     this->clearBuffer();
-    Serial.println("CMD: " + cmd);
+    // Serial.println("CMD: " + cmd);
     NBIoTModule.println(cmd);
     delay(500);  // wait at least 300ms
 
@@ -82,7 +82,7 @@ public:
 
   void sendCMDFast(String cmd) {
     this->clearBuffer();
-    Serial.println("CMD: " + cmd);
+    // Serial.println("CMD: " + cmd);
     NBIoTModule.println(cmd);
 
     this->prevSendMillis = millis();

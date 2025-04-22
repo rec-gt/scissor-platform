@@ -24,7 +24,10 @@ private:
     Serial.println(this->CIMI);
   }
 
-
+  void parseCSQ() {
+    this->CSQ = this->response.substring(this->RN + 5, this->RN + 5 + 2);
+    Serial.println(this->CSQ);
+  }
 
   void parseIMEI() {
     this->IMEI = this->response.substring(this->RN + 6, this->RN + 6 + 15);
@@ -49,9 +52,6 @@ private:
   }
 
 public:
-  String lastCMD = "";
-  unsigned long prevMillis = millis();
-
   String CIMI;
   byte CIMIErrCnt = 0;
 
@@ -59,6 +59,10 @@ public:
   byte CSQErrCnt = 0;
 
   String IMEI;
+
+
+  unsigned long prevSendMillis = 0;
+  unsigned long prevRecvMillis = 0;
 
   NBIoT(){};
 
@@ -86,32 +90,25 @@ public:
     delay(300);
   }
 
-  void sendCMDAsync(String cmd, String callbackCMD) {
+  void updateAsync() {
     this->clearBuffer();
+    Serial.println("CMD: " + cmd);
 
-    if (cmd != this->lastCMD) {
+
+    if (millis() - this->prevSendMillis > 400) {
+      this->prevSendMillis = millis();
       NBIoTModule.println(cmd);
     }
 
-    if (millis() - this->prevMillis > 400) {
-      this->prevMillis = millis();
+    if (millis() - this->prevRecvMillis > 400) {
+      this->prevRecvMillis = millis();
       if (NBIoTModule.available()) {
-        this->response = NBIoTModule.readString();
+        this->response = NBIoTModule.readString();g
         Serial.println(this->response);
         this->parseCSQ();
-        NBIoTModule.println(callbackCMD);
-        this->clearBuffer();
-        return true;
-      } else {
-        this->clearBuffer();
-        return false;
       }
+      this->clearBuffer();
     }
-  }
-
-  void parseCSQ() {
-    this->CSQ = this->response.substring(this->RN + 5, this->RN + 5 + 2);
-    Serial.println(this->CSQ);
   }
 
   bool init() {
@@ -148,7 +145,6 @@ public:
     while (1) {
       this->sendCMD("AT+CSQ");
       if (!this->resContain("ERROR")) {
-        this->parseCSQ();
         break;
       } else {
         this->errHook(true);

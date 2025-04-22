@@ -80,9 +80,6 @@ void loop() {
   sensorsManager.listenAll();
   sensorsManager.publishStatus();
 
-  // === handling NBIoT CSQ ===
-  nbiot.updateCSQ();
-
   // === handling press button ===
   pressButton.listen();
 

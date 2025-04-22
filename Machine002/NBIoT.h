@@ -62,7 +62,6 @@ public:
 
 
   unsigned long prevSendMillis = 0;
-  unsigned long prevRecvMillis = 0;
 
   NBIoT(){};
 
@@ -98,14 +97,12 @@ public:
       NBIoTModule.println("AT+CSQ");
     }
 
-    if (millis() - this->prevRecvMillis > 1 * 1000) {
-      this->prevRecvMillis = millis();
+    if (millis() - this->prevSendMillis > 1 * 500) {
       if (NBIoTModule.available()) {
         this->response = NBIoTModule.readString();
         this->parseCSQ();
-        // Serial.println(this->CSQ);
+        this->clearBuffer();
       }
-      this->clearBuffer();
     }
   }
 

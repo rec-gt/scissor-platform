@@ -133,7 +133,7 @@ public:
 
     byte resX2 = 255;
     if (this->laserSensors[8].isDetected()) {
-      resX2 &= ~(1 << 3); // idk why, ask Viki System's Keith
+      resX2 &= ~(1 << 5); // idk why, ask Viki System's Keith
     }
     if (this->laserSensors[9].isDetected()) {
       resX2 &= ~(1 << 1);

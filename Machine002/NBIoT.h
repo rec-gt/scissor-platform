@@ -90,20 +90,19 @@ public:
     delay(300);
   }
 
-  void updateAsync() {
+  void updateCSQ() {
     this->clearBuffer();
-    Serial.println("CMD: " + cmd);
 
-
-    if (millis() - this->prevSendMillis > 400) {
+    if (millis() - this->prevSendMillis > 1000) {
+      Serial.println("UPDATE CSQ");
       this->prevSendMillis = millis();
-      NBIoTModule.println(cmd);
+      NBIoTModule.println("AT+CSQ");
     }
 
     if (millis() - this->prevRecvMillis > 400) {
       this->prevRecvMillis = millis();
       if (NBIoTModule.available()) {
-        this->response = NBIoTModule.readString();g
+        this->response = NBIoTModule.readString();
         Serial.println(this->response);
         this->parseCSQ();
       }

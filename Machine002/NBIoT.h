@@ -56,6 +56,7 @@ public:
   byte CIMIErrCnt = 0;
 
   String CSQ;
+  byte CSQByte = 0;
   byte CSQErrCnt = 0;
 
   String IMEI;
@@ -104,6 +105,13 @@ public:
         this->clearBuffer();
       }
     }
+  }
+
+  String getCSQ() {
+    if (!utils.isNumeric(this->CSQ) || this->CSQ == "") {
+      return "99";
+    }
+    return this->CSQ;
   }
 
   bool init() {

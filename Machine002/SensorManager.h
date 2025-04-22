@@ -158,7 +158,7 @@ public:
     nbiot.sendCMDFast(
       "AT+MQTTPUB=\"rgt/"
       + String(nbiot.IMEI) + "/in\",1,0,0,0,\"{\"seq\":1,\"csq\":"
-      + String(nbiot.CSQ) + ",\"sw\":0,\"din\":"
+      + String(nbiot.getCSQ()) + ",\"sw\":0,\"din\":"
       + String(this->sensorStatusX8) + ",\"dout\":"
       + String(this->sensorStatusX2) + ",\"ain\":["
       + String(detectSystem.getStatus()) + ","

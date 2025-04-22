@@ -79,7 +79,8 @@ void loop() {
   // === handling sensors ===
   sensorsManager.listenAll();
   sensorsManager.publishStatus();
-
+  nbiot.updateCSQ();
+  
   // === handling press button ===
   pressButton.listen();
 

@@ -27,6 +27,16 @@ public:
     return c;
   }
 
+  bool isNumeric(String str) {
+    for (size_t i = 0; i < str.length(); i++) {
+      if (!isDigit(str.charAt(i))) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
   ~Utils(){};
 };
 

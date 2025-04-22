@@ -152,7 +152,7 @@ public:
     // Analog Input[0] : 1 = RUNNING, ...
     // Analog Input[1] : 0 = not lifted up, 1 = lifted up
 
-    if (millis() - this->lastMillis >= 10 * 1000) {  // send every 10s
+    if (millis() - this->lastMillis >= 30 * 1000) {  // send every 30s
       this->lastMillis = millis();
       this->quickSend();
     }

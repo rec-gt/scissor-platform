@@ -33,8 +33,7 @@ public:
   }
 
   void listen() {
-    // this->reading = this->avgRead();
-    this->reading = analogRead(this->pin);
+    this->reading = this->avgRead();
 
     this->measuredDistance = this->calcDistance();
 
@@ -54,10 +53,10 @@ public:
 
   float avgRead() {
     unsigned long avg = 0;
-    for (size_t i = 0; i < 32; i++) {
+    for (size_t i = 0; i < 64; i++) {
       avg += analogRead(this->pin);
     };
-    return avg / 32.;
+    return avg / 64.;
   }
 
   float calcDistance() {

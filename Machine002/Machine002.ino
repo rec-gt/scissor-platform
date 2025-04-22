@@ -60,9 +60,8 @@ LaserSensorManager sensorsManager(sensors, sizeof(sensors) / sizeof(sensors[0]))
 
 
 void setup() {
+  analogReference(DEFAULT);
   Serial.begin(9600);
-  // analogReference(DEFAULT);
-  // analogReference(EXTERNAL);
 
   // === System Starting ===
   relay.cut();
@@ -70,7 +69,7 @@ void setup() {
   trafficLight.off();
   warningSystem.off();
   displayOLED.init();
-  // nbiot.init();
+  nbiot.init();
   powerLight.on();
   detectSystem.set(SYS_RUNNING);
 
@@ -139,10 +138,10 @@ void loop() {
 
   // === Debugging ===
   // sensorsManager.printOne(0);
-  sensorsManager.printAll();
+  // sensorsManager.printAll();
   // rs485.waitForMsg();
 
-  delay(1000);
+  delay(100);
 }
 
 void countDownCallback() {

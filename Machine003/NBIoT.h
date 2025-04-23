@@ -53,13 +53,9 @@ public:
   byte CIMIErrCnt = 0;
 
   String CSQ;
-  byte CSQByte = 0;
   byte CSQErrCnt = 0;
 
   String IMEI;
-
-
-  unsigned long prevSendMillis = 0;
 
   NBIoT(){};
 
@@ -82,35 +78,11 @@ public:
 
   void sendCMDFast(String cmd) {
     this->clearBuffer();
-    // Serial.println("CMD: " + cmd);
+    Serial.println("CMD: " + cmd);
     NBIoTModule.println(cmd);
-    // this->prevSendMillis = millis();
   }
 
-  void updateCSQ() {
-    if (millis() - this->prevSendMillis > 5 * 1000) {
-      this->prevSendMillis = millis();
-      this->clearBuffer();
-      NBIoTModule.println("AT+CSQ");
-    }
-
-    if (millis() - this->prevSendMillis > 1 * 1000) {
-      if (NBIoTModule.available()) {
-        this->response = NBIoTModule.readString();
-        this->parseCSQ();
-        this->clearBuffer();
-      }
-    }
-  }
-
-  String getCSQ() {
-    if (!utils.isNumeric(this->CSQ) || this->CSQ == "") {
-      return "99";
-    }
-    return this->CSQ;
-  }
-
-  bool init() {
+  void init() {
     displayOLED.print("", "正在加載IoT...", "", 2);
 
     delay(100);
@@ -219,11 +191,6 @@ public:
     }
 
     Serial.println("MQTT Init Finished");
-
-    if (this->errCount > 10) {
-      return false;
-    }
-    return true;
   }
 
   ~NBIoT(){};

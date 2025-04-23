@@ -5,14 +5,13 @@
 #include "Countdown.h"
 #include "LaserSensor.h"
 #include "SensorManager.h"
-// #include "DownwardSensor.h"
 #include "BaseThresholdSwitch.h"
 #include "DisplayOLED.h"
 #include "NBIoT.h"
 #include "WarningSystem.h"
 #include "TrafficLight.h"
 #include "Utils.h"
-// #include "RS485Module.h"
+#include <avr/wdt.h>
 
 DetectSystem detectSystem;
 
@@ -54,10 +53,6 @@ LaserSensor sensors[] = {
 
 LaserSensorManager sensorsManager(sensors, sizeof(sensors) / sizeof(sensors[0]));
 
-// DownwardSensor downwardSensor(A11, 200);
-
-// RS485Module rs485;
-
 
 void setup() {
   analogReference(DEFAULT);
@@ -88,10 +83,10 @@ void loop() {
   baseThresholdSwitch.listen();
   sensorsManager.setAllBaseThreshold(baseThresholdSwitch.on());
 
-  // === controlling traffic light ===
+  // === handling traffic light ===
   trafficLight.listen(sensorsManager.getMinDistance());
 
-  // === controlling detection system ===
+  // === handling detection system ===
   if (detectSystem.is(SYS_RUNNING)) {
     relay.connect();
     warningSystem.off();
@@ -138,7 +133,6 @@ void loop() {
   // === Debugging ===
   // sensorsManager.printOne(0);
   // sensorsManager.printAll();
-  // rs485.waitForMsg();
 
   delay(100);
 }

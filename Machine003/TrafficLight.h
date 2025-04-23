@@ -1,13 +1,15 @@
 #include "Arduino.h"
 #include "SystemEnums.h"
 
+#ifndef trafficLight_h
+#define trafficLight_h
+
 class TrafficLight {
 private:
   byte redPin;
   byte yellowPin;
   byte greenPin;
 
-  TrafficStatus status = TRAFFIC_GREEN;
   TrafficStatus lastStatus = TRAFFIC_GREEN;
 
   unsigned long lastMillis;
@@ -74,4 +76,12 @@ public:
       this->lastMillis = millis();
     }
   }
+
+  TrafficStatus getStatus() {
+    return this->lastStatus;
+  }
 };
+
+extern TrafficLight trafficLight;
+
+#endif

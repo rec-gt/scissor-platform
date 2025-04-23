@@ -2,6 +2,7 @@
 #include "SystemEnums.h"
 #include "DisplayOLED.h"
 #include "SensorManager.h"
+#include "TrafficLight.h"
 #include "NBIoT.h"
 
 #ifndef detectSystem_h
@@ -52,7 +53,7 @@ public:
                  + String(sensorManager.sensorStatusX8) + ",\"dout\":"
                  + String(sensorManager.sensorStatusX4) + ",\"ain\":["
                  + String(this->getStatus()) + ","
-                 + 0 + ",0,0],\"aout\":[0,0,0,0]}\"";
+                 + String(trafficLight.getStatus()) + ",0,0],\"aout\":[0,0,0,0]}\"";
 
     if (reason == 0) {
       if (millis() - this->prevMillis > 30 * 1000) {  // send every 30s

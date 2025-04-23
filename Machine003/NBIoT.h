@@ -201,7 +201,7 @@ public:
     if (reason != this->prevReason) {
       this->prevReason = reason;
 
-      Serial.println("One-go CMD: " + cmd);
+      Serial.println("One-time CMD: " + cmd);
       NBIoTModule.println(cmd);
     }
   }

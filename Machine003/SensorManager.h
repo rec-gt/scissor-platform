@@ -36,7 +36,7 @@ public:
     for (int i = 0; i < this->num; i++) {
       if (this->laserSensors[i].isDetected()) {
         this->showOneDetected(i);
-        this->quickSend();
+        this->quickSend(true);
         return true;
       }
     }
@@ -154,7 +154,7 @@ public:
     }
   }
 
-  void quickSend() {
+  void quickSend(byte forceStop = false) {
     this->getSensorsStatus();
     nbiot.sendCMDFast(
       "AT+MQTTPUB=\"rgt/"
@@ -162,7 +162,7 @@ public:
       + String(nbiot.CSQ) + ",\"sw\":0,\"din\":"
       + String(this->sensorStatusX8) + ",\"dout\":"
       + String(this->sensorStatusX4) + ",\"ain\":["
-      + String(detectSystem.getStatus()) + ","
+      + String(forceStop ? "3" : detectSystem.getStatus()) + ","
       + 0 + ",0,0],\"aout\":[0,0,0,0]}\"");
   }
 

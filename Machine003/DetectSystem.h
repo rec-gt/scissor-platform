@@ -47,13 +47,20 @@ public:
     //         4 - obstacle enters 800mm range
     sensorManager.getSensorsStatus();
 
+    byte trafficValue = 90;
+    if (trafficLight.getStatus() == TRAFFIC_RED) {
+      trafficValue = 30;
+    } else if (trafficLight.getStatus() == TRAFFIC_YELLOW) {
+      trafficValue = 60;
+    }
+
     String cmd = "AT+MQTTPUB=\"rgt/"
                  + String(nbiot.IMEI) + "/in\",1,0,0,0,\"{\"seq\":1,\"csq\":"
                  + String(nbiot.CSQ) + ",\"sw\":0,\"din\":"
                  + String(sensorManager.sensorStatusX8) + ",\"dout\":"
                  + String(sensorManager.sensorStatusX4) + ",\"ain\":["
                  + String(this->getStatus()) + ","
-                 + String(trafficLight.getStatus()) + ",0,0],\"aout\":[0,0,0,0]}\"";
+                 + trafficValue + ",0,0],\"aout\":[0,0,0,0]}\"";
 
     if (reason == 0) {
       if (millis() - this->prevMillis > 30 * 1000) {  // send every 30s

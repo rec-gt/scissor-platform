@@ -55,7 +55,6 @@ public:
     unsigned long avg = 0;
     for (size_t i = 0; i < 64; i++) {
       avg += analogRead(this->pin);
-      delay(1);
     };
     return avg / 64.;
   }

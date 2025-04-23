@@ -11,7 +11,7 @@ private:
   String response;
 
   void clearBuffer() {
-    while (NBIoTModule.read() >= 0) { delay(1); }
+    while (NBIoTModule.read() >= 0) {}
   }
 
   bool resContain(char* target) {

@@ -74,6 +74,8 @@ void setup() {
 }
 
 void loop() {
+
+
   // === handling sensors ===
   sensorsManager.listenAll();
   sensorsManager.publishStatus();

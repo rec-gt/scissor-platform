@@ -162,7 +162,7 @@ public:
       + String(nbiot.CSQ) + ",\"sw\":0,\"din\":"
       + String(this->sensorStatusX8) + ",\"dout\":"
       + String(this->sensorStatusX4) + ",\"ain\":["
-      + String(forceStop ? "3" : detectSystem.getStatus()) + ","
+      + String((forceStop ? SYS_STOPPED : detectSystem.getStatus())) + ","
       + 0 + ",0,0],\"aout\":[0,0,0,0]}\"");
   }
 

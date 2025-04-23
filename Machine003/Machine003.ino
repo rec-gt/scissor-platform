@@ -50,7 +50,7 @@ LaserSensor sensors[] = {
   LaserSensor(A9, 800, 500, 210),
 };
 
-LaserSensorManager sensorsManager(sensors, sizeof(sensors) / sizeof(sensors[0]));
+LaserSensorManager sensorManager(sensors, sizeof(sensors) / sizeof(sensors[0]));
 
 
 void setup() {
@@ -75,17 +75,17 @@ void setup() {
 
 void loop() {
   // === handling sensors ===
-  sensorsManager.listenAll();
+  sensorManager.listenAll();
 
   // === handling press button ===
   pressButton.listen();
 
   // === handling threshold switch ===
   baseThresholdSwitch.listen();
-  sensorsManager.setAllBaseThreshold(baseThresholdSwitch.on());
+  sensorManager.setAllBaseThreshold(baseThresholdSwitch.on());
 
   // === handling traffic light ===
-  trafficLight.listen(sensorsManager.getMinDistance());
+  trafficLight.listen(sensorManager.getMinDistance());
 
   // === handling detection system ===
   if (detectSystem.is(SYS_RUNNING)) {
@@ -95,11 +95,11 @@ void loop() {
     warningSystem.off();
     tenSecondsLight.off();
 
-    if (sensorsManager.isOneDetected()) {
+    if (sensorManager.isOneDetected()) {
       detectSystem.set(SYS_STOPPED);
     }
 
-    if (!sensorsManager.areAllHealthy()) {
+    if (!sensorManager.areAllHealthy()) {
       detectSystem.set(SYS_FAILURE);
     }
 
@@ -110,7 +110,7 @@ void loop() {
     warningSystem.on();
     tenSecondsLight.on();
 
-    if (sensorsManager.areAllEscaped()) {  // 1. sensor keep detection, once escape from obstacle, switch to RUNNING
+    if (sensorManager.areAllEscaped()) {  // 1. sensor keep detection, once escape from obstacle, switch to RUNNING
       detectSystem.set(SYS_RUNNING);
     }
 
@@ -132,7 +132,7 @@ void loop() {
     relay.cut();
     warningSystem.on();
 
-    if (sensorsManager.areAllHealthy()) {
+    if (sensorManager.areAllHealthy()) {
       detectSystem.set(SYS_RUNNING);
     }
   }
@@ -144,8 +144,8 @@ void loop() {
   wdt_reset();
 
   // === Debugging ===
-  // sensorsManager.printOne(0);
-  // sensorsManager.printAll();
+  // sensorManager.printOne(0);
+  // sensorManager.printAll();
 
   delay(100);
 }

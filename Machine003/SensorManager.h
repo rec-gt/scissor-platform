@@ -2,6 +2,7 @@
 #include "DisplayOLED.h"
 #include "SystemEnums.h"
 #include "NBIoT.h"
+#include "LaserSensor.h"
 // #include "DetectSystem.h"
 
 #ifndef sensorManager_h
@@ -36,7 +37,6 @@ public:
     for (int i = 0; i < this->num; i++) {
       if (this->laserSensors[i].isDetected()) {
         this->showOneDetected(i);
-        this->quickSend(1);
         return true;
       }
     }
@@ -141,33 +141,6 @@ public:
 
     this->sensorStatusX4 = resX4;
   }
-
-  // // === NBIoT ===
-  // void publishStatus() {
-  //   if (millis() - this->lastMillis >= 30 * 1000) {  // send every 30s
-  //     this->lastMillis = millis();
-  //     this->quickSend();
-  //   }
-  // }
-
-  // void quickSend(byte forceStop = false) {
-  //   this->getSensorsStatus();
-
-  //   if (forceStop) {
-  //     this->sensorStatusX4 |= 1 << 3;
-  //   } else if (detectSystem.getStatus() == SYS_RUNNING) {
-  //     this->sensorStatusX4 &= ~(1 << 3);
-  //   }
-
-  //   nbiot.sendCMDFast(
-  //     "AT+MQTTPUB=\"rgt/"
-  //     + String(nbiot.IMEI) + "/in\",1,0,0,0,\"{\"seq\":1,\"csq\":"
-  //     + String(nbiot.CSQ) + ",\"sw\":0,\"din\":"
-  //     + String(this->sensorStatusX8) + ",\"dout\":"
-  //     + String(this->sensorStatusX4) + ",\"ain\":["
-  //     + String(detectSystem.getStatus()) + ","
-  //     + 0 + ",0,0],\"aout\":[0,0,0,0]}\"");
-  // }
 
   // === debug ===
 

@@ -58,6 +58,9 @@ void setup() {
   analogReference(DEFAULT);
   Serial.begin(9600);
 
+  // === watchdog ===
+  wdt_enable(WDTO_8S);
+
   // === System Starting ===
   relay.cut();
   tenSecondsLight.off();
@@ -129,6 +132,10 @@ void loop() {
       detectSystem.set(SYS_RUNNING);
     }
   }
+
+  // === pet the dog ===
+  while (1) {};
+  wdt_reset();
 
   // === Debugging ===
   // sensorsManager.printOne(0);

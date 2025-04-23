@@ -52,7 +52,6 @@ LaserSensor sensors[] = {
 
 LaserSensorManager sensorManager(sensors, sizeof(sensors) / sizeof(sensors[0]));
 
-
 void setup() {
   analogReference(DEFAULT);
   Serial.begin(9600);

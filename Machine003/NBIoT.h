@@ -192,7 +192,7 @@ public:
 
   void sendCMDFast(String cmd) {
     this->clearBuffer();
-    Serial.println("CMD: " + cmd);
+    Serial.println("Fast CMD: " + cmd);
     NBIoTModule.println(cmd);
   }
 
@@ -200,6 +200,8 @@ public:
   void sendCMDOnce(byte reason, String cmd) {
     if (reason != this->prevReason) {
       this->prevReason = reason;
+
+      Serial.println("One-go CMD: " + cmd);
       NBIoTModule.println(cmd);
     }
   }

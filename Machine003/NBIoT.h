@@ -12,7 +12,7 @@ private:
   String response;
 
   void clearBuffer() {
-    while (NBIoTModule.read() > 0) { delay(1); }
+    while (NBIoTModule.read() >= 0) { delay(1); }
   }
 
   bool resContain(char* target) {
@@ -116,13 +116,17 @@ public:
     while (1) {
       this->sendCMD("AT+CSQ");
       if (!this->resContain("ERROR")) {
+        this->parseCSQ();
+        if (this->CSQ.toInt() == 99) {
+          this->errHook(true);
+          delay(1000);
+        }
         break;
       } else {
         this->errHook(true);
         delay(1000);
       }
     }
-    this->parseCSQ();
 
     while (1) {
       this->sendCMD("AT+CEREG?");

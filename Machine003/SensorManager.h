@@ -36,7 +36,7 @@ public:
     for (int i = 0; i < this->num; i++) {
       if (this->laserSensors[i].isDetected()) {
         this->showOneDetected(i);
-        this->quickSend(true);
+        this->quickSend(1);
         return true;
       }
     }
@@ -131,19 +131,15 @@ public:
 
     this->sensorStatusX8 = resX8;
 
-    byte resX2 = 255;
+    byte resX4 = 255;
     if (this->laserSensors[8].isDetected()) {
-      resX2 &= ~(1 << 0);  // idk why, ask Viki System's Keith
+      resX4 &= ~(1 << 0);  // idk why, ask Viki System's Keith
     }
     if (this->laserSensors[9].isDetected()) {
-      resX2 &= ~(1 << 1);
+      resX4 &= ~(1 << 1);
     }
 
-    if (detectSystem.getStatus() == 2) {
-      resX2 &= ~(1 << 3);
-    }
-
-    this->sensorStatusX4 = resX2;
+    this->sensorStatusX4 = resX4;
   }
 
   // === NBIoT ===
@@ -156,13 +152,20 @@ public:
 
   void quickSend(byte forceStop = false) {
     this->getSensorsStatus();
+
+    if (forceStop) {
+      this->sensorStatusX4 |= 1 << 3;
+    } else if (detectSystem.getStatus() == SYS_RUNNING) {
+      this->sensorStatusX4 &= ~(1 << 3);
+    }
+
     nbiot.sendCMDFast(
       "AT+MQTTPUB=\"rgt/"
       + String(nbiot.IMEI) + "/in\",1,0,0,0,\"{\"seq\":1,\"csq\":"
       + String(nbiot.CSQ) + ",\"sw\":0,\"din\":"
       + String(this->sensorStatusX8) + ",\"dout\":"
       + String(this->sensorStatusX4) + ",\"ain\":["
-      + String((forceStop ? SYS_STOPPED : detectSystem.getStatus())) + ","
+      + String(detectSystem.getStatus()) + ","
       + 0 + ",0,0],\"aout\":[0,0,0,0]}\"");
   }
 

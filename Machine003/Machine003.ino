@@ -38,8 +38,7 @@ CountdownTimer countdownTimer;
 NBIoT nbiot;
 
 LaserSensor sensors[] = {
-  // (pin, longer threshold, shorter threshold, fine tune)
-  LaserSensor(A0, 800, 500, 210),  // 工廠fine-tune，遮擋鏡頭做測試
+  LaserSensor(A0, 800, 500, 210),
   LaserSensor(A1, 800, 500, 210),
   LaserSensor(A2, 800, 500, 210),
   LaserSensor(A3, 800, 500, 210),
@@ -58,9 +57,6 @@ void setup() {
   analogReference(DEFAULT);
   Serial.begin(9600);
 
-  // === watchdog ===
-  wdt_enable(WDTO_8S);
-
   // === System Starting ===
   relay.cut();
   tenSecondsLight.off();
@@ -72,6 +68,9 @@ void setup() {
   detectSystem.set(SYS_RUNNING);
 
   delay(500);
+
+  // === watchdog ===
+  wdt_enable(WDTO_8S);
 }
 
 void loop() {
@@ -134,7 +133,6 @@ void loop() {
   }
 
   // === pet the dog ===
-  while (1) {};
   wdt_reset();
 
   // === Debugging ===

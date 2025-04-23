@@ -47,11 +47,11 @@ public:
     //         4 - obstacle enters 800mm range
     sensorManager.getSensorsStatus();
 
-    byte trafficValue = 90;
-    if (trafficLight.getStatus() == TRAFFIC_RED) {
-      trafficValue = 30;
-    } else if (trafficLight.getStatus() == TRAFFIC_YELLOW) {
+    byte trafficValue = 30;
+    if (trafficLight.getStatus() == TRAFFIC_YELLOW) {
       trafficValue = 60;
+    } else if (trafficLight.getStatus() == TRAFFIC_RED) {
+      trafficValue = 90;
     }
 
     String cmd = "AT+MQTTPUB=\"rgt/"

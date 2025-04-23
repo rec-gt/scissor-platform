@@ -1,4 +1,3 @@
-#include "DetectSystem.h"
 #include "DisplayOLED.h"
 
 #ifndef NBIoT_h
@@ -200,7 +199,7 @@ public:
   byte prevReason = 0;  // 0 = INIT, 1 = SEND_FORCE_STOP, 2 = SEND_10S_ALLOW
   void sendCMDOnce(byte reason, String cmd) {
     if (reason != this->prevReason) {
-      this->prevReason = state;
+      this->prevReason = reason;
       NBIoTModule.println(cmd);
     }
   }

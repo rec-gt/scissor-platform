@@ -89,6 +89,8 @@ void loop() {
 
   // === handling detection system ===
   if (detectSystem.is(SYS_RUNNING)) {
+    detectSystem.publishStatus(3);
+
     relay.connect();
     warningSystem.off();
     tenSecondsLight.off();

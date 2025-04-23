@@ -2,7 +2,7 @@
 #include "DisplayOLED.h"
 #include "SystemEnums.h"
 #include "NBIoT.h"
-#include "DetectSystem.h"
+// #include "DetectSystem.h"
 
 #ifndef sensorManager_h
 #define sensorManager_h
@@ -36,7 +36,7 @@ public:
     for (int i = 0; i < this->num; i++) {
       if (this->laserSensors[i].isDetected()) {
         this->showOneDetected(i);
-        this->sendStatus(1);
+        this->quickSend(1);
         return true;
       }
     }
@@ -142,32 +142,32 @@ public:
     this->sensorStatusX4 = resX4;
   }
 
-  // === NBIoT ===
-  void publishStatus() {
-    if (millis() - this->lastMillis >= 30 * 1000) {  // send every 30s
-      this->lastMillis = millis();
-      this->sendStatus();
-    }
-  }
+  // // === NBIoT ===
+  // void publishStatus() {
+  //   if (millis() - this->lastMillis >= 30 * 1000) {  // send every 30s
+  //     this->lastMillis = millis();
+  //     this->quickSend();
+  //   }
+  // }
 
-  void sendStatus(byte forceStop = false) {
-    this->getSensorsStatus();
+  // void quickSend(byte forceStop = false) {
+  //   this->getSensorsStatus();
 
-    if (forceStop) {
-      this->sensorStatusX4 |= 1 << 3;
-    } else if (detectSystem.getStatus() == SYS_RUNNING) {
-      this->sensorStatusX4 &= ~(1 << 3);
-    }
+  //   if (forceStop) {
+  //     this->sensorStatusX4 |= 1 << 3;
+  //   } else if (detectSystem.getStatus() == SYS_RUNNING) {
+  //     this->sensorStatusX4 &= ~(1 << 3);
+  //   }
 
-    nbiot.sendCMDFast(
-      "AT+MQTTPUB=\"rgt/"
-      + String(nbiot.IMEI) + "/in\",1,0,0,0,\"{\"seq\":1,\"csq\":"
-      + String(nbiot.CSQ) + ",\"sw\":0,\"din\":"
-      + String(this->sensorStatusX8) + ",\"dout\":"
-      + String(this->sensorStatusX4) + ",\"ain\":["
-      + String(detectSystem.getStatus()) + ","
-      + 0 + ",0,0],\"aout\":[0,0,0,0]}\"");
-  }
+  //   nbiot.sendCMDFast(
+  //     "AT+MQTTPUB=\"rgt/"
+  //     + String(nbiot.IMEI) + "/in\",1,0,0,0,\"{\"seq\":1,\"csq\":"
+  //     + String(nbiot.CSQ) + ",\"sw\":0,\"din\":"
+  //     + String(this->sensorStatusX8) + ",\"dout\":"
+  //     + String(this->sensorStatusX4) + ",\"ain\":["
+  //     + String(detectSystem.getStatus()) + ","
+  //     + 0 + ",0,0],\"aout\":[0,0,0,0]}\"");
+  // }
 
   // === debug ===
 

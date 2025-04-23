@@ -1,6 +1,8 @@
 #include "Arduino.h"
 #include "SystemEnums.h"
 #include "DisplayOLED.h"
+#include "SensorManager.h"
+#include "NBIoT.h"
 
 #ifndef detectSystem_h
 #define detectSystem_h
@@ -37,9 +39,10 @@ public:
   }
 
   void publishStatus(byte reason = 0) {
-    // reason: 0 - align with
-    //         1 - Force stop
+    // reason: 0 - send every 30s
+    //         1 - force stop
     //         2 - allow 10s control
+    //         3 - recover back to running
 
     sensorManager.getSensorsStatus();
     String cmd = "AT+MQTTPUB=\"rgt/"
@@ -59,7 +62,8 @@ public:
       nbiot.sendCMDOnce(reason, cmd);
     }
   }
+};
 
-  extern DetectSystem detectSystem;
+extern DetectSystem detectSystem;
 
 #endif

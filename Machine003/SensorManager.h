@@ -36,7 +36,7 @@ public:
     for (int i = 0; i < this->num; i++) {
       if (this->laserSensors[i].isDetected()) {
         this->showOneDetected(i);
-        this->quickSend(1);
+        this->sendStatus(1);
         return true;
       }
     }
@@ -112,7 +112,7 @@ public:
 
   float getMinDistance() {
     float minDistance = this->laserSensors[0].getDistance();
-    for (int i = 0; i < this->num; i++) {
+    for (size_t i = 0; i < this->num; i++) {
       float distance = this->laserSensors[i].getDistance();
       if (distance < minDistance) {
         minDistance = distance;
@@ -146,11 +146,11 @@ public:
   void publishStatus() {
     if (millis() - this->lastMillis >= 30 * 1000) {  // send every 30s
       this->lastMillis = millis();
-      this->quickSend();
+      this->sendStatus();
     }
   }
 
-  void quickSend(byte forceStop = false) {
+  void sendStatus(byte forceStop = false) {
     this->getSensorsStatus();
 
     if (forceStop) {

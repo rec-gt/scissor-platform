@@ -74,11 +74,8 @@ void setup() {
 }
 
 void loop() {
-
-
   // === handling sensors ===
   sensorsManager.listenAll();
-  sensorsManager.publishStatus();
 
   // === handling press button ===
   pressButton.listen();
@@ -133,6 +130,9 @@ void loop() {
       detectSystem.set(SYS_RUNNING);
     }
   }
+
+  // === send MQTT ===
+  detectSystem.publishStatus();
 
   // === pet the dog ===
   wdt_reset();

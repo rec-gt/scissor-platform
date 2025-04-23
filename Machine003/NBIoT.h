@@ -76,12 +76,6 @@ public:
     }
   }
 
-  void sendCMDFast(String cmd) {
-    this->clearBuffer();
-    Serial.println("CMD: " + cmd);
-    NBIoTModule.println(cmd);
-  }
-
   void init() {
     displayOLED.print("", "正在加載IoT...", "", 2);
 
@@ -195,6 +189,20 @@ public:
     }
 
     Serial.println("MQTT Init Finished");
+  }
+
+  void sendCMDFast(String cmd) {
+    this->clearBuffer();
+    Serial.println("CMD: " + cmd);
+    NBIoTModule.println(cmd);
+  }
+
+  byte prevReason = 0;  // 0 = INIT, 1 = SEND_FORCE_STOP, 2 = SEND_10S_ALLOW
+  void sendCMDOnce(byte reason, String cmd) {
+    if (reason != this->prevReason) {
+      this->prevReason = state;
+      NBIoTModule.println(cmd);
+    }
   }
 
   ~NBIoT(){};

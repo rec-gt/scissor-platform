@@ -102,6 +102,8 @@ void loop() {
     }
 
   } else if (detectSystem.is(SYS_STOPPED)) {
+    detectSystem.publishStatus(1);
+
     relay.cut();
     warningSystem.on();
     tenSecondsLight.on();
@@ -116,6 +118,8 @@ void loop() {
     }
 
   } else if (detectSystem.is(SYS_ALLOW_10S)) {
+    detectSystem.publishStatus(2);
+
     relay.connect();
     warningSystem.off();
     tenSecondsLight.off();

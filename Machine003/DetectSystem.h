@@ -36,8 +36,8 @@ public:
     return this->status == targetStatus;
   }
 
-  void publishStatus(byte reason) {
-    // reason: 0 - Send every 30s
+  void publishStatus(byte reason = 0) {
+    // reason: 0 - align with
     //         1 - Force stop
     //         2 - allow 10s control
 

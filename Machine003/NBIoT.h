@@ -76,7 +76,7 @@ public:
   }
 
   void init() {
-    displayOLED.print("", "正在加載IoT...", "", 2);
+    displayOLED.print("", "正在加載IoT...", "", 404);
 
     delay(100);
 
@@ -110,10 +110,12 @@ public:
       this->sendCMD("AT+CSQ");
       if (!this->resContain("ERROR")) {
         this->parseCSQ();
+        displayOLED.print("", "IoT CSQ:", this->CSQ.c_str(), 403);
         if (this->CSQ.toInt() == 99) {
           this->errHook(true);
-          delay(1000);
         }
+        delay(4000);
+        displayOLED.print("", "正在加載IoT...", "", 404);
         break;
       } else {
         this->errHook(true);
@@ -192,7 +194,7 @@ public:
 
   void sendCMDFast(String cmd) {
     this->clearBuffer();
-    Serial.println("Fast CMD: " + cmd);
+    // Serial.println("Fast CMD: " + cmd);
     NBIoTModule.println(cmd);
   }
 
@@ -200,8 +202,7 @@ public:
   void sendCMDOnce(byte reason, String cmd) {
     if (reason != this->prevReason) {
       this->prevReason = reason;
-
-      Serial.println("One-time CMD: " + cmd);
+      // Serial.println("One-time CMD: " + cmd);
       NBIoTModule.println(cmd);
     }
   }

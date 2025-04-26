@@ -144,9 +144,9 @@ void loop() {
 
   // === Debugging ===
   // sensorManager.printOne(0);
-  sensorManager.printAll();
+  // sensorManager.printAll();
 
-  delay(1000);
+  delay(10);
 }
 
 void countDownCallback() {

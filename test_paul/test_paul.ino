@@ -31,6 +31,8 @@ void loop() {
 
   if ((ai1.getVoltage() < 0.7 && ai3.getVoltage() < 0.7) || (ai2.getVoltage() < 0.7 && ai4.getVoltage() < 0.7)) {
     relay1.connect();
+  } else {
+    relay1.cut();
   }
 
   wdt_reset();

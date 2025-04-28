@@ -2,8 +2,7 @@
 #include "AnalogInput.h"
 #include <avr/wdt.h>
 
-Relay relay1(2);
-Relay relay2(3);
+Relay relay1(13);
 
 AnalogInput ai1(A0);
 AnalogInput ai2(A1);
@@ -15,29 +14,24 @@ void setup() {
 
   Serial.begin(9600);
 
-  // === System Starting ===
-  // relay1.cut();
-  // relay2.cut();
+  // === System Init ===
+  relay1.cut();
 
   // === watchdog ===
-  // wdt_enable(WDTO_8S);
+  wdt_enable(WDTO_8S);
 }
 
 void loop() {
   delay(500);
+
   ai1.listen();
   ai2.listen();
   ai3.listen();
   ai4.listen();
 
-  Serial.println(ai1.getVoltage());
-  Serial.println(ai2.getVoltage());
-  Serial.println(ai3.getVoltage());
-  Serial.println(ai4.getVoltage());
+  if ((ai1.getVoltage() < 0.7 && ai3.getVoltage() < 0.7) || (ai2.getVoltage() < 0.7 && ai4.getVoltage() < 0.7)) {
+    relay1.connect();
+  }
 
-  delay(1000);
-  relay1.connect();
-  delay(1000);
-  relay1.cut();
-  // wdt_reset();
+  wdt_reset();
 }

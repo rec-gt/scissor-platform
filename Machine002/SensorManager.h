@@ -158,6 +158,9 @@ public:
     }
   }
 
+
+
+
   void quickSend() {
     this->getSensorsStatus();
     nbiot.sendCMDFast(

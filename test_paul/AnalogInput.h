@@ -8,14 +8,14 @@ private:
 
   float avgRead() {
     unsigned long avg = 0;
-    for (size_t i = 0; i < 10; i++) {
+    for (size_t i = 0; i < 32; i++) {
       avg += analogRead(this->pin);
     };
-    return avg / 10.;
+    return avg / 32.;
   }
 
   float calVoltage() {
-    return this->reading / 1023. * 3.3;
+    return this->reading / 1023. * 5.;
   }
 
 public:

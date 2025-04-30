@@ -21,17 +21,17 @@ Utils utils;
 
 PressButton pressButton(5);
 
-BaseThresholdSwitch baseThresholdSwitch(6);
+BaseThresholdSwitch baseThresholdSwitch(4);
 
-Relay relay(24);
+Relay relay(31);
+
+WarningSystem warningSystem(24);
 
 Light tenSecondsLight(25);
 
 Light powerLight(26);
 
-WarningSystem warningSystem(28);
-
-TrafficLight trafficLight(31, 30, 29);
+TrafficLight trafficLight(30, 29, 28);
 
 CountdownTimer countdownTimer;
 
@@ -62,7 +62,7 @@ void setup() {
   trafficLight.off();
   warningSystem.off();
   displayOLED.init();
-  nbiot.init();
+  // nbiot.init();
   powerLight.on();
   detectSystem.set(SYS_RUNNING);
 
@@ -144,9 +144,10 @@ void loop() {
 
   // === Debugging ===
   // sensorManager.printOne(0);
-  // sensorManager.printAll();
+  sensorManager.printAll();
+  baseThresholdSwitch.print();
 
-  delay(10);
+  delay(1000);
 }
 
 void countDownCallback() {

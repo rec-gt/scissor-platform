@@ -2,15 +2,16 @@
 #include "AnalogInput.h"
 #include <avr/wdt.h>
 
-Relay relay1(13);
+Relay relay1(10);
 
-AnalogInput ai1(A0);
-AnalogInput ai2(A1);
-AnalogInput ai3(A2);
-AnalogInput ai4(A3);
+AnalogInput ai1(A6);
+AnalogInput ai2(A8);
+AnalogInput ai3(A10);
+AnalogInput ai4(A12);
 
 void setup() {
-  analogReference(EXTERNAL);
+  analogReference(DEFAULT);
+  // analogReference(EXTERNAL);
 
   Serial.begin(9600);
 
@@ -18,22 +19,32 @@ void setup() {
   relay1.cut();
 
   // === watchdog ===
-  wdt_enable(WDTO_8S);
+  // wdt_enable(WDTO_8S);
 }
 
 void loop() {
-  delay(500);
+  delay(1000);
 
   ai1.listen();
   ai2.listen();
   ai3.listen();
   ai4.listen();
 
-  if ((ai1.getVoltage() < 0.7 && ai3.getVoltage() < 0.7) || (ai2.getVoltage() < 0.7 && ai4.getVoltage() < 0.7)) {
+  if ((ai1.getVoltage() < 0.2 && ai3.getVoltage() < 0.2) || (ai2.getVoltage() < 0.2 && ai4.getVoltage() < 0.2)) {
     relay1.connect();
   } else {
     relay1.cut();
   }
+
+  Serial.print("ai1: ");
+  Serial.println(ai1.getVoltage());
+  Serial.print("ai2: ");
+  Serial.println(ai2.getVoltage());
+  Serial.print("ai3: ");
+  Serial.println(ai3.getVoltage());
+  Serial.print("ai4: ");
+  Serial.println(ai4.getVoltage());
+  Serial.println();
 
   wdt_reset();
 }

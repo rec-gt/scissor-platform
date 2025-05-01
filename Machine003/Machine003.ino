@@ -38,16 +38,16 @@ CountdownTimer countdownTimer;
 NBIoT nbiot;
 
 LaserSensor sensors[] = {
-  LaserSensor(A0, 800, 500, 210),
-  LaserSensor(A1, 800, 500, 210),
-  LaserSensor(A2, 800, 500, 210),
-  LaserSensor(A3, 800, 500, 210),
-  LaserSensor(A4, 800, 500, 210),
-  LaserSensor(A5, 800, 500, 210),
-  LaserSensor(A6, 800, 500, 210),
-  LaserSensor(A7, 800, 500, 210),
-  LaserSensor(A8, 800, 500, 210),
-  LaserSensor(A9, 800, 500, 210),
+  LaserSensor(A0, 900, 550, 210),
+  LaserSensor(A1, 900, 550, 210),
+  LaserSensor(A2, 900, 550, 210),
+  LaserSensor(A3, 900, 550, 210),
+  LaserSensor(A4, 900, 550, 210),
+  LaserSensor(A5, 900, 550, 210),
+  LaserSensor(A6, 900, 550, 210),
+  LaserSensor(A7, 900, 550, 210),
+  LaserSensor(A8, 900, 550, 210),
+  LaserSensor(A9, 900, 550, 210),
 };
 
 LaserSensorManager sensorManager(sensors, sizeof(sensors) / sizeof(sensors[0]));

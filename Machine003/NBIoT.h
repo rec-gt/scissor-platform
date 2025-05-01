@@ -106,7 +106,7 @@ public:
     }
 
     while (1) {
-      displayOLED.print("", "Reading IoT CSQ...", "", 405);
+      displayOLED.print("", "Reading CSQ...", "", 405);
       this->sendCMD("AT+CSQ");
       if (!this->resContain("ERROR")) {
         this->parseCSQ();

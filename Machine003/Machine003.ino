@@ -62,7 +62,7 @@ void setup() {
   trafficLight.off();
   warningSystem.off();
   displayOLED.init();
-  // nbiot.init();
+  nbiot.init();
   powerLight.on();
   detectSystem.set(SYS_RUNNING);
 
@@ -145,7 +145,6 @@ void loop() {
   // === Debugging ===
   // sensorManager.printOne(0);
   sensorManager.printAll();
-  baseThresholdSwitch.print();
 
   delay(1000);
 }

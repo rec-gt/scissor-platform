@@ -43,7 +43,6 @@ private:
         displayOLED.print("", "IoT 訊號不佳", "", 401);
       }
       Serial.println("MQTT init failed");
-      while (1) {};
     }
   }
 
@@ -107,14 +106,16 @@ public:
     }
 
     while (1) {
+      displayOLED.print("", "Reading IoT CSQ...", "", 405);
       this->sendCMD("AT+CSQ");
       if (!this->resContain("ERROR")) {
         this->parseCSQ();
         displayOLED.print("", "IoT CSQ:", this->CSQ.c_str(), 403);
-        if (this->CSQ.toInt() == 99) {
-          this->errHook(true);
-        }
         delay(4000);
+        if (this->CSQ == "99") {
+          this->errHook(true);
+          continue;
+        }
         displayOLED.print("", "正在加載IoT...", "", 404);
         break;
       } else {

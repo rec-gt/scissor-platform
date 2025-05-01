@@ -60,16 +60,17 @@ public:
   }
 
   void listen(int distance) {
+    int delay = 1000;
     if (distance <= 500) {  // enter the RED signal range
-      if (millis() - this->lastMillis > 1000) {
+      if (millis() - this->lastMillis > delay) {
         this->red();
       }
-    } else if ((500 < distance && distance <= 800)) {  // enter the YELLOW signal range
-      if (millis() - this->lastMillis > 1000) {
+    } else if ((500 < distance && distance <= 1000)) {  // enter the YELLOW signal range
+      if (millis() - this->lastMillis > delay) {
         this->yellow();
       }
-    } else if (800 < distance) {  // enter the GREEN signal range
-      if (millis() - this->lastMillis > 1000) {
+    } else if (1000 < distance) {  // enter the GREEN signal range
+      if (millis() - this->lastMillis > delay) {
         this->green();
       }
     } else {

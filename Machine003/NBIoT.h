@@ -1,4 +1,5 @@
 #include "DisplayOLED.h"
+#include <ctype.h>
 
 #ifndef NBIoT_h
 #define NBIoT_h
@@ -110,9 +111,11 @@ public:
       this->sendCMD("AT+CSQ");
       if (!this->resContain("ERROR")) {
         this->parseCSQ();
-        displayOLED.print("", "IoT CSQ:", this->CSQ.c_str(), 403);
+        char* csq_c = this->CSQ.c_str();
+        displayOLED.print("", "IoT CSQ:", csq_c, 403);
         delay(4000);
-        if (this->CSQ == "99") {
+
+        if (!isdigit(csq_c) || this->CSQ == "99") {
           this->errHook(true);
           continue;
         }

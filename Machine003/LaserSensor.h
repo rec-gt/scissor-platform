@@ -27,8 +27,8 @@ private:
 public:
   LaserSensor() {}
 
-  LaserSensor(byte pin, int longerThreshold, int shorterThreshold, int tunningMinReading)
-    : pin(pin), longerThreshold(longerThreshold), shorterThreshold(shorterThreshold), tunningMinReading(tunningMinReading) {
+  LaserSensor(byte pin, int tunningMinReading)
+    : pin(pin), tunningMinReading(tunningMinReading) {
     pinMode(this->pin, INPUT);
   }
 

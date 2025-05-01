@@ -60,7 +60,7 @@ public:
   }
 
   void listen(int distance) {
-    int delay = 1000;
+    int delay = 500;
     if (distance <= 500) {  // enter the RED signal range
       if (millis() - this->lastMillis > delay) {
         this->red();

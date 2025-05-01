@@ -1,8 +1,8 @@
 #ifndef SystemEnums_h
 #define SystemEnums_h
 
-#define CONST_LONGER_THRESHOLED 800
-#define CONST_SHORTER_THRESHOLED 500
+#define CONST_LONGER_THRESHOLED 850
+#define CONST_SHORTER_THRESHOLED 550
 #define CONST_ESCAPE_BUFFER 100
 
 enum SystemStatus {

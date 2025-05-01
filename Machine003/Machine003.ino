@@ -19,11 +19,9 @@ DisplayOLED displayOLED;
 
 Utils utils;
 
-PressButton pressButton(5);
-
 BaseThresholdSwitch baseThresholdSwitch(4);
 
-Relay relay(31);
+PressButton pressButton(5);
 
 WarningSystem warningSystem(24);
 
@@ -32,6 +30,8 @@ Light tenSecondsLight(25);
 Light powerLight(26);
 
 TrafficLight trafficLight(30, 29, 28);
+
+Relay relay(31);
 
 CountdownTimer countdownTimer;
 

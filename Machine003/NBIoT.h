@@ -114,8 +114,8 @@ public:
         char* csq_c = this->CSQ.c_str();
         displayOLED.print("", "IoT CSQ:", csq_c, 403);
         delay(4000);
-
-        if (!isdigit(csq_c) || this->CSQ == "99") {
+        Serial.println(csq_c);
+        if (csq_c == "d" || this->CSQ == "99") {
           this->errHook(true);
           continue;
         }

@@ -83,16 +83,14 @@ void loop() {
   baseThresholdSwitch.listen();
   sensorManager.setAllBaseThreshold(baseThresholdSwitch.on());
 
-  // === handling traffic light ===
-  trafficLight.listen(sensorManager.getMinDistance());
-
   // === handling detection system ===
   if (detectSystem.is(SYS_RUNNING)) {
-    detectSystem.publishStatus(3);
-
     relay.connect();
     warningSystem.off();
     tenSecondsLight.off();
+    trafficLight.listen(sensorManager.getMinDistance());
+
+    detectSystem.publishStatus(3);
 
     if (sensorManager.isOneDetected()) {
       detectSystem.set(SYS_STOPPED);
@@ -103,11 +101,12 @@ void loop() {
     }
 
   } else if (detectSystem.is(SYS_STOPPED)) {
-    detectSystem.publishStatus(1);
-
     relay.cut();
     warningSystem.on();
     tenSecondsLight.on();
+    trafficLight.red();
+
+    detectSystem.publishStatus(1);
 
     if (sensorManager.areAllEscaped()) {  // 1. sensor keep detection, once escape from obstacle, switch to RUNNING
       detectSystem.set(SYS_RUNNING);
@@ -119,13 +118,12 @@ void loop() {
     }
 
   } else if (detectSystem.is(SYS_ALLOW_10S)) {
-    detectSystem.publishStatus(2);
-
     relay.connect();
     warningSystem.off();
     tenSecondsLight.off();
-
     countdownTimer.countdown(countDownCallback);
+
+    detectSystem.publishStatus(2);
 
   } else if (detectSystem.is(SYS_FAILURE)) {
     relay.cut();

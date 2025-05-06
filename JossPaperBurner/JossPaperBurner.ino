@@ -19,7 +19,7 @@ void setup() {
   relay1.cut();
 
   // === watchdog ===
-  // wdt_enable(WDTO_8S);
+  wdt_enable(WDTO_8S);
 }
 
 void loop() {

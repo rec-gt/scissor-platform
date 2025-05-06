@@ -30,7 +30,7 @@ void loop() {
   ai3.listen();
   ai4.listen();
 
-  if ((ai1.getVoltage() < 0.2 && ai3.getVoltage() < 0.2) || (ai2.getVoltage() < 0.2 && ai4.getVoltage() < 0.2)) {
+  if ((ai1.getVoltage() < 0.4 && ai3.getVoltage() < 0.4) || (ai2.getVoltage() < 0.4 && ai4.getVoltage() < 0.4)) {
     relay1.connect();
   } else {
     relay1.cut();

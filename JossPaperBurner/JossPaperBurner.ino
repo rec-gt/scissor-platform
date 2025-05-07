@@ -4,13 +4,14 @@
 
 Relay relay(10);
 
-AnalogInput ai1(A6);
-AnalogInput ai2(A8);
-AnalogInput ai3(A10);
-AnalogInput ai4(A12);
+AnalogInput ai1(A0);
+AnalogInput ai2(A2);
+AnalogInput ai3(A4);
+AnalogInput ai4(A6);
 
 void setup() {
-  analogReference(DEFAULT);
+  // analogReference(DEFAULT);
+  analogReference(EXTERNAL);
 
   Serial.begin(9600);
 
@@ -22,7 +23,7 @@ void setup() {
 }
 
 void loop() {
-  delay(1000);
+  delay(500);
 
   ai1.listen();
   ai2.listen();
@@ -35,14 +36,10 @@ void loop() {
     relay.cut();
   }
 
-  Serial.print("ai1: ");
-  Serial.println(ai1.getVoltage());
-  Serial.print("ai2: ");
-  Serial.println(ai2.getVoltage());
-  Serial.print("ai3: ");
-  Serial.println(ai3.getVoltage());
-  Serial.print("ai4: ");
-  Serial.println(ai4.getVoltage());
+  ai1.print();
+  ai2.print();
+  ai3.print();
+  ai4.print();
   Serial.println();
 
   wdt_reset();

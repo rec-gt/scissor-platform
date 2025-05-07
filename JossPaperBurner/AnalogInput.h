@@ -7,7 +7,7 @@ private:
   float voltage = 0;
 
   float avgRead() {
-    unsigned long avg = 0;
+    float avg = 0.;
     for (size_t i = 0; i < 32; i++) {
       avg += analogRead(this->pin);
     };
@@ -37,6 +37,16 @@ public:
 
   float getVoltage() {
     return this->voltage;
+  }
+
+  void print() {
+    Serial.print("Pin: ");
+    Serial.print(this->pin);
+    Serial.print(" Reading: ");
+    Serial.print(this->getReading());
+    Serial.print(" Voltage: ");
+    Serial.print(this->getVoltage());
+    Serial.println();
   }
 
   ~AnalogInput(){};

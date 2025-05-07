@@ -1,8 +1,16 @@
+#include "NBIoT.h"
+#include "Utils.h"
+
+NBIoT nbiot;
+
+Utils utils;
+
 void setup() {
   Serial.begin(9600);
+  nbiot.init();
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
-
+  nbiot.listen();
+  delay(1000);
 }

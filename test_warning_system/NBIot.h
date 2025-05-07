@@ -1,5 +1,4 @@
-#include "DisplayOLED.h"
-#include <ctype.h>
+#include "Utils.h"
 
 #ifndef NBIoT_h
 #define NBIoT_h
@@ -39,9 +38,7 @@ private:
     if (this->errCount >= 5) {
       Serial.print(this->CSQ.toInt());
       if (this->CSQ.toInt() <= 30) {
-        displayOLED.print("", "IoT SIM卡問題", "", 402);
       } else {
-        displayOLED.print("", "IoT 訊號不佳", "", 401);
       }
       Serial.println("MQTT init failed");
     }
@@ -76,8 +73,6 @@ public:
   }
 
   void init() {
-    displayOLED.print("", "正在加載IoT...", "", 404);
-
     delay(100);
 
     NBIoTModule.begin(9600);
@@ -107,19 +102,14 @@ public:
     }
 
     while (1) {
-      displayOLED.print("", "Reading CSQ...", "", 405);
       this->sendCMD("AT+CSQ");
       if (!this->resContain("ERROR")) {
         this->parseCSQ();
         char* csq_c = this->CSQ.c_str();
-        displayOLED.print("", "IoT CSQ:", csq_c, 403);
-        delay(4000);
-        Serial.println(utils.isNumeric(csq_c));
         if (!utils.isNumeric(csq_c) || this->CSQ == "99") {
           this->errHook(true);
           continue;
         }
-        displayOLED.print("", "正在加載IoT...", "", 404);
         break;
       } else {
         this->errHook(true);
@@ -193,7 +183,25 @@ public:
       }
     }
 
+    while (1) {
+      this->sendCMD("AT+MQTTSUB=TEST_TOPIC_RGT88,0,0");
+      if (!this->resContain("ERROR")) {
+        break;
+      } else {
+        this->errHook(true);
+        delay(1000);
+      }
+    }
+
     Serial.println("MQTT Init Finished");
+  }
+
+  void listen() {
+    if (NBIoTModule.available()) {
+      this->response = NBIoTModule.readString();
+      Serial.println(this->response);
+      this->clearBuffer();
+    }
   }
 
   void sendCMDFast(String cmd) {

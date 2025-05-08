@@ -21,16 +21,25 @@ void loop() {
     String cmd = Serial.readString();
     Serial.print("Console: ");
     Serial.println(cmd);
-    NBIOT_Serial.println(cmd);
+    if (cmd == "s") {
+      sendMsg();
+    }
   }
 
   if (NBIOT_Serial.available()) {
     String res = NBIOT_Serial.readString();
     Serial.println(res);
   }
+}
 
-  // while (NBIOT_Serial.available()) {
-  //   byte r = NBIOT_Serial.read();
-  //   Serial.print(char(r));
-  // }
+
+void sendMsg() {
+  NBIOT_Serial.println("AT+QMTOPEN=0,8.210.84.24,1880");
+  delay(300);
+  // NBIOT_Serial.println("AT+QMTOPEN=0,\"8.210.84.24\",1880");
+  delay(300);
+  delay(300);
+  // AT+QMTDISC=1
+  // 
+  // AT+QMTPUB=0,0,0,0,"rgt/861096060571706",1,"d"
 }

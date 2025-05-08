@@ -2,7 +2,8 @@
 void setup() {
   Serial.begin(9600);
   Serial1.begin(9600);
-  // Serial1.print("AT");
+  delay(1000);
+  Serial.print("=== START ===");
 }
 
 // AT+CEREG?
@@ -16,13 +17,12 @@ void setup() {
 
 
 void loop() {
-
+  if (Serial.available()) {
+    String cmd = Serial.readString();
+    Serial1.print(cmd);
+  }
   if (Serial1.available()) {
     String str = Serial1.readString();
     Serial.println(str);
-    if (str == "+QNBIOTEVENT: \"ENTER DEEPSLEEP\"") {
-      Serial.println("X");
-    }
   }
-  delay(1000);
 }

@@ -12,7 +12,7 @@ void setup() {
 // AT+QMTDISC=1
 // AT+QMTOPEN=0,"8.210.84.24",1880
 // AT+QMTCONN=0,"dev","tswh","1Wo=[6vA0m"
-// AT+QMTPUB=0,0,0,0,"rgt/861096060571706/in",29,"asd"
+// AT+QMTPUB=0,0,0,0,"rgt/861096060571706",1,"d"
 
 
 void loop() {

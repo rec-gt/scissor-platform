@@ -1,7 +1,8 @@
+#define NBIOT_Serial Serial1
 
 void setup() {
   Serial.begin(9600);
-  Serial1.begin(9600);
+  NBIOT_Serial.begin(9600);
   delay(1000);
   Serial.print("=== START ===");
 }
@@ -19,10 +20,12 @@ void setup() {
 void loop() {
   if (Serial.available()) {
     String cmd = Serial.readString();
-    Serial1.print(cmd);
+    Serial.print("Console: ");
+    Serial.println(cmd);
+    NBIOT_Serial.print(cmd);
   }
-  if (Serial1.available()) {
-    String str = Serial1.readString();
+  if (NBIOT_Serial.available()) {
+    String str = NBIOT_Serial.readString();
     Serial.println(str);
   }
 }

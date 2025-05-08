@@ -1,8 +1,8 @@
 #define NBIOT_Serial Serial1
 
 void setup() {
-  Serial.begin(9600);
-  NBIOT_Serial.begin(9600);
+  Serial.begin(4800);
+  NBIOT_Serial.begin(4800);
   Serial.println("=== START ===");
 }
 
@@ -18,18 +18,19 @@ void setup() {
 
 void loop() {
   if (Serial.available()) {
-    char *cmd;
-    while (Serial.available()) {
-      cmd += char(Serial.read());
-    }
-
+    String cmd = Serial.readString();
+    Serial.print("Console: ");
     Serial.println(cmd);
     NBIOT_Serial.println(cmd);
-    delay(500);
   }
 
-  while (NBIOT_Serial.available()) {
-    byte r = NBIOT_Serial.read();
-    Serial.print(char(r));
+  if (NBIOT_Serial.available()) {
+    String res = NBIOT_Serial.readString();
+    Serial.println(res);
   }
+
+  // while (NBIOT_Serial.available()) {
+  //   byte r = NBIOT_Serial.read();
+  //   Serial.print(char(r));
+  // }
 }

@@ -3,8 +3,7 @@
 void setup() {
   Serial.begin(9600);
   NBIOT_Serial.begin(9600);
-  delay(1000);
-  Serial.print("=== START ===");
+  Serial.println("=== START ===");
 }
 
 // AT+CEREG?
@@ -19,13 +18,18 @@ void setup() {
 
 void loop() {
   if (Serial.available()) {
-    String cmd = Serial.readString();
-    Serial.print("Console: ");
+    char *cmd;
+    while (Serial.available()) {
+      cmd += char(Serial.read());
+    }
+
     Serial.println(cmd);
-    NBIOT_Serial.print(cmd);
+    NBIOT_Serial.println(cmd);
+    delay(500);
   }
-  if (NBIOT_Serial.available()) {
-    String str = NBIOT_Serial.readString();
-    Serial.println(str);
+
+  while (NBIOT_Serial.available()) {
+    byte r = NBIOT_Serial.read();
+    Serial.print(char(r));
   }
 }

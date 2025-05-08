@@ -34,12 +34,13 @@ void loop() {
 
 
 void sendMsg() {
-  NBIOT_Serial.println("AT+QMTOPEN=0,8.210.84.24,1880");
+  // wakeup();…
+  NBIOT_Serial.println("AT");
   delay(300);
-  // NBIOT_Serial.println("AT+QMTOPEN=0,\"8.210.84.24\",1880");
+  NBIOT_Serial.println("AT+QMTOPEN=0,\"8.210.84.24\",1880");
   delay(300);
+  NBIOT_Serial.println("AT+QMTCONN=0,\"dev\",\"tswh\",\"1Wo=[6vA0m\"");
   delay(300);
-  // AT+QMTDISC=1
-  // 
-  // AT+QMTPUB=0,0,0,0,"rgt/861096060571706",1,"d"
+  NBIOT_Serial.println("AT+QMTPUB=0,0,0,0,\"rgt/861096060571706\",1,\"d\"");
+  delay(300);
 }

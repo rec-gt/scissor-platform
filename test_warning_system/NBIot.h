@@ -216,10 +216,12 @@ public:
           Serial.println(error.c_str());
         } else {
           JsonObject msg = doc["msg"];
-          this->resCode = msg["code"];
+          String code = msg["code"];
+          this->resCode = code;
+          Serial.println(code);
           Serial.println(this->resCode);
         }
-      } 
+      }
 
       this->clearBuffer();
     }

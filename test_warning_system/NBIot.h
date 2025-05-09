@@ -205,17 +205,21 @@ public:
       String mqttResponse = NBIoT_Serial.readString();
       Serial.println(mqttResponse);
 
-      String jsonStr = utils.retrieveMsg(mqttResponse);
-      Serial.println(jsonStr);
+      if (this->resContain("+MQTTPUBLISH")) {
+        String jsonStr = utils.retrieveMsg(mqttResponse);
 
-      JsonObject jsonDoc = utils.parseJsonObj(jsonStr);
-      if (!jsonDoc.isNull()) {
-        JsonObject msg = jsonDoc["msg"];
-        String code = msg["code"];
-        this->resCode = code;
+        DynamicJsonDocument doc(1024);
+        DeserializationError error = deserializeJson(doc, jsonStr);
 
-        Serial.println(this->resCode);
-      }
+        if (error) {
+          Serial.print("Parsing failed: ");
+          Serial.println(error.c_str());
+        } else {
+          JsonObject msg = doc["msg"];
+          this->resCode = msg["code"];
+          Serial.println(this->resCode);
+        }
+      } 
 
       this->clearBuffer();
     }

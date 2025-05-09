@@ -202,11 +202,11 @@ public:
 
   void listen() {
     if (NBIoT_Serial.available()) {
-      String mqttResponse = NBIoT_Serial.readString();
-      Serial.println(mqttResponse);
+      this->response = NBIoT_Serial.readString();
+      Serial.println(this->response);
 
       if (this->resContain("+MQTTPUBLISH")) {
-        String jsonStr = utils.retrieveMsg(mqttResponse);
+        String jsonStr = utils.retrieveMsg(this->response);
 
         DynamicJsonDocument doc(1024);
         DeserializationError error = deserializeJson(doc, jsonStr);

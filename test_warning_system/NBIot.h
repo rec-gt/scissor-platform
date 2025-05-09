@@ -54,7 +54,7 @@ public:
     this->clearBuffer();
     Serial.println("CMD: " + cmd);
     NBIoT_Serial.println(cmd);
-    delay(500);  // wait at least 300ms
+    delay(500);  // according to docs, wait at least 300ms
 
     if (NBIoT_Serial.available()) {
       this->response = NBIoT_Serial.readString();
@@ -98,14 +98,15 @@ public:
 
     while (1) {
       this->sendCMD("AT+CSQ");
-      if (this->resContain("OK")) {
+      if (this->resContain("+CSQ") && !this->resContain("ERROR")) {
         this->parseCSQ();
         char* csq_c = this->CSQ.c_str();
-        if (!utils.isNumeric(csq_c) || this->CSQ == "99") {
+        if (this->resContain("99,99") || !utils.isNumeric(csq_c)) {
           this->errHook(true);
           continue;
+        } else {
+          break;
         }
-        break;
       } else {
         this->errHook(true);
         delay(1000);
@@ -114,7 +115,7 @@ public:
 
     while (1) {
       this->sendCMD("AT+CEREG?");
-      if (this->resContain("OK")) {
+      if (this->resContain("+CEREG:") && !this->resContain("ERROR")) {
         break;
       } else {
         this->errHook(true);
@@ -124,7 +125,7 @@ public:
 
     while (1) {
       this->sendCMD("AT+CGATT?");
-      if (this->resContain("OK")) {
+      if (this->resContain("+CGATT:1") && !this->resContain("ERROR")) {
         break;
       } else {
         this->errHook(true);
@@ -135,25 +136,25 @@ public:
     // get cimi
     while (1) {
       this->sendCMD("AT+CIMI");
-      if (this->resContain("OK")) {
+      if (this->resContain("+CIMI:") && !this->resContain("ERROR")) {
+        this->parseCIMI();
         break;
       } else {
         this->errHook(true);
         delay(1000);
       }
     }
-    this->parseCIMI();
 
     while (1) {
       this->sendCMD("AT+CGSN=1");
-      if (this->resContain("OK")) {
+      if (this->resContain("+CGSN:") && !this->resContain("ERROR")) {
+        this->parseIMEI();
         break;
       } else {
         this->errHook(true);
         delay(1000);
       }
     }
-    this->parseIMEI();
 
 
     while (1) {

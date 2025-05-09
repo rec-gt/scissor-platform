@@ -179,7 +179,9 @@ public:
     while (1) {
       this->sendCMD("AT+MQTTSUB=TOPIC 123,0,0");
       delay(3000);
-      if (this->resContain("OK")) {
+      if (this->resContain("+MQTTSUBACK")) {
+        delay(3000);
+        this->clearBuffer();
         break;
       } else {
         this->errHook(true);
@@ -195,7 +197,14 @@ public:
       String mqttResponse = NBIoT_Serial.readString();
       Serial.println(mqttResponse);
 
-      utils.retrieveMsg(mqttResponse);
+      String jsonStr = utils.retrieveMsg(mqttResponse);
+      Serial.println(jsonStr);
+
+      JsonObject obj = utils.parseJsonObj(jsonStr);
+
+      String code = obj["code"];
+
+      Serial.println(code);
 
       this->clearBuffer();
     }

@@ -1,3 +1,5 @@
+#include <ArduinoJson.h>
+
 #ifndef Utils_h
 #define Utils_h
 
@@ -37,18 +39,23 @@ public:
     return true;
   }
 
-  char* retrieveMsg(String mqttMsg) {
+  String retrieveMsg(String mqttMsg) {
     int startInx = mqttMsg.indexOf('{');
+    return (startInx != -1) ? mqttMsg.substring(startInx) : "";
+  }
 
-    if (startInx != -1) {
-      // Extract the JSON object substring
-      String jsonStr = mqttMsg.substring(startInx);
-      
-      // Print the extracted JSON object
-      Serial.println(jsonStr);
-    } else {
-      Serial.println("JSON object not found");
+  JsonObject parseJsonObj(String jsonStr) {
+    DynamicJsonDocument doc(1024);
+    DeserializationError error = deserializeJson(doc, jsonStr);
+
+    if (error) {
+      Serial.print("Parsing failed: ");
+      Serial.println(error.c_str());
+      return;
     }
+    return doc["msg"];
+    // JsonObject msg = doc["msg"];
+    // String code = msg["code"];
   }
 
   ~Utils(){};

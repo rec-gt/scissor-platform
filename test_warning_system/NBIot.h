@@ -179,9 +179,14 @@ public:
     while (1) {
       this->sendCMD("AT+MQTTSUB=TOPIC 123,0,0");
       delay(3000);
-      if (this->resContain("+MQTTSUBACK")) {
-        delay(3000);
-        this->clearBuffer();
+      if (this->resContain("OK") && !this->resContain("ERROR")) {
+        while (NBIoT_Serial.available()) {
+          this->response = NBIoT_Serial.readString();
+          if (this->resContain("+MQTTSUBACK")) {
+            this->clearBuffer();
+            break;
+          }
+        }
         break;
       } else {
         this->errHook(true);

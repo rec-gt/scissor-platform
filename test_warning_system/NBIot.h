@@ -210,9 +210,10 @@ public:
 
       JsonObject jsonDoc = utils.parseJsonObj(jsonStr);
       if (!jsonDoc.isNull()) {
-        JsonObject msg = parsedJson["msg"];
-        this->resCode = msg["code"];
-        
+        JsonObject msg = jsonDoc["msg"];
+        String code = msg["code"];
+        this->resCode = code;
+
         Serial.println(this->resCode);
       }
 

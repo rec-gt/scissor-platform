@@ -1,3 +1,4 @@
+#include <ArduinoJson.h>
 #include "Utils.h"
 
 #ifndef NBIoT_h
@@ -45,6 +46,7 @@ public:
   String CIMI;
   String CSQ;
   String IMEI;
+  String resCode;
 
   NBIoT(){};
 
@@ -180,6 +182,7 @@ public:
       this->sendCMD("AT+MQTTSUB=TOPIC 123,0,0");
       delay(3000);
       if (this->resContain("OK") && !this->resContain("ERROR")) {
+        delay(3000);
         while (NBIoT_Serial.available()) {
           this->response = NBIoT_Serial.readString();
           if (this->resContain("+MQTTSUBACK")) {
@@ -205,11 +208,13 @@ public:
       String jsonStr = utils.retrieveMsg(mqttResponse);
       Serial.println(jsonStr);
 
-      JsonObject obj = utils.parseJsonObj(jsonStr);
-
-      String code = obj["code"];
-
-      Serial.println(code);
+      JsonObject jsonDoc = utils.parseJsonObj(jsonStr);
+      if (!jsonDoc.isNull()) {
+        JsonObject msg = parsedJson["msg"];
+        this->resCode = msg["code"];
+        
+        Serial.println(this->resCode);
+      }
 
       this->clearBuffer();
     }

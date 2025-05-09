@@ -53,9 +53,7 @@ public:
       Serial.println(error.c_str());
       return;
     }
-    return doc["msg"];
-    // JsonObject msg = doc["msg"];
-    // String code = msg["code"];
+    return doc.as<JsonObject>();
   }
 
   ~Utils(){};

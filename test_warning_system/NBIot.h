@@ -2,7 +2,7 @@
 
 #ifndef NBIoT_h
 #define NBIoT_h
-#define NBIoTModule Serial1
+#define NBIoT_Serial Serial1
 
 class NBIoT {
 private:
@@ -11,7 +11,7 @@ private:
   String response;
 
   void clearBuffer() {
-    while (NBIoTModule.read() >= 0) {}
+    while (NBIoT_Serial.read() >= 0) {}
   }
 
   bool resContain(char* target) {
@@ -35,22 +35,15 @@ private:
       ++this->errCount;
     }
 
-    if (this->errCount >= 5) {
-      Serial.print(this->CSQ.toInt());
-      if (this->CSQ.toInt() <= 30) {
-      } else {
-      }
+    if (this->errCount >= 10) {
       Serial.println("MQTT init failed");
+      while (1) {};
     }
   }
 
 public:
   String CIMI;
-  byte CIMIErrCnt = 0;
-
   String CSQ;
-  byte CSQErrCnt = 0;
-
   String IMEI;
 
   NBIoT(){};
@@ -58,11 +51,11 @@ public:
   bool sendCMD(String cmd) {
     this->clearBuffer();
     Serial.println("CMD: " + cmd);
-    NBIoTModule.println(cmd);
+    NBIoT_Serial.println(cmd);
     delay(500);  // wait at least 300ms
 
-    if (NBIoTModule.available()) {
-      this->response = NBIoTModule.readString();
+    if (NBIoT_Serial.available()) {
+      this->response = NBIoT_Serial.readString();
       Serial.println(this->response);
       this->clearBuffer();
       return true;
@@ -75,14 +68,14 @@ public:
   void init() {
     delay(100);
 
-    NBIoTModule.begin(9600);
+    NBIoT_Serial.begin(9600);
 
     this->clearBuffer();
 
     // ask for 9600 baud rate
     while (1) {
       this->sendCMD("AT+NATSPEED=9600,30,0,0");
-      if (!this->resContain("ERROR")) {
+      if (this->resContain("OK")) {
         break;
       } else {
         this->errHook(true);
@@ -93,7 +86,7 @@ public:
     // check communication success
     while (1) {
       this->sendCMD("AT");
-      if (!this->resContain("ERROR")) {
+      if (this->resContain("OK")) {
         break;
       } else {
         this->errHook(true);
@@ -103,7 +96,7 @@ public:
 
     while (1) {
       this->sendCMD("AT+CSQ");
-      if (!this->resContain("ERROR")) {
+      if (this->resContain("OK")) {
         this->parseCSQ();
         char* csq_c = this->CSQ.c_str();
         if (!utils.isNumeric(csq_c) || this->CSQ == "99") {
@@ -119,7 +112,7 @@ public:
 
     while (1) {
       this->sendCMD("AT+CEREG?");
-      if (!this->resContain("ERROR")) {
+      if (this->resContain("OK")) {
         break;
       } else {
         this->errHook(true);
@@ -129,7 +122,7 @@ public:
 
     while (1) {
       this->sendCMD("AT+CGATT?");
-      if (!this->resContain("ERROR")) {
+      if (this->resContain("OK")) {
         break;
       } else {
         this->errHook(true);
@@ -140,7 +133,7 @@ public:
     // get cimi
     while (1) {
       this->sendCMD("AT+CIMI");
-      if (!this->resContain("ERROR")) {
+      if (this->resContain("OK")) {
         break;
       } else {
         this->errHook(true);
@@ -151,7 +144,7 @@ public:
 
     while (1) {
       this->sendCMD("AT+CGSN=1");
-      if (!this->resContain("ERROR")) {
+      if (this->resContain("OK")) {
         break;
       } else {
         this->errHook(true);
@@ -165,7 +158,7 @@ public:
       this->sendCMD("AT+MQTTDISC");
       this->sendCMD("AT+MQTTDEL");
       this->sendCMD("AT+MQTTCFG=\"iot.rec-gt.com\",1880,\"" + this->IMEI + "\",60,\"tswh\",\"1Wo=[6vA0m\",1");
-      if (!this->resContain("ERROR")) {
+      if (this->resContain("OK")) {
         break;
       } else {
         this->errHook(true);
@@ -175,7 +168,7 @@ public:
 
     while (1) {
       this->sendCMD("AT+MQTTOPEN=1,1,1,0,1,\"rgt/" + this->IMEI + "/in\",\"gone\"");
-      if (!this->resContain("ERROR")) {
+      if (this->resContain("OK")) {
         break;
       } else {
         this->errHook(true);
@@ -184,8 +177,9 @@ public:
     }
 
     while (1) {
-      this->sendCMD("AT+MQTTSUB=TEST_TOPIC_RGT88,0,0");
-      if (!this->resContain("ERROR")) {
+      this->sendCMD("AT+MQTTSUB=TOPIC 123,0,0");
+      delay(3000);
+      if (this->resContain("OK")) {
         break;
       } else {
         this->errHook(true);
@@ -197,25 +191,13 @@ public:
   }
 
   void listen() {
-    if (NBIoTModule.available()) {
-      this->response = NBIoTModule.readString();
-      Serial.println(this->response);
+    if (NBIoT_Serial.available()) {
+      String mqttResponse = NBIoT_Serial.readString();
+      Serial.println(mqttResponse);
+
+      utils.retrieveMsg(mqttResponse);
+
       this->clearBuffer();
-    }
-  }
-
-  void sendCMDFast(String cmd) {
-    this->clearBuffer();
-    // Serial.println("Fast CMD: " + cmd);
-    NBIoTModule.println(cmd);
-  }
-
-  byte prevReason = 0;  // 0 = INIT, 1 = SEND_FORCE_STOP, 2 = SEND_10S_ALLOW
-  void sendCMDOnce(byte reason, String cmd) {
-    if (reason != this->prevReason) {
-      this->prevReason = reason;
-      // Serial.println("One-time CMD: " + cmd);
-      NBIoTModule.println(cmd);
     }
   }
 

@@ -37,6 +37,20 @@ public:
     return true;
   }
 
+  char* retrieveMsg(String mqttMsg) {
+    int startInx = mqttMsg.indexOf('{');
+
+    if (startInx != -1) {
+      // Extract the JSON object substring
+      String jsonStr = mqttMsg.substring(startInx);
+      
+      // Print the extracted JSON object
+      Serial.println(jsonStr);
+    } else {
+      Serial.println("JSON object not found");
+    }
+  }
+
   ~Utils(){};
 };
 

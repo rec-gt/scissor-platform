@@ -240,7 +240,7 @@ public:
   void listen() {
     Serial.println("listen...");
 
-    if (millis() - this->prevMillis > 5 * 1000) {
+    if (millis() - this->prevMillis > 30 * 1000) {
       this->reconnect();
       this->prevMillis = millis();
     }

@@ -52,6 +52,7 @@ public:
   String CSQ;
   String IMEI;
   String resCode;
+  unsigned long prevMillis;
 
   NBIoT(){};
 
@@ -113,12 +114,18 @@ public:
     NBIoT_Serial.begin(9600);
 
     while (1) {
-      this->sendCMD("AT");
-
+      this->sendCMD("AT+QSCLK=0");
       if (this->isOK()) {
         break;
       }
+      this->errHook(true);
+    }
 
+    while (1) {
+      this->sendCMD("AT");
+      if (this->isOK()) {
+        break;
+      }
       this->errHook(true);
     }
 
@@ -200,19 +207,44 @@ public:
 
     while (1) {
       this->sendCMD("AT+QMTSUB=0,1,\"rgt/" + this->IMEI + "/in\",2");
-      Serial.print(this->response);
-      delay(3000);
       if (this->isOK()) {
         break;
       }
+      delay(3000);
       this->errHook(true);
     }
 
     Serial.println("MQTT Init Finished");
   }
 
+
+  void reconnect() {
+    Serial.println("Reconnecting...");
+    while (1) {
+      Serial.println("Try reconnect...");
+      
+      this->sendCMD("AT+QMTCONN=0,dev,tswh,1Wo=[6vA0m", 1000);
+
+      if (this->isOK()) {
+        break;
+      }
+
+      this->sendCMD("AT+QMTCLOSE=0", 1000);
+
+      this->sendCMD("AT+QMTDISC=1", 1000);
+
+      this->sendCMD("AT+QMTOPEN=0,8.210.84.24,1880", 1000);
+    }
+  }
+
   void listen() {
     Serial.println("listen...");
+
+    if (millis() - this->prevMillis > 5 * 1000) {
+      this->reconnect();
+      this->prevMillis = millis();
+    }
+
 
     if (NBIoT_Serial.available()) {
       this->response = this->readRes();

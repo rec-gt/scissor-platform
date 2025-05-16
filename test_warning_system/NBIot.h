@@ -191,9 +191,9 @@ public:
       this->sendCMD("AT+QMTCLOSE=0", 1000);
 
       this->sendCMD("AT+QMTDISC=1", 1000);
-      
+
       this->sendCMD("AT+QMTOPEN=0,8.210.84.24,1880", 1000);
-      
+
       this->errHook(true);
     }
 
@@ -208,22 +208,14 @@ public:
       this->errHook(true);
     }
 
-    // Serial.println("MQTT Init Finished");
+    Serial.println("MQTT Init Finished");
   }
 
   void listen() {
-    NBIoT_Serial.println("AT+MQTTSUB?");
-    delay(300);  // according to docs, wait at least 300ms
-    if (NBIoT_Serial.available()) {
-      this->response = NBIoT_Serial.readString();
-      if (!this->resContain("TOPIC 123")) {
-        NBIoT_Serial.println("AT+MQTTSUB=TOPIC 123,0,0");
-      } else {
-      }
-    }
+    Serial.println("listen...");
 
     if (NBIoT_Serial.available()) {
-      this->response = NBIoT_Serial.readString();
+      this->response = this->readRes();
       Serial.println(this->response);
 
       String jsonStr = utils.retrieveMsg(this->response);
@@ -240,7 +232,6 @@ public:
         this->resCode = code;
         Serial.println(this->resCode);
       }
-      // }
 
       this->clearBuffer();
     }

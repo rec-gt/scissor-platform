@@ -188,33 +188,35 @@ public:
       this->errHook(true);
     }
 
-    while (1) {
-      this->sendCMD("AT+QMTCONN=0,dev,tswh,1Wo=[6vA0m", 1000);
+    // while (1) {
+    //   this->sendCMD("AT+QMTCONN=0,dev,tswh,1Wo=[6vA0m", 1000);
 
-      if (this->isOK()) {
-        break;
-      }
+    //   if (this->isOK()) {
+    //     break;
+    //   }
 
-      this->sendCMD("AT+QMTCLOSE=0", 1000);
+    //   this->sendCMD("AT+QMTCLOSE=0", 1000);
 
-      this->sendCMD("AT+QMTDISC=1", 1000);
+    //   this->sendCMD("AT+QMTDISC=1", 1000);
 
-      this->sendCMD("AT+QMTOPEN=0,8.210.84.24,1880", 1000);
+    //   this->sendCMD("AT+QMTOPEN=0,8.210.84.24,1880", 1000);
 
-      this->errHook(true);
-    }
+    //   this->errHook(true);
+    // }
 
 
-    while (1) {
-      this->sendCMD("AT+QMTSUB=0,1,\"rgt/" + this->IMEI + "/in\",2");
-      if (this->isOK()) {
-        break;
-      }
-      delay(3000);
-      this->errHook(true);
-    }
+    // while (1) {
+    //   this->sendCMD("AT+QMTSUB=0,1,\"rgt/" + this->IMEI + "/in\",2");
+    //   if (this->isOK()) {
+    //     break;
+    //   }
+    //   delay(3000);
+    //   this->errHook(true);
+    // }
 
     Serial.println("MQTT Init Finished");
+
+    this->reconnect();
   }
 
 
@@ -242,29 +244,17 @@ public:
   void listen() {
     Serial.println("listen...");
 
-    if (millis() - this->prevMillis > 30 * 1000) {
+    if (millis() - this->prevMillis > 60 * 1000) {
       this->reconnect();
       this->prevMillis = millis();
     }
 
-
     if (NBIoT_Serial.available()) {
       this->response = this->readRes();
-      Serial.println(this->response);
+      int isActived = this->response.indexOf("{\"din\":1}");
+      Serial.println(this->response + String(isActived));
 
-      String jsonStr = utils.retrieveMsg(this->response);
-
-      DynamicJsonDocument doc(1024);
-      DeserializationError error = deserializeJson(doc, jsonStr);
-
-      if (error) {
-        Serial.print("Parsing failed: ");
-        Serial.println(error.c_str());
-      } else {
-        JsonObject msg = doc["msg"];
-        String code = msg["code"];
-        this->resCode = code;
-        Serial.println(this->resCode);
+      if (isActived > -1) {
       }
 
       this->clearBuffer();

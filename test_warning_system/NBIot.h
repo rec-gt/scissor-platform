@@ -55,11 +55,11 @@ public:
 
   NBIoT(){};
 
-  bool sendCMD(String cmd) {
+  bool sendCMD(String cmd, int time = 300) {
     this->clearBuffer();
     Serial.println("CMD: " + cmd);
     NBIoT_Serial.println(cmd);
-    delay(300);  // according to docs, wait at least 300ms
+    delay(time);  // according to docs, wait at least 300ms
 
     if (NBIoT_Serial.available()) {
       this->response = this->readRes();
@@ -182,14 +182,14 @@ public:
     }
 
     while (1) {
-      this->sendCMD("AT+QMTCONN=0,dev,tswh,1Wo=[6vA0m");
+      this->sendCMD("AT+QMTCONN=0,dev,tswh,1Wo=[6vA0m", 1000);
 
-      Serial.println(this->response);
       if (this->isOK()) {
         break;
       } else {
-        this->sendCMD("AT+QMTDISC=1");
-        this->sendCMD("AT+QMTOPEN=0,8.210.84.24,1880");
+        this->sendCMD("AT+QMTCLOSE=0", 1000);
+        this->sendCMD("AT+QMTDISC=1", 1000);
+        this->sendCMD("AT+QMTOPEN=0,8.210.84.24,1880", 1000);
         this->errHook(true);
       }
     }

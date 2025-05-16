@@ -24,7 +24,7 @@ private:
   }
 
   void parseCSQ() {
-    this->CSQ = this->response.substring(0, 8 + 2);
+    this->CSQ = this->response.substring(this->RN + 5, this->RN + 5 + 2);
   }
 
   void parseIMEI() {
@@ -32,9 +32,6 @@ private:
   }
 
   void errHook(bool add) {
-    delay(300);
-    Serial.println("ERR HOOK");
-
     if (add) {
       ++this->errCount;
     }
@@ -57,17 +54,6 @@ public:
     this->clearBuffer();
     Serial.println("CMD: " + cmd);
     NBIoT_Serial.println(cmd);
-    delay(300);  // according to docs, wait at least 300ms
-
-    if (NBIoT_Serial.available()) {
-      this->response = this->readRes();
-    }
-  }
-
-  bool sendCMD2(String cmd) {
-    this->clearBuffer();
-    Serial.println("CMD: " + cmd);
-    NBIoT_Serial.println(cmd);
     delay(500);  // according to docs, wait at least 300ms
 
     if (NBIoT_Serial.available()) {
@@ -81,98 +67,84 @@ public:
     }
   }
 
-  String readRes() {
-    String res = "";
-    while (NBIoT_Serial.available()) {
-      char c = NBIoT_Serial.read();
-      res += c;
-    }
-    return res;
-  }
-
-  byte findIdx(String content, String target) {
-    byte startIdx = content.indexOf(target);
-    if (startIdx > -1) {
-      startIdx += target.length();
-    }
-    return startIdx;
-  }
-
-  bool isOK() {
-    return findIdx(this->response, "OK") > -1;
-  }
-
   void init() {
     delay(100);
 
     NBIoT_Serial.begin(9600);
 
+    this->clearBuffer();
+
+    // ask for 9600 baud rate
+    while (1) {
+      this->sendCMD("AT+NATSPEED=9600,30,0,0");
+      if (this->resContain("OK")) {
+        break;
+      } else {
+        this->errHook(true);
+        delay(1000);
+      }
+    }
+
+    // check communication success
     while (1) {
       this->sendCMD("AT");
-
-      if (this->isOK()) {
+      if (this->resContain("OK")) {
         break;
+      } else {
+        this->errHook(true);
+        delay(1000);
       }
-
-      this->errHook(true);
     }
 
     while (1) {
       this->sendCMD("AT+CSQ");
-
-      byte startIdx = findIdx(this->response, "+CSQ: ");
-      if (startIdx > -1) {
-        String csq = this->response.substring(startIdx, startIdx + 2);
-        if (utils.isNumeric(csq) && csq != "99") {
-          this->CSQ = csq;
+      if (this->resContain("+CSQ") && !this->resContain("ERROR")) {
+        this->parseCSQ();
+        char* csq_c = this->CSQ.c_str();
+        if (this->resContain("99,99") || !utils.isNumeric(csq_c)) {
+          this->errHook(true);
+          delay(1000);
+          continue;
+        } else {
           break;
         }
+      } else {
+        this->errHook(true);
+        delay(1000);
       }
-
-      this->errHook(true);
     }
 
     while (1) {
       this->sendCMD("AT+CEREG?");
-
-      if (this->isOK()) {
+      if (this->resContain("+CEREG:") && !this->resContain("ERROR")) {
         break;
+      } else {
+        this->errHook(true);
+        delay(1000);
       }
-
-      this->errHook(true);
     }
 
     while (1) {
       this->sendCMD("AT+CGATT?");
-
-      if (this->isOK()) {
+      if (this->resContain("+CGATT:1") && !this->resContain("ERROR")) {
         break;
+      } else {
+        this->errHook(true);
+        delay(1000);
       }
-
-      this->errHook(true);
     }
 
+    // get cimi
     while (1) {
       this->sendCMD("AT+CIMI");
-
-      Serial.println("RESPONSE: " + this->response);
-
-      byte startIdx = findIdx(this->response, "+CIMI: ");
-      if (startIdx > -1) {
-        String csq = this->response.substring(startIdx, startIdx + 2);
-        if (utils.isNumeric(csq) && csq != "99") {
-          this->CSQ = csq;
-          break;
-        }
+      if (this->resContain("+CIMI:") && !this->resContain("ERROR")) {
+        this->parseCIMI();
+        break;
+      } else {
+        this->errHook(true);
+        delay(1000);
       }
-
-      this->errHook(true);
     }
-
-
-
-
-
 
     while (1) {
       this->sendCMD("AT+CGSN=1");
@@ -238,7 +210,8 @@ public:
       this->response = NBIoT_Serial.readString();
       if (!this->resContain("TOPIC 123")) {
         NBIoT_Serial.println("AT+MQTTSUB=TOPIC 123,0,0");
-      } else {
+      }else{
+
       }
     }
 

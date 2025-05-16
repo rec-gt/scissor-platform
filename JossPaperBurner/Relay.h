@@ -13,10 +13,10 @@ public:
   }
 
   void connect() {
-    digitalWrite(pin, HIGH);
+    digitalWrite(pin, LOW);
   }
 
   void cut() {
-    digitalWrite(pin, LOW);
+    digitalWrite(pin, HIGH);
   }
 };

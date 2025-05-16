@@ -22,9 +22,7 @@ public:
 
     Serial.println("IsActived: " + String(this->isActived));
 
-    if (this->isActived) {
-      digitalWrite(10, HIGH);
-    }
+    digitalWrite(10, this->isActived ? HIGH : LOW);
   }
 
   ~WarningSystem(){};

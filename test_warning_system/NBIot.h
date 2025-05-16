@@ -222,18 +222,20 @@ public:
     Serial.println("Reconnecting...");
     while (1) {
       Serial.println("Try reconnect...");
-      
-      this->sendCMD("AT+QMTCONN=0,dev,tswh,1Wo=[6vA0m", 1000);
-
-      if (this->isOK()) {
-        break;
-      }
 
       this->sendCMD("AT+QMTCLOSE=0", 1000);
 
       this->sendCMD("AT+QMTDISC=1", 1000);
 
       this->sendCMD("AT+QMTOPEN=0,8.210.84.24,1880", 1000);
+
+      this->sendCMD("AT+QMTCONN=0,dev,tswh,1Wo=[6vA0m", 1000);
+
+      this->sendCMD("AT+QMTSUB=0,1,\"rgt/" + this->IMEI + "/in\",2", 1000);
+
+      if (this->isOK()) {
+        break;
+      }
     }
   }
 

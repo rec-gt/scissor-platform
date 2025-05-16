@@ -19,6 +19,10 @@ public:
       this->isActived = false;
       this->prevMillis = millis();
     }
+
+    if (this->isActived) {
+      digitalWrite(10, HIGH);
+    }
   }
 
   ~WarningSystem(){};

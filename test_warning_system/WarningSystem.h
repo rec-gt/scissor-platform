@@ -19,11 +19,11 @@ public:
       this->isActived = false;
       this->prevMillis = millis();
     }
-    
-    Serial.println(this->isActived);
+
+    Serial.println("IsActived: " + String(this->isActived));
 
     if (this->isActived) {
-      digitalWrite(10, LOW);
+      digitalWrite(10, HIGH);
     }
   }
 

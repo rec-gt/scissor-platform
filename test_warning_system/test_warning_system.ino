@@ -10,7 +10,7 @@ WarningSystem warningSystem;
 
 void setup() {
   Serial.begin(9600);
-  pinMode(10, INPUT_PULLUP);
+  pinMode(10, INPUT);
 
   nbiot.init();
 }

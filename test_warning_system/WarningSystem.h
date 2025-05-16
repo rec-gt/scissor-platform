@@ -15,7 +15,7 @@ public:
   }
 
   void listen() {
-    if (millis() - this->prevMillis > 5 * 60 * 1000) {
+    if ((millis() - this->prevMillis) > (2 * 60 * 1000)) {
       this->isActived = false;
       this->prevMillis = millis();
     }

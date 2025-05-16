@@ -8,27 +8,10 @@
 class NBIoT {
 private:
   byte errCount = 0;
-  byte RN = 2;
   String response;
 
   void clearBuffer() {
     while (NBIoT_Serial.read() >= 0) {}
-  }
-
-  bool resContain(char* target) {
-    return this->response.indexOf(target) != -1;
-  }
-
-  void parseCIMI() {
-    this->CIMI = this->response.substring(this->RN + 0, this->RN + 15);
-  }
-
-  void parseCSQ() {
-    this->CSQ = this->response.substring(0, 8 + 2);
-  }
-
-  void parseIMEI() {
-    this->IMEI = this->response.substring(this->RN + 6, this->RN + 6 + 15);
   }
 
   void errHook(bool add) {
@@ -51,7 +34,6 @@ public:
   String CIMI;
   String CSQ;
   String IMEI;
-  String resCode;
   unsigned long prevMillis;
 
   NBIoT(){};
@@ -195,9 +177,8 @@ public:
 
 
   void connect() {
-    Serial.println("Reconnecting...");
     while (1) {
-      Serial.println("Try reconnect...");
+      Serial.println("Try connecting...");
 
       this->sendCMD("AT+QMTDISC=1", 1500);
 
@@ -217,10 +198,12 @@ public:
     }
   }
 
-  void reconnect() {
-    if (millis() - this->prevMillis > 60 * 1000) {
+  void checkReconnect() {
+    unsigned long currMillis = millis();
+    if ((currMillis - this->prevMillis) > (60 * 1000)) {
+      Serial.println("Reconnecting...");
       this->connect();
-      this->prevMillis = millis();
+      this->prevMillis = currMillis;
     }
   }
 
@@ -228,7 +211,9 @@ public:
     Serial.println("listen...");
 
     // handle reconnection
-    this->reconnect();
+    this->checkReconnect();
+    unsigned long currMillis = millis();
+    Serial.println(String(currMillis - this->prevMillis) + " : " + String((currMillis - this->prevMillis) > (60 * 1000)));
 
     // handle receive data
     if (NBIoT_Serial.available()) {

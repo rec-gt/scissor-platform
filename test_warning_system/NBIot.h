@@ -186,12 +186,15 @@ public:
 
       if (this->isOK()) {
         break;
-      } else {
-        this->sendCMD("AT+QMTCLOSE=0", 1000);
-        this->sendCMD("AT+QMTDISC=1", 1000);
-        this->sendCMD("AT+QMTOPEN=0,8.210.84.24,1880", 1000);
-        this->errHook(true);
       }
+
+      this->sendCMD("AT+QMTCLOSE=0", 1000);
+
+      this->sendCMD("AT+QMTDISC=1", 1000);
+      
+      this->sendCMD("AT+QMTOPEN=0,8.210.84.24,1880", 1000);
+      
+      this->errHook(true);
     }
 
 

@@ -6,7 +6,7 @@
 class WarningSystem {
 private:
   bool isActived = false;
-  unsigned long prevMillis;
+  unsigned long prevMillis=0;
 
 public:
   void setIsActived(bool b) {

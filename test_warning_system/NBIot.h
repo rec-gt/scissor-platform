@@ -43,6 +43,7 @@ private:
       Serial.println("MQTT init failed");
       while (1) {};
     }
+    delay(1000);
   }
 
 public:
@@ -154,14 +155,19 @@ public:
 
     while (1) {
       this->sendCMD("AT+CIMI");
+      String cimi = this->response.substring(10, 10 + 15);
+      Serial.println("CIMI: " + cimi);
+      this->CIMI = cimi;
+      break;
+    }
 
-      Serial.println("RESPONSE: " + this->response);
+    while (1) {
+      this->sendCMD("AT+CGSN=1");
 
-      byte startIdx = findIdx(this->response, "+CIMI: ");
-      if (startIdx > -1) {
-        String csq = this->response.substring(startIdx, startIdx + 2);
-        if (utils.isNumeric(csq) && csq != "99") {
-          this->CSQ = csq;
+      if (this->isOK()) {
+        byte startIdx = findIdx(this->response, "+CGSN: ");
+        if (startIdx > -1) {
+          this->IMEI = this->response.substring(startIdx, startIdx + 15);
           break;
         }
       }
@@ -169,63 +175,32 @@ public:
       this->errHook(true);
     }
 
-
-
-
-
-
     while (1) {
-      this->sendCMD("AT+CGSN=1");
-      if (this->resContain("+CGSN:") && !this->resContain("ERROR")) {
-        this->parseIMEI();
+      this->sendCMD("AT+QMTOPEN=0,8.210.84.24,1880");
+      if (this->isOK()) {
         break;
       } else {
-        this->errHook(true);
-        delay(1000);
-      }
-    }
-
-
-    while (1) {
-      this->sendCMD("AT+MQTTREC=0");
-      this->sendCMD("AT+MQTTDISC");
-      this->sendCMD("AT+MQTTDEL");
-      this->sendCMD("AT+MQTTCFG=\"iot.rec-gt.com\",1880,\"" + this->IMEI + "\",60,\"tswh\",\"1Wo=[6vA0m\",1");
-      if (this->resContain("OK")) {
-        break;
-      } else {
-        this->errHook(true);
-        delay(1000);
+        this->sendCMD("AT+QMTDISC=1");
+        continue;
       }
     }
 
     while (1) {
-      this->sendCMD("AT+MQTTOPEN=1,1,1,0,1,\"rgt/" + this->IMEI + "/in\",\"gone\"");
-      if (this->resContain("OK")) {
+      this->sendCMD("AT+QMTCONN=0,dev,tswh,1Wo=[6vA0m");
+      if (this->isOK()) {
         break;
-      } else {
-        this->errHook(true);
-        delay(1000);
       }
+      this->errHook(true);
     }
 
+
     while (1) {
-      this->sendCMD("AT+MQTTSUB=TOPIC 123,0,0");
-      delay(3000);
-      if (this->resContain("OK") && !this->resContain("ERROR")) {
-        delay(3000);
-        while (NBIoT_Serial.available()) {
-          this->response = NBIoT_Serial.readString();
-          if (this->resContain("+MQTTSUBACK")) {
-            this->clearBuffer();
-            break;
-          }
-        }
+      this->sendCMD("AT+MQTTSUB=rgt/" + this->IMEI + "/in,0,0");
+      Serial.print(this->response);
+      if (this->isOK()) {
         break;
-      } else {
-        this->errHook(true);
-        delay(1000);
       }
+      this->errHook(true);
     }
 
     Serial.println("MQTT Init Finished");

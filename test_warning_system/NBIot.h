@@ -1,5 +1,5 @@
-#include <ArduinoJson.h>
 #include "Utils.h"
+#include "WarningSystem.h"
 
 #ifndef NBIoT_h
 #define NBIoT_h
@@ -188,39 +188,13 @@ public:
       this->errHook(true);
     }
 
-    // while (1) {
-    //   this->sendCMD("AT+QMTCONN=0,dev,tswh,1Wo=[6vA0m", 1000);
-
-    //   if (this->isOK()) {
-    //     break;
-    //   }
-
-    //   this->sendCMD("AT+QMTCLOSE=0", 1000);
-
-    //   this->sendCMD("AT+QMTDISC=1", 1000);
-
-    //   this->sendCMD("AT+QMTOPEN=0,8.210.84.24,1880", 1000);
-
-    //   this->errHook(true);
-    // }
-
-
-    // while (1) {
-    //   this->sendCMD("AT+QMTSUB=0,1,\"rgt/" + this->IMEI + "/in\",2");
-    //   if (this->isOK()) {
-    //     break;
-    //   }
-    //   delay(3000);
-    //   this->errHook(true);
-    // }
-
     Serial.println("MQTT Init Finished");
 
-    this->reconnect();
+    this->connect();
   }
 
 
-  void reconnect() {
+  void connect() {
     Serial.println("Reconnecting...");
     while (1) {
       Serial.println("Try reconnect...");
@@ -241,21 +215,26 @@ public:
     }
   }
 
+  void reconnect() {
+    if (millis() - this->prevMillis > 60 * 1000) {
+      this->connect();
+      this->prevMillis = millis();
+    }
+  }
+
   void listen() {
     Serial.println("listen...");
 
-    if (millis() - this->prevMillis > 60 * 1000) {
-      this->reconnect();
-      this->prevMillis = millis();
-    }
+    // handle reconnection
+    this->reconnect();
 
+    // handle receive data
     if (NBIoT_Serial.available()) {
       this->response = this->readRes();
       int isActived = this->response.indexOf("{\"din\":1}");
       Serial.println(this->response + String(isActived));
 
-      if (isActived > -1) {
-      }
+      warningSystem.setIsActived(isActived > -1);
 
       this->clearBuffer();
     }

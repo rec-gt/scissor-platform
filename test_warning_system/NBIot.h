@@ -139,6 +139,7 @@ public:
 
     while (1) {
       this->sendCMD("AT+CEREG?");
+      Serial.print(this->response);
 
       if (this->isOK()) {
         break;
@@ -149,6 +150,7 @@ public:
 
     while (1) {
       this->sendCMD("AT+CGATT?");
+      Serial.print(this->response);
 
       if (this->isOK()) {
         break;
@@ -180,21 +182,16 @@ public:
     }
 
     while (1) {
-      this->sendCMD("AT+QMTOPEN=\"0,8.210.84.24\",1880");
-      if (this->isOK()) {
-        break;
-      }
-      delay(1000);
-
-      this->sendCMD("AT+QMTDISC=1");
-    }
-
-    while (1) {
       this->sendCMD("AT+QMTCONN=0,dev,tswh,1Wo=[6vA0m");
+
+      Serial.println(this->response);
       if (this->isOK()) {
         break;
+      } else {
+        this->sendCMD("AT+QMTDISC=1");
+        this->sendCMD("AT+QMTOPEN=0,8.210.84.24,1880");
+        this->errHook(true);
       }
-      this->errHook(true);
     }
 
 

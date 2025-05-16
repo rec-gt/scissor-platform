@@ -43,6 +43,7 @@ private:
       Serial.println("MQTT init failed");
       while (1) {};
     }
+
     delay(1000);
   }
 
@@ -91,8 +92,11 @@ public:
     return res;
   }
 
-  byte findIdx(String content, String target) {
-    byte startIdx = content.indexOf(target);
+  int findIdx(String content, String target) {
+    int startIdx = content.indexOf(target);
+    Serial.print(startIdx);
+    Serial.print(" : ");
+    Serial.println();
     if (startIdx > -1) {
       startIdx += target.length();
     }
@@ -121,7 +125,7 @@ public:
     while (1) {
       this->sendCMD("AT+CSQ");
 
-      byte startIdx = findIdx(this->response, "+CSQ: ");
+      int startIdx = findIdx(this->response, "+CSQ: ");
       if (startIdx > -1) {
         String csq = this->response.substring(startIdx, startIdx + 2);
         if (utils.isNumeric(csq) && csq != "99") {
@@ -165,7 +169,7 @@ public:
       this->sendCMD("AT+CGSN=1");
 
       if (this->isOK()) {
-        byte startIdx = findIdx(this->response, "+CGSN: ");
+        int startIdx = findIdx(this->response, "+CGSN: ");
         if (startIdx > -1) {
           this->IMEI = this->response.substring(startIdx, startIdx + 15);
           break;
@@ -176,13 +180,13 @@ public:
     }
 
     while (1) {
-      this->sendCMD("AT+QMTOPEN=0,8.210.84.24,1880");
+      this->sendCMD("AT+QMTOPEN=\"0,8.210.84.24\",1880");
       if (this->isOK()) {
         break;
-      } else {
-        this->sendCMD("AT+QMTDISC=1");
-        continue;
       }
+      delay(1000);
+
+      this->sendCMD("AT+QMTDISC=1");
     }
 
     while (1) {
@@ -195,15 +199,16 @@ public:
 
 
     while (1) {
-      this->sendCMD("AT+MQTTSUB=rgt/" + this->IMEI + "/in,0,0");
+      this->sendCMD("AT+QMTSUB=0,1,\"rgt/" + this->IMEI + "/in\",2");
       Serial.print(this->response);
+      delay(3000);
       if (this->isOK()) {
         break;
       }
       this->errHook(true);
     }
 
-    Serial.println("MQTT Init Finished");
+    // Serial.println("MQTT Init Finished");
   }
 
   void listen() {

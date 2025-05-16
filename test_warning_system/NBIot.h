@@ -231,10 +231,15 @@ public:
     // handle receive data
     if (NBIoT_Serial.available()) {
       this->response = this->readRes();
-      int isActived = this->response.indexOf("{\"din\":1}");
-      Serial.println(this->response + String(isActived));
+      int isReceiving = this->response.indexOf("+QMTRECV:");
 
-      warningSystem.setIsActived(isActived > -1);
+      if (isReceiving > -1) {
+        int isActived = this->response.indexOf("{\"din\":1}");
+        Serial.println(this->response + String(isActived));
+        warningSystem.setIsActived(isActived > -1);
+      }else{
+        Serial.println(this->response);
+      }
 
       this->clearBuffer();
     }

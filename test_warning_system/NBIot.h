@@ -211,7 +211,7 @@ public:
 
       this->sendCMD("AT+QMTCONN=0,dev,tswh,1Wo=[6vA0m", 2000);
 
-      this->sendCMD("AT+QMTSUB=0,1,\"rgt/" + this->IMEI + "/in\",2", 1000);
+      this->sendCMD("AT+QMTSUB=0,1,\"rgt/" + this->IMEI + "/in\",2", 2000);
 
       if (this->isOK()) {
         break;
@@ -241,7 +241,7 @@ public:
         int isActived = this->response.indexOf("{\"din\":1}");
         Serial.println(this->response + String(isActived));
         warningSystem.setIsActived(isActived > -1);
-      }else{
+      } else {
         Serial.println(this->response);
       }
 

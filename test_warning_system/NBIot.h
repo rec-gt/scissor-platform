@@ -180,17 +180,19 @@ public:
     while (1) {
       Serial.println("Try connecting...");
 
-      this->sendCMD("AT+QMTDISC=1", 1500);
+      this->sendCMD("AT+QMTDISC=1", 1000);
 
-      this->sendCMD("AT+QMTCLOSE=0", 1500);
+      this->sendCMD("AT+QMTCLOSE=0", 1000);
 
-      this->sendCMD("AT+QMTDISC=1", 1500);
+      this->sendCMD("AT+QMTDISC=1", 1000);
 
-      this->sendCMD("AT+QMTOPEN=0,8.210.84.24,1880", 1500);
+      this->sendCMD("AT+QMTCLOSE=0", 1000);
 
-      this->sendCMD("AT+QMTCONN=0,dev,tswh,1Wo=[6vA0m", 1500);
+      this->sendCMD("AT+QMTOPEN=0,8.210.84.24,1880", 1000);
 
-      this->sendCMD("AT+QMTSUB=0,1,\"rgt/" + this->IMEI + "/in\",2", 2000);
+      this->sendCMD("AT+QMTCONN=0,dev,tswh,1Wo=[6vA0m", 1000);
+
+      this->sendCMD("AT+QMTSUB=0,1,\"rgt/" + this->IMEI + "/in\",2", 3000);
 
       if (this->isOK()) {
         break;
@@ -200,7 +202,7 @@ public:
 
   void checkReconnect() {
     unsigned long currMillis = millis();
-    unsigned int interval = 60 * 1000;  // 30*60*1000
+    unsigned int interval = 30 * 60 * 1000;  // 30*60*1000
 
     Serial.println("Diff : " + String(currMillis - this->prevMillis) + " , " + String(interval) + " , " + String((currMillis - this->prevMillis) > interval));
 

@@ -200,7 +200,8 @@ public:
 
   void checkReconnect() {
     unsigned long currMillis = millis();
-    if ((currMillis - this->prevMillis) > (30 * 1000)) {
+    int interval = 1800000;  // 30*60*1000
+    if ((currMillis - this->prevMillis) > interval) {
       Serial.println("Reconnecting...");
       this->connect();
       this->prevMillis = currMillis;
@@ -213,7 +214,7 @@ public:
     // handle reconnection
     this->checkReconnect();
     unsigned long currMillis = millis();
-    Serial.println(String(currMillis - this->prevMillis) + " : " + String((currMillis - this->prevMillis) > (30 * 1000)));
+    Serial.println(String(currMillis - this->prevMillis) + " : " + String(bool((currMillis - this->prevMillis) > long(30 * 60 * 1000))));
 
     // handle receive data
     if (NBIoT_Serial.available()) {

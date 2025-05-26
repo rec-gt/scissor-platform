@@ -200,10 +200,11 @@ public:
 
   void checkReconnect() {
     unsigned long currMillis = millis();
-    int interval = 1800000;  // 30*60*1000
-    Serial.println("Diff : " + String(currMillis - this->prevMillis) + " , " + String(bool((currMillis - this->prevMillis) > 1800000)));
+    unsigned int interval = 60 * 1000;  // 30*60*1000
 
-    if ((currMillis - this->prevMillis) > 1800000) {
+    Serial.println("Diff : " + String(currMillis - this->prevMillis) + " , " + String(interval) + " , " + String((currMillis - this->prevMillis) > interval));
+
+    if ((currMillis - this->prevMillis) > interval) {
       Serial.println("Reconnecting...");
       this->connect();
       this->prevMillis = currMillis;

@@ -39,30 +39,13 @@ public:
   NBIoT(){};
 
   bool sendCMD(String cmd, int time = 300) {
-    this->clearBuffer();
+    // this->clearBuffer();
     Serial.println("CMD: " + cmd);
     NBIoT_Serial.println(cmd);
     delay(time);  // according to docs, wait at least 300ms
 
     if (NBIoT_Serial.available()) {
       this->response = this->readRes();
-    }
-  }
-
-  bool sendCMD2(String cmd) {
-    this->clearBuffer();
-    Serial.println("CMD: " + cmd);
-    NBIoT_Serial.println(cmd);
-    delay(500);  // according to docs, wait at least 300ms
-
-    if (NBIoT_Serial.available()) {
-      this->response = NBIoT_Serial.readString();
-      Serial.println(this->response);
-      this->clearBuffer();
-      return true;
-    } else {
-      this->clearBuffer();
-      return false;
     }
   }
 
@@ -180,19 +163,17 @@ public:
     while (1) {
       Serial.println("Try connecting...");
 
-      this->sendCMD("AT+QMTDISC=1", 1000);
+      this->sendCMD("AT+QMTDISC=1", 1500);
 
-      this->sendCMD("AT+QMTCLOSE=0", 1000);
+      this->sendCMD("AT+QMTCLOSE=0", 1500);
 
-      this->sendCMD("AT+QMTDISC=1", 1000);
+      this->sendCMD("AT+QMTDISC=1", 1500);
 
-      this->sendCMD("AT+QMTCLOSE=0", 1000);
+      this->sendCMD("AT+QMTOPEN=0,8.210.84.24,1880", 1500);
 
-      this->sendCMD("AT+QMTOPEN=0,8.210.84.24,1880", 1000);
+      this->sendCMD("AT+QMTCONN=0,dev,tswh,1Wo=[6vA0m", 1500);
 
-      this->sendCMD("AT+QMTCONN=0,dev,tswh,1Wo=[6vA0m", 1000);
-
-      this->sendCMD("AT+QMTSUB=0,1,\"rgt/" + this->IMEI + "/in\",2", 3000);
+      this->sendCMD("AT+QMTSUB=0,1,\"rgt/" + this->IMEI + "/in\",0", 3000);
 
       if (this->isOK()) {
         break;
@@ -202,7 +183,7 @@ public:
 
   void checkReconnect() {
     unsigned long currMillis = millis();
-    unsigned int interval = 30 * 60 * 1000;  // 30*60*1000
+    unsigned long interval = 30UL * 60UL * 1000UL;  // 30*60*1000
 
     Serial.println("Diff : " + String(currMillis - this->prevMillis) + " , " + String(interval) + " , " + String((currMillis - this->prevMillis) > interval));
 
@@ -222,17 +203,21 @@ public:
     // handle receive data
     if (NBIoT_Serial.available()) {
       this->response = this->readRes();
-      int isReceiving = this->response.indexOf("+QMTRECV:");
+      Serial.println(this->response);
+      
+      // int isReceiving = this->response.indexOf("+QMTRECV:");
 
-      if (isReceiving > -1) {
-        int isActived = this->response.indexOf("{\"din\":1}");
-        Serial.println(this->response + String(isActived));
-        warningSystem.setIsActived(isActived > -1);
-      } else {
-        Serial.println(this->response);
-      }
+      // if (isReceiving > -1) {
+      //   int isActived = this->response.indexOf("{\"din\":1}");
+      //   Serial.println(this->response + String(isActived));
+      //   warningSystem.setIsActived(isActived > -1);
+      // } else {
+      //   // if received any unwanted msg, force reconnection
+      //   Serial.println(this->response);
+      //   this->connect();
+      // }
 
-      this->clearBuffer();
+      // this->clearBuffer();
     }
   }
 

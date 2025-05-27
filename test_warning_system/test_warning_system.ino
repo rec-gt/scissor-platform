@@ -19,4 +19,5 @@ void loop() {
   nbiot.listen();
   warningSystem.listen();
   delay(1000);
+  NBIoT_Serial.write("AT");
 }

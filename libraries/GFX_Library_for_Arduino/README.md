@@ -332,19 +332,20 @@ ESP32LCD8, ESP32LCD16 and ESP32RGBPanel only supported by arduino-esp32 v2.x and
 * ESP32S3-2.1-TP
 * [ESPboy](https://www.espboy.com) [[demo video](https://youtu.be/Cx82XWrc8-0)]
 * [Guition JC1060P470](https://www.aliexpress.com/item/1005008328088576.html) [[demo video](https://youtu.be/CF1EDSQDHQ8)] [[LVGL demo](https://youtu.be/CF1EDSQDHQ8)]
-* [LILYGO T-Deck](https://www.lilygo.cc/products/t-deck) [[demo video](https://youtube.com/shorts/fXKTVqjUoPM)]
-* [LILYGO T-Display](https://www.lilygo.cc/products/lilygo®-ttgo-t-display-1-14-inch-lcd-esp32-control-board)
-* [LILYGO T-Display-S3](https://www.lilygo.cc/products/t-display-s3) [[demo video](https://youtu.be/kpRC64QNQAo)]
-* [LILYGO T-Display-S3 AMOLED](https://www.lilygo.cc/products/t-display-s3-amoled) [[demo video](https://youtu.be/NvOGJAMlh1M)]
-* [LILYGO T-Display-S3 AMOLED](https://www.lilygo.cc/products/t-display-s3-amoled-1-64) [[demo video](https://youtu.be/5O3fQ1xNsrg)][[LVGL demo video](https://youtu.be/6UEaxWfxm9g)]
-* [T-Display S3 Long](https://www.lilygo.cc/products/t-display-s3-long)[[LVGL demo video](https://youtu.be/OuxLFwxvcVc)]
-* [LILYGO T-Display-s3-Pro](https://www.lilygo.cc/products/t-display-s3-pro) [[demo video](https://youtube.com/shorts/PE-GKTzbdP8)]
-* [LILYGO T-QT](https://www.lilygo.cc/products/t-qt-v1-1) [[demo video](https://youtube.com/shorts/V1MCQ1tQ8PM)]
-* [LILYGO T-RGB](https://www.lilygo.cc/products/t-rgb) [[LVGL demo video](https://youtu.be/BKEl_pWp_qQ)]
-* [LILYGO T-Track](https://www.lilygo.cc/products/t-track) [[demo video](https://youtu.be/6wmUhp-5eMg)][[LVGL demo video](https://youtu.be/wQjMu5JZSkg)]
-* [LILYGO T-Watch](http://www.lilygo.cn/prod_view.aspx?TypeId=50053&Id=1123)
-* [LILYGO T-Watch 2021](https://www.lilygo.cc/products/t-watch-2021)
-* [LILYGO T4 S3](https://www.lilygo.cc/products/t4-s3)[[LVGL demo video](https://youtu.be/h4vXEYrDERM)]
+* [LILYGO T-Deck](https://www.lilygo.cc/products/t-deck?bg_ref=Ts2JN05e23) [[demo video](https://youtube.com/shorts/fXKTVqjUoPM)]
+* [LILYGO T-Deck Plus](https://www.lilygo.cc/products/t-deck-plus-1?bg_ref=Ts2JN05e23)
+* [LILYGO T-Display](https://www.lilygo.cc/products/lilygo®-ttgo-t-display-1-14-inch-lcd-esp32-control-board?bg_ref=Ts2JN05e23)
+* [LILYGO T-Display-S3](https://www.lilygo.cc/products/t-display-s3?bg_ref=Ts2JN05e23) [[demo video](https://youtu.be/kpRC64QNQAo)]
+* [LILYGO T-Display-S3 AMOLED](https://www.lilygo.cc/products/t-display-s3-amoled?bg_ref=Ts2JN05e23) [[demo video](https://youtu.be/NvOGJAMlh1M)]
+* [LILYGO T-Display-S3 AMOLED 1.64](https://www.lilygo.cc/products/t-display-s3-amoled-1-64?bg_ref=Ts2JN05e23) [[demo video](https://youtu.be/5O3fQ1xNsrg)][[LVGL demo video](https://youtu.be/6UEaxWfxm9g)]
+* [LILYGO T-Display S3 Long](https://www.lilygo.cc/products/t-display-s3-long?bg_ref=Ts2JN05e23)[[LVGL demo video](https://youtu.be/OuxLFwxvcVc)]
+* [LILYGO T-Display S3 Pro](https://www.lilygo.cc/products/t-display-s3-pro?bg_ref=Ts2JN05e23) [[demo video](https://youtube.com/shorts/PE-GKTzbdP8)]
+* [LILYGO T-QT](https://www.lilygo.cc/products/t-qt-pro?bg_ref=Ts2JN05e23) [[demo video](https://youtube.com/shorts/V1MCQ1tQ8PM)]
+* [LILYGO T-RGB](https://www.lilygo.cc/products/t-rgb?bg_ref=Ts2JN05e23) [[LVGL demo video](https://youtu.be/BKEl_pWp_qQ)]
+* [LILYGO T-Track](https://www.lilygo.cc/products/t-track?bg_ref=Ts2JN05e23) [[demo video](https://youtu.be/6wmUhp-5eMg)][[LVGL demo video](https://youtu.be/wQjMu5JZSkg)]
+* LILYGO T-Watch
+* [LILYGO T-Watch 2021](https://www.lilygo.cc/products/t-watch-2021?bg_ref=Ts2JN05e23)
+* [LILYGO T4 S3](https://www.lilygo.cc/products/t4-s3?bg_ref=Ts2JN05e23)[[LVGL demo video](https://youtu.be/h4vXEYrDERM)]
 * [M5Stack Core Family](https://shop.m5stack.com/collections/m5-controllers/CORE)
 * [M5Stack AtomS3](https://shop.m5stack.com/products/atoms3-dev-kit-w-0-85-inch-screen)[[demo video](https://youtu.be/8u4TwZHmnN0)]
 * [Makerfabs ESP32 3.5" TFT Touch with Camera](https://www.makerfabs.com/esp32-3.5-inch-tft-touch-capacitive-with-camera.html)
@@ -352,7 +353,17 @@ ESP32LCD8, ESP32LCD16 and ESP32RGBPanel only supported by arduino-esp32 v2.x and
 * [Makerfabs ESP32-S3 TFT 4.3" v1.3](https://www.makerfabs.com/esp32-s3-parallel-tft-with-touch-4-3-inch.html) [[demo video](https://youtu.be/oQ57L2gTHoo)]
 * [Odroid Go](https://www.hardkernel.com/shop/odroid-go/)
 * [seeed studio Wio Terminal](https://wiki.seeedstudio.com/Wio-Terminal-Getting-Started/)
-* [Waveshare RP2040-LCD-1.28](https://www.waveshare.com/wiki/RP2040-LCD-1.28)
+* [Waveshare ESP32-C6-LCD-1.47](https://www.waveshare.com/esp32-c6-lcd-1.47.htm?&aff_id=107987)
+* [Waveshare ESP32-C6-LCD-1.9](https://www.waveshare.com/esp32-c6-lcd-1.9.htm?&aff_id=107987)[[demo video](https://youtube.com/shorts/OryF57VqufY?feature=share)]
+* [Waveshare ESP32-S3 1.46inch Round Display Development Board](https://www.waveshare.com/esp32-s3-touch-lcd-1.46b.htm?&aff_id=107987) [[demo video](https://youtube.com/shorts/tqyqxdRA550)]
+* [Waveshare ESP32-S3-Touch-LCD-1.3](https://www.waveshare.com/esp32-s3-lcd-1.3.htm?&aff_id=107987) [[demo video](https://youtube.com/shorts/_n3qTa_nVGE)]
+* [Waveshare ESP32-S3-Touch-LCD-1.3 with case and prism cube](https://www.waveshare.com/esp32-s3-lcd-1.3.htm?sku=30559&aff_id=107987) [[demo video](https://youtube.com/shorts/tqyqxdRA550)]
+* [Waveshare ESP32-S3-Touch-LCD-2.8](https://www.waveshare.com/esp32-s3-touch-lcd-2.8.htm?&aff_id=107987) [[demo video](https://youtube.com/shorts/1RU_EanUgSU)
+* [Waveshare ESP32-S3-Touch-AMOLED-1.64](https://www.waveshare.com/esp32-s3-touch-amoled-1.64.htm?&aff_id=107987)[[demo video](https://youtube.com/shorts/aTTQ9PKgESU?feature=share)]
+* [Waveshare ESP32-S3-Touch-AMOLED-2.41](https://www.waveshare.com/esp32-s3-touch-amoled-2.41.htm?&aff_id=107987)
+* [Waveshare RP2040-LCD-0.96](https://www.waveshare.com/rp2040-lcd-0.96.htm?&aff_id=107987)
+* [Waveshare RP2040-LCD-1.28](https://www.waveshare.com/rp2040-lcd-1.28.htm?&aff_id=107987)
+* [Waveshare RP2350-LCD-0.96](https://www.waveshare.com/rp2350-lcd-0.96.htm?&aff_id=107987)
 * [wireless-tag WT-32-SC01](http://www.wireless-tag.com/portfolio/wt32-sc01/)
 * [Elecrow ESP Terminal with 3.5" parallel RGB display DLC35010R](https://www.elecrow.com/esp-terminal-with-esp32-3-5-inch-parallel-480x320-tft-capacitive-touch-display-rgb-by-chip-ili9488.html) [[demo video](https://youtu.be/QRDVuwayNFw)]
 * [Elecrow Wizee-ESP32 WZ8048C050](https://www.elecrow.com/esp32-display-5-inch-hmi-display-rgb-tft-lcd-touch-screen-support-lvgl.html)
@@ -371,11 +382,13 @@ ESP32LCD8, ESP32LCD16 and ESP32RGBPanel only supported by arduino-esp32 v2.x and
 ### Currently Supported Display [[Wiki](https://github.com/moononournation/Arduino_GFX/wiki/Display-Class)]
 
 * GC9A01 240x240 round display [[demo video](https://youtu.be/kJrAFm20-zg)]
+* GC9C01 360x360 round display [[demo video](https://youtube.com/shorts/Sk9sVT9PawA)]
 * GC9106 80x160 [[demo video](https://youtu.be/RToGeeb1jxQ)]
 * GC9107 128x128 [[demo video](https://youtube.com/shorts/V1MCQ1tQ8PM)]
 * GC9503V 480x480 (RGB) [[demo video](https://youtube.com/shorts/hk7ZMBRCmjI)]
 * HX8347C 240x320 [[demo video](https://youtu.be/25ymuV51YQM)]
 * HX8347D 240x320 [[demo video](https://youtu.be/sv6LGkLRZjI)]
+* HX8394 720x1280 [[demo video](https://www.bilibili.com/video/BV1eNLRzaEFL)]
 * HX8352C 240x400 [[demo video](https://youtu.be/m2xWYbS3t7s)]
 * HX8357A 320x480 [[demo video](https://youtu.be/wJkLO_xCTXA)] (currently only portrait works, i.e. rotation 0 and 2)
 * HX8357B 320x480 (9-bit SPI) [[demo video](https://youtu.be/pB6_LOCiUqg)]
@@ -396,6 +409,7 @@ ESP32LCD8, ESP32LCD16 and ESP32RGBPanel only supported by arduino-esp32 v2.x and
 * NT35310 320x480 [[demo video](https://youtu.be/bvIz5CoYPNk)]
 * NT35510 480x800 (8-bit/16-bit Parallel) [[demo video](https://youtu.be/C_1ASzUN3bg)]
 * NT39125 240x376 (8-bit/16-bit Parallel) [[demo video](https://youtu.be/JGMrM18JAFA)]
+* NV3007 142x428 [[demo video](https://youtube.com/shorts/ePcf0LmMgOo)]
 * NV3041A 480x272 [[demo video](https://youtu.be/pd1DTW9QHkg)]
 * OTM8009A 480x800 (8-bit/16-bit Parallel)
 * R61529 320x480 (8-bit/16-bit Parallel) [[demo video](https://youtu.be/s93gxjbIAT8)]
@@ -490,3 +504,5 @@ ESP32LCD8, ESP32LCD16 and ESP32RGBPanel only supported by arduino-esp32 v2.x and
 As you may already aware there are lack of sponsorship in this project. Convert the funding in terms of man power, it is much lower than 1 man hour per month. So don't expect too much on the support. Expecially the features not realted to my planned maker projects ;>
 
 For the same reason, Arduino_GFX only focus on the Arduino IDE support. Any other IDE, e.g. PlatformIO, if you found an issue at that IDE but normal at Arduino IDE, please direct report to that IDE for better support.
+
+**Please use Discussions space for new hardware support or new feature request. I will direct close any non-issue issues. And I will consider report the users who insist raising duplicate issue continuously.**

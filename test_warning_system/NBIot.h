@@ -87,6 +87,38 @@ public:
     }
 
     while (1) {
+      this->sendCMD("AT+CPSMS=0");
+      if (this->isOK()) {
+        break;
+      }
+      this->errHook(true);
+    }
+
+    while (1) {
+      this->sendCMD("AT+CEDRXS=0,5");
+      if (this->isOK()) {
+        break;
+      }
+      this->errHook(true);
+    }
+
+    while (1) {
+      this->sendCMD("AT+QMTCFG=keepalive,0,0");
+      if (this->isOK()) {
+        break;
+      }
+      this->errHook(true);
+    }
+    
+    while (1) {
+      this->sendCMD("AT+CSCON=1");
+      if (this->isOK())  {
+        break;
+      }
+      this->errHook(true);
+    }
+
+    while (1) {
       this->sendCMD("AT");
       if (this->isOK()) {
         break;
@@ -204,7 +236,7 @@ public:
     if (NBIoT_Serial.available()) {
       this->response = this->readRes();
       Serial.println(this->response);
-      
+
       // int isReceiving = this->response.indexOf("+QMTRECV:");
 
       // if (isReceiving > -1) {

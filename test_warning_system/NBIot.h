@@ -87,8 +87,8 @@ public:
 
     // init
     this->sendCMD("AT+CFUN=0", 100);
-    this->sendCMD("AT+QCSEARFCN", 100);
-    this->sendCMD("AT+QRST=1", 100);
+    this->sendCMD("AT+QCSEARFCN", 3000);
+    this->sendCMD("AT+QRST=1", 3000);
     this->sendCMD("AT+CFUN=1", 100);
     this->sendCMD("AT+QSCLK=0", 100);
     this->sendCMD("AT+CPSMS=0", 100);
@@ -167,7 +167,7 @@ public:
     Serial.println("MQTT Init Finished");
     this->clearBuffer();
     delay(2000);
-    
+
     this->connect();
   }
 
@@ -176,21 +176,19 @@ public:
     while (1) {
       Serial.println("Try connecting...");
 
-      this->sendCMD("AT+QMTDISC=0", 1500);
-
-      this->sendCMD("AT+QMTCLOSE=0", 1500);
-
-      this->sendCMD("AT+QMTDISC=0", 1500);
-
       this->sendCMD("AT+QMTOPEN=0,8.210.84.24,1880", 1500);
 
-      this->sendCMD("AT+QMTCONN=0,dev,tswh,1Wo=[6vA0m", 1500);
+      this->sendCMD("AT+QMTCONN=0,dev,tswh,1Wo=[6vA0m", 3000);
 
       this->sendCMD("AT+QMTSUB=0,1,\"rgt/" + this->IMEI + "/in\",0", 3000);
 
       if (this->isOK()) {
         break;
       }
+
+      this->sendCMD("AT+QMTUNS=0,1,\"rgt/" + this->IMEI + "/in\"", 1500);
+      this->sendCMD("AT+QMTDISC=0", 1500);
+      this->sendCMD("AT+QMTCLOSE=0", 1500);
     }
   }
 

@@ -46,13 +46,13 @@ public:
   NBIoT(){};
 
   bool sendCMD(String cmd, int time = 300) {
-    // this->clearBuffer();
     Serial.println("CMD: " + cmd);
     NBIoT_Serial.println(cmd);
     delay(time);  // according to docs, wait at least 300ms
 
     if (NBIoT_Serial.available()) {
       this->response = this->readRes();
+      Serial.println("RESPONSE: " + this->response);
     }
   }
 
@@ -87,8 +87,8 @@ public:
 
     // init
     this->sendCMD("AT+CFUN=0", 100);
-    this->sendCMD("AT+QCSEARFCN", 3000);
-    this->sendCMD("AT+QRST=1", 3000);
+    this->sendCMD("AT+QCSEARFCN", 100);
+    this->sendCMD("AT+QRST=1", 100);
     this->sendCMD("AT+CFUN=1", 100);
     this->sendCMD("AT+QSCLK=0", 100);
     this->sendCMD("AT+CPSMS=0", 100);
@@ -97,7 +97,7 @@ public:
     this->sendCMD("AT+QMTCFG=version,0,1", 100);
     this->sendCMD("AT+QMTCFG=keepalive,0,0", 100);
     this->sendCMD("AT+QMTCFG=session,0,1", 100);
-    this->sendCMD("AT+QIDNSCFG=0,8.8.8.8,1.1.1.1", 100);
+    // this->sendCMD("AT+QIDNSCFG=0,8.8.8.8,1.1.1.1", 100);
 
     // connection
     while (1) {
@@ -111,8 +111,8 @@ public:
           break;
         }
       }
-
       this->errHook(true);
+      delay(2000);
     }
 
     while (1) {
@@ -130,14 +130,16 @@ public:
       }
 
       this->errHook(true);
+      delay(2000);
     }
 
     while (1) {
-      this->sendCMD("AT+CGATT");
+      this->sendCMD("AT+CGATT?");
       if (this->isOK()) {
         break;
       }
       this->errHook(true);
+      delay(2000);
     }
 
     while (1) {
@@ -163,7 +165,9 @@ public:
     }
 
     Serial.println("MQTT Init Finished");
-
+    this->clearBuffer();
+    delay(2000);
+    
     this->connect();
   }
 
@@ -171,6 +175,8 @@ public:
   void connect() {
     while (1) {
       Serial.println("Try connecting...");
+
+      this->sendCMD("AT+QMTDISC=0", 1500);
 
       this->sendCMD("AT+QMTCLOSE=0", 1500);
 
@@ -212,19 +218,19 @@ public:
       this->response = this->readRes();
       Serial.println(this->response);
 
-      // int isReceiving = this->response.indexOf("+QMTRECV:");
+      int isReceiving = this->response.indexOf("+QMTRECV:");
 
-      // if (isReceiving > -1) {
-      //   int isActived = this->response.indexOf("{\"din\":1}");
-      //   Serial.println(this->response + String(isActived));
-      //   warningSystem.setIsActived(isActived > -1);
-      // } else {
-      //   // if received any unwanted msg, force reconnection
-      //   Serial.println(this->response);
-      //   this->connect();
-      // }
+      if (isReceiving > -1) {
+        int isActived = this->response.indexOf("{\"din\":1}");
+        Serial.println(this->response + String(isActived));
+        warningSystem.setIsActived(isActived > -1);
+      } else {
+        // if received any unwanted msg, force reconnection
+        Serial.println(this->response);
+        this->connect();
+      }
 
-      // this->clearBuffer();
+      this->clearBuffer();
     }
   }
 

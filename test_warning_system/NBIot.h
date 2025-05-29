@@ -78,6 +78,16 @@ public:
 
     NBIoT_Serial.begin(9600);
 
+    // init
+
+    while (1) {
+      this->sendCMD("AT");
+      if (this->isOK()) {
+        break;
+      }
+      this->errHook(true);
+    }
+
     while (1) {
       this->sendCMD("AT+QSCLK=0");
       if (this->isOK()) {
@@ -109,22 +119,32 @@ public:
       }
       this->errHook(true);
     }
-    
+
     while (1) {
-      this->sendCMD("AT+CSCON=1");
-      if (this->isOK())  {
+      this->sendCMD("AT+QMTCFG=session,0,1");
+      if (this->isOK()) {
         break;
       }
       this->errHook(true);
     }
 
     while (1) {
-      this->sendCMD("AT");
+      this->sendCMD("AT+CSCON=1");
       if (this->isOK()) {
         break;
       }
       this->errHook(true);
     }
+
+    while (1) {
+      this->sendCMD("AT+QIDNSCFG=0,8.8.8.8,1.1.1.1");
+      if (this->isOK()) {
+        break;
+      }
+      this->errHook(true);
+    }
+
+    // connection
 
     while (1) {
       this->sendCMD("AT+CSQ");
@@ -138,6 +158,14 @@ public:
         }
       }
 
+      this->errHook(true);
+    }
+
+    while (1) {
+      this->sendCMD("AT+CGATT");
+      if (this->isOK()) {
+        break;
+      }
       this->errHook(true);
     }
 
@@ -195,11 +223,9 @@ public:
     while (1) {
       Serial.println("Try connecting...");
 
-      this->sendCMD("AT+QMTDISC=1", 1500);
-
       this->sendCMD("AT+QMTCLOSE=0", 1500);
 
-      this->sendCMD("AT+QMTDISC=1", 1500);
+      this->sendCMD("AT+QMTDISC=0", 1500);
 
       this->sendCMD("AT+QMTOPEN=0,8.210.84.24,1880", 1500);
 

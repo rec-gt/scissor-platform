@@ -1,9 +1,16 @@
 #include "Utils.h"
 #include "WarningSystem.h"
+#include <avr/wdt.h>
 
 #ifndef NBIoT_h
 #define NBIoT_h
 #define NBIoT_Serial Serial1
+
+void reboot() {
+  wdt_disable();
+  wdt_enable(WDTO_15MS);
+  while (1) {}
+}
 
 class NBIoT {
 private:
@@ -79,6 +86,13 @@ public:
     NBIoT_Serial.begin(9600);
 
     // init
+    while (1) {
+      this->sendCMD("AT+QRST=1");
+      if (this->isOK()) {
+        break;
+      }
+      this->errHook(true);
+    }
 
     while (1) {
       this->sendCMD("AT");
@@ -90,6 +104,14 @@ public:
 
     while (1) {
       this->sendCMD("AT+QSCLK=0");
+      if (this->isOK()) {
+        break;
+      }
+      this->errHook(true);
+    }
+
+    while (1) {
+      this->sendCMD("AT+CFUN=1");
       if (this->isOK()) {
         break;
       }
@@ -129,7 +151,7 @@ public:
     }
 
     while (1) {
-      this->sendCMD("AT+CSCON=1");
+      this->sendCMD("AT+CSCON=0");
       if (this->isOK()) {
         break;
       }
@@ -172,17 +194,12 @@ public:
     while (1) {
       this->sendCMD("AT+CEREG?");
       Serial.print(this->response);
+      int errIdx1 = findIdx(this->response, "+CEREG:0,0");
+      int errIdx2 = findIdx(this->response, "+CEREG:0,2");
 
-      if (this->isOK()) {
-        break;
+      if (errIdx1 > -1 || errIdx2 > -1) {
+        reboot();
       }
-
-      this->errHook(true);
-    }
-
-    while (1) {
-      this->sendCMD("AT+CGATT?");
-      Serial.print(this->response);
 
       if (this->isOK()) {
         break;

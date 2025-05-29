@@ -86,88 +86,20 @@ public:
     NBIoT_Serial.begin(9600);
 
     // init
-    while (1) {
-      this->sendCMD("AT+QRST=1");
-      if (this->isOK()) {
-        break;
-      }
-      this->errHook(true);
-    }
-
-    while (1) {
-      this->sendCMD("AT");
-      if (this->isOK()) {
-        break;
-      }
-      this->errHook(true);
-    }
-
-    while (1) {
-      this->sendCMD("AT+QSCLK=0");
-      if (this->isOK()) {
-        break;
-      }
-      this->errHook(true);
-    }
-
-    while (1) {
-      this->sendCMD("AT+CFUN=1");
-      if (this->isOK()) {
-        break;
-      }
-      this->errHook(true);
-    }
-
-    while (1) {
-      this->sendCMD("AT+CPSMS=0");
-      if (this->isOK()) {
-        break;
-      }
-      this->errHook(true);
-    }
-
-    while (1) {
-      this->sendCMD("AT+CEDRXS=0,5");
-      if (this->isOK()) {
-        break;
-      }
-      this->errHook(true);
-    }
-
-    while (1) {
-      this->sendCMD("AT+QMTCFG=keepalive,0,0");
-      if (this->isOK()) {
-        break;
-      }
-      this->errHook(true);
-    }
-
-    while (1) {
-      this->sendCMD("AT+QMTCFG=session,0,1");
-      if (this->isOK()) {
-        break;
-      }
-      this->errHook(true);
-    }
-
-    while (1) {
-      this->sendCMD("AT+CSCON=0");
-      if (this->isOK()) {
-        break;
-      }
-      this->errHook(true);
-    }
-
-    while (1) {
-      this->sendCMD("AT+QIDNSCFG=0,8.8.8.8,1.1.1.1");
-      if (this->isOK()) {
-        break;
-      }
-      this->errHook(true);
-    }
+    this->sendCMD("AT+CFUN=0", 100);
+    this->sendCMD("AT+QCSEARFCN", 3000);
+    this->sendCMD("AT+QRST=1", 3000);
+    this->sendCMD("AT+CFUN=1", 100);
+    this->sendCMD("AT+QSCLK=0", 100);
+    this->sendCMD("AT+CPSMS=0", 100);
+    this->sendCMD("AT+CEDRXS=0,5", 100);
+    this->sendCMD("AT+CSCON=0", 100);
+    this->sendCMD("AT+QMTCFG=version,0,1", 100);
+    this->sendCMD("AT+QMTCFG=keepalive,0,0", 100);
+    this->sendCMD("AT+QMTCFG=session,0,1", 100);
+    this->sendCMD("AT+QIDNSCFG=0,8.8.8.8,1.1.1.1", 100);
 
     // connection
-
     while (1) {
       this->sendCMD("AT+CSQ");
 
@@ -180,14 +112,6 @@ public:
         }
       }
 
-      this->errHook(true);
-    }
-
-    while (1) {
-      this->sendCMD("AT+CGATT");
-      if (this->isOK()) {
-        break;
-      }
       this->errHook(true);
     }
 
@@ -205,6 +129,14 @@ public:
         break;
       }
 
+      this->errHook(true);
+    }
+
+    while (1) {
+      this->sendCMD("AT+CGATT");
+      if (this->isOK()) {
+        break;
+      }
       this->errHook(true);
     }
 

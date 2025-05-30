@@ -21,5 +21,7 @@ void setup() {
 void loop() {
   nbiot.listen();
   warningSystem.listen();
+  warningSystem.print();
+ 
   delay(1000);
 }

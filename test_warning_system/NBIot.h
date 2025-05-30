@@ -86,16 +86,16 @@ public:
     NBIoT_Serial.begin(9600);
 
     // init
-    // this->sendCMD("AT+QRST=1", 5000);
-    this->sendCMD("AT+CFUN=1", 1000);
-    this->sendCMD("AT+QSCLK=0", 1000);
-    this->sendCMD("AT+CPSMS=0", 1000);
-    this->sendCMD("AT+CEDRXS=0,5", 1000);
-    this->sendCMD("AT+CSCON=1", 1000);
-    this->sendCMD("AT+QMTCFG=version,0,3", 1000);
-    this->sendCMD("AT+QMTCFG=keepalive,0,600", 1000);
-    this->sendCMD("AT+QMTCFG=session,0,1", 1000);
-    this->sendCMD("AT+QIDNSCFG=0,8.8.8.8,1.1.1.1", 1000);
+    this->sendCMD("AT+QRST=1", 9000);
+    this->sendCMD("AT+CFUN=1", 300);
+    this->sendCMD("AT+QSCLK=0", 300);
+    this->sendCMD("AT+CPSMS=0", 300);
+    this->sendCMD("AT+CEDRXS=0,5", 300);
+    this->sendCMD("AT+CSCON=1", 300);
+    this->sendCMD("AT+QMTCFG=version,0,1", 300);
+    this->sendCMD("AT+QMTCFG=keepalive,0,600", 300);
+    this->sendCMD("AT+QMTCFG=session,0,1", 300);
+    this->sendCMD("AT+QIDNSCFG=0,8.8.8.8,1.1.1.1", 300);
 
     // connection
     while (1) {
@@ -113,14 +113,17 @@ public:
       delay(3000);
     }
 
-    while (1) {
+    int chances = 3;
+    while (chances >= 0) {
       this->sendCMD("AT+CEREG?");
       Serial.print(this->response);
       int errIdx1 = findIdx(this->response, "+CEREG:0,0");
       int errIdx2 = findIdx(this->response, "+CEREG:0,2");
 
       if (errIdx1 > -1 || errIdx2 > -1) {
-        reboot();
+        if (chances-- <= 0) {
+          reboot();
+        }
       }
 
       if (this->isOK()) {
@@ -205,30 +208,32 @@ public:
     }
   }
 
+  void checkHeartbeat() {
+  }
+
   void listen() {
     Serial.println("listen...");
+
+    // handle reconnection
+    this->checkReconnect();
+
+    this->checkHeartbeat();
+
+    // handle receive data
     if (NBIoT_Serial.available()) {
       this->response = this->readRes();
-      Serial.println("RESPONSE: " + this->response);
+      Serial.println(this->response);
+
+      int isReceiving = this->response.indexOf("+QMTRECV:");
+
+      if (isReceiving > -1) {
+        int isActived = this->response.indexOf("{\"din\":1}");
+        Serial.println(this->response + String(isActived));
+        // warningSystem.setIsActived(isActived > -1);
+      }
+
+      // this->clearBuffer();
     }
-    // handle reconnection
-    // this->checkReconnect();
-
-    // // handle receive data
-    // if (NBIoT_Serial.available()) {
-    //   this->response = this->readRes();
-    //   Serial.println(this->response);
-
-    //   int isReceiving = this->response.indexOf("+QMTRECV:");
-
-    //   if (isReceiving > -1) {
-    //     int isActived = this->response.indexOf("{\"din\":1}");
-    //     Serial.println(this->response + String(isActived));
-    //     warningSystem.setIsActived(isActived > -1);
-    //   }
-
-    //   // this->clearBuffer();
-    // }
   }
 
   ~NBIoT(){};

@@ -15,11 +15,11 @@ private:
   unsigned long prevMillis = 0;
   unsigned long prevHeartBeatMillis = 0;
 
-  byte recvStatus[_CODE_COUNT] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };  // 0=DEFAULT, 1=ISSUE, 2=CANCEL
+  byte recvStatus[_CODE_COUNT] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };  // 0=NULL, 1=ISSUE, 2=CANCEL
   byte prevStatus[_CODE_COUNT] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };  // 0=IDLE_DEFAULT, 1=IDLE_BY_ISSUE, 2=IDLE_BY_CANCEL
   byte issuePins[_CODE_COUNT] = { 10, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
   byte issueDuration[_CODE_COUNT] = { 10, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-  byte cancelPins[_CODE_COUNT] = { 11, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+  byte cancelPins[_CODE_COUNT] = { 9, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
   byte cancelDuration[_CODE_COUNT] = { 10, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 
 public:

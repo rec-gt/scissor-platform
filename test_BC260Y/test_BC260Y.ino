@@ -1,8 +1,8 @@
 #define NBIOT_Serial Serial1
 
 void setup() {
-  Serial.begin(4800);
-  NBIOT_Serial.begin(4800);
+  Serial.begin(9600);
+  NBIOT_Serial.begin(9600);
   Serial.println("=== START ===");
   pinMode(6, OUTPUT);
   digitalWrite(6, LOW);

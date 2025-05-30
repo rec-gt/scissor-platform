@@ -86,18 +86,16 @@ public:
     NBIoT_Serial.begin(9600);
 
     // init
-    // this->sendCMD("AT+CFUN=0", 100);
-    // this->sendCMD("AT+QCSEARFCN", 3000);
-    // this->sendCMD("AT+QRST=1", 3…000);
-    this->sendCMD("AT+CFUN=1", 100);
-    this->sendCMD("AT+QSCLK=0", 100);
-    // this->sendCMD("AT+CPSMS=0", 100);
-    // this->sendCMD("AT+CEDRXS=0,5", 100);
-    // this->sendCMD("AT+CSCON=0", 100);
-    // this->sendCMD("AT+QMTCFG=version,0,0", 100);
-    this->sendCMD("AT+QMTCFG=keepalive,0,60", 100);
-    // this->sendCMD("AT+QMTCFG=session,0,1", 100);
-    // this->sendCMD("AT+QIDNSCFG=0,8.8.8.8,1.1.1.1", 100);
+    // this->sendCMD("AT+QRST=1", 5000);
+    this->sendCMD("AT+CFUN=1", 1000);
+    this->sendCMD("AT+QSCLK=0", 1000);
+    this->sendCMD("AT+CPSMS=0", 1000);
+    this->sendCMD("AT+CEDRXS=0,5", 1000);
+    this->sendCMD("AT+CSCON=1", 1000);
+    this->sendCMD("AT+QMTCFG=version,0,3", 1000);
+    this->sendCMD("AT+QMTCFG=keepalive,0,600", 1000);
+    this->sendCMD("AT+QMTCFG=session,0,1", 1000);
+    this->sendCMD("AT+QIDNSCFG=0,8.8.8.8,1.1.1.1", 1000);
 
     // connection
     while (1) {
@@ -112,7 +110,7 @@ public:
         }
       }
       this->errHook(true);
-      delay(2000);
+      delay(3000);
     }
 
     while (1) {
@@ -130,7 +128,6 @@ public:
       }
 
       this->errHook(true);
-      delay(2000);
     }
 
     while (1) {
@@ -139,7 +136,6 @@ public:
         break;
       }
       this->errHook(true);
-      delay(2000);
     }
 
     while (1) {
@@ -211,25 +207,28 @@ public:
 
   void listen() {
     Serial.println("listen...");
-
-    // handle reconnection
-    this->checkReconnect();
-
-    // handle receive data
     if (NBIoT_Serial.available()) {
       this->response = this->readRes();
-      Serial.println(this->response);
-
-      int isReceiving = this->response.indexOf("+QMTRECV:");
-
-      if (isReceiving > -1) {
-        int isActived = this->response.indexOf("{\"din\":1}");
-        Serial.println(this->response + String(isActived));
-        warningSystem.setIsActived(isActived > -1);
-      }
-
-      // this->clearBuffer();
+      Serial.println("RESPONSE: " + this->response);
     }
+    // handle reconnection
+    // this->checkReconnect();
+
+    // // handle receive data
+    // if (NBIoT_Serial.available()) {
+    //   this->response = this->readRes();
+    //   Serial.println(this->response);
+
+    //   int isReceiving = this->response.indexOf("+QMTRECV:");
+
+    //   if (isReceiving > -1) {
+    //     int isActived = this->response.indexOf("{\"din\":1}");
+    //     Serial.println(this->response + String(isActived));
+    //     warningSystem.setIsActived(isActived > -1);
+    //   }
+
+    //   // this->clearBuffer();
+    // }
   }
 
   ~NBIoT(){};

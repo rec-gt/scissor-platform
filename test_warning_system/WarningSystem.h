@@ -25,13 +25,17 @@ private:
 public:
 
   void print() {
+    Serial.print("recvStatus: ");
     for (size_t i = 0; i < _CODE_COUNT; i++) {
-      Serial.print("recvStatus: ");
-      Serial.println(this->recvStatus[i]);
-      Serial.print("prevStatus: ");
-      Serial.println(this->prevStatus[i]);
-      Serial.println("");
+      Serial.print(this->recvStatus[i]);
     }
+    Serial.println();
+
+    Serial.print("prevStatus: ");
+    for (size_t i = 0; i < _CODE_COUNT; i++) {
+      Serial.print(this->prevStatus[i]);
+    }
+    Serial.println();
   }
 
   void execAlarm(byte pin, byte duration) {

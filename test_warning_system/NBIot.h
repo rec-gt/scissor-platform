@@ -227,12 +227,18 @@ public:
       int isReceiving = this->response.indexOf("+QMTRECV:");
 
       if (isReceiving > -1) {
-        int isActived = this->response.indexOf("{\"din\":1}");
-        Serial.println(this->response + String(isActived));
-        // warningSystem.setIsActived(isActived > -1);
+        int isIssued = this->response.indexOf("{\"din\":1}");
+        if (isIssued > -1) {
+          warningSystem.setRecvStatus(0, 1);
+        }
+
+        int isCancelled = this->response.indexOf("{\"din\":0}");
+        if (isCancelled > -1) {
+          warningSystem.setRecvStatus(0, 2);
+        }
       }
 
-      // this->clearBuffer();
+      this->clearBuffer();
     }
   }
 

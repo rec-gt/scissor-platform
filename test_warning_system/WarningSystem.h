@@ -23,6 +23,12 @@ private:
   byte cancelDuration[_CODE_COUNT] = { 30, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 
 public:
+  void execAlarm(byte pin, byte duration) {
+    digitalWrite(pin, HIGH);
+    delay(duration);
+    digitalWrite(pin, LOW);
+  }
+
   void execAlarmTasks() {
     for (size_t i = 0; i < _CODE_COUNT; i++) {
       // DEFAULE/CANCEL => ISSUE
@@ -30,38 +36,25 @@ public:
         (this->prevStatus[i] == 0 || this->prevStatus[i] == 2)
         && this->recvStatus[i] == 1) {
         // 1. activate alarm
+        this->execAlarm(issuePins[i], issueDuration[i]);
         // 2. update status
         prevStatus[i] = 1;
       }
-      
+
       // DEFAULE/ISSUE => CANCEL
       if (
         (this->prevStatus[i] == 0 || this->prevStatus[i] == 1)
         && this->recvStatus[i] == 2) {
         // 1. activate alarm
+        this->execAlarm(cancelPins[i], cancelDuration[i]);
         // 2. update status
         prevStatus[i] = 2;
       }
     }
   }
 
-  bool is() {
-    // return receivedStatus == currentStatus;
-  }
-
-  void setIssuedWarning(byte item) {
-    // this->issuedWarning |= 1 << item;
-  }
-
-  void listen() {
-    // if ((millis() - this->prevMillis) > (30UL * 1000UL)) {
-    //   this->isActived = false;
-    //   this->prevMillis = millis();
-    // }
-    // Serial.println("IsActived: " + String(this->isActived));
-    // digitalWrite(10, this->isActived ? HIGH : LOW);
-    // if (this->issuedWarning & (1 << WS_S_HSWW)) {
-    // }
+  void setRecvStatus(byte i, byte status) {
+    this->recvStatus[i] = status;
   }
 
   ~WarningSystem(){};

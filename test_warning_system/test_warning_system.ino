@@ -13,8 +13,6 @@ SystemStatus SYSTEM_STATUS;
 
 void setup() {
   Serial.begin(9600);
-  pinMode(10, OUTPUT);
-
   nbiot.init();
 }
 

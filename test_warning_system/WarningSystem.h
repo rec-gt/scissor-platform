@@ -19,10 +19,18 @@ private:
   byte prevStatus[_CODE_COUNT] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };  // 0=IDLE_DEFAULT, 1=IDLE_BY_ISSUE, 2=IDLE_BY_CANCEL
   byte issuePins[_CODE_COUNT] = { 10, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
   byte issueDuration[_CODE_COUNT] = { 10, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-  byte cancelPins[_CODE_COUNT] = { 9, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+  byte cancelPins[_CODE_COUNT] = { 11, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
   byte cancelDuration[_CODE_COUNT] = { 10, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 
 public:
+  void init() {
+    for (size_t i = 0; i < _CODE_COUNT; i++) {
+      pinMode(this->issuePins[i], OUTPUT);
+    }
+    for (size_t i = 0; i < _CODE_COUNT; i++) {
+      pinMode(this->cancelPins[i], OUTPUT);
+    }
+  }
 
   void print() {
     Serial.print("recvStatus: ");

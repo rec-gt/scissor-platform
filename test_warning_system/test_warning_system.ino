@@ -21,6 +21,5 @@ void setup() {
 void loop() {
   nbiot.listen();
   warningSystem.listen();
-  warningSystem.execAlarmTasks();
   delay(1000);
 }

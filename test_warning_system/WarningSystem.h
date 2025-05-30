@@ -23,13 +23,24 @@ private:
   byte cancelDuration[_CODE_COUNT] = { 30, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 
 public:
+
+  void print() {
+    for (size_t i = 0; i < _CODE_COUNT; i++) {
+      Serial.print("recvStatus: ");
+      Serial.println(this->recvStatus[i]);
+      Serial.print("prevStatus: ");
+      Serial.println(this->prevStatus[i]);
+      Serial.println("");
+    }
+  }
+
   void execAlarm(byte pin, byte duration) {
     digitalWrite(pin, HIGH);
     delay(duration);
     digitalWrite(pin, LOW);
   }
 
-  void execAlarmTasks() {
+  void listen() {
     for (size_t i = 0; i < _CODE_COUNT; i++) {
       // DEFAULE/CANCEL => ISSUE
       if (

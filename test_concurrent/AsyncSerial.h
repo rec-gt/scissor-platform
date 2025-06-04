@@ -22,6 +22,10 @@ private:
   unsigned long trySubsMillis = 0;
   unsigned long waitDataMillis = 0;
 
+  void print() {
+    Serial.println("isOpen: " + String(isOpen) + "isConn: " + String(isConn) + "isSubs: " + String(isSubs) + "tryOpen: " + String(tryOpen) + "tryConn: " + String(tryConn) + "trySubs: " + String(trySubs));
+  }
+
   void pruneSerialBuffer() {
     while (NBIoT_Module.read() > 0) {};
   }
@@ -59,6 +63,9 @@ private:
         this->tryOpenCnt = 0;
       }
       this->tryOpenMillis = millis();
+      Serial.println(millis() - this->tryOpenMillis);
+      Serial.println(millis() - this->tryOpenMillis <= 5UL * 1000UL);
+      this->print();
     }
   }
 

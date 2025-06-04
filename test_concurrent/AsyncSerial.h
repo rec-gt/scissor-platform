@@ -64,6 +64,15 @@ private:
         this->tryOpen = false;
         this->tryOpenCnt = 0;
       }
+      if (++this->tryResetCnt > 6) {
+        NBIoT_Module.println("AT+QRST=1");
+        delay(5000);
+        NBIoT_Module.println("AT+CFUN=1");
+        delay(100);
+        NBIoT_Module.println("AT+QSCLK=0");
+        delay(100);
+        this->tryResetCnt = 0;
+      }
       this->tryOpenMillis = millis();
     }
   }
@@ -176,16 +185,6 @@ public:
   void waitData() {
     // if received, feed this->waitDataMillis
     if (millis() - this->waitDataMillis > 15000) {
-      if (++this->tryResetCnt > 3) {
-        NBIoT_Module.println("AT+QRST=1");
-        delay(5000);
-        NBIoT_Module.println("AT+CFUN=1");
-        delay(100);
-        NBIoT_Module.println("AT+QSCLK=0");
-        delay(100);
-        this->tryResetCnt = 0;
-      }
-
       this->isOpen = false;
       this->isConn = false;
       this->isSubs = false;

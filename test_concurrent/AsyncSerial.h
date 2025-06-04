@@ -10,6 +10,7 @@ private:
   bool tryConn = false;
   bool trySubs = false;
   bool tryOpenErrCnt = 0;
+  bool tryConnErrCnt = 0;
   bool trySubsErrCnt = 0;
 
   void pruneResBuffer() {
@@ -28,20 +29,42 @@ private:
   void hookCEREG() {
     int idx = this->res.indexOf("+CEREG:");
     Serial.println(this->res);
+  }
 
-    // if (idx != -1) {
-    //   int winStart = idx + 6;
-    //   int winEnd = winStart + 2;
-    //   Serial.println(this->res.substring(winStart, winEnd));
-    // }
+  void hookTryOpen() {
+    int idx = this->res.indexOf("+QMTOPEN: 0,0");
+    if (idx != -1) {
+      // reset open trial
+      this->tryOpen = false;
+      this->tryOpenErrCnt = 0;
+
+      // goto connection phase
+      this->tryConn = true;
+    }
+  }
+
+  void hookTryConn() {
+    int idx = this->res.indexOf("+QMTCONN: 0,0,0");
+    if (idx != -1) {
+      // reset conn trial
+      this->tryConn = false;
+      this->tryConnErrCnt = 0;
+
+      this->trySubs = true;
+    }
   }
 
   void parseMsg() {
     // readonly, never modify msg
     this->hookCSQ();
     this->hookCEREG();
-    if (this->res.indexOf("AT+GATT") != -1) {
-    } else if (this->res.indexOf("AT+CEREG") != -1) {
+
+    if (tryOpen) {
+      this->hookTryOpen();
+    }
+
+    if (tryConn) {
+      this->hookTryConn();
     }
   }
 

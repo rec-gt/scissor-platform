@@ -19,6 +19,7 @@ private:
 
   unsigned long tryOpenMillis = 0;
   unsigned long tryConnMillis = 0;
+  unsigned long trySubsMillis = 0;
 
   void pruneResBuffer() {
     this->res = "";
@@ -45,6 +46,8 @@ private:
         this->isOpen = true;
         this->tryOpen = false;
       }
+    } else {
+      this->tryOpenMillis = millis();
     }
   }
 
@@ -59,11 +62,12 @@ private:
   }
 
   void hookTrySubs() {
-    int idx = this->res.indexOf("+QMTSUB: 0,1,0,2");
-    if (idx != -1) {
-      // reset conn trial
-      this->trySubs = false;
-      this->trySubsErrCnt = 0;
+    if (millis() - this->trySubsMillis <= 5UL * 1000UL) {
+      int idx = this->res.indexOf("+QMTSUB: 0,1,0,2");
+      if (idx != -1) {
+        this->isSubs = true;
+        this->trySubs = false;
+      }
     }
   }
 
@@ -73,7 +77,6 @@ private:
     this->hookCEREG();
 
     if (this->tryOpen) {
-      this->tryOpenMillis = millis();
       this->hookTryOpen();
     }
 
@@ -96,14 +99,14 @@ public:
   }
 
   void open() {
-    if (!this->isOpen) {
+    if (!this->isOpen && !this->tryOpen) {
       NBIoT_Module.print("AT+QMTOPEN=0,8.210.84.24,1880");
       this->tryOpen = true;
     }
   }
 
   void conn() {
-    if (this->isOpen && !this->isConn) {
+    if (this->isOpen && !this->isConn && !this->tryConn) {
       NBIoT_Module.print("AT+QMTCONN=0,dev2,tswh,1Wo=[6vA0m");
       this->tryConn = true;
     }

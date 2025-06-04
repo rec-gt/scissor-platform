@@ -7,6 +7,7 @@ String atCommand = "";
 void setup() {
   Serial.begin(9600);
   Serial1.begin(9600);
+  asyncSerial.init();
 }
 
 void otherJobs() {
@@ -14,7 +15,7 @@ void otherJobs() {
 }
 
 void loop() {
-  otherJobs();
+  // otherJobs();
   asyncSerial.listen();
   asyncSerial.waitMsg();
   delay(200);

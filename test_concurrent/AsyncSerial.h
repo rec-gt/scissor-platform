@@ -13,9 +13,9 @@ private:
   bool tryOpen = false;
   bool tryConn = false;
   bool trySubs = false;
-  bool tryOpenCnt = 0;
-  bool tryConnCnt = 0;
-  bool trySubsCnt = 0;
+  int tryOpenCnt = 0;
+  int tryConnCnt = 0;
+  int trySubsCnt = 0;
 
   unsigned long tryOpenMillis = 0;
   unsigned long tryConnMillis = 0;
@@ -47,7 +47,7 @@ private:
         this->tryOpen = false;
       }
     } else {
-      if (this->tryOpenCnt++ > 3) {
+      if (++this->tryOpenCnt > 3) {
         this->isOpen = false;
         this->tryOpen = false;
         this->tryOpenCnt = 0;
@@ -64,7 +64,7 @@ private:
         this->tryConn = false;
       }
     } else {
-      if (this->tryConnCnt++ > 3) {
+      if (++this->tryConnCnt > 3) {
         this->isConn = false;
         this->tryConn = false;
         this->tryConnCnt = 0;
@@ -81,7 +81,7 @@ private:
         this->trySubs = false;
       }
     } else {
-      if (this->trySubsCnt++ > 3) {
+      if (++this->trySubsCnt > 3) {
         this->isSubs = false;
         this->trySubs = false;
         this->trySubsCnt = 0;
@@ -94,6 +94,29 @@ private:
     // readonly, never modify msg
     this->hookCSQ();
     this->hookCEREG();
+  }
+
+public:
+  AsyncSerial() {}
+
+  void init() {
+    NBIoT_Module.print("AT+QSCLK=0");
+    delay(100);
+    NBIoT_Module.print("AT+QMTDISC=0");
+    delay(100);
+    NBIoT_Module.print("AT+QMTCLOSE=0");
+    delay(100);
+    NBIoT_Module.print("AT+QMTDISC=0");
+    delay(100);
+    NBIoT_Module.print("AT+QMTCLOSE=0");
+    delay(100);
+    while (NBIoT_Module.read()) {};
+  }
+
+  void listen() {
+    this->open();
+    this->conn();
+    this->subs();
 
     if (this->tryOpen) {
       this->hookTryOpen();
@@ -108,31 +131,23 @@ private:
     }
   }
 
-public:
-  AsyncSerial() {}
-
-  void listen() {
-    this->open();
-    this->conn();
-    this->subs();
-  }
-
   void open() {
     if (!this->isOpen && !this->tryOpen) {
+      Serial.println("Opening MQTT...");
       NBIoT_Module.print("AT+QMTOPEN=0,8.210.84.24,1880");
       this->tryOpen = true;
     }
   }
 
   void conn() {
-    if (this->isOpen && !this->isConn && !this->tryConn) {
-      NBIoT_Module.print("AT+QMTCONN=0,dev2,tswh,1Wo=[6vA0m");
+    if (this->isOpen && (!this->isConn && !this->tryConn)) {
+      NBIoT_Module.print("AT+QMTCONN=0,dev" + String(random(101)) + ",tswh,1Wo=[6vA0m");
       this->tryConn = true;
     }
   }
 
   void subs() {
-    if (this->isOpen && this->isConn && !this->isSubs) {
+    if (this->isOpen && this->isConn && (!this->isSubs && !this->trySubs)) {
       NBIoT_Module.print("AT+QMTSUB=0,1,rgt/861096060571706/in,2");
       this->trySubs = true;
     }

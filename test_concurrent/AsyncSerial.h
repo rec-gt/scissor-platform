@@ -6,12 +6,17 @@
 class AsyncSerial {
 private:
   String res = "";
+  bool tryOpen = false;
+  bool tryConn = false;
+  bool trySubs = false;
+  bool tryOpenErrCnt = 0;
+  bool trySubsErrCnt = 0;
 
   void pruneResBuffer() {
     this->res = "";
   }
 
-  void hook() {
+  void hookCSQ() {
     int idx = this->res.indexOf("+CSQ:");
     if (idx != -1) {
       int winStart = idx + 6;
@@ -20,9 +25,21 @@ private:
     }
   }
 
+  void hookCEREG() {
+    int idx = this->res.indexOf("+CEREG:");
+    Serial.println(this->res);
+
+    // if (idx != -1) {
+    //   int winStart = idx + 6;
+    //   int winEnd = winStart + 2;
+    //   Serial.println(this->res.substring(winStart, winEnd));
+    // }
+  }
+
   void parseMsg() {
     // readonly, never modify msg
-    this->hook();
+    this->hookCSQ();
+    this->hookCEREG();
     if (this->res.indexOf("AT+GATT") != -1) {
     } else if (this->res.indexOf("AT+CEREG") != -1) {
     }

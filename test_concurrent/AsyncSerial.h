@@ -40,6 +40,7 @@ private:
   }
 
   void hookTryOpen() {
+    Serial.println(millis() - this->tryOpenMillis);
     if (millis() - this->tryOpenMillis <= 5UL * 1000UL) {
       int idx = this->res.indexOf("+QMTOPEN: 0,0");
       if (idx != -1) {
@@ -47,7 +48,7 @@ private:
         this->tryOpen = false;
       }
     } else {
-      Serial.println("MQTT OPEN COUNT: " + this->tryOpenCnt);
+      Serial.println("MQTT OPEN COUNT: " + String(this->tryOpenCnt));
       if (++this->tryOpenCnt > 3) {
         this->isOpen = false;
         this->tryOpen = false;
@@ -113,8 +114,9 @@ public:
   AsyncSerial() {}
 
   void init() {
+    Serial.print("INIT ");
     NBIoT_Module.println("AT+QRST=1");
-    delay(5000);
+    delay(10000);
     NBIoT_Module.println("AT+CFUN=1");
     delay(100);
     NBIoT_Module.println("AT+QSCLK=0");
@@ -128,7 +130,7 @@ public:
     NBIoT_Module.println("AT+QMTCLOSE=0");
     delay(100);
     while (NBIoT_Module.read() > 0) {};
-    Serial.println("INIT OK");
+    Serial.println("OK");
   }
 
   void listen() {

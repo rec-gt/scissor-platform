@@ -19,5 +19,4 @@ void loop() {
   // otherJobs();
   asyncSerial.listen();
   asyncSerial.waitMsg();
-  delay(200);
 }

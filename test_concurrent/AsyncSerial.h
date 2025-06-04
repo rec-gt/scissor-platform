@@ -55,8 +55,7 @@ private:
         this->tryOpen = false;
       }
     } else {
-      Serial.println("Open Count: " + String(this->tryOpenCnt));
-      if (this->tryOpenCnt == 2) {
+      if (this->tryOpenCnt == 1) {
         NBIoT_Module.println("AT+QMTCLOSE=0");
         NBIoT_Module.println("AT+QMTOPEN=0,8.210.84.24,1880");
       }
@@ -77,6 +76,10 @@ private:
         this->tryConn = false;
       }
     } else {
+      if (this->tryConnCnt == 1) {
+        NBIoT_Module.println("AT+QMTDISC=0");
+        NBIoT_Module.println("AT+QMTCONN=0,dev" + String(random(101)) + ",tswh,1Wo=[6vA0m");
+      }
       if (++this->tryConnCnt > 3) {
         this->isConn = false;
         this->tryConn = false;
@@ -137,16 +140,20 @@ public:
     this->conn();
     this->subs();
     this->waitData();
+
     if (this->tryOpen) {
       this->hookTryOpen();
+      this->waitDataMillis = millis();
     }
 
     if (this->tryConn) {
       this->hookTryConn();
+      this->waitDataMillis = millis();
     }
 
     if (this->trySubs) {
       this->hookTrySubs();
+      this->waitDataMillis = millis();
     }
   }
 
@@ -179,20 +186,18 @@ public:
     // this->pruneSerialBuffer();
 
     // if received, reset this->waitDataMillis
-    if (this->isOpen && this->isConn && this->isSubs) {
-      if (millis() - this->waitDataMillis > 15000) {
-        this->isOpen = false;
-        this->isConn = false;
-        this->isSubs = false;
-        this->tryOpen = false;
-        this->tryConn = false;
-        this->trySubs = false;
-        this->tryOpenCnt = 0;
-        this->tryConnCnt = 0;
-        this->trySubsCnt = 0;
-        this->waitDataMillis = millis();
-        Serial.println("No data received, timeout, reconnect");
-      }
+    if (millis() - this->waitDataMillis > 15000) {
+      this->isOpen = false;
+      this->isConn = false;
+      this->isSubs = false;
+      this->tryOpen = false;
+      this->tryConn = false;
+      this->trySubs = false;
+      this->tryOpenCnt = 0;
+      this->tryConnCnt = 0;
+      this->trySubsCnt = 0;
+      this->waitDataMillis = millis();
+      Serial.println("No data received, timeout, reconnect");
     }
   }
 

@@ -13,9 +13,9 @@ private:
   bool tryOpen = false;
   bool tryConn = false;
   bool trySubs = false;
-  bool tryOpenErrCnt = 0;
-  bool tryConnErrCnt = 0;
-  bool trySubsErrCnt = 0;
+  bool tryOpenCnt = 0;
+  bool tryConnCnt = 0;
+  bool trySubsCnt = 0;
 
   unsigned long tryOpenMillis = 0;
   unsigned long tryConnMillis = 0;
@@ -47,6 +47,11 @@ private:
         this->tryOpen = false;
       }
     } else {
+      if (this->tryOpenCnt++ > 3) {
+        this->isOpen = false;
+        this->tryOpen = false;
+        this->tryOpenCnt = 0;
+      }
       this->tryOpenMillis = millis();
     }
   }
@@ -58,6 +63,13 @@ private:
         this->isConn = true;
         this->tryConn = false;
       }
+    } else {
+      if (this->tryConnCnt++ > 3) {
+        this->isConn = false;
+        this->tryConn = false;
+        this->tryConnCnt = 0;
+      }
+      this->tryConnMillis = millis();
     }
   }
 
@@ -68,6 +80,13 @@ private:
         this->isSubs = true;
         this->trySubs = false;
       }
+    } else {
+      if (this->trySubsCnt++ > 3) {
+        this->isSubs = false;
+        this->trySubs = false;
+        this->trySubsCnt = 0;
+      }
+      this->trySubsMillis = millis();
     }
   }
 

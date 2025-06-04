@@ -23,7 +23,7 @@ private:
   unsigned long waitDataMillis = 0;
 
   void print() {
-    Serial.println("isOpen: " + String(isOpen) + "isConn: " + String(isConn) + "isSubs: " + String(isSubs) + "tryOpen: " + String(tryOpen) + "tryConn: " + String(tryConn) + "trySubs: " + String(trySubs));
+    Serial.println("isOpen: " + String(isOpen) + " isConn: " + String(isConn) + " isSubs: " + String(isSubs) + " tryOpen: " + String(tryOpen) + " tryConn: " + String(tryConn) + " trySubs: " + String(trySubs));
   }
 
   void pruneSerialBuffer() {
@@ -49,28 +49,25 @@ private:
   }
 
   void hookTryOpen() {
-    if (millis() - this->tryOpenMillis <= 5UL * 1000UL) {
+    if (millis() - this->tryOpenMillis <= 5000) {
       int idx = this->res.indexOf("+QMTOPEN: 0,0");
       if (idx != -1) {
         this->isOpen = true;
         this->tryOpen = false;
       }
+      Serial.println(this->res);
     } else {
-      Serial.println("MQTT OPEN COUNT: " + String(this->tryOpenCnt));
       if (++this->tryOpenCnt > 3) {
         this->isOpen = false;
         this->tryOpen = false;
         this->tryOpenCnt = 0;
       }
       this->tryOpenMillis = millis();
-      Serial.println(millis() - this->tryOpenMillis);
-      Serial.println(millis() - this->tryOpenMillis <= 5UL * 1000UL);
-      this->print();
     }
   }
 
   void hookTryConn() {
-    if (millis() - this->tryConnMillis <= 5UL * 1000UL) {
+    if (millis() - this->tryConnMillis <= 5000) {
       int idx = this->res.indexOf("+QMTCONN: 0,0,0");
       if (idx != -1) {
         this->isConn = true;
@@ -87,7 +84,7 @@ private:
   }
 
   void hookTrySubs() {
-    if (millis() - this->trySubsMillis <= 5UL * 1000UL) {
+    if (millis() - this->trySubsMillis <= 5000) {
       int idx = this->res.indexOf("+QMTSUB: 0,1,0,2");
       if (idx != -1) {
         this->isSubs = true;
@@ -127,7 +124,7 @@ public:
   void init() {
     Serial.print("INIT ");
     NBIoT_Module.println("AT+QRST=1");
-    delay(10000);
+    delay(5000);
     NBIoT_Module.println("AT+CFUN=1");
     delay(100);
     NBIoT_Module.println("AT+QSCLK=0");
@@ -178,7 +175,8 @@ public:
 
   void waitData() {
     // if received, reset this->waitDataMillis
-    if (millis() - this->waitDataMillis > 20UL * 1000UL) {
+    if (millis() - this->waitDataMillis > 15000) {
+      this->pruneSerialBuffer();
       this->isOpen = false;
       this->isConn = false;
       this->isSubs = false;

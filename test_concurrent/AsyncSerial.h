@@ -20,6 +20,11 @@ private:
   unsigned long tryOpenMillis = 0;
   unsigned long tryConnMillis = 0;
   unsigned long trySubsMillis = 0;
+  unsigned long waitDataMillis = 0;
+
+  void pruneSerialBuffer() {
+    while (NBIoT_Module.read() > 0) {};
+  }
 
   void pruneResBuffer() {
     this->res = "";
@@ -36,11 +41,10 @@ private:
 
   void hookCEREG() {
     int idx = this->res.indexOf("+CEREG:");
-    Serial.println(this->res);
+    // Serial.println(this->res);
   }
 
   void hookTryOpen() {
-    Serial.println(millis() - this->tryOpenMillis);
     if (millis() - this->tryOpenMillis <= 5UL * 1000UL) {
       int idx = this->res.indexOf("+QMTOPEN: 0,0");
       if (idx != -1) {
@@ -129,7 +133,7 @@ public:
     delay(100);
     NBIoT_Module.println("AT+QMTCLOSE=0");
     delay(100);
-    while (NBIoT_Module.read() > 0) {};
+    this->pruneSerialBuffer();
     Serial.println("OK");
   }
 
@@ -137,6 +141,7 @@ public:
     this->open();
     this->conn();
     this->subs();
+    this->waitData();
   }
 
   void open() {
@@ -160,6 +165,16 @@ public:
       Serial.println("Subscribing Topic...");
       NBIoT_Module.println("AT+QMTSUB=0,1,rgt/861096060571706/in,2");
       this->trySubs = true;
+    }
+  }
+
+
+  void waitData() {
+    // if received, reset this->waitDataMillis
+    if (millis() - this->waitDataMillis > 60UL * 1000UL) {
+      this->isOpen = false;
+      this->isConn = false;
+      this->isSubs = false;
     }
   }
 

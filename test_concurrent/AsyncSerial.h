@@ -10,23 +10,46 @@ private:
   void pruneResBuffer() {
     this->res = "";
   }
+
+  void hook() {
+    int idx = this->res.indexOf("+CSQ:");
+    if (idx != -1) {
+      int winStart = idx + 6;
+      int winEnd = winStart + 2;
+      Serial.println(this->res.substring(winStart, winEnd));
+    }
+  }
+
+  void parseMsg() {
+    // readonly, never modify msg
+    this->hook();
+    if (this->res.indexOf("AT+GATT") != -1) {
+    } else if (this->res.indexOf("AT+CEREG") != -1) {
+    }
+  }
+
 public:
   AsyncSerial() {}
 
   void waitMsg() {
     if (NBIoT_Module.available() > 0) {
-      char byte = NBIoT_Module.read();
-      if (byte != '\r' && byte != '\n') {
-        this->res += byte;
+      char _byte = NBIoT_Module.read();
+
+      if (_byte != '\r' && _byte != '\n') {
+        this->res += _byte;
       }
 
-      if (byte == '\r') {
-        handleATCommand(res);
+      if (_byte == '\r') {
+        parseMsg();
         pruneResBuffer();
       }
     }
   }
 
-
   ~AsyncSerial() {}
 };
+
+
+extern AsyncSerial asyncSerial;
+
+#endif

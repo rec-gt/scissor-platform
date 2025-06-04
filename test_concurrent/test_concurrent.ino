@@ -1,5 +1,7 @@
 #include "AsyncSerial.h"
 
+AsyncSerial asyncSerial;
+
 String atCommand = "";
 
 void setup() {
@@ -11,27 +13,8 @@ void otherJobs() {
   Serial.println("doing other jobs...");
 }
 
-void asyncReceive() {
-  if (Serial1.available() > 0) {
-    char incomingByte = Serial1.read();
-    if (incomingByte != '\r' && incomingByte != '\n') {
-      atCommand += incomingByte;
-    }
-
-    if (incomingByte == '\r') {
-      handleATCommand(atCommand);
-      atCommand = "";
-    }
-  }
-}
-
-void handleATCommand(String command) {
-  Serial.print("Received AT command: ");
-  Serial.println(command);
-}
-
 void loop() {
   otherJobs();
-  asyncReceive();
-  delay(500);
+  asyncSerial.waitMsg();
+  delay(200);
 }

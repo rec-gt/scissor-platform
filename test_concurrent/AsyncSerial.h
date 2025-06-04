@@ -47,6 +47,7 @@ private:
         this->tryOpen = false;
       }
     } else {
+      Serial.println("MQTT OPEN COUNT: " + this->tryOpenCnt);
       if (++this->tryOpenCnt > 3) {
         this->isOpen = false;
         this->tryOpen = false;
@@ -75,7 +76,6 @@ private:
 
   void hookTrySubs() {
     if (millis() - this->trySubsMillis <= 5UL * 1000UL) {
-      Serial.println(this->res);
       int idx = this->res.indexOf("+QMTSUB: 0,1,0,2");
       if (idx != -1) {
         this->isSubs = true;
@@ -113,15 +113,19 @@ public:
   AsyncSerial() {}
 
   void init() {
-    NBIoT_Module.print("AT+QSCLK=0");
+    NBIoT_Module.println("AT+QRST=1");
+    delay(5000);
+    NBIoT_Module.println("AT+CFUN=1");
     delay(100);
-    NBIoT_Module.print("AT+QMTDISC=0");
+    NBIoT_Module.println("AT+QSCLK=0");
     delay(100);
-    NBIoT_Module.print("AT+QMTCLOSE=0");
+    NBIoT_Module.println("AT+QMTDISC=0");
     delay(100);
-    NBIoT_Module.print("AT+QMTDISC=0");
+    NBIoT_Module.println("AT+QMTCLOSE=0");
     delay(100);
-    NBIoT_Module.print("AT+QMTCLOSE=0");
+    NBIoT_Module.println("AT+QMTDISC=0");
+    delay(100);
+    NBIoT_Module.println("AT+QMTCLOSE=0");
     delay(100);
     while (NBIoT_Module.read() > 0) {};
     Serial.println("INIT OK");
@@ -136,21 +140,23 @@ public:
   void open() {
     if (!this->isOpen && !this->tryOpen) {
       Serial.println("Opening MQTT...");
-      NBIoT_Module.print("AT+QMTOPEN=0,8.210.84.24,1880");
+      NBIoT_Module.println("AT+QMTOPEN=0,8.210.84.24,1880");
       this->tryOpen = true;
     }
   }
 
   void conn() {
     if (this->isOpen && (!this->isConn && !this->tryConn)) {
-      NBIoT_Module.print("AT+QMTCONN=0,dev" + String(random(101)) + ",tswh,1Wo=[6vA0m");
+      Serial.println("Connecting MQTT...");
+      NBIoT_Module.println("AT+QMTCONN=0,dev" + String(random(101)) + ",tswh,1Wo=[6vA0m");
       this->tryConn = true;
     }
   }
 
   void subs() {
     if (this->isOpen && this->isConn && (!this->isSubs && !this->trySubs)) {
-      NBIoT_Module.print("AT+QMTSUB=0,1,rgt/861096060571706/in,2");
+      Serial.println("Subscribing Topic...");
+      NBIoT_Module.println("AT+QMTSUB=0,1,rgt/861096060571706/in,2");
       this->trySubs = true;
     }
   }
@@ -158,6 +164,8 @@ public:
   void waitMsg() {
     if (NBIoT_Module.available() > 0) {
       char _byte = NBIoT_Module.read();
+
+      Serial.print(_byte);
 
       if (_byte != '\r' && _byte != '\n') {
         this->res += _byte;

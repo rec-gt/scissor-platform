@@ -13,10 +13,10 @@ private:
   bool tryOpen = false;
   bool tryConn = false;
   bool trySubs = false;
+  int tryResetCnt = 0;
   int tryOpenCnt = 0;
   int tryConnCnt = 0;
   int trySubsCnt = 0;
-
   unsigned long tryOpenMillis = 0;
   unsigned long tryConnMillis = 0;
   unsigned long trySubsMillis = 0;
@@ -123,14 +123,6 @@ public:
     delay(100);
     NBIoT_Module.println("AT+QSCLK=0");
     delay(100);
-    NBIoT_Module.println("AT+QMTDISC=0");
-    delay(100);
-    NBIoT_Module.println("AT+QMTCLOSE=0");
-    delay(100);
-    NBIoT_Module.println("AT+QMTDISC=0");
-    delay(100);
-    NBIoT_Module.println("AT+QMTCLOSE=0");
-    delay(100);
     this->pruneSerialBuffer();
     Serial.println("OK");
   }
@@ -181,12 +173,19 @@ public:
     }
   }
 
-
   void waitData() {
-    // this->pruneSerialBuffer();
-
-    // if received, reset this->waitDataMillis
+    // if received, feed this->waitDataMillis
     if (millis() - this->waitDataMillis > 15000) {
+      if (++this->tryResetCnt > 3) {
+        NBIoT_Module.println("AT+QRST=1");
+        delay(5000);
+        NBIoT_Module.println("AT+CFUN=1");
+        delay(100);
+        NBIoT_Module.println("AT+QSCLK=0");
+        delay(100);
+        this->tryResetCnt = 0;
+      }
+
       this->isOpen = false;
       this->isConn = false;
       this->isSubs = false;

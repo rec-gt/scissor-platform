@@ -7,15 +7,17 @@ class AsyncSerial {
 private:
   String res = "";
 
-  bool openSuccess = false;
-  bool connSuccess = false;
-  bool subsSuccess = false;
+  bool isOpen = false;
+  bool isConn = false;
+  bool isSubs = false;
   bool tryOpen = false;
   bool tryConn = false;
   bool trySubs = false;
   bool tryOpenErrCnt = 0;
   bool tryConnErrCnt = 0;
   bool trySubsErrCnt = 0;
+
+  unsigned long tryOpenMillis = 0;
 
   void pruneResBuffer() {
     this->res = "";
@@ -36,14 +38,12 @@ private:
   }
 
   void hookTryOpen() {
-    int idx = this->res.indexOf("+QMTOPEN: 0,0");
-    if (idx != -1) {
-      // reset open trial
-      this->tryOpen = false;
-      this->tryOpenErrCnt = 0;
-
-      // goto connection phase
-      this->tryConn = true;
+    if (millis() - this->tryOpenMillis <= 5UL * 1000UL) {
+      int idx = this->res.indexOf("+QMTOPEN: 0,0");
+      if (idx != -1) {
+        this->isOpen = true;
+        this->tryOpen = false;
+      }
     }
   }
 
@@ -72,25 +72,41 @@ private:
     this->hookCSQ();
     this->hookCEREG();
 
-    if (!openSuccess || !connSuccess || !subsSuccess) {
-      if (tryOpen) {
-        this->hookTryOpen();
-      }
+    if (this->tryOpen) {
+      this->tryOpenMillis = millis();
+      this->hookTryOpen();
+    }
 
-      if (tryConn) {
-        this->hookTryConn();
-      }
+    if (this->tryConn) {
+      this->hookTryConn();
+    }
 
-      if (trySubs) {
-        this->hookTrySubs();
-      }
+    if (this->trySubs) {
+      this->hookTrySubs();
     }
   }
 
 public:
   AsyncSerial() {}
 
-  void init() {
+  void listen() {
+    this->open();
+    this->conn();
+    this->subs();
+  }
+
+  void open() {
+    if (!this->isOpen) {
+      NBIoT_Module.print("AT+QMTOPEN=0,8.210.84.24,1880");
+      this->tryOpen = true;
+    }
+  }
+
+  void conn() {
+    if (this->isOpen && !this->isConn) {
+      NBIoT_Module.print("AT+QMTOPEN=0,8.210.84.24,1880");
+      this->tryConn = true;
+    }
   }
 
   void waitMsg() {
@@ -102,8 +118,8 @@ public:
       }
 
       if (_byte == '\r') {
-        parseMsg();
-        pruneResBuffer();
+        this->parseMsg();
+        this->pruneResBuffer();
       }
     }
   }

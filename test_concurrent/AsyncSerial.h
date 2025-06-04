@@ -171,10 +171,18 @@ public:
 
   void waitData() {
     // if received, reset this->waitDataMillis
-    if (millis() - this->waitDataMillis > 60UL * 1000UL) {
+    if (millis() - this->waitDataMillis > 20UL * 1000UL) {
       this->isOpen = false;
       this->isConn = false;
       this->isSubs = false;
+      this->tryOpen = false;
+      this->tryConn = false;
+      this->trySubs = false;
+      this->tryOpenCnt = 0;
+      this->tryConnCnt = 0;
+      this->trySubsCnt = 0;
+      this->waitDataMillis = millis();
+      Serial.println("No data received, timeout, reconnect");
     }
   }
 

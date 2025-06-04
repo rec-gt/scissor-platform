@@ -6,6 +6,10 @@
 class AsyncSerial {
 private:
   String res = "";
+
+  bool openSuccess = false;
+  bool connSuccess = false;
+  bool subsSuccess = false;
   bool tryOpen = false;
   bool tryConn = false;
   bool trySubs = false;
@@ -68,17 +72,26 @@ private:
     this->hookCSQ();
     this->hookCEREG();
 
-    if (tryOpen) {
-      this->hookTryOpen();
-    }
+    if (!openSuccess || !connSuccess || !subsSuccess) {
+      if (tryOpen) {
+        this->hookTryOpen();
+      }
 
-    if (tryConn) {
-      this->hookTryConn();
+      if (tryConn) {
+        this->hookTryConn();
+      }
+
+      if (trySubs) {
+        this->hookTrySubs();
+      }
     }
   }
 
 public:
   AsyncSerial() {}
+
+  void init() {
+  }
 
   void waitMsg() {
     if (NBIoT_Module.available() > 0) {

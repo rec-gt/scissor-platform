@@ -75,6 +75,7 @@ private:
 
   void hookTrySubs() {
     if (millis() - this->trySubsMillis <= 5UL * 1000UL) {
+      Serial.println(this->res);
       int idx = this->res.indexOf("+QMTSUB: 0,1,0,2");
       if (idx != -1) {
         this->isSubs = true;
@@ -94,6 +95,18 @@ private:
     // readonly, never modify msg
     this->hookCSQ();
     this->hookCEREG();
+
+    if (this->tryOpen) {
+      this->hookTryOpen();
+    }
+
+    if (this->tryConn) {
+      this->hookTryConn();
+    }
+
+    if (this->trySubs) {
+      this->hookTrySubs();
+    }
   }
 
 public:
@@ -110,25 +123,14 @@ public:
     delay(100);
     NBIoT_Module.print("AT+QMTCLOSE=0");
     delay(100);
-    while (NBIoT_Module.read()) {};
+    while (NBIoT_Module.read() > 0) {};
+    Serial.println("INIT OK");
   }
 
   void listen() {
     this->open();
     this->conn();
     this->subs();
-
-    if (this->tryOpen) {
-      this->hookTryOpen();
-    }
-
-    if (this->tryConn) {
-      this->hookTryConn();
-    }
-
-    if (this->trySubs) {
-      this->hookTrySubs();
-    }
   }
 
   void open() {

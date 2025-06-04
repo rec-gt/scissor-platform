@@ -54,6 +54,15 @@ private:
     }
   }
 
+  void hookTrySubs() {
+    int idx = this->res.indexOf("+QMTSUB: 0,1,0,2");
+    if (idx != -1) {
+      // reset conn trial
+      this->trySubs = false;
+      this->trySubsErrCnt = 0;
+    }
+  }
+
   void parseMsg() {
     // readonly, never modify msg
     this->hookCSQ();

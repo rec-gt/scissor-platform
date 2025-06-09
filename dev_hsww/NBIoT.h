@@ -5,8 +5,8 @@
 
 #define NBIoT_Serial Serial1
 
-AsyncTimer timer(3000);
-AsyncTimer nbiotWatchDog(30UL * 1000UL);
+AsyncTimer timer = new AsyncTimer(3000);
+AsyncTimer nbiotWatchDog = new AsyncTimer(60UL * 1000UL);
 
 class NBIoT {
 private:
@@ -41,7 +41,7 @@ private:
     this->res = "";
   }
 
-  void hookCSQ() {
+  void hookGetCSQ() {
     int idx = this->res.indexOf("+CSQ:");
     if (idx != -1) {
       int winStart = idx + 6;
@@ -50,14 +50,35 @@ private:
     }
   }
 
-  void hookCEREG() {
+  void hookGetCEREG() {
     int idx = this->res.indexOf("+CEREG:");
   }
 
+  void hookGetMsg() {
+    int idx = this->res.indexOf("+QMTRECV:");
+    int commaIndex = this->res.indexOf(",");
+    String data = this->res;
+
+    if (idx > -1) {
+      data = data.substring(commaIndex);
+      commaIndex = this->res.indexOf(",");
+      data = data.substring(commaIndex);
+      commaIndex = this->res.indexOf(",");
+      Serial.print(data);
+
+      nbiotWatchDog.feed();
+      // +QMTRECV: 0,133,"rgt/861096060571706/in","{
+      //   "dout": 1
+      // }"
+    }
+  }
+
+
   void parseMsg() {
     // readonly, never modify msg
-    this->hookCSQ();
-    this->hookCEREG();
+    this->hookGetCSQ();
+    this->hookGetCEREG();
+    this->hookGetMsg();
   }
 
   void listenTryHooks() {

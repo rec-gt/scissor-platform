@@ -56,21 +56,19 @@ private:
   }
 
   void hookGetMsg() {
-    int idx = this->res.indexOf("+QMTRECV:");
-    int commaIndex = this->res.indexOf(",");
-    String data = this->res;
+    int idx = this->res.indexOf("DO:");
 
     if (idx > -1) {
-      
-      data = data.substring(commaIndex);
-      commaIndex = this->res.indexOf(",");
-      data = data.substring(commaIndex);
-      commaIndex = this->res.indexOf(",");
+      Serial.println();
+      Serial.println(this->res.substring(idx));
+
       speaker.off();
 
       speaker.on(1);
 
       nbiotWatchDog.feed();
+
+      // +QMTRECV: 0,84,"rgt/861096060571706/in","DO:00000000"
       // +QMTRECV: 0,133,"rgt/861096060571706/in","{
       //   "dout": 1
       // }"

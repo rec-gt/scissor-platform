@@ -1,5 +1,6 @@
 #include "AsyncTimer.h"
-#include "Speaker.h"
+#include "Enums.h"
+#include "System.h"
 
 #ifndef NBIoT_h
 #define NBIoT_h
@@ -65,8 +66,8 @@ private:
 
       int alarmIdx = payload.indexOf("1");
       if (alarmIdx > -1) {
-        speaker.off();
         speaker.on(alarmIdx);
+        system.set(SYS_YELLOW_OUTDOOR);
       }
 
       nbiotWatchDog.feed();

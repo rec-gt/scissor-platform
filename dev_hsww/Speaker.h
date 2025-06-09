@@ -22,6 +22,7 @@ public:
   };
 
   void on(byte i) {
+    this->off();
     digitalWrite(this->speakerPin, HIGH);
     digitalWrite(this->audioPins[i], LOW);
   };

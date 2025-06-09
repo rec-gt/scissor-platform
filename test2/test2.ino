@@ -1,30 +1,55 @@
-#include <avr/sleep.h>
-#include <avr/power.h>
-#include <avr/wdt.h>
-
-
-
-
-byte cnt = 0;
+byte toggle = LOW;
+byte buffer[8] = {};
 
 void setup() {
   Serial.begin(9600);
-  Serial.println("Reseting...");
+  Serial1.begin(9600);
+  Serial2.begin(9600);
+  pinMode(30, OUTPUT);
+  pinMode(28, OUTPUT);
+  digitalWrite(30, toggle);
+  delay(300);
 }
 
 void loop() {
+  if (Serial1.available()) {
+    size_t i = 0;
 
-  // Serial.println(_BV(WDCE));
-  // Serial.println(1 << WDCE);
-  // Serial.println((1 << WDCE) | (1 << WDE));
-  // Serial.println(bit(WDIE));
-  // Serial.println(_BV(WDIE));
+    while (Serial1.available()) {
+      Serial.print(Serial1.read());
+      Serial.print(", ");
+    }
+
+    // while (Serial1.available()) {
+    //   byte recv = Serial1.read();
+    //   buffer[i++] = recv;
+    // }
+
+    // if (buffer[0] == 132) {
+    //   //switch to send mode
+    //   digitalWrite(28, HIGH);
+    //   for (size_t i = 0; i < 8; i++) {
+    //     Serial2.print(buffer[i]);
+    //   }
 
 
+    //   for (size_t i = 0; i < 8; i++) {
+    //     Serial.print(buffer[i]);
+    //     Serial.print(", ");
+    //   }
+
+
+    //   //switch to recv mode
+    //   digitalWrite(28, LOW);
+    //   if (Serial2.available()) {
+    //     for (size_t i = 0; i < 8; i++) {
+    //       Serial.print(Serial2.read());
+    //     }
+    //   }
+    // }
+  }
+
+
+  Serial.println();
   delay(1000);
-
-  // while (1) {
-  //   Serial.println(cnt++);
-  //   delay(1000);
-  // }
 }

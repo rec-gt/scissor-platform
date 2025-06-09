@@ -15,14 +15,16 @@ private:
   bool tryOpen = false;
   bool tryConn = false;
   bool trySubs = false;
-  int tryResetCnt = 0;
-  int tryOpenCnt = 0;
-  int tryConnCnt = 0;
-  int trySubsCnt = 0;
+  unsigned long tryStartMillis = 0;
   unsigned long tryOpenMillis = 0;
   unsigned long tryConnMillis = 0;
   unsigned long trySubsMillis = 0;
   unsigned long waitDataMillis = 0;
+  int tryResetCnt = 0;
+  int tryStartCnt = 0;
+  int tryOpenCnt = 0;
+  int tryConnCnt = 0;
+  int trySubsCnt = 0;
 
   void print() {
     Serial.println("isOpen: " + String(isOpen) + " isConn: " + String(isConn) + " isSubs: " + String(isSubs) + " tryOpen: " + String(tryOpen) + " tryConn: " + String(tryConn) + " trySubs: " + String(trySubs));
@@ -50,10 +52,14 @@ private:
   }
 
   void hookTryStart() {
-    int idx = this->res.indexOf("+QMTOPEN: 0,0");
-    if (idx != -1) {
-      this->isStart = true;
-      this->tryStart = false;
+    if (millis() - this->tryStartMillis <= 5000) {
+      int idx = this->res.indexOf("+IP:");
+      if (idx != -1) {
+        this->isStart = true;
+        this->tryStart = false;
+      }
+    } else {
+      this->tryStartMillis = millis();
     }
   }
 
@@ -135,6 +141,9 @@ public:
   NBIoT() {}
 
   void init() {
+    this->pruneSerialBuffer();
+    this->pruneResBuffer();
+
     Serial.print("INIT ");
     NBIoT_Serial.println("AT+QRST=1");
     delay(5000);
@@ -148,10 +157,13 @@ public:
 
   void listen() {
     this->start();
-    this->open();
-    this->conn();
-    this->subs();
-    this->waitData();
+
+    if (this->isStart) {
+      this->open();
+      this->conn();
+      this->subs();
+      this->waitData();
+    }
 
     if (this->tryStart) {
       this->hookTryStart();
@@ -159,24 +171,30 @@ public:
 
     if (this->tryOpen) {
       this->hookTryOpen();
-      this->waitDataMillis = millis();
     }
 
     if (this->tryConn) {
       this->hookTryConn();
-      this->waitDataMillis = millis();
     }
 
     if (this->trySubs) {
       this->hookTrySubs();
-      this->waitDataMillis = millis();
     }
+
+    this->waitDataMillis = millis();
   }
 
   void start() {
     if (!this->isStart && !this->tryStart) {
+      this->pruneSerialBuffer();
+      this->pruneResBuffer();
+
       Serial.println("Start NBIOT...");
+
       NBIoT_Serial.println("AT+QRST=1");
+      NBIoT_Serial.println("AT+QSCLK=0");
+      NBIoT_Serial.println("AT+CFUN=1");
+
       this->tryStart = true;
     }
   }

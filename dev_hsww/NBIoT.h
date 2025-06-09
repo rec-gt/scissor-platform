@@ -19,16 +19,14 @@ private:
   bool tryOpen = false;
   bool tryConn = false;
   bool trySubs = false;
-  unsigned long tryStartMillis = 0;
-  unsigned long tryOpenMillis = 0;
-  unsigned long tryConnMillis = 0;
-  unsigned long trySubsMillis = 0;
-  unsigned long waitDataMillis = 0;
   int tryResetCnt = 0;
   int tryStartCnt = 0;
   int tryOpenCnt = 0;
   int tryConnCnt = 0;
   int trySubsCnt = 0;
+  unsigned long waitDataMillis = 0;
+
+  byte resetPin = 30;
 
   void print() {
     Serial.println("isOpen: " + String(isOpen) + " isConn: " + String(isConn) + " isSubs: " + String(isSubs) + " tryOpen: " + String(tryOpen) + " tryConn: " + String(tryConn) + " trySubs: " + String(trySubs));
@@ -142,19 +140,7 @@ private:
     this->hookCEREG();
   }
 
-public:
-  NBIoT() {}
-
-  void listen() {
-    this->start();
-
-    if (this->isStart) {
-      this->open();
-      this->conn();
-      this->subs();
-      this->waitData();
-    }
-
+  void listenTryHooks() {
     if (this->tryStart) {
       this->hookTryStart();
     }
@@ -170,17 +156,44 @@ public:
     if (this->trySubs) {
       this->hookTrySubs();
     }
+  }
+
+public:
+  NBIoT() {
+    pinMode(this->resetPin, OUTPUT);
+    digitalWrite(this->resetPin, HIGH);
+  }
+
+  void listen() {
+    this->start();
+
+    if (this->isStart) {
+      this->open();
+      this->conn();
+      this->subs();
+      if (this->isSubs) {
+        this->waitData();
+      }
+    }
+
+    this->listenTryHooks();
 
     this->waitDataMillis = millis();
   }
 
+  void reset() {
+    digitalWrite(this->resetPin, LOW);
+    delay(50);
+    digitalWrite(this->resetPin, HIGH);
+    delay(10);
+  }
+
   void start() {
     if (!this->isStart && !this->tryStart) {
+      Serial.println("Start NBIOT...");
+      this->reset();
       this->pruneSerialBuffer();
       this->pruneResBuffer();
-
-      Serial.println("Start NBIOT...");
-
       NBIoT_Serial.println("AT+QRST=1");
       NBIoT_Serial.println("AT+QSCLK=0");
       NBIoT_Serial.println("AT+CFUN=1");

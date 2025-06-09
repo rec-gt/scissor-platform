@@ -1,11 +1,7 @@
-#include "AsyncTimer.h"
-
 #ifndef NBIoT_h
 #define NBIoT_h
 
 #define NBIoT_Serial Serial1
-
-AsyncTimer startTimer(5000);
 
 class NBIoT {
 private:
@@ -56,14 +52,14 @@ private:
   }
 
   void hookTryStart() {
-    if (startTimer.isExpired()) {
+    if (millis() - this->tryStartMillis <= 5000) {
       int idx = this->res.indexOf("+IP:");
       if (idx != -1) {
         this->isStart = true;
         this->tryStart = false;
       }
     } else {
-      startTimer.refresh();
+      this->tryStartMillis = millis();
     }
   }
 
@@ -143,6 +139,21 @@ private:
 
 public:
   NBIoT() {}
+
+  void init() {
+    this->pruneSerialBuffer();
+    this->pruneResBuffer();
+
+    Serial.print("INIT ");
+    NBIoT_Serial.println("AT+QRST=1");
+    delay(5000);
+    NBIoT_Serial.println("AT+CFUN=1");
+    delay(100);
+    NBIoT_Serial.println("AT+QSCLK=0");
+    delay(100);
+    this->pruneSerialBuffer();
+    Serial.println("OK");
+  }
 
   void listen() {
     this->start();

@@ -7,7 +7,6 @@ String atCommand = "";
 void setup() {
   Serial.begin(9600);
   NBIoT_Serial.begin(9600);
-  nbiot.init();
   delay(300);
 }
 

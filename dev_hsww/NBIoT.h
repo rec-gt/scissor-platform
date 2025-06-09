@@ -63,15 +63,11 @@ private:
       String payload = this->res.substring(idx + 3, idx + 11);
       Serial.println(payload);
 
-      speaker.off();
-      for (int i = 0; i < payload.length(); i++) {
-        char c = payload.charAt(i);
-        if (c == "1") {
-          speaker.on(1);
-          break;
-        }
+      int alarmIdx = payload.indexOf("1");
+      if (alarmIdx > -1) {
+        speaker.off();
+        speaker.on(alarmIdx);
       }
-
 
       nbiotWatchDog.feed();
 

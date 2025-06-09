@@ -8,7 +8,7 @@
 #define NBIoT_Serial Serial1
 
 AsyncTimer timer(3000);
-AsyncTimer nbiotWatchDog(60UL * 1000UL);
+AsyncTimer nbiotWatchDog(3UL * 60UL * 1000UL);
 
 class NBIoT {
 private:

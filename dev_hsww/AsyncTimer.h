@@ -10,10 +10,14 @@ public:
     : timeout(timeout){};
 
   bool isExpired(void) {
-    return millis() - this->prevMillis <= this->timeout;
+    return millis() - this->prevMillis > this->timeout;
   }
 
   bool refresh(void) {
+    this->prevMillis = millis();
+  }
+
+  bool feed(void) {
     this->prevMillis = millis();
   }
 

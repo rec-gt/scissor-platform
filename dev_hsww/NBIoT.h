@@ -6,6 +6,7 @@
 #define NBIoT_Serial Serial1
 
 AsyncTimer timer(3000);
+AsyncTimer nbiotWatchDog(30UL * 1000UL);
 
 class NBIoT {
 private:
@@ -53,20 +54,50 @@ private:
     int idx = this->res.indexOf("+CEREG:");
   }
 
+  void parseMsg() {
+    // readonly, never modify msg
+    this->hookCSQ();
+    this->hookCEREG();
+  }
+
+  void listenTryHooks() {
+    if (this->tryStart) {
+      this->hookTryStart();
+    }
+
+    if (this->tryOpen) {
+      this->hookTryOpen();
+    }
+
+    if (this->tryConn) {
+      this->hookTryConn();
+    }
+
+    if (this->trySubs) {
+      this->hookTrySubs();
+    }
+  }
+
   void hookTryStart() {
-    if (timer.isExpired()) {
+    if (!timer.isExpired()) {
       int idx = this->res.indexOf("+IP:");
       if (idx != -1) {
+        NBIoT_Serial.println("AT+CFUN=1");
+        delay(30);
+        NBIoT_Serial.println("AT+QSCLK=0");
+        delay(30);
+
         this->isStart = true;
         this->tryStart = false;
       }
     } else {
+      // err count
       timer.refresh();
     }
   }
 
   void hookTryOpen() {
-    if (timer.isExpired()) {
+    if (!timer.isExpired()) {
       int idx = this->res.indexOf("+QMTOPEN: 0,0");
       if (idx != -1) {
         this->isOpen = true;
@@ -97,7 +128,7 @@ private:
   }
 
   void hookTryConn() {
-    if (timer.isExpired()) {
+    if (!timer.isExpired()) {
       int idx = this->res.indexOf("+QMTCONN: 0,0,0");
       if (idx != -1) {
         this->isConn = true;
@@ -118,7 +149,7 @@ private:
   }
 
   void hookTrySubs() {
-    if (timer.isExpired()) {
+    if (!timer.isExpired()) {
       int idx = this->res.indexOf("+QMTSUB: 0,1,0,2");
       if (idx != -1) {
         this->isSubs = true;
@@ -134,30 +165,6 @@ private:
     }
   }
 
-  void parseMsg() {
-    // readonly, never modify msg
-    this->hookCSQ();
-    this->hookCEREG();
-  }
-
-  void listenTryHooks() {
-    if (this->tryStart) {
-      this->hookTryStart();
-    }
-
-    if (this->tryOpen) {
-      this->hookTryOpen();
-    }
-
-    if (this->tryConn) {
-      this->hookTryConn();
-    }
-
-    if (this->trySubs) {
-      this->hookTrySubs();
-    }
-  }
-
 public:
   NBIoT() {
     pinMode(this->resetPin, OUTPUT);
@@ -165,28 +172,40 @@ public:
   }
 
   void listen() {
-    this->start();
+    if (nbiotWatchDog.isExpired()) {
+      Serial.print("connection expired");
+      this->reset();
+    }
 
     this->listenTryHooks();
 
-    if (!this->isStart) {
-      return;
+    this->start();
+
+    if (this->isStart) {
+      this->open();
+      this->conn();
+      this->subs();
+      this->waitData();
     }
-
-    this->open();
-    this->conn();
-    this->subs();
-
-    if (!this->isSubs) {
-      return;
-    }
-
-    this->waitData();
 
     this->waitDataMillis = millis();
   }
 
   void reset() {
+    isStart = false;
+    isOpen = false;
+    isConn = false;
+    isSubs = false;
+    tryStart = false;
+    tryOpen = false;
+    tryConn = false;
+    trySubs = false;
+    tryResetCnt = 0;
+    tryStartCnt = 0;
+    tryOpenCnt = 0;
+    tryConnCnt = 0;
+    trySubsCnt = 0;
+    waitDataMillis = 0;
     digitalWrite(this->resetPin, LOW);
     delay(50);
     digitalWrite(this->resetPin, HIGH);
@@ -200,9 +219,6 @@ public:
       this->pruneSerialBuffer();
       this->pruneResBuffer();
       NBIoT_Serial.println("AT+QRST=1");
-      NBIoT_Serial.println("AT+QSCLK=0");
-      NBIoT_Serial.println("AT+CFUN=1");
-
       this->tryStart = true;
     }
   }
@@ -234,17 +250,6 @@ public:
   void waitData() {
     // if received, feed this->waitDataMillis
     if (millis() - this->waitDataMillis > 15000) {
-      this->isOpen = false;
-      this->isConn = false;
-      this->isSubs = false;
-      this->tryOpen = false;
-      this->tryConn = false;
-      this->trySubs = false;
-      this->tryOpenCnt = 0;
-      this->tryConnCnt = 0;
-      this->trySubsCnt = 0;
-      this->waitDataMillis = millis();
-      Serial.println("No data received, timeout, reconnect");
     }
   }
 

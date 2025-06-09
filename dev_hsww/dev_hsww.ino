@@ -16,4 +16,5 @@ void setup() {
 void loop() {
   nbiot.listen();
   nbiot.waitMsg();
+  alarmSystem.listen();
 }

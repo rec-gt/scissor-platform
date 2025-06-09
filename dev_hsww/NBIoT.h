@@ -70,14 +70,10 @@ private:
 
     if (idx > -1) {
       Serial.println();
-      String payload = this->res.substring(idx + 3, idx + 11);
+      String payload = this->res.substring(idx + 3, idx + 3 + 8);
       Serial.println(payload);
 
-      int alarmIdx = payload.indexOf("1");
-      if (alarmIdx > -1) {
-        speaker.on(alarmIdx);
-        alarmSystem.set(SYS_YELLOW_OUTDOOR);
-      }
+      alarmSystem.set(payload);
 
       nbiotWatchDog.feed();
     }

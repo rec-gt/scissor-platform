@@ -174,6 +174,7 @@ public:
   void listen() {
     if (nbiotWatchDog.isExpired()) {
       Serial.print("connection expired");
+      nbiotWatchDog.feed();
       this->reset();
     }
 

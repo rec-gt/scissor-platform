@@ -60,11 +60,18 @@ private:
 
     if (idx > -1) {
       Serial.println();
-      Serial.println(this->res.substring(idx));
+      String payload = this->res.substring(idx + 3, idx + 11);
+      Serial.println(payload);
 
       speaker.off();
+      for (int i = 0; i < payload.length(); i++) {
+        char c = payload.charAt(i);
+        if (c == "1") {
+          speaker.on(1);
+          break;
+        }
+      }
 
-      speaker.on(1);
 
       nbiotWatchDog.feed();
 

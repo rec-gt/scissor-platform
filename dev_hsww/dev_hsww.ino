@@ -1,6 +1,8 @@
 #include "NBIoT.h"
+#include "Speaker.h"
 
 NBIoT nbiot;
+Speaker speaker;
 
 String atCommand = "";
 

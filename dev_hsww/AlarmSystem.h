@@ -6,6 +6,7 @@
 
 class AlarmSystem {
 private:
+  byte speakerIdx = 0;
   SystemStatus prevStatus = SYS_INIT;
   SystemStatus recvStatus = SYS_INIT;
 
@@ -15,8 +16,8 @@ public:
   void set(String payload) {
     int idx = payload.indexOf("1");
     if (idx > -1) {
-
       this->recvStatus = idx + 1;
+      this->speakerIdx = idx;
     }
   };
 
@@ -28,32 +29,17 @@ public:
     if (this->recvStatus != SYS_INIT && this->recvStatus != SYS_CANCEL_OUTDOOR && this->recvStatus != SYS_CANCEL_INDOOR) {
       if (this->recvStatus != this->prevStatus) {
         this->update();
-        speaker.on(this->recvStatus);
+        speaker.on(this->speakerIdx);
       }
     }
 
-    if (this->recvStatus == SYS_CANCEL_OUTDOOR) {
+    if (this->recvStatus == SYS_CANCEL_OUTDOOR || this->recvStatus == SYS_CANCEL_INDOOR) {
       if (this->recvStatus != this->prevStatus) {
         this->update();
-        this->alarmCancel();
-      }
-    }
-
-    if (this->recvStatus == SYS_CANCEL_INDOOR) {
-      if (this->recvStatus != this->prevStatus) {
-        this->update();
-        this->alarmCancel();
+        speaker.on(this->speakerIdx);
       }
     }
   };
-
-  void alarmActive(void) {
-    speaker.on(1);
-  }
-
-  void alarmCancel(void) {
-    speaker.on(7);
-  }
 
   ~AlarmSystem(){};
 };

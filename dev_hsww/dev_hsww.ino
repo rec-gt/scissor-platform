@@ -1,11 +1,11 @@
 #include "NBIoT.h"
 #include "Speaker.h"
-#include "System.h"
+#include "AlarmSystem.h"
 #include "Enums.h"
 
 NBIoT nbiot;
 Speaker speaker;
-System system;
+AlarmSystem alarmSystem;
 
 void setup() {
   Serial.begin(9600);

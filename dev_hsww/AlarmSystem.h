@@ -1,16 +1,16 @@
 #include "Speaker.h"
 #include "Enums.h"
 
-#ifndef System_h
-#define System_h
+#ifndef AlarmSystem_h
+#define AlarmSystem_h
 
-class System {
+class AlarmSystem {
 private:
   SystemStatus prevStatus = SYS_INIT;
   SystemStatus recvStatus = SYS_INIT;
 
 public:
-  System(){};
+  AlarmSystem(){};
 
   void set(SystemStatus status) {
     this->recvStatus = status;
@@ -39,9 +39,9 @@ public:
     speaker.on(7);
   }
 
-  ~System(){};
+  ~AlarmSystem(){};
 };
 
-extern System system;
+extern AlarmSystem alarmSystem;
 
 #endif

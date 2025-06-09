@@ -1,6 +1,6 @@
 #include "AsyncTimer.h"
 #include "Enums.h"
-#include "System.h"
+#include "AlarmSystem.h"
 
 #ifndef NBIoT_h
 #define NBIoT_h
@@ -43,6 +43,15 @@ private:
     this->res = "";
   }
 
+  void parseMsg() {
+    // readonly, never modify msg
+    this->hookGetCSQ();
+    this->hookGetCEREG();
+    this->hookGetMsg();
+  }
+
+  // ==========
+
   void hookGetCSQ() {
     int idx = this->res.indexOf("+CSQ:");
     if (idx != -1) {
@@ -67,20 +76,14 @@ private:
       int alarmIdx = payload.indexOf("1");
       if (alarmIdx > -1) {
         speaker.on(alarmIdx);
-        system.set(SYS_YELLOW_OUTDOOR);
+        alarmSystem.set(SYS_YELLOW_OUTDOOR);
       }
 
       nbiotWatchDog.feed();
     }
   }
 
-
-  void parseMsg() {
-    // readonly, never modify msg
-    this->hookGetCSQ();
-    this->hookGetCEREG();
-    this->hookGetMsg();
-  }
+  // ==========
 
   void listenTryHooks() {
     if (this->tryStart) {
@@ -187,31 +190,7 @@ private:
     }
   }
 
-public:
-  NBIoT() {
-    pinMode(this->resetPin, OUTPUT);
-    digitalWrite(this->resetPin, HIGH);
-  }
-
-  void listen() {
-    if (nbiotWatchDog.isExpired()) {
-      Serial.print("connection expired");
-      nbiotWatchDog.feed();
-      this->reset();
-    }
-
-    this->listenTryHooks();
-
-    this->start();
-
-    if (this->isStart) {
-      this->open();
-      this->conn();
-      this->subs();
-    }
-
-    this->waitDataMillis = millis();
-  }
+  // ==========
 
   void reset() {
     isStart = false;
@@ -267,6 +246,32 @@ public:
       NBIoT_Serial.println("AT+QMTSUB=0,1,rgt/861096060571706/in,2");
       this->trySubs = true;
     }
+  }
+
+public:
+  NBIoT() {
+    pinMode(this->resetPin, OUTPUT);
+    digitalWrite(this->resetPin, HIGH);
+  }
+
+  void listen() {
+    if (nbiotWatchDog.isExpired()) {
+      Serial.print("connection expired");
+      nbiotWatchDog.feed();
+      this->reset();
+    }
+
+    this->listenTryHooks();
+
+    this->start();
+
+    if (this->isStart) {
+      this->open();
+      this->conn();
+      this->subs();
+    }
+
+    this->waitDataMillis = millis();
   }
 
   void waitMsg() {

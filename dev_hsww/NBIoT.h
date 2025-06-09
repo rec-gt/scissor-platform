@@ -70,11 +70,6 @@ private:
       }
 
       nbiotWatchDog.feed();
-
-      // +QMTRECV: 0,84,"rgt/861096060571706/in","DO:00000000"
-      // +QMTRECV: 0,133,"rgt/861096060571706/in","{
-      //   "dout": 1
-      // }"
     }
   }
 
@@ -212,7 +207,6 @@ public:
       this->open();
       this->conn();
       this->subs();
-      this->waitData();
     }
 
     this->waitDataMillis = millis();
@@ -271,12 +265,6 @@ public:
       Serial.println("Subscribing Topic...");
       NBIoT_Serial.println("AT+QMTSUB=0,1,rgt/861096060571706/in,2");
       this->trySubs = true;
-    }
-  }
-
-  void waitData() {
-    // if received, feed this->waitDataMillis
-    if (millis() - this->waitDataMillis > 15000) {
     }
   }
 

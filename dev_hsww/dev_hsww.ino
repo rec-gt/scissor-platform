@@ -1,5 +1,6 @@
 #include "NBIoT.h"
 #include "Speaker.h"
+#include "Enums.h"
 
 NBIoT nbiot;
 Speaker speaker;

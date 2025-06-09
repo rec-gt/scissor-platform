@@ -32,8 +32,8 @@ public:
     for (size_t i = 0; i < 8; i++) {
       digitalWrite(this->audioPins[i], HIGH);
     }
-    
-    delay(30);
+
+    delay(300);
   };
 
   ~Speaker() {}

@@ -5,7 +5,7 @@
 
 #define NBIoT_Serial Serial1
 
-AsyncTimer startTimer(5000);
+AsyncTimer timer(3000);
 
 class NBIoT {
 private:
@@ -56,19 +56,19 @@ private:
   }
 
   void hookTryStart() {
-    if (startTimer.isExpired()) {
+    if (timer.isExpired()) {
       int idx = this->res.indexOf("+IP:");
       if (idx != -1) {
         this->isStart = true;
         this->tryStart = false;
       }
     } else {
-      startTimer.refresh();
+      timer.refresh();
     }
   }
 
   void hookTryOpen() {
-    if (millis() - this->tryOpenMillis <= 5000) {
+    if (timer.isExpired()) {
       int idx = this->res.indexOf("+QMTOPEN: 0,0");
       if (idx != -1) {
         this->isOpen = true;
@@ -93,12 +93,13 @@ private:
         delay(100);
         this->tryResetCnt = 0;
       }
-      this->tryOpenMillis = millis();
+
+      timer.refresh();
     }
   }
 
   void hookTryConn() {
-    if (millis() - this->tryConnMillis <= 5000) {
+    if (timer.isExpired()) {
       int idx = this->res.indexOf("+QMTCONN: 0,0,0");
       if (idx != -1) {
         this->isConn = true;
@@ -114,12 +115,12 @@ private:
         this->tryConn = false;
         this->tryConnCnt = 0;
       }
-      this->tryConnMillis = millis();
+      timer.refresh();
     }
   }
 
   void hookTrySubs() {
-    if (millis() - this->trySubsMillis <= 5000) {
+    if (timer.isExpired()) {
       int idx = this->res.indexOf("+QMTSUB: 0,1,0,2");
       if (idx != -1) {
         this->isSubs = true;
@@ -131,7 +132,7 @@ private:
         this->trySubs = false;
         this->trySubsCnt = 0;
       }
-      this->trySubsMillis = millis();
+      timer.refresh();
     }
   }
 

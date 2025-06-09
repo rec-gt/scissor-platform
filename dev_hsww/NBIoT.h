@@ -167,16 +167,21 @@ public:
   void listen() {
     this->start();
 
-    if (this->isStart) {
-      this->open();
-      this->conn();
-      this->subs();
-      if (this->isSubs) {
-        this->waitData();
-      }
+    this->listenTryHooks();
+
+    if (!this->isStart) {
+      return;
     }
 
-    this->listenTryHooks();
+    this->open();
+    this->conn();
+    this->subs();
+
+    if (!this->isSubs) {
+      return;
+    }
+
+    this->waitData();
 
     this->waitDataMillis = millis();
   }

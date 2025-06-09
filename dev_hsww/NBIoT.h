@@ -1,4 +1,5 @@
 #include "AsyncTimer.h"
+#include "Speaker.h"
 
 #ifndef NBIoT_h
 #define NBIoT_h
@@ -60,11 +61,14 @@ private:
     String data = this->res;
 
     if (idx > -1) {
+      
       data = data.substring(commaIndex);
       commaIndex = this->res.indexOf(",");
       data = data.substring(commaIndex);
       commaIndex = this->res.indexOf(",");
-      Serial.print(data);
+      speaker.off();
+
+      speaker.on(1);
 
       nbiotWatchDog.feed();
       // +QMTRECV: 0,133,"rgt/861096060571706/in","{

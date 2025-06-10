@@ -208,8 +208,6 @@ private:
     if (!this->isStart && !this->tryStart) {
       Serial.println("Start NBIOT...");
       this->reset();
-      this->pruneSerialBuffer();
-      this->pruneResBuffer();
       NBIoT_Serial.println("AT+QRST=1");
       this->tryStart = true;
     }

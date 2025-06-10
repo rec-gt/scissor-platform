@@ -41,14 +41,14 @@ public:
     if (this->recvStatus != SYS_INIT && this->recvStatus != SYS_CANCEL_OUTDOOR && this->recvStatus != SYS_CANCEL_INDOOR) {
       if (this->recvStatus != this->prevStatus) {
         this->update();
-        speaker.on(this->speakerIdx);
+        speaker.on(this->recvStatus);
       }
     }
 
     if (this->recvStatus == SYS_CANCEL_OUTDOOR || this->recvStatus == SYS_CANCEL_INDOOR) {
       if (this->recvStatus != this->prevStatus) {
         this->update();
-        speaker.on(this->speakerIdx);
+        speaker.on(this->recvStatus);
       }
     }
   };
@@ -59,7 +59,7 @@ public:
       if (this->recvStatus != SYS_INIT && this->recvStatus != SYS_CANCEL_OUTDOOR && this->recvStatus != SYS_CANCEL_INDOOR) {
         // count for replay
         if (replayTimer.isExpired()) {
-          speaker.on(this->speakerIdx);
+          speaker.on(this->recvStatus);
           replayTimer.refresh();
         }
       }
@@ -67,7 +67,7 @@ public:
       // state change, force issue/cancel
       if (this->recvStatus != SYS_INIT && this->recvStatus != SYS_CANCEL_OUTDOOR && this->recvStatus != SYS_CANCEL_INDOOR) {
         this->update();
-        speaker.on(this->speakerIdx);
+        speaker.on(this->recvStatus);
       }
     }
   }

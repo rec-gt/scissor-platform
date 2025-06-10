@@ -1,3 +1,5 @@
+#include "Enums.h"
+
 #ifndef Speaker_h
 #define Speaker_h
 
@@ -21,10 +23,11 @@ public:
     this->init();
   };
 
-  void on(byte i) {
+  void on(SystemStatus status) {
     this->off();
+    byte idx = status - 1;
     digitalWrite(this->speakerPin, HIGH);
-    digitalWrite(this->audioPins[i], LOW);
+    digitalWrite(this->audioPins[idx], LOW);
   };
 
   void off() {

@@ -1,3 +1,6 @@
+#ifndef AsyncTimer_h
+#define AsyncTimer_h
+
 class AsyncTimer {
 private:
   unsigned long timeout = 3000;
@@ -19,3 +22,5 @@ public:
 
   ~AsyncTimer() {}
 };
+
+#endif

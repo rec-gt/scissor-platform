@@ -48,6 +48,8 @@ public:
         speaker.on(this->recvStatus);
       }
     }
+
+    this->replay();
   };
 
   void replay() {

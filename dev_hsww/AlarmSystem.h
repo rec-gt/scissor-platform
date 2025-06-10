@@ -8,12 +8,10 @@
 
 #define EEPROM_LAST_STATUS_ADDR 1
 
-AsyncTimer replayTimer(2UL * 60UL * 1000UL);
+AsyncTimer replayTimer(1UL * 60UL * 1000UL);
 
 class AlarmSystem {
 private:
-  byte speakerIdx = 0;
-  byte accumulate = 0;
   SystemStatus prevStatus = SYS_INIT;
   SystemStatus recvStatus = SYS_INIT;
 
@@ -28,7 +26,6 @@ public:
     int idx = payload.indexOf("1");
     if (idx > -1) {
       this->recvStatus = idx + 1;
-      this->speakerIdx = idx;
     }
   };
 

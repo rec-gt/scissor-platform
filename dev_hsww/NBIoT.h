@@ -68,6 +68,14 @@ private:
     }
   }
 
+  void hookGetOnFlyStart() {
+    int idx = this->res.indexOf("+IP:");
+    if (idx != -1) {
+      this->isStart = false;
+      this->tryStart = false;
+    }
+  }
+
   void hookGetMsg() {
     int idx = this->res.indexOf("DO:");
 
@@ -77,6 +85,20 @@ private:
       Serial.println(payload);
 
       alarmSystem.set(payload);
+
+      watchdog.feed();
+    }
+
+    int idx2 = this->res.indexOf("DFO:");
+
+    if (idx2 > -1) {
+      Serial.println();
+      String payload = this->res.substring(idx2 + 4, idx2 + 4 + 8);
+      Serial.println(payload);
+
+      alarmSystem.set(payload);
+      alarmSystem.update();
+      alarmSystem.forcePlay();
 
       watchdog.feed();
     }

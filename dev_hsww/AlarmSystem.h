@@ -71,6 +71,10 @@ public:
     }
   }
 
+  void forcePlay() {
+    speaker.on(this->recvStatus);
+  }
+
   ~AlarmSystem(){};
 };
 

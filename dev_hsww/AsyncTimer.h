@@ -17,9 +17,5 @@ public:
     this->prevMillis = millis();
   }
 
-  bool feed(void) {
-    this->prevMillis = millis();
-  }
-
   ~AsyncTimer() {}
 };

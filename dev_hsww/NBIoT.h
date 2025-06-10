@@ -1,14 +1,14 @@
 #include "AsyncTimer.h"
 #include "Enums.h"
 #include "AlarmSystem.h"
+#include "Watchdog.h"
 
 #ifndef NBIoT_h
 #define NBIoT_h
 
 #define NBIoT_Serial Serial1
 
-AsyncTimer timer(3000);
-AsyncTimer nbiotWatchDog(3UL * 60UL * 1000UL);
+AsyncTimer timer(5000);
 
 class NBIoT {
 private:
@@ -63,6 +63,9 @@ private:
 
   void hookGetCEREG() {
     int idx = this->res.indexOf("+CEREG:");
+    if (idx > -1) {
+      Serial.println(this->res);
+    }
   }
 
   void hookGetMsg() {
@@ -75,7 +78,7 @@ private:
 
       alarmSystem.set(payload);
 
-      nbiotWatchDog.feed();
+      watchdog.feed();
     }
   }
 
@@ -103,10 +106,10 @@ private:
     if (!timer.isExpired()) {
       int idx = this->res.indexOf("+IP:");
       if (idx != -1) {
+        delay(100);
         NBIoT_Serial.println("AT+CFUN=1");
-        delay(30);
+        delay(100);
         NBIoT_Serial.println("AT+QSCLK=0");
-        delay(30);
 
         this->isStart = true;
         this->tryStart = false;
@@ -121,27 +124,17 @@ private:
     if (!timer.isExpired()) {
       int idx = this->res.indexOf("+QMTOPEN: 0,0");
       if (idx != -1) {
+        Serial.println(this->res);
         this->isOpen = true;
         this->tryOpen = false;
       }
     } else {
-      if (this->tryOpenCnt == 1) {
-        NBIoT_Serial.println("AT+QMTCLOSE=0");
-        NBIoT_Serial.println("AT+QMTOPEN=0,8.210.84.24,1880");
-      }
-      if (++this->tryOpenCnt > 3) {
+      Serial.println("Open connection timeout: " + String(this->tryOpenCnt));
+      this->tryOpen = true;
+      if (this->tryOpenCnt++ >= 3) {
         this->isOpen = false;
         this->tryOpen = false;
         this->tryOpenCnt = 0;
-      }
-      if (++this->tryResetCnt > 6) {
-        NBIoT_Serial.println("AT+QRST=1");
-        delay(5000);
-        NBIoT_Serial.println("AT+CFUN=1");
-        delay(100);
-        NBIoT_Serial.println("AT+QSCLK=0");
-        delay(100);
-        this->tryResetCnt = 0;
       }
 
       timer.refresh();
@@ -207,6 +200,8 @@ private:
     delay(50);
     digitalWrite(this->resetPin, HIGH);
     delay(10);
+    this->pruneSerialBuffer();
+    this->pruneResBuffer();
   }
 
   void start() {
@@ -223,6 +218,8 @@ private:
   void open() {
     if (!this->isOpen && !this->tryOpen) {
       Serial.println("Opening MQTT...");
+      NBIoT_Serial.println("AT+QMTCLOSE=0");
+      NBIoT_Serial.println("AT+QMTDISC=0");
       NBIoT_Serial.println("AT+QMTOPEN=0,8.210.84.24,1880");
       this->tryOpen = true;
     }
@@ -251,12 +248,6 @@ public:
   }
 
   void listen() {
-    if (nbiotWatchDog.isExpired()) {
-      Serial.print("connection expired");
-      nbiotWatchDog.feed();
-      this->reset();
-    }
-
     this->listenTryHooks();
 
     this->start();

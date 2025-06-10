@@ -13,10 +13,7 @@ void setup() {
   Serial.begin(9600);
   NBIoT_Serial.begin(9600);
   delay(300);
-
-  Serial.println();
-  Serial.println(EEPROM.read(EEPROM_LAST_STATUS_ADDR));
-  Serial.println();
+  alarmSystem.init(EEPROM.read(EEPROM_LAST_STATUS_ADDR));
 }
 
 void loop() {

@@ -16,6 +16,10 @@ private:
 public:
   AlarmSystem(){};
 
+  void init(SystemStatus initStatus) {
+    this->prevStatus = initStatus;
+  };
+
   void set(String payload) {
     int idx = payload.indexOf("1");
     if (idx > -1) {

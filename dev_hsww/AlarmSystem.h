@@ -1,8 +1,11 @@
 #include "Speaker.h"
 #include "Enums.h"
+#include <EEPROM.h>
 
 #ifndef AlarmSystem_h
 #define AlarmSystem_h
+
+#define EEPROM_LAST_STATUS_ADDR 1
 
 class AlarmSystem {
 private:
@@ -23,6 +26,7 @@ public:
 
   void update() {
     this->prevStatus = this->recvStatus;
+    EEPROM.put(EEPROM_LAST_STATUS_ADDR, this->prevStatus);
   };
 
   void listen(void) {

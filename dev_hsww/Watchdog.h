@@ -5,7 +5,7 @@
 
 class Watchdog {
 private:
-  unsigned long timeout = 3UL * 60UL * 1000UL;
+  unsigned long timeout = 2UL * 60UL * 1000UL;
   unsigned long prevMillis = 0;
 
 public:

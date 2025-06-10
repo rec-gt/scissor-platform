@@ -236,7 +236,7 @@ private:
   void subs() {
     if (this->isOpen && this->isConn && (!this->isSubs && !this->trySubs)) {
       Serial.println("Subscribing Topic...");
-      NBIoT_Serial.println("AT+QMTSUB=0,1,rgt/861096060571706/out,2");
+      NBIoT_Serial.println("AT+QMTSUB=0,1,rgt/" + String("861096060571706") + "/out,2");
       this->trySubs = true;
     }
   }

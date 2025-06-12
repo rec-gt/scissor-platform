@@ -7,7 +7,9 @@
 #define NBIoT_h
 
 #define NBIoT_Serial Serial1
+#define TOPIC "rgt/HSWW_TOPIC/out"
 #define IMEI "861096060465131"
+// #define IMEI "861096060571706"
 
 AsyncTimer timer(5000);
 
@@ -50,6 +52,7 @@ private:
     this->hookGetIMEI();
     this->hookGetCEREG();
     this->hookGetMsg();
+    this->hookMonitor();
   }
 
   // ==========
@@ -74,14 +77,6 @@ private:
     int idx = this->res.indexOf("+CEREG:");
     if (idx > -1) {
       Serial.println(this->res);
-    }
-  }
-
-  void hookGetOnFlyStart() {
-    int idx = this->res.indexOf("+IP:");
-    if (idx != -1) {
-      this->isStart = false;
-      this->tryStart = false;
     }
   }
 
@@ -110,6 +105,15 @@ private:
       alarmSystem.forcePlay();
 
       watchdog.feed();
+    }
+  }
+
+  void hookMonitor() {
+    if (this->isOpen || this->isConn || this->isSubs) {
+      int idx = this->res.indexOf("RDY");
+      if (idx != -1) {
+        this->reset();
+      }
     }
   }
 
@@ -249,7 +253,6 @@ private:
       Serial.println("Opening MQTT...");
       NBIoT_Serial.println("AT+QMTCLOSE=0");
       NBIoT_Serial.println("AT+QMTDISC=0");
-      NBIoT_Serial.println("AT+CGSN=1");
       NBIoT_Serial.println("AT+QMTOPEN=0,8.210.84.24,1880");
       this->tryOpen = true;
     }
@@ -266,7 +269,8 @@ private:
   void subs() {
     if (this->isOpen && this->isConn && (!this->isSubs && !this->trySubs)) {
       Serial.println("Subscribing Topic...");
-      NBIoT_Serial.println("AT+QMTSUB=0,1,rgt/" + String("861096060571706") + "/out,2");
+      // NBIoT_Serial.println("AT+QMTSUB=0,1,rgt/" + String(IMEI) + "/out,2");
+      NBIoT_Serial.println("AT+QMTSUB=0,1," + String(TOPIC) + ",2");
       this->trySubs = true;
     }
   }

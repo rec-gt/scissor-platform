@@ -145,6 +145,12 @@ private:
         NBIoT_Serial.println("AT+CFUN=1");
         delay(100);
         NBIoT_Serial.println("AT+QSCLK=0");
+        delay(100);
+        NBIoT_Serial.println("AT+CPSMS=0");
+        delay(100);
+        NBIoT_Serial.println("AT+CSCON=0");
+        delay(100);
+        NBIoT_Serial.println("AT+CEDRXS=0,5");
 
         this->isStart = true;
         this->tryStart = false;

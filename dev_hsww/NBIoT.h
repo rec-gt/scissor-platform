@@ -7,6 +7,7 @@
 #define NBIoT_h
 
 #define NBIoT_Serial Serial1
+#define IMEI "861096060465131"
 
 AsyncTimer timer(5000);
 
@@ -46,6 +47,7 @@ private:
   void parseMsg() {
     // readonly, never modify msg
     this->hookGetCSQ();
+    this->hookGetIMEI();
     this->hookGetCEREG();
     this->hookGetMsg();
   }
@@ -58,6 +60,13 @@ private:
       int winStart = idx + 6;
       int winEnd = winStart + 2;
       Serial.println(this->res.substring(winStart, winEnd));
+    }
+  }
+
+  void hookGetIMEI() {
+    int idx = this->res.indexOf("+CGSN:");
+    if (idx != -1) {
+      Serial.println(this->res);
     }
   }
 
@@ -240,6 +249,7 @@ private:
       Serial.println("Opening MQTT...");
       NBIoT_Serial.println("AT+QMTCLOSE=0");
       NBIoT_Serial.println("AT+QMTDISC=0");
+      NBIoT_Serial.println("AT+CGSN=1");
       NBIoT_Serial.println("AT+QMTOPEN=0,8.210.84.24,1880");
       this->tryOpen = true;
     }

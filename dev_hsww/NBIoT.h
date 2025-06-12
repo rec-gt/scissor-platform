@@ -8,8 +8,6 @@
 
 #define NBIoT_Serial Serial1
 #define TOPIC "rgt/HSWW_TOPIC/out"
-#define IMEI "861096060465131"
-// #define IMEI "861096060571706"
 
 AsyncTimer timer(5000);
 
@@ -31,6 +29,8 @@ private:
   int tryConnCnt = 0;
   int trySubsCnt = 0;
   unsigned long waitDataMillis = 0;
+
+  String IMEI = "";
 
   byte resetPin = 30;
 
@@ -69,7 +69,7 @@ private:
   void hookGetIMEI() {
     int idx = this->res.indexOf("+CGSN:");
     if (idx != -1) {
-      Serial.println(this->res);
+      this->IMEI = this->res.substring(7, 7 + 15);
     }
   }
 
@@ -151,6 +151,8 @@ private:
         NBIoT_Serial.println("AT+CSCON=0");
         delay(100);
         NBIoT_Serial.println("AT+CEDRXS=0,5");
+        delay(100);
+        NBIoT_Serial.println("AT+CGSN=1");
 
         this->isStart = true;
         this->tryStart = false;
@@ -192,7 +194,7 @@ private:
     } else {
       if (this->tryConnCnt == 1) {
         NBIoT_Serial.println("AT+QMTDISC=0");
-        NBIoT_Serial.println("AT+QMTCONN=0,dev" + String(random(101)) + ",tswh,1Wo=[6vA0m");
+        NBIoT_Serial.println("AT+QMTCONN=0,dev" + this->IMEI + ",tswh,1Wo=[6vA0m");
       }
       if (++this->tryConnCnt > 3) {
         this->isConn = false;
@@ -267,7 +269,7 @@ private:
   void conn() {
     if (this->isOpen && (!this->isConn && !this->tryConn)) {
       Serial.println("Connecting MQTT...");
-      NBIoT_Serial.println("AT+QMTCONN=0,dev" + String(random(101)) + ",tswh,1Wo=[6vA0m");
+      NBIoT_Serial.println("AT+QMTCONN=0,dev" + String(IMEI) + ",tswh,1Wo=[6vA0m");
       this->tryConn = true;
     }
   }

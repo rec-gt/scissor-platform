@@ -8,7 +8,7 @@
 
 #define EEPROM_LAST_STATUS_ADDR 1
 
-AsyncTimer replayTimer(2UL * 60UL * 1000UL);
+AsyncTimer replayTimer(5UL * 60UL * 1000UL);
 
 class AlarmSystem {
 private:
@@ -68,6 +68,7 @@ public:
         this->update();
         speaker.on(this->recvStatus);
       }
+      replayTimer.refresh();
     }
   }
 

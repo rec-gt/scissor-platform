@@ -1,6 +1,7 @@
 #include "Speaker.h"
 #include "AsyncTimer.h"
 #include "Enums.h"
+#include "Utils.h"
 #include <EEPROM.h>
 
 #ifndef AlarmSystem_h
@@ -22,8 +23,8 @@ public:
     this->prevStatus = initStatus;
   };
 
-  void set(String payload) {
-    int idx = payload.indexOf("1");
+  void set(int num) {
+    size_t idx = getBitIndex(num);
     if (idx > -1) {
       this->recvStatus = idx + 1;
     }

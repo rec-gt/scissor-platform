@@ -86,9 +86,7 @@ private:
     if (idx > -1) {
       Serial.println();
       String payload = this->res.substring(idx + 3, idx + 3 + 8);
-      Serial.println(payload);
-
-      alarmSystem.set(payload);
+      alarmSystem.set(payload.toInt());
 
       watchdog.feed();
     }
@@ -98,9 +96,7 @@ private:
     if (idx2 > -1) {
       Serial.println();
       String payload = this->res.substring(idx2 + 4, idx2 + 4 + 8);
-      Serial.println(payload);
-
-      alarmSystem.set(payload);
+      alarmSystem.set(payload.toInt());
       alarmSystem.update();
       alarmSystem.forcePlay();
 

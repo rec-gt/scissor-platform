@@ -24,10 +24,16 @@ public:
   };
 
   void on(SystemStatus status) {
+    delay(300);
     this->off();
+    delay(300);
+
     byte idx = status - 1;
+    
     digitalWrite(this->speakerPin, HIGH);
+    delay(300);
     digitalWrite(this->audioPins[idx], LOW);
+    delay(300);
   };
 
   void off() {
@@ -36,8 +42,6 @@ public:
     for (size_t i = 0; i < 8; i++) {
       digitalWrite(this->audioPins[i], HIGH);
     }
-
-    delay(300);
   };
 
   ~Speaker() {}

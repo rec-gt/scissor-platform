@@ -24,7 +24,8 @@ public:
   };
 
   void set(int num) {
-    size_t idx = getBitIndex(num);
+    int idx = getBitIndex(num);
+    Serial.print(idx);
     if (idx > -1) {
       this->recvStatus = idx + 1;
     }

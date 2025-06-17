@@ -171,9 +171,7 @@ private:
       Serial.println("Open connection timeout: " + String(this->tryOpenCnt));
       this->tryOpen = true;
       if (this->tryOpenCnt++ >= 3) {
-        this->isOpen = false;
-        this->tryOpen = false;
-        this->tryOpenCnt = 0;
+        this->reset();
       }
 
       timer.refresh();
@@ -193,9 +191,7 @@ private:
         NBIoT_Serial.println("AT+QMTCONN=0,dev" + this->IMEI + ",tswh,1Wo=[6vA0m");
       }
       if (++this->tryConnCnt > 3) {
-        this->isConn = false;
-        this->tryConn = false;
-        this->tryConnCnt = 0;
+        this->reset();
       }
       timer.refresh();
     }
@@ -203,16 +199,14 @@ private:
 
   void hookTrySubs() {
     if (!timer.isExpired()) {
-      int idx = this->res.indexOf("+QMTSUB: 0,1,0,2");
+      int idx = this->res.indexOf("+QMTSUB: 0,1,0,0");
       if (idx != -1) {
         this->isSubs = true;
         this->trySubs = false;
       }
     } else {
       if (++this->trySubsCnt > 3) {
-        this->isSubs = false;
-        this->trySubs = false;
-        this->trySubsCnt = 0;
+        this->reset();
       }
       timer.refresh();
     }
@@ -274,7 +268,7 @@ private:
     if (this->isOpen && this->isConn && (!this->isSubs && !this->trySubs)) {
       Serial.println("Subscribing Topic...");
       // NBIoT_Serial.println("AT+QMTSUB=0,1,rgt/" + String(IMEI) + "/out,2");
-      NBIoT_Serial.println("AT+QMTSUB=0,1," + String(TOPIC) + ",2");
+      NBIoT_Serial.println("AT+QMTSUB=0,1," + String(TOPIC) + ",0");
       this->trySubs = true;
     }
   }

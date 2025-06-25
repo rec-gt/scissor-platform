@@ -1,10 +1,16 @@
 #include "Utils.h"
 #include "SystemEnums.h"
 #include "Relay.h"
+#include "Switch.h"
 
 #ifndef ChargingSystem_h
 #define ChargingSystem_h
 #define LoRaSerial Serial1
+
+// modules
+Relay relay(10);
+Switch powerSwitch(11);
+Switch modeSwitch(12);
 
 class ChargingSystem {
 private:
@@ -19,12 +25,6 @@ private:
   byte S = SYS_RUNNING;
 
   unsigned long sendStatusMillis = millis();
-
-  // modules
-  Relay relay(10);
-  Switch powerSwitch(11);
-  Switch modeSwitch(12);
-
 public:
   ChargingSystem(void){};
 
@@ -53,11 +53,11 @@ public:
   }
 
   void monitor() {
-    this->powerSwitch.listen();
-    this->modeSwitch.listen();
+    powerSwitch.listen();
+    modeSwitch.listen();
 
-    if (this->powerSwitch.isOn()) {
-      if (this->modeSwitch.isOn()) {
+    if (powerSwitch.isOn()) {
+      if (modeSwitch.isOn()) {
         this->S == SYS_RUNNING;
       } else {
         this->S == SYS_BYPASS;
@@ -69,14 +69,14 @@ public:
 
     if (this->S == SYS_RUNNING) {
       if (this->AT >= this->SPT || this->ST >= this->SPT) {
-        this->relay.cut();
+        relay.cut();
       } else {
-        this->relay.connect();
+        relay.connect();
       }
     } else if (this->S == SYS_STOPPED) {
-      this->relay.cut();
+      relay.cut();
     } else if (this->S == SYS_BYPASS) {
-      this->relay.connect();
+      relay.connect();
     }
   }
 

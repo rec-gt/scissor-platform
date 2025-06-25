@@ -52,10 +52,14 @@ public:
   }
 
   void monitor() {
-    if (this->AT >= this->SPT || this->ST >= this->SPT) {
-      this->relay.cut();
-    } else {
-      this->relay.connect();
+    if (this->S == SYS_RUNNING) {
+      if (this->AT >= this->SPT || this->ST >= this->SPT) {
+        this->relay.cut();
+      } else {
+        this->relay.connect();
+      }
+    } else if (this->S == SYS_STOPPED) {
+    } else if (this->S == SYS_BYPASS) {
     }
   }
 

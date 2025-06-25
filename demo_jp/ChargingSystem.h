@@ -17,6 +17,7 @@ private:
   byte SPT = 80;
   byte S = SYS_RUNNING;
 
+  unsigned long sendStatusMillis = millis();
 public:
   ChargingSystem(void){};
 
@@ -44,16 +45,22 @@ public:
   }
 
   // write
-  void sendStatus() {
+  void collectData() {
     this->AT = float(random(230, 270) / 10.0);
     this->ST = float(random(230, 270) / 10.0);
     this->A = float(random(80, 110) / 10.0);
     this->C = 1;
     this->S = SYS_RUNNING;
+  }
 
-    String str = "AT:" + String(AT) + "," + "ST:" + String(ST) + "," + "A:" + String(A) + "," + "C:" + String(C) + "," + "SPT:" + String(SPT) + "," + "S:" + String(S);
-    LoRaSerial.println(str);
-    Serial.println(str);
+  void sendStatus() {
+    if (millis() - this->sendStatusMillis > 1000) {
+      this->collectData();
+      String str = "AT:" + String(AT) + "," + "ST:" + String(ST) + "," + "A:" + String(A) + "," + "C:" + String(C) + "," + "SPT:" + String(SPT) + "," + "S:" + String(S);
+      LoRaSerial.println(str);
+      Serial.println(str);
+      this->sendStatusMillis = millis();
+    }
   }
 
   ~ChargingSystem(void){};

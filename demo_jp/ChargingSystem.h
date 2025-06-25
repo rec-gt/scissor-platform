@@ -1,9 +1,11 @@
 #include "Utils.h"
 #include "SystemEnums.h"
+#include "Relay.h"
 
 #ifndef ChargingSystem_h
 #define ChargingSystem_h
 #define LoRaSerial Serial1
+
 
 class ChargingSystem {
 private:
@@ -14,10 +16,14 @@ private:
   float ST = 25;
   float A = 8;
   byte C = 1;
-  byte SPT = 80;
+  int SPT = 80;
   byte S = SYS_RUNNING;
 
   unsigned long sendStatusMillis = millis();
+
+  // modules
+  Relay relay(10);
+
 public:
   ChargingSystem(void){};
 
@@ -40,12 +46,28 @@ public:
     }
   }
 
+  // control
   void setSPT(int newSPT) {
     this->SPT = newSPT;
   }
 
+  void monitor() {
+    if (this->AT >= this->SPT || this->ST >= this->SPT) {
+      this->relay.cut();
+    } else {
+      this->relay.connect();
+    }
+  }
+
   // write
   void collectData() {
+    // String AT = String(float(random(800, 900) / 10.0));
+    // String ST = String(float(random(800, 900) / 10.0));
+    // String A = "0";
+    // String C = "0";
+    // String SPT = "80";
+    // String S = String(SYS_RUNNING);
+
     this->AT = float(random(230, 270) / 10.0);
     this->ST = float(random(230, 270) / 10.0);
     this->A = float(random(80, 110) / 10.0);
@@ -56,9 +78,11 @@ public:
   void sendStatus() {
     if (millis() - this->sendStatusMillis > 1000) {
       this->collectData();
+
       String str = "AT:" + String(AT) + "," + "ST:" + String(ST) + "," + "A:" + String(A) + "," + "C:" + String(C) + "," + "SPT:" + String(SPT) + "," + "S:" + String(S);
       LoRaSerial.println(str);
       Serial.println(str);
+
       this->sendStatusMillis = millis();
     }
   }

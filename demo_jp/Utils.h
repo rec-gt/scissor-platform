@@ -46,6 +46,15 @@ public:
     return (startInx != -1) ? mqttMsg.substring(startInx) : "";
   }
 
+  int findStrIdx(String content, String target) {
+    int startIdx = content.indexOf(target);
+    Serial.println("FOUND AT IDX: " + String(startIdx));
+    if (startIdx > -1) {
+      startIdx += target.length();
+    }
+    return startIdx;
+  }
+
   ~Utils(){};
 };
 

@@ -30,5 +30,3 @@ public:
     return this->state == HIGH;
   }
 };
-
-#endif

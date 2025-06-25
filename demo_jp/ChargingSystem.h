@@ -91,9 +91,9 @@ public:
 
     this->AT = float(random(230, 270) / 10.0);
     this->ST = float(random(230, 270) / 10.0);
-    this->A = float(random(80, 110) / 10.0);
-    this->C = 1;
-    this->S = SYS_RUNNING;
+    this->A = float(random(70, 80) / 10.0);
+    this->C = 0;
+    this->S = SYS_STOPPED;
   }
 
   void sendStatus() {

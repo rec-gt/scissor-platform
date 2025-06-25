@@ -6,7 +6,6 @@
 #define ChargingSystem_h
 #define LoRaSerial Serial1
 
-
 class ChargingSystem {
 private:
   String recv = "";
@@ -23,6 +22,8 @@ private:
 
   // modules
   Relay relay(10);
+  Switch powerSwitch(11);
+  Switch modeSwitch(12);
 
 public:
   ChargingSystem(void){};
@@ -52,6 +53,20 @@ public:
   }
 
   void monitor() {
+    this->powerSwitch.listen();
+    this->modeSwitch.listen();
+
+    if (this->powerSwitch.isOn()) {
+      if (this->modeSwitch.isOn()) {
+        this->S == SYS_RUNNING;
+      } else {
+        this->S == SYS_BYPASS;
+      }
+    } else {
+      this->S == SYS_STOPPED;
+    }
+
+
     if (this->S == SYS_RUNNING) {
       if (this->AT >= this->SPT || this->ST >= this->SPT) {
         this->relay.cut();

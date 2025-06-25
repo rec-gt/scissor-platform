@@ -59,7 +59,9 @@ public:
         this->relay.connect();
       }
     } else if (this->S == SYS_STOPPED) {
+      this->relay.cut();
     } else if (this->S == SYS_BYPASS) {
+      this->relay.connect();
     }
   }
 

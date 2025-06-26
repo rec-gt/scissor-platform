@@ -13,6 +13,7 @@ void setup() {
 void loop() {
   chargingSystem.listenPort();
   chargingSystem.sendStatus();
+  chargingSystem.monitor();
 
-  delay(10);
+  delay(1000);
 }

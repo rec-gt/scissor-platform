@@ -31,7 +31,9 @@ void loop(void) {
   // Serial.println("====");
 
   Serial.print("Temp3 --> ");
-  Serial.print(map(analogRead(A0), 0, 1023, 10, 100));
+  Serial.print(analogRead(A0));
+  Serial.print(", ");
+  Serial.print(map(analogRead(A0), 204.6, 1023, 0, 20000)/100.);
 
   delay(1000);
 }

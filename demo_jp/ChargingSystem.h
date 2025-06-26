@@ -2,6 +2,7 @@
 #include "SystemEnums.h"
 #include "Relay.h"
 #include "Switch.h"
+#include "Thermometer.h"
 
 #ifndef ChargingSystem_h
 #define ChargingSystem_h
@@ -9,6 +10,8 @@
 
 // modules
 Relay relay(10);
+Thermometer thermometer1(A4);
+Thermometer thermometer2(A2);
 Switch powerSwitch(11);
 Switch modeSwitch(12);
 
@@ -53,6 +56,9 @@ public:
   }
 
   void monitor() {
+    relay.connect();
+    thermometer1.read();
+    thermometer2.read();
     powerSwitch.listen();
     modeSwitch.listen();
 
@@ -82,18 +88,17 @@ public:
 
   // write
   void collectData() {
-    // String AT = String(float(random(800, 900) / 10.0));
-    // String ST = String(float(random(800, 900) / 10.0));
-    // String A = "0";
-    // String C = "0";
-    // String SPT = "80";
-    // String S = String(SYS_RUNNING);
+    // this->AT = float(random(230, 270) / 10.0);
+    // this->ST = float(random(230, 270) / 10.0);
+    // this->A = float(random(70, 80) / 10.0);
+    // this->C = 0;
+    // this->S = SYS_STOPPED;
 
     this->AT = float(random(230, 270) / 10.0);
     this->ST = float(random(230, 270) / 10.0);
-    this->A = float(random(70, 80) / 10.0);
-    this->C = 0;
-    this->S = SYS_STOPPED;
+    this->A = float(random(30, 40) / 10.0);
+    this->C = 1;
+    this->S = SYS_RUNNING;
   }
 
   void sendStatus() {

@@ -3,6 +3,7 @@
 class Thermometer {
 private:
   byte pin;
+  int temperature = 2500;  //25
 
 public:
   Thermometer(byte pin)
@@ -11,6 +12,11 @@ public:
   }
 
   void read() {
-    Serial.println(map(analogRead(this->pin), 204.6, 1023, 0, 20000) / 100.);
+    this->temperature = map(analogRead(this->pin), 204.6, 1023, 0, 20000);
+    Serial.println(this->temperature / 100.);
+  }
+
+  int get() {
+    return this->temperature;
   }
 };

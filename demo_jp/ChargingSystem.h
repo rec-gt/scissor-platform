@@ -3,6 +3,7 @@
 #include "Relay.h"
 #include "Switch.h"
 #include "Thermometer.h"
+#include "Ammeter.h"
 
 #ifndef ChargingSystem_h
 #define ChargingSystem_h
@@ -12,6 +13,7 @@
 Relay relay(10);
 Thermometer thermometer1(A4);
 Thermometer thermometer2(A2);
+Ammeter ammeter(A0);
 Switch powerSwitch(11);
 Switch modeSwitch(12);
 
@@ -59,6 +61,8 @@ public:
     relay.connect();
     thermometer1.read();
     thermometer2.read();
+    ammeter.read();
+
     powerSwitch.listen();
     modeSwitch.listen();
 

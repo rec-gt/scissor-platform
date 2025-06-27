@@ -9,14 +9,17 @@
 #define ChargingSystem_h
 #define LoRaSerial Serial1
 
+#define SYS_RECOVERED 0
+#define SYS_STOPPED_BY_AMBIENT_TEMP 1
+#define SYS_STOPPED_BY_STATION_TEMP 2
+#define SYS_STOPPED_BY_CURRENT 3
+
 // modules
 Relay relay(10);
 Thermometer thermometer3(A6);
 Thermometer thermometer1(A4);
 Thermometer thermometer2(A2);
 Ammeter ammeter(A0);
-Switch powerSwitch(11);
-Switch modeSwitch(12);
 
 class ChargingSystem {
 private:
@@ -82,64 +85,34 @@ public:
     this->ST = thermometer2.get();
     this->A = ammeter.get();
 
-    Serial.println(this->AT);
-
     if (this->M == MODE_RUNNING) {
+      // error hook
       if (this->AT >= this->SPST) {
-        this->attachedProblems |= 1 << 0;
+        this->attachedProblems |= 1 << SYS_STOPPED_BY_AMBIENT_TEMP;
       }
       if (this->ST >= this->SPST) {
-        this->attachedProblems |= 1 << 1;
+        this->attachedProblems |= 1 << SYS_STOPPED_BY_STATION_TEMP;
       }
       if (this->A >= this->SPA) {
-        this->attachedProblems |= 1 << 2;
+        this->attachedProblems |= 1 << SYS_STOPPED_BY_CURRENT;
       }
 
-      if (this->attachedProblems == 0) {
+      if (this->attachedProblems == SYS_RECOVERED) {
         relay.connect();
+        this->C = 1;
       } else {
         relay.cut();
+        this->C = 0;
+
+        // error recovery
         if (this->AT < this->SPST - 50) {
-          this->attachedProblems &= ~(1 << 0);
+          this->attachedProblems &= ~(1 << SYS_STOPPED_BY_AMBIENT_TEMP);
         }
         if (this->ST < this->SPST - 50) {
-          this->attachedProblems &= ~(1 << 1);
+          this->attachedProblems &= ~(1 << SYS_STOPPED_BY_STATION_TEMP);
         }
         if (this->A < this->SPA - 5) {
-          this->attachedProblems &= ~(1 << 2);
-        }
-      }
-
-      // (this->AT >= this->SPST) || (this->ST >= this->SPST) || (this->A >= this->SPA);
-      // (this->AT < this->SPST - 50) && (this->ST < this->SPST - 50) && (this->A >= this->SPA - 5);
-
-      Serial.println("Status: " + String(this->status));
-      if (this->status == STATUS_RUNNING) {
-        relay.connect();
-        if (this->AT >= this->SPST) {
-          this->status = STATUS_STOP_BY_AMBIENT_TEMP;
-        }
-        if (this->ST >= this->SPST) {
-          this->status = STATUS_STOP_BY_STATION_TEMP;
-        }
-        if (this->A >= this->SPA) {
-          this->status = STATUS_STOP_BY_CURRENT;
-        }
-      } else if (this->status == STATUS_STOP_BY_AMBIENT_TEMP) {
-        relay.cut();
-
-        if (condition) {
-          this->status = STATUS_RUNNING;
-        }
-      } else if (this->status == STATUS_STOP_BY_STATION_TEMP) {
-        if (this->ST < this->SPST - 50) {
-          this->status = STATUS_RUNNING;
-          relay.connect();
-        }
-      } else if (this->status == STATUS_STOP_BY_CURRENT) {
-        if (this->A >= this->SPA - 5) {
-          this->status = STATUS_RUNNING;
-          relay.connect();
+          this->attachedProblems &= ~(1 << SYS_STOPPED_BY_CURRENT);
         }
       }
     } else if (this->M == MODE_STOPPED) {

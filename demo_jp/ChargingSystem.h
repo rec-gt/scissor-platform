@@ -103,6 +103,7 @@ public:
       } else {
         relay.cut();
         this->C = 0;
+        this->A = 0;  // pseudo 0 current
 
         // error recovery
         if (this->AT < this->SPST - 50) {

@@ -24,9 +24,9 @@ private:
   int AT = 2500;         // ambient temp
   int ST = 2500;         // station temp
   int A = 100;           // current
+  int SPST = 8000;       // set-point temperature
+  int SPA = 500;         // set-point current
   byte C = 1;            // relay cut=0, connect=1
-  byte SPT = 8000;       // set-point temperature
-  byte SPC = 500;        // set-point current
   byte S = SYS_RUNNING;  // system status
 
   unsigned long sendStatusMillis = millis();
@@ -46,7 +46,7 @@ public:
     {
       int idx = utils.findStrIdx(this->recv, "STP:");
       if (idx > -1) {
-        String newSPTStr = this->recv.substring(idx, idx + 3);
+        String newSPTStr = this->recv.substring(idx, idx + 4);
         int newSPT = newSPTStr.toInt();
         this->SPT = newSPT;
       }

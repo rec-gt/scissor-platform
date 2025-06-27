@@ -63,7 +63,7 @@ public:
 
     // Running Mode
     {
-      int idx = utils.findStrIdx(this->recv, "S:");
+      int idx = utils.findStrIdx(this->recv, "M:");
       if (idx > -1) {
       }
     }
@@ -83,19 +83,33 @@ public:
     if (this->M == MODE_RUNNING) {
       if (this->status == STATUS_RUNNING) {
         if (this->AT >= this->SPST) {
+          this->status == STATUS_STOP_BY_AMBIENT_TEMP;
           relay.cut();
         }
+        if (this->ST >= this->SPST) {
+          this->status == STATUS_STOP_BY_STATION_TEMP;
+          relay.cut();
+        }
+        if (this->A >= this->SPA) {
+          this->status == STATUS_STOP_BY_CURRENT;
+          relay.cut();
+        }
+      } else if (this->status == STATUS_STOP_BY_AMBIENT_TEMP) {
+        if (this->AT < this->SPST - 100) {
+          this->status == STATUS_RUNNING;
+          relay.connect();
+        }
+      } else if (this->status == STATUS_STOP_BY_STATION_TEMP) {
+        if (this->ST < this->SPST - 100) {
+          this->status == STATUS_RUNNING;
+          relay.connect();
+        }
+      } else if (this->status == STATUS_STOP_BY_CURRENT) {
+        if (this->A >= this->SPA - 10) {
+          this->status == STATUS_RUNNING;
+          relay.connect();
+        }
       }
-
-      // if (this->AT < this->SPST - 50) {
-      //   relay.connect();
-      // }
-
-      // if (this->AT >= this->SPST || this->ST >= this->SPST) {
-      //   relay.cut();
-      // } else {
-      //   relay.connect();
-      // }
     } else if (this->M == MODE_STOPPED) {
       relay.cut();
     } else if (this->M == MODE_BYPASS) {
@@ -112,7 +126,7 @@ public:
                      + "SPST:" + String(this->SPST) + ","
                      + "SPA:" + String(this->SPA) + ","
                      + "C:" + String(this->C) + ","
-                     + "S:" + String(this->S);
+                     + "M:" + String(this->M);
 
       LoRaSerial.println(stats);
       Serial.println(stats);

@@ -31,6 +31,7 @@ private:
   byte M = MODE_RUNNING;  // system mode
 
   byte status = STATUS_RUNNING;  // system status
+  byte attachedProblems = 0;     // problem buffer
 
   unsigned long sendStatusMillis = millis();
 
@@ -84,17 +85,61 @@ public:
     Serial.println(this->AT);
 
     if (this->M == MODE_RUNNING) {
-      Serial.println("Status: " + String(this->status));
+      if (this->AT >= this->SPST) {
+        this->attachedProblems |= 1 << 0;
+      }
+      if (this->ST >= this->SPST) {
+        this->attachedProblems |= 1 << 1;
+      }
+      if (this->A >= this->SPA) {
+        this->attachedProblems |= 1 << 2;
+      }
 
+      if (this->attachedProblems == 0) {
+        relay.connect();
+      } else {
+        relay.cut();
+        if (this->AT < this->SPST - 50) {
+          this->attachedProblems &= ~(1 << 0);
+        }
+        if (this->ST < this->SPST - 50) {
+          this->attachedProblems &= ~(1 << 1);
+        }
+        if (this->A < this->SPA - 5) {
+          this->attachedProblems &= ~(1 << 2);
+        }
+      }
+
+      // (this->AT >= this->SPST) || (this->ST >= this->SPST) || (this->A >= this->SPA);
+      // (this->AT < this->SPST - 50) && (this->ST < this->SPST - 50) && (this->A >= this->SPA - 5);
+
+      Serial.println("Status: " + String(this->status));
       if (this->status == STATUS_RUNNING) {
         relay.connect();
-        if ((this->AT >= this->SPST) || (this->ST >= this->SPST) || (this->A >= this->SPA)) {
-          this->status = STATUS_STOPPED;
+        if (this->AT >= this->SPST) {
+          this->status = STATUS_STOP_BY_AMBIENT_TEMP;
         }
-      } else if (this->status == STATUS_STOPPED) {
+        if (this->ST >= this->SPST) {
+          this->status = STATUS_STOP_BY_STATION_TEMP;
+        }
+        if (this->A >= this->SPA) {
+          this->status = STATUS_STOP_BY_CURRENT;
+        }
+      } else if (this->status == STATUS_STOP_BY_AMBIENT_TEMP) {
         relay.cut();
-        if ((this->AT < this->SPST - 50) && (this->ST < this->SPST - 50) && (this->A >= this->SPA - 5)) {
+
+        if (condition) {
           this->status = STATUS_RUNNING;
+        }
+      } else if (this->status == STATUS_STOP_BY_STATION_TEMP) {
+        if (this->ST < this->SPST - 50) {
+          this->status = STATUS_RUNNING;
+          relay.connect();
+        }
+      } else if (this->status == STATUS_STOP_BY_CURRENT) {
+        if (this->A >= this->SPA - 5) {
+          this->status = STATUS_RUNNING;
+          relay.connect();
         }
       }
     } else if (this->M == MODE_STOPPED) {

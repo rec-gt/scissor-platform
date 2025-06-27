@@ -20,21 +20,21 @@ Switch modeSwitch(12);
 class ChargingSystem {
 private:
   String recv = "";
-  byte setPointTemp = 80;
 
-  float AT = 25;
-  float ST = 25;
-  float A = 8;
-  byte C = 1;
-  int SPT = 80;
-  byte S = SYS_RUNNING;
-
+  int AT = 25;           // ambient temp
+  int ST = 25;           // station temp
+  int A = 8;             // current
+  byte C = 1;            // relay cut=0, connect=1
+  byte SPT = 80;         // set-point temperature
+  byte SPC = 5;          // set-point current
+  byte S = SYS_RUNNING;  // system status
+  
   unsigned long sendStatusMillis = millis();
+
 public:
   ChargingSystem(void){};
 
-  // read
-  void listenPort() {
+  void waitMsg() {
     if (LoRaSerial.available()) {
       this->recv = LoRaSerial.readString();
       this->actionHooks();
@@ -42,40 +42,41 @@ public:
   }
 
   void actionHooks() {
+    // Set point tempareture
     {
       int idx = utils.findStrIdx(this->recv, "STP:");
       if (idx > -1) {
         String newSPTStr = this->recv.substring(idx, idx + 3);
         int newSPT = newSPTStr.toInt();
-        this->setSPT(newSPT);
+        this->SPT = newSPT;
+      }
+    }
+
+    // Set point current
+    {
+      int idx = utils.findStrIdx(this->recv, "STC:");
+      if (idx > -1) {
+      }
+    }
+
+    // Running Mode
+    {
+      int idx = utils.findStrIdx(this->recv, "S:");
+      if (idx > -1) {
       }
     }
   }
 
-  // control
-  void setSPT(int newSPT) {
-    this->SPT = newSPT;
-  }
+  void listen() {
+    this->waitMsg();
 
-  void monitor() {
-    relay.connect();
-    thermometer1.read();
-    thermometer2.read();
-    ammeter.read();
+    thermometer1.listen();
+    thermometer2.listen();
+    ammeter.listen();
 
-    powerSwitch.listen();
-    modeSwitch.listen();
-
-    if (powerSwitch.isOn()) {
-      if (modeSwitch.isOn()) {
-        this->S == SYS_RUNNING;
-      } else {
-        this->S == SYS_BYPASS;
-      }
-    } else {
-      this->S == SYS_STOPPED;
-    }
-
+    this->AT = thermometer1.get();
+    this->ST = thermometer2.get();
+    this->A = ammeter.get();
 
     if (this->S == SYS_RUNNING) {
       if (this->AT >= this->SPT || this->ST >= this->SPT) {
@@ -90,26 +91,10 @@ public:
     }
   }
 
-  // write
-  void collectData() {
-    // this->AT = float(random(230, 270) / 10.0);
-    // this->ST = float(random(230, 270) / 10.0);
-    // this->A = float(random(70, 80) / 10.0);
-    // this->C = 0;
-    // this->S = SYS_STOPPED;
-
-    this->AT = float(random(230, 270) / 10.0);
-    this->ST = float(random(230, 270) / 10.0);
-    this->A = float(random(30, 40) / 10.0);
-    this->C = 1;
-    this->S = SYS_RUNNING;
-  }
-
   void sendStatus() {
     if (millis() - this->sendStatusMillis > 1000) {
-      this->collectData();
 
-      String str = "AT:" + String(AT) + "," + "ST:" + String(ST) + "," + "A:" + String(A) + "," + "C:" + String(C) + "," + "SPT:" + String(SPT) + "," + "S:" + String(S);
+      String str = "AT:" + String(this->AT) + "," + "ST:" + String(this->ST) + "," + "A:" + String(this->A) + "," + "C:" + String(this->C) + "," + "SPT:" + String(this->SPT) + "," + "S:" + String(this->S);
       LoRaSerial.println(str);
       Serial.println(str);
 

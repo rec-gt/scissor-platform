@@ -11,12 +11,14 @@ public:
     pinMode(pin, INPUT);
   }
 
-  void read() {
+  void listen() {
     this->current = map(analogRead(this->pin), 204.6, 1023, 0, 1000);
-    Serial.println(this->current / 100.);
   }
 
   int get() {
+    if (this->current < 0) {
+      return 0;
+    }
     return this->current;
   }
 };

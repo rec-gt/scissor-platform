@@ -11,9 +11,8 @@ public:
     pinMode(pin, INPUT);
   }
 
-  void read() {
+  void listen() {
     this->temperature = map(analogRead(this->pin), 204.6, 1023, 0, 20000);
-    Serial.println(this->temperature / 100.);
   }
 
   int get() {

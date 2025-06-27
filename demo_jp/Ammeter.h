@@ -3,7 +3,7 @@
 class Ammeter {
 private:
   byte pin;
-  int current = 1;
+  int current = 0;  // 100=1A, 1000=10A
 
 public:
   Ammeter(byte pin)

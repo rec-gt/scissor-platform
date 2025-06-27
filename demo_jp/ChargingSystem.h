@@ -51,7 +51,7 @@ public:
   void actionHooks() {
     // Set point tempareture
     {
-      int idx = utils.findStrIdx(this->recv, "STP:");
+      int idx = utils.findStrIdx(this->recv, "SPST:");
       if (idx > -1) {
         String newSPSTStr = this->recv.substring(idx, idx + 4);
         int newSPST = newSPSTStr.toInt();
@@ -61,7 +61,7 @@ public:
 
     // Set point current
     {
-      int idx = utils.findStrIdx(this->recv, "STC:");
+      int idx = utils.findStrIdx(this->recv, "SPA:");
       if (idx > -1) {
       }
     }

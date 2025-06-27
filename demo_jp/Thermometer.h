@@ -12,7 +12,11 @@ public:
   }
 
   void listen() {
-    this->temperature = map(analogRead(this->pin), 204.6, 1023, 0, 20000);
+    unsigned long avg = 0;
+    for (size_t i = 0; i < 64; i++) {
+      avg += analogRead(this->pin);
+    };
+    this->temperature = map((avg / 64.), 204.6, 1023, 0, 20000);
   }
 
   int get() {

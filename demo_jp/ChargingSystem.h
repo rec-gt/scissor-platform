@@ -80,7 +80,10 @@ public:
     this->ST = thermometer2.get();
     this->A = ammeter.get();
 
+    Serial.println(this->AT);
+
     if (this->M == MODE_RUNNING) {
+      Serial.println("Status: " + String(this->status));
       if (this->status == STATUS_RUNNING) {
         relay.connect();
         if (this->AT >= this->SPST) {
@@ -96,20 +99,20 @@ public:
           relay.cut();
         }
       } else if (this->status == STATUS_STOP_BY_AMBIENT_TEMP) {
-        if (this->AT < this->SPST - 100) {
-          this->status == STATUS_RUNNING;
-          relay.connect();
-        }
+        // if (this->AT < this->SPST - 300) {
+        //   this->status == STATUS_RUNNING;
+        //   relay.connect();
+        // }
       } else if (this->status == STATUS_STOP_BY_STATION_TEMP) {
-        if (this->ST < this->SPST - 100) {
-          this->status == STATUS_RUNNING;
-          relay.connect();
-        }
+        // if (this->ST < this->SPST - 300) {
+        //   this->status == STATUS_RUNNING;
+        //   relay.connect();
+        // }
       } else if (this->status == STATUS_STOP_BY_CURRENT) {
-        if (this->A >= this->SPA - 10) {
-          this->status == STATUS_RUNNING;
-          relay.connect();
-        }
+        // if (this->A >= this->SPA - 10) {
+        //   this->status == STATUS_RUNNING;
+        //   relay.connect();
+        // }
       }
     } else if (this->M == MODE_STOPPED) {
       relay.cut();

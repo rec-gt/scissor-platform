@@ -13,4 +13,5 @@ void setup() {
 void loop() {
   chargingSystem.listen();
   chargingSystem.sendStatus();
+  delay(250);
 }

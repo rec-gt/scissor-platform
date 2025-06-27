@@ -21,14 +21,14 @@ class ChargingSystem {
 private:
   String recv = "";
 
-  int AT = 25;           // ambient temp
-  int ST = 25;           // station temp
-  int A = 8;             // current
+  int AT = 2500;         // ambient temp
+  int ST = 2500;         // station temp
+  int A = 100;           // current
   byte C = 1;            // relay cut=0, connect=1
-  byte SPT = 80;         // set-point temperature
-  byte SPC = 5;          // set-point current
+  byte SPT = 8000;       // set-point temperature
+  byte SPC = 500;        // set-point current
   byte S = SYS_RUNNING;  // system status
-  
+
   unsigned long sendStatusMillis = millis();
 
 public:

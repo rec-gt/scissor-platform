@@ -1,10 +1,17 @@
 #ifndef SystemEnums_h
 #define SystemEnums_h
 
-enum SYSTEM_STATUS {
+enum SYSTEM_MODE {
   SYS_RUNNING,
   SYS_STOPPED,
   SYS_BYPASS,
+};
+
+enum SYSTEM_STATUS {
+  MODE_RUNNING,
+  MODE_STOP_BY_AMBIENT_TEMP,
+  MODE_STOP_BY_STATION_TEMP,
+  MODE_STOP_BY_CURRENT,
 };
 
 #endif

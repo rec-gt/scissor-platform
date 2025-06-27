@@ -28,6 +28,8 @@ private:
   int SPA = 500;         // set-point current
   byte C = 1;            // relay cut=0, connect=1
   byte S = SYS_RUNNING;  // system status
+  
+  byte S = SYS_RUNNING;  // system status
 
   unsigned long sendStatusMillis = millis();
 
@@ -79,6 +81,14 @@ public:
     this->A = ammeter.get();
 
     if (this->S == SYS_RUNNING) {
+      if (this->AT >= this->SPST) {
+        relay.cut();
+      }
+
+      if (this->AT < this->SPST - 50) {
+        relay.connect();
+      }
+
       if (this->AT >= this->SPST || this->ST >= this->SPST) {
         relay.cut();
       } else {
@@ -95,13 +105,13 @@ public:
     if (millis() - this->sendStatusMillis > 1000) {
 
       String stats = "AT:" + String(this->AT) + ","
-                   + "ST:" + String(this->ST) + ","
-                   + "A:" + String(this->A) + ","
-                   + "SPST:" + String(this->SPST) + ","
-                   + "SPA:" + String(this->SPA) + ","
-                   + "C:" + String(this->C) + ","
-                   + "S:" + String(this->S);
-      
+                     + "ST:" + String(this->ST) + ","
+                     + "A:" + String(this->A) + ","
+                     + "SPST:" + String(this->SPST) + ","
+                     + "SPA:" + String(this->SPA) + ","
+                     + "C:" + String(this->C) + ","
+                     + "S:" + String(this->S);
+
       LoRaSerial.println(stats);
       Serial.println(stats);
 

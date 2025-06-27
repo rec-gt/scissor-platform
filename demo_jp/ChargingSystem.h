@@ -87,32 +87,32 @@ public:
       if (this->status == STATUS_RUNNING) {
         relay.connect();
         if (this->AT >= this->SPST) {
-          this->status == STATUS_STOP_BY_AMBIENT_TEMP;
+          this->status = STATUS_STOP_BY_AMBIENT_TEMP;
           relay.cut();
         }
         if (this->ST >= this->SPST) {
-          this->status == STATUS_STOP_BY_STATION_TEMP;
+          this->status = STATUS_STOP_BY_STATION_TEMP;
           relay.cut();
         }
         if (this->A >= this->SPA) {
-          this->status == STATUS_STOP_BY_CURRENT;
+          this->status = STATUS_STOP_BY_CURRENT;
           relay.cut();
         }
       } else if (this->status == STATUS_STOP_BY_AMBIENT_TEMP) {
-        // if (this->AT < this->SPST - 300) {
-        //   this->status == STATUS_RUNNING;
-        //   relay.connect();
-        // }
+        if (this->AT < this->SPST - 300) {
+          this->status = STATUS_RUNNING;
+          relay.connect();
+        }
       } else if (this->status == STATUS_STOP_BY_STATION_TEMP) {
-        // if (this->ST < this->SPST - 300) {
-        //   this->status == STATUS_RUNNING;
-        //   relay.connect();
-        // }
+        if (this->ST < this->SPST - 300) {
+          this->status = STATUS_RUNNING;
+          relay.connect();
+        }
       } else if (this->status == STATUS_STOP_BY_CURRENT) {
-        // if (this->A >= this->SPA - 10) {
-        //   this->status == STATUS_RUNNING;
-        //   relay.connect();
-        // }
+        if (this->A >= this->SPA - 10) {
+          this->status = STATUS_RUNNING;
+          relay.connect();
+        }
       }
     } else if (this->M == MODE_STOPPED) {
       relay.cut();

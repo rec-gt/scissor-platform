@@ -82,6 +82,7 @@ public:
 
     if (this->M == MODE_RUNNING) {
       if (this->status == STATUS_RUNNING) {
+        relay.connect();
         if (this->AT >= this->SPST) {
           this->status == STATUS_STOP_BY_AMBIENT_TEMP;
           relay.cut();

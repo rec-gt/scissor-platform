@@ -63,6 +63,9 @@ public:
     {
       int idx = utils.findStrIdx(this->recv, "SPA:");
       if (idx > -1) {
+        String newSPAStr = this->recv.substring(idx, idx + 4);
+        int newSPA = newSPAStr.toInt();
+        this->SPA = newSPA;
       }
     }
 
@@ -70,6 +73,9 @@ public:
     {
       int idx = utils.findStrIdx(this->recv, "M:");
       if (idx > -1) {
+        String newModeStr = this->recv.substring(idx, idx + 1);
+        int newMode = newModeStr.toInt();
+        this->M = newMode;
       }
     }
   }

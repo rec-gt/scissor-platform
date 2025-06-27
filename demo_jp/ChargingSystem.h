@@ -11,6 +11,7 @@
 
 // modules
 Relay relay(10);
+Thermometer thermometer3(A6);
 Thermometer thermometer1(A4);
 Thermometer thermometer2(A2);
 Ammeter ammeter(A0);
@@ -84,34 +85,16 @@ public:
 
     if (this->M == MODE_RUNNING) {
       Serial.println("Status: " + String(this->status));
+
       if (this->status == STATUS_RUNNING) {
         relay.connect();
-        if (this->AT >= this->SPST) {
-          this->status = STATUS_STOP_BY_AMBIENT_TEMP;
-          relay.cut();
+        if ((this->AT >= this->SPST) || (this->ST >= this->SPST) || (this->A >= this->SPA)) {
+          this->status = STATUS_STOPPED;
         }
-        if (this->ST >= this->SPST) {
-          this->status = STATUS_STOP_BY_STATION_TEMP;
-          relay.cut();
-        }
-        if (this->A >= this->SPA) {
-          this->status = STATUS_STOP_BY_CURRENT;
-          relay.cut();
-        }
-      } else if (this->status == STATUS_STOP_BY_AMBIENT_TEMP) {
-        if (this->AT < this->SPST - 300) {
+      } else if (this->status == STATUS_STOPPED) {
+        relay.cut();
+        if ((this->AT < this->SPST - 50) && (this->ST < this->SPST - 50) && (this->A >= this->SPA - 5)) {
           this->status = STATUS_RUNNING;
-          relay.connect();
-        }
-      } else if (this->status == STATUS_STOP_BY_STATION_TEMP) {
-        if (this->ST < this->SPST - 300) {
-          this->status = STATUS_RUNNING;
-          relay.connect();
-        }
-      } else if (this->status == STATUS_STOP_BY_CURRENT) {
-        if (this->A >= this->SPA - 10) {
-          this->status = STATUS_RUNNING;
-          relay.connect();
         }
       }
     } else if (this->M == MODE_STOPPED) {

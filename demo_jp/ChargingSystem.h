@@ -21,15 +21,15 @@ class ChargingSystem {
 private:
   String recv = "";
 
-  int AT = 2500;         // ambient temp
-  int ST = 2500;         // station temp
-  int A = 100;           // current
-  int SPST = 8000;       // set-point temperature
-  int SPA = 500;         // set-point current
-  byte C = 1;            // relay cut=0, connect=1
-  byte S = SYS_RUNNING;  // system status
-  
-  byte S = SYS_RUNNING;  // system status
+  int AT = 2500;          // ambient temp
+  int ST = 2500;          // station temp
+  int A = 100;            // current
+  int SPST = 8000;        // set-point temperature
+  int SPA = 500;          // set-point current
+  byte C = 1;             // relay cut=0, connect=1
+  byte M = MODE_RUNNING;  // system mode
+
+  byte status = STATUS_RUNNING;  // system status
 
   unsigned long sendStatusMillis = millis();
 
@@ -80,23 +80,25 @@ public:
     this->ST = thermometer2.get();
     this->A = ammeter.get();
 
-    if (this->S == SYS_RUNNING) {
-      if (this->AT >= this->SPST) {
-        relay.cut();
+    if (this->M == MODE_RUNNING) {
+      if (this->status == STATUS_RUNNING) {
+        if (this->AT >= this->SPST) {
+          relay.cut();
+        }
       }
 
-      if (this->AT < this->SPST - 50) {
-        relay.connect();
-      }
+      // if (this->AT < this->SPST - 50) {
+      //   relay.connect();
+      // }
 
-      if (this->AT >= this->SPST || this->ST >= this->SPST) {
-        relay.cut();
-      } else {
-        relay.connect();
-      }
-    } else if (this->S == SYS_STOPPED) {
+      // if (this->AT >= this->SPST || this->ST >= this->SPST) {
+      //   relay.cut();
+      // } else {
+      //   relay.connect();
+      // }
+    } else if (this->M == MODE_STOPPED) {
       relay.cut();
-    } else if (this->S == SYS_BYPASS) {
+    } else if (this->M == MODE_BYPASS) {
       relay.connect();
     }
   }

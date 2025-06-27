@@ -48,7 +48,7 @@ public:
 
   int findStrIdx(String content, String target) {
     int startIdx = content.indexOf(target);
-    Serial.println("FOUND AT IDX: " + String(startIdx));
+    Serial.println("FOUND " + target + " IDX: " + String(startIdx));
     if (startIdx > -1) {
       startIdx += target.length();
     }

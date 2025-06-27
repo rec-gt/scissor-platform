@@ -46,9 +46,9 @@ public:
     {
       int idx = utils.findStrIdx(this->recv, "STP:");
       if (idx > -1) {
-        String newSPTStr = this->recv.substring(idx, idx + 4);
-        int newSPT = newSPTStr.toInt();
-        this->SPT = newSPT;
+        String newSPSTStr = this->recv.substring(idx, idx + 4);
+        int newSPST = newSPSTStr.toInt();
+        this->SPST = newSPST;
       }
     }
 
@@ -79,7 +79,7 @@ public:
     this->A = ammeter.get();
 
     if (this->S == SYS_RUNNING) {
-      if (this->AT >= this->SPT || this->ST >= this->SPT) {
+      if (this->AT >= this->SPST || this->ST >= this->SPST) {
         relay.cut();
       } else {
         relay.connect();
@@ -94,9 +94,16 @@ public:
   void sendStatus() {
     if (millis() - this->sendStatusMillis > 1000) {
 
-      String str = "AT:" + String(this->AT) + "," + "ST:" + String(this->ST) + "," + "A:" + String(this->A) + "," + "C:" + String(this->C) + "," + "SPT:" + String(this->SPT) + "," + "S:" + String(this->S);
-      LoRaSerial.println(str);
-      Serial.println(str);
+      String stats = "AT:" + String(this->AT) + ","
+                   + "ST:" + String(this->ST) + ","
+                   + "A:" + String(this->A) + ","
+                   + "SPST:" + String(this->SPST) + ","
+                   + "SPA:" + String(this->SPA) + ","
+                   + "C:" + String(this->C) + ","
+                   + "S:" + String(this->S);
+      
+      LoRaSerial.println(stats);
+      Serial.println(stats);
 
       this->sendStatusMillis = millis();
     }

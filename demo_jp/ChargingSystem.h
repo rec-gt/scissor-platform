@@ -42,42 +42,74 @@ public:
   ChargingSystem(void){};
 
   void waitMsg() {
-    if (LoRaSerial.available()) {
-      this->recv = LoRaSerial.readString();
-      this->actionHooks();
+    if (LoRaSerial.available() > 0) {
+      char _byte = LoRaSerial.read();
+
+      if (_byte != '\r' && _byte != '\n') {
+        this->recv += _byte;
+      }
+
+      if (_byte == '\r') {
+        this->actionHooks();
+        this->pruneResBuffer();
+        this->pruneSerialBuffer();
+      }
     }
   }
 
+  void pruneSerialBuffer() {
+    while (LoRaSerial.read() > 0) {};
+  }
+
+  void pruneResBuffer() {
+    this->recv = "";
+  }
+  // void waitMsg() {
+  //   if (LoRaSerial.available()) {
+  //     this->recv = LoRaSerial.readString();
+  //     this->actionHooks();
+  //   }
+  // }
+
   void actionHooks() {
-    // Set point tempareture
     {
-      int idx = utils.findStrIdx(this->recv, "SPST:");
+      int idx = utils.findStrIdx(this->recv, "ASK:");
       if (idx > -1) {
-        String newSPSTStr = this->recv.substring(idx, idx + 4);
-        int newSPST = newSPSTStr.toInt();
-        this->SPST = newSPST;
+        delay(10);
+        this->sendStatus();
+        delay(10);
       }
     }
 
-    // Set point current
-    {
-      int idx = utils.findStrIdx(this->recv, "SPA:");
-      if (idx > -1) {
-        String newSPAStr = this->recv.substring(idx, idx + 4);
-        int newSPA = newSPAStr.toInt();
-        this->SPA = newSPA;
-      }
-    }
+    // // Set point tempareture
+    // {
+    //   int idx = utils.findStrIdx(this->recv, "SPST:");
+    //   if (idx > -1) {
+    //     String newSPSTStr = this->recv.substring(idx, idx + 4);
+    //     int newSPST = newSPSTStr.toInt();
+    //     this->SPST = newSPST;
+    //   }
+    // }
 
-    // Running Mode
-    {
-      int idx = utils.findStrIdx(this->recv, "M:");
-      if (idx > -1) {
-        String newModeStr = this->recv.substring(idx, idx + 1);
-        int newMode = newModeStr.toInt();
-        this->M = newMode;
-      }
-    }
+    // // Set point current
+    // {
+    //   int idx = utils.findStrIdx(this->recv, "SPA:");
+    //   if (idx > -1) {
+    //     String newSPAStr = this->recv.substring(idx, idx + 4);
+    //     int newSPA = newSPAStr.toInt();
+    //     this->SPA = newSPA;
+    //   }
+    // }
+
+    // // Running Mode
+    // {
+    //   int idx = utils.findStrIdx(this->recv, "M:");
+    //   if (idx > -1) {
+    //     String newModeStr = this->recv.substring(idx, idx + 1);
+    //     int newMode = newModeStr.toInt();
+    //     this->M = newMode;
+    //   }
+    // }
   }
 
   void listen() {
@@ -130,21 +162,21 @@ public:
   }
 
   void sendStatus() {
-    if (millis() - this->sendStatusMillis > 1000) {
+    // if (millis() - this->sendStatusMillis > 1000) {
 
-      String stats = "AT:" + String(this->AT) + ","
-                     + "ST:" + String(this->ST) + ","
-                     + "A:" + String(this->A) + ","
-                     + "SPST:" + String(this->SPST) + ","
-                     + "SPA:" + String(this->SPA) + ","
-                     + "C:" + String(this->C) + ","
-                     + "M:" + String(this->M);
+    String stats = "AT:" + String(this->AT) + ","
+                   + "ST:" + String(this->ST) + ","
+                   + "A:" + String(this->A) + ","
+                   + "SPST:" + String(this->SPST) + ","
+                   + "SPA:" + String(this->SPA) + ","
+                   + "C:" + String(this->C) + ","
+                   + "M:" + String(this->M);
 
-      LoRaSerial.println(stats);
-      Serial.println(stats);
+    LoRaSerial.println(stats);
+    Serial.println(stats);
 
-      this->sendStatusMillis = millis();
-    }
+    // this->sendStatusMillis = millis();
+    // }
   }
 
   ~ChargingSystem(void){};

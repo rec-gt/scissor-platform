@@ -37,15 +37,6 @@ public:
     return true;
   }
 
-  bool strContain(String str, char* target) {
-    return str.indexOf(target) != -1;
-  }
-
-  String retrieveMsg(String mqttMsg) {
-    int startInx = mqttMsg.indexOf('{');
-    return (startInx != -1) ? mqttMsg.substring(startInx) : "";
-  }
-
   int findStrIdx(String content, String target) {
     int startIdx = content.indexOf(target);
     Serial.println("FOUND " + target + " IDX: " + String(startIdx));

@@ -13,10 +13,10 @@ public:
 
   void listen() {
     unsigned long avg = 0;
-    for (size_t i = 0; i < 8; i++) {
+    for (size_t i = 0; i < 64; i++) {
       avg += analogRead(this->pin);
     };
-    this->current = map((avg / 8.), 204.6, 1023, 0, 1000);
+    this->current = map((avg / 64.), 204.6, 1023, 0, 1000);
   }
 
   int get() {

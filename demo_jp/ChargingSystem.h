@@ -32,6 +32,9 @@ private:
   byte C = 1;             // relay cut=0, connect=1
   byte M = MODE_RUNNING;  // system mode
   byte simCache = 0;      // simulation only: problem buffer
+  int SIM_AT = 0;
+  int SIM_ST = 0;
+  int SIM_A = 0;
 
 public:
   ChargingSystem(void){};
@@ -87,7 +90,7 @@ public:
       if (idx > -1) {
         String newModeStr = this->recv.substring(idx, idx + 1);
         Serial.println(newModeStr);
-        if (newModeStr == "0" || newModeStr == "1" || newModeStr == "2") {
+        if (newModeStr == "0" || newModeStr == "1" || newModeStr == "2" || newModeStr == "3") {
           int newMode = newModeStr.toInt();
           this->setMode(newMode);
         }
@@ -121,6 +124,10 @@ public:
     } else if (this->modeIs(MODE_BYPASS)) {
       this->power(true);
     } else if (this->modeIs(MODE_SIMULATION)) {
+      this->AT = this->SIM_AT;
+      this->ST = this->SIM_ST;
+      this->A = this->SIM_A;
+
       // error hook
       if (this->AT >= this->SPST) {
         this->simCache |= 1 << SIM_STOPPED_BY_AMBIENT_TEMP;

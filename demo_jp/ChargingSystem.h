@@ -90,6 +90,7 @@ public:
       int idx = utils.findStrIdx(this->recv, "M:");
       if (idx > -1) {
         String newModeStr = this->recv.substring(idx, idx + 1);
+        Serial.println(newModeStr);
         int newMode = newModeStr.toInt();
         this->M = newMode;
       }
@@ -98,9 +99,9 @@ public:
     {
       int idx = utils.findStrIdx(this->recv, "ASK:");
       if (idx > -1) {
-        delay(10);
+        delay(100);
         this->sendStatus();
-        delay(10);
+        delay(100);
       }
     }
   }
@@ -117,36 +118,40 @@ public:
     this->A = ammeter.get();
 
     if (this->M == MODE_RUNNING) {
-      // error hook
-      if (this->AT >= this->SPST) {
-        this->attachedProblems |= 1 << SYS_STOPPED_BY_AMBIENT_TEMP;
-      }
-      if (this->ST >= this->SPST) {
-        this->attachedProblems |= 1 << SYS_STOPPED_BY_STATION_TEMP;
-      }
-      if (this->A >= this->SPA) {
-        this->attachedProblems |= 1 << SYS_STOPPED_BY_CURRENT;
+      if (this->AT >= this->SPST || this->ST >= this->SPST || this->A >= this->SPA) {
+        this->M = MODE_STOPPED;
       }
 
-      if (this->attachedProblems == SYS_RECOVERED) {
-        relay.connect();
-        this->C = 1;
-      } else {
-        relay.cut();
-        this->C = 0;
-        this->A = 0;  // pseudo 0 current
+      // // error hook
+      // if (this->AT >= this->SPST) {
+      //   this->attachedProblems |= 1 << SYS_STOPPED_BY_AMBIENT_TEMP;
+      // }
+      // if (this->ST >= this->SPST) {
+      //   this->attachedProblems |= 1 << SYS_STOPPED_BY_STATION_TEMP;
+      // }
+      // if (this->A >= this->SPA) {
+      //   this->attachedProblems |= 1 << SYS_STOPPED_BY_CURRENT;
+      // }
 
-        // error recovery
-        if (this->AT < this->SPST - 50) {
-          this->attachedProblems &= ~(1 << SYS_STOPPED_BY_AMBIENT_TEMP);
-        }
-        if (this->ST < this->SPST - 50) {
-          this->attachedProblems &= ~(1 << SYS_STOPPED_BY_STATION_TEMP);
-        }
-        if (this->A < this->SPA - 5) {
-          this->attachedProblems &= ~(1 << SYS_STOPPED_BY_CURRENT);
-        }
-      }
+      // if (this->attachedProblems == SYS_RECOVERED) {
+      //   relay.connect();
+      //   this->C = 1;
+      // } else {
+      //   relay.cut();
+      //   this->C = 0;
+      //   this->A = 0;  // pseudo 0 current
+
+      //   // error recovery
+      //   if (this->AT < this->SPST - 50) {
+      //     this->attachedProblems &= ~(1 << SYS_STOPPED_BY_AMBIENT_TEMP);
+      //   }
+      //   if (this->ST < this->SPST - 50) {
+      //     this->attachedProblems &= ~(1 << SYS_STOPPED_BY_STATION_TEMP);
+      //   }
+      //   if (this->A < this->SPA - 5) {
+      //     this->attachedProblems &= ~(1 << SYS_STOPPED_BY_CURRENT);
+      //   }
+      // }
     } else if (this->M == MODE_STOPPED) {
       relay.cut();
     } else if (this->M == MODE_BYPASS) {

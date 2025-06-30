@@ -16,10 +16,9 @@
 
 // modules
 Relay relay(10);
-Thermometer thermometer3(A6);
-Thermometer thermometer1(A4);
+Thermometer thermometer1(A0);
 Thermometer thermometer2(A2);
-Ammeter ammeter(A0);
+Ammeter ammeter(A4);
 
 class ChargingSystem {
 private:
@@ -51,7 +50,7 @@ public:
 
       if (_byte == '\r') {
         this->actionHooks();
-        this->pruneResBuffer();
+        this->pruneRecvBuffer();
         this->pruneSerialBuffer();
       }
     }
@@ -61,7 +60,7 @@ public:
     while (LoRaSerial.read() > 0) {};
   }
 
-  void pruneResBuffer() {
+  void pruneRecvBuffer() {
     this->recv = "";
   }
 

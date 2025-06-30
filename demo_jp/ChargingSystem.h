@@ -23,8 +23,7 @@ Ammeter ammeter(A4);
 class ChargingSystem {
 private:
   byte BUFFER_SIZE = 4 * 6;
-
-  String recv = "";
+  byte buffer[24];
 
   int AT = 2500;         // ambient temp
   int ST = 2500;         // station temp
@@ -33,14 +32,13 @@ private:
   int SPA = 500;         // set-point current
   int C = 1;             // relay cut=0, connect=1
   int M = MODE_RUNNING;  // system mode
-  byte simCache = 0;     // simulation only: problem buffer
+  int simCache = 0;      // simulation only: problem buffer
   int SIM_AT = 0;
   int SIM_ST = 0;
   int SIM_A = 0;
 
 public:
   ChargingSystem(void){};
-  byte buffer[24];
   void waitMsg() {
     if (LoRaSerial.available() >= BUFFER_SIZE) {
       LoRaSerial.readBytes(buffer, BUFFER_SIZE);
@@ -52,20 +50,12 @@ public:
       this->SIM_ST = buffer[16] | (buffer[17] << 8) | (buffer[18] << 16) | (buffer[19] << 24);
       this->SIM_A = buffer[20] | (buffer[21] << 8) | (buffer[22] << 16) | (buffer[23] << 24);
 
-      // // Convert the bytes back to integers
-      for (int i = 0; i < BUFFER_SIZE; i += 4) {
-        int value = 0;
-        value = buffer[i] | (buffer[i + 1] << 8) | (buffer[i + 2] << 16) | (buffer[i + 3] << 24);
-        Serial.print("Received Integer: ");
-        Serial.println(value);
-      }
-
       Serial.println(this->SPST);
       Serial.println(this->SPA);
-      // Serial.println(this->M);
-      // Serial.println(this->SIM_AT);
-      // Serial.println(this->SIM_ST);
-      // Serial.println(this->SIM_A);
+      Serial.println(this->M);
+      Serial.println(this->SIM_AT);
+      Serial.println(this->SIM_ST);
+      Serial.println(this->SIM_A);
 
       this->pruneSerialBuffer();
 

@@ -22,91 +22,60 @@ Ammeter ammeter(A4);
 
 class ChargingSystem {
 private:
+  byte BUFFER_SIZE = 4 * 6;
+
   String recv = "";
 
-  int AT = 2500;          // ambient temp
-  int ST = 2500;          // station temp
-  int A = 100;            // current
-  int SPST = 8000;        // set-point temperature
-  int SPA = 500;          // set-point current
-  byte C = 1;             // relay cut=0, connect=1
-  byte M = MODE_RUNNING;  // system mode
-  byte simCache = 0;      // simulation only: problem buffer
+  int AT = 2500;         // ambient temp
+  int ST = 2500;         // station temp
+  int A = 100;           // current
+  int SPST = 8000;       // set-point temperature
+  int SPA = 500;         // set-point current
+  int C = 1;             // relay cut=0, connect=1
+  int M = MODE_RUNNING;  // system mode
+  byte simCache = 0;     // simulation only: problem buffer
   int SIM_AT = 0;
   int SIM_ST = 0;
   int SIM_A = 0;
 
 public:
   ChargingSystem(void){};
-
+  byte buffer[24];
   void waitMsg() {
-    if (LoRaSerial.available() > 0) {
-      char _byte = LoRaSerial.read();
+    if (LoRaSerial.available() >= BUFFER_SIZE) {
+      LoRaSerial.readBytes(buffer, BUFFER_SIZE);
 
-      if (_byte != '\r' && _byte != '\n') {
-        this->recv += _byte;
+      this->SPST = buffer[0] | (buffer[1] << 8) | (buffer[2] << 16) | (buffer[3] << 24);
+      this->SPA = buffer[4] | (buffer[5] << 8) | (buffer[6] << 16) | (buffer[7] << 24);
+      this->M = buffer[7] | (buffer[8] << 8) | (buffer[9] << 16) | (buffer[10] << 24);
+      this->SIM_AT = buffer[11] | (buffer[12] << 8) | (buffer[13] << 16) | (buffer[14] << 24);
+      // this->SIM_ST = buffer[32];
+      // this->SIM_A = buffer[64];
+
+      // // Convert the bytes back to integers
+      for (int i = 0; i < BUFFER_SIZE; i += 4) {
+        int value = 0;
+        value = buffer[i] | (buffer[i + 1] << 8) | (buffer[i + 2] << 16) | (buffer[i + 3] << 24);
+        Serial.print("Received Integer: ");
+        Serial.println(value);
       }
 
-      if (_byte == '\r') {
-        this->actionHooks();
-        this->pruneRecvBuffer();
-        this->pruneSerialBuffer();
-      }
+      Serial.println(this->SPST);
+      Serial.println(this->SPA);
+      // Serial.println(this->M);
+      // Serial.println(this->SIM_AT);
+      // Serial.println(this->SIM_ST);
+      // Serial.println(this->SIM_A);
+
+      this->pruneSerialBuffer();
+
+      this->collectData();
+      this->sendStatus();
     }
   }
 
   void pruneSerialBuffer() {
     while (LoRaSerial.read() > 0) {};
-  }
-
-  void pruneRecvBuffer() {
-    this->recv = "";
-  }
-
-  void actionHooks() {
-    // Set point tempareture
-    {
-      int idx = utils.findStrIdx(this->recv, "SPST:");
-      if (idx > -1) {
-        String newSPSTStr = this->recv.substring(idx, idx + 4);
-        int newSPST = newSPSTStr.toInt();
-        this->SPST = newSPST;
-      }
-    }
-
-    // Set point current
-    {
-      int idx = utils.findStrIdx(this->recv, "SPA:");
-      if (idx > -1) {
-        String newSPAStr = this->recv.substring(idx, idx + 4);
-        int newSPA = newSPAStr.toInt();
-        this->SPA = newSPA;
-      }
-    }
-
-    // Running Mode
-    {
-      int idx = utils.findStrIdx(this->recv, "M:");
-      if (idx > -1) {
-        String newModeStr = this->recv.substring(idx, idx + 1);
-        Serial.println(newModeStr);
-        if (newModeStr == "0" || newModeStr == "1" || newModeStr == "2" || newModeStr == "3") {
-          int newMode = newModeStr.toInt();
-          this->setMode(newMode);
-        }
-      }
-    }
-
-    // ASK request
-    {
-      int idx = utils.findStrIdx(this->recv, "ASK:");
-      if (idx > -1) {
-        delay(100);
-        this->collectData();
-        this->sendStatus();
-        delay(100);
-      }
-    }
   }
 
   void collectData() {

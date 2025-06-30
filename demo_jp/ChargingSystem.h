@@ -29,7 +29,7 @@ private:
   int AT = 2500;         // ambient temp
   int ST = 2500;         // station temp
   int A = 100;           // current
-  int SPT = 8000;       // set-point temperature
+  int SPT = 8000;        // set-point temperature
   int SPA = 500;         // set-point current
   int C = 1;             // relay cut=0, connect=1
   int M = MODE_RUNNING;  // system mode
@@ -59,7 +59,6 @@ public:
       // Serial.println(this->SIM_A);
 
       this->pruneSerialBuffer();
-
       this->collectData();
       this->sendStatus();
     }
@@ -70,53 +69,72 @@ public:
   }
 
   void collectData() {
-    if (this->modeIs(MODE_SIMULATION)) {
-      this->AT = this->SIM_AT;
-      this->ST = this->SIM_ST;
-      this->A = this->SIM_A;
+    this->AT = thermometer1.get();
+    this->ST = thermometer2.get();
+    this->A = ammeter.get();
 
-      // error hook
-      if (this->AT >= this->SPT) {
-        this->simCache |= 1 << SIM_STOPPED_BY_AMBIENT_TEMP;
-      }
-      if (this->ST >= this->SPT) {
-        this->simCache |= 1 << SIM_STOPPED_BY_STATION_TEMP;
-      }
-      if (this->A >= this->SPA) {
-        this->simCache |= 1 << SIM_STOPPED_BY_CURRENT;
-      }
-      if (this->simCache == SIM_RECOVERED) {
-        this->power(true);
+    if (this->modeIs(MODE_RUNNING)) {
+      if (this->AT >= this->SPT || this->ST >= this->SPT || this->A >= this->SPA) {
+        this->setMode(MODE_STOPPED);
       } else {
-        this->power(false);
-
-        // error recovery
-        if (this->AT < this->SPT) {
-          this->simCache &= ~(1 << SIM_STOPPED_BY_AMBIENT_TEMP);
-        }
-        if (this->ST < this->SPT) {
-          this->simCache &= ~(1 << SIM_STOPPED_BY_STATION_TEMP);
-        }
-        if (this->A < this->SPA) {
-          this->simCache &= ~(1 << SIM_STOPPED_BY_CURRENT);
-        }
-      }
-    } else {
-      this->AT = thermometer1.get();
-      this->ST = thermometer2.get();
-      this->A = ammeter.get();
-
-      if (this->modeIs(MODE_RUNNING)) {
-        if (this->AT >= this->SPT || this->ST >= this->SPT || this->A >= this->SPA) {
-          this->setMode(MODE_STOPPED);
-        }
-        this->power(true);
-      } else if (this->modeIs(MODE_STOPPED)) {
-        this->power(false);
-      } else if (this->modeIs(MODE_BYPASS)) {
         this->power(true);
       }
+    } else if (this->modeIs(MODE_STOPPED)) {
+      Serial.println("MODE_STOPPED");
+      this->power(false);
+    } else if (this->modeIs(MODE_BYPASS)) {
+      this->power(true);
     }
+
+    // if (this->modeIs(MODE_SIMULATION)) {
+    //   this->AT = this->SIM_AT;
+    //   this->ST = this->SIM_ST;
+    //   this->A = this->SIM_A;
+
+    //   // error hook
+    //   if (this->AT >= this->SPT) {
+    //     this->simCache |= 1 << SIM_STOPPED_BY_AMBIENT_TEMP;
+    //   }
+    //   if (this->ST >= this->SPT) {
+    //     this->simCache |= 1 << SIM_STOPPED_BY_STATION_TEMP;
+    //   }
+    //   if (this->A >= this->SPA) {
+    //     this->simCache |= 1 << SIM_STOPPED_BY_CURRENT;
+    //   }
+    //   if (this->simCache == SIM_RECOVERED) {
+    //     this->power(true);
+    //   } else {
+    //     this->power(false);
+
+    //     // error recovery
+    //     if (this->AT < this->SPT) {
+    //       this->simCache &= ~(1 << SIM_STOPPED_BY_AMBIENT_TEMP);
+    //     }
+    //     if (this->ST < this->SPT) {
+    //       this->simCache &= ~(1 << SIM_STOPPED_BY_STATION_TEMP);
+    //     }
+    //     if (this->A < this->SPA) {
+    //       this->simCache &= ~(1 << SIM_STOPPED_BY_CURRENT);
+    //     }
+    //   }
+    // } else {
+    //   this->AT = thermometer1.get();
+    //   this->ST = thermometer2.get();
+    //   this->A = ammeter.get();
+
+    //   if (this->modeIs(MODE_RUNNING)) {
+    //     if (this->AT >= this->SPT || this->ST >= this->SPT || this->A >= this->SPA) {
+    //       this->setMode(MODE_STOPPED);
+    //     } else {
+    //       this->power(true);
+    //     }
+    //   } else if (this->modeIs(MODE_STOPPED)) {
+    //     Serial.println("MODE_STOPPED");
+    //     this->power(false);
+    //   } else if (this->modeIs(MODE_BYPASS)) {
+    //     this->power(true);
+    //   }
+    // }
   }
 
   void listen() {

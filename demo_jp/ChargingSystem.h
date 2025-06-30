@@ -47,10 +47,10 @@ public:
 
       this->SPST = buffer[0] | (buffer[1] << 8) | (buffer[2] << 16) | (buffer[3] << 24);
       this->SPA = buffer[4] | (buffer[5] << 8) | (buffer[6] << 16) | (buffer[7] << 24);
-      this->M = buffer[7] | (buffer[8] << 8) | (buffer[9] << 16) | (buffer[10] << 24);
-      this->SIM_AT = buffer[11] | (buffer[12] << 8) | (buffer[13] << 16) | (buffer[14] << 24);
-      // this->SIM_ST = buffer[32];
-      // this->SIM_A = buffer[64];
+      this->M = buffer[8] | (buffer[9] << 8) | (buffer[10] << 16) | (buffer[11] << 24);
+      this->SIM_AT = buffer[12] | (buffer[13] << 8) | (buffer[14] << 16) | (buffer[15] << 24);
+      this->SIM_ST = buffer[16] | (buffer[17] << 8) | (buffer[18] << 16) | (buffer[19] << 24);
+      this->SIM_A = buffer[20] | (buffer[21] << 8) | (buffer[22] << 16) | (buffer[23] << 24);
 
       // // Convert the bytes back to integers
       for (int i = 0; i < BUFFER_SIZE; i += 4) {

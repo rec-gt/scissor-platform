@@ -64,14 +64,38 @@ public:
   void pruneResBuffer() {
     this->recv = "";
   }
-  // void waitMsg() {
-  //   if (LoRaSerial.available()) {
-  //     this->recv = LoRaSerial.readString();
-  //     this->actionHooks();
-  //   }
-  // }
 
   void actionHooks() {
+    // Set point tempareture
+    {
+      int idx = utils.findStrIdx(this->recv, "SPST:");
+      if (idx > -1) {
+        String newSPSTStr = this->recv.substring(idx, idx + 4);
+        int newSPST = newSPSTStr.toInt();
+        this->SPST = newSPST;
+      }
+    }
+
+    // Set point current
+    {
+      int idx = utils.findStrIdx(this->recv, "SPA:");
+      if (idx > -1) {
+        String newSPAStr = this->recv.substring(idx, idx + 4);
+        int newSPA = newSPAStr.toInt();
+        this->SPA = newSPA;
+      }
+    }
+
+    // Running Mode
+    {
+      int idx = utils.findStrIdx(this->recv, "M:");
+      if (idx > -1) {
+        String newModeStr = this->recv.substring(idx, idx + 1);
+        int newMode = newModeStr.toInt();
+        this->M = newMode;
+      }
+    }
+
     {
       int idx = utils.findStrIdx(this->recv, "ASK:");
       if (idx > -1) {
@@ -80,36 +104,6 @@ public:
         delay(10);
       }
     }
-
-    // // Set point tempareture
-    // {
-    //   int idx = utils.findStrIdx(this->recv, "SPST:");
-    //   if (idx > -1) {
-    //     String newSPSTStr = this->recv.substring(idx, idx + 4);
-    //     int newSPST = newSPSTStr.toInt();
-    //     this->SPST = newSPST;
-    //   }
-    // }
-
-    // // Set point current
-    // {
-    //   int idx = utils.findStrIdx(this->recv, "SPA:");
-    //   if (idx > -1) {
-    //     String newSPAStr = this->recv.substring(idx, idx + 4);
-    //     int newSPA = newSPAStr.toInt();
-    //     this->SPA = newSPA;
-    //   }
-    // }
-
-    // // Running Mode
-    // {
-    //   int idx = utils.findStrIdx(this->recv, "M:");
-    //   if (idx > -1) {
-    //     String newModeStr = this->recv.substring(idx, idx + 1);
-    //     int newMode = newModeStr.toInt();
-    //     this->M = newMode;
-    //   }
-    // }
   }
 
   void listen() {

@@ -91,11 +91,14 @@ public:
       if (idx > -1) {
         String newModeStr = this->recv.substring(idx, idx + 1);
         Serial.println(newModeStr);
-        int newMode = newModeStr.toInt();
-        this->M = newMode;
+        if (newModeStr == "0" || newModeStr == "1" || newModeStr == "2") {
+          int newMode = newModeStr.toInt();
+          this->M = newMode;
+        }
       }
     }
 
+    // ASK request
     {
       int idx = utils.findStrIdx(this->recv, "ASK:");
       if (idx > -1) {
@@ -118,6 +121,7 @@ public:
     this->A = ammeter.get();
 
     if (this->M == MODE_RUNNING) {
+      relay.connect();
       if (this->AT >= this->SPST || this->ST >= this->SPST || this->A >= this->SPA) {
         this->M = MODE_STOPPED;
       }

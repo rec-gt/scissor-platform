@@ -22,9 +22,9 @@ Ammeter ammeter(A4);
 
 class ChargingSystem {
 private:
-  byte RECV_BUFFER_SIZE = 4 * 6;
+  byte RECV_BUFFER_SIZE = 28;
   byte SEND_BUFFER_SIZE = 4 * 7;
-  byte recvBuffer[24];
+  byte recvBuffer[28];
 
   int AT = 2500;         // ambient temp
   int ST = 2500;         // station temp
@@ -37,24 +37,39 @@ private:
   int SIM_AT = 0;
   int SIM_ST = 0;
   int SIM_A = 0;
+  int CRC = 0;
+
+  bool portCanSend = false;
 
 public:
   ChargingSystem(void){};
+
+  bool validateCRC(int crc) {
+    return crc == 37;
+  }
+
   void waitMsg() {
     if (LoRaSerial.available() >= RECV_BUFFER_SIZE) {
       LoRaSerial.readBytes(recvBuffer, RECV_BUFFER_SIZE);
 
-      this->SPT = recvBuffer[0] | (recvBuffer[1] << 8) | (recvBuffer[2] << 16) | (recvBuffer[3] << 24);
-      this->SPA = recvBuffer[4] | (recvBuffer[5] << 8) | (recvBuffer[6] << 16) | (recvBuffer[7] << 24);
-      this->M = recvBuffer[8] | (recvBuffer[9] << 8) | (recvBuffer[10] << 16) | (recvBuffer[11] << 24);
-      this->SIM_AT = recvBuffer[12] | (recvBuffer[13] << 8) | (recvBuffer[14] << 16) | (recvBuffer[15] << 24);
-      this->SIM_ST = recvBuffer[16] | (recvBuffer[17] << 8) | (recvBuffer[18] << 16) | (recvBuffer[19] << 24);
-      this->SIM_A = recvBuffer[20] | (recvBuffer[21] << 8) | (recvBuffer[22] << 16) | (recvBuffer[23] << 24);
+      this->CRC = recvBuffer[24] | (recvBuffer[25] << 8) | (recvBuffer[26] << 16) | (recvBuffer[27] << 24);
 
-      Serial.println(String(this->SPT) + ", " + String(this->SPA) + ", " + String(this->M) + ", " + String(this->SIM_AT) + ", " + String(this->SIM_ST) + ", " + String(this->SIM_A));
+      if (!validateCRC(this->CRC)) {
+        this->pruneSerialBuffer();
+        this->portCanSend = false;
+      } else {
+        this->SPT = recvBuffer[0] | (recvBuffer[1] << 8) | (recvBuffer[2] << 16) | (recvBuffer[3] << 24);
+        this->SPA = recvBuffer[4] | (recvBuffer[5] << 8) | (recvBuffer[6] << 16) | (recvBuffer[7] << 24);
+        this->M = recvBuffer[8] | (recvBuffer[9] << 8) | (recvBuffer[10] << 16) | (recvBuffer[11] << 24);
+        this->SIM_AT = recvBuffer[12] | (recvBuffer[13] << 8) | (recvBuffer[14] << 16) | (recvBuffer[15] << 24);
+        this->SIM_ST = recvBuffer[16] | (recvBuffer[17] << 8) | (recvBuffer[18] << 16) | (recvBuffer[19] << 24);
+        this->SIM_A = recvBuffer[20] | (recvBuffer[21] << 8) | (recvBuffer[22] << 16) | (recvBuffer[23] << 24);
 
-      this->pruneSerialBuffer();
-      this->sendStatus();
+        Serial.println(String(this->SPT) + ", " + String(this->SPA) + ", " + String(this->M) + ", " + String(this->SIM_AT) + ", " + String(this->SIM_ST) + ", " + String(this->SIM_A));
+        this->portCanSend = true;
+        this->pruneSerialBuffer();
+        this->sendStatus();
+      }
     }
   }
 
@@ -125,6 +140,8 @@ public:
   }
 
   void sendStatus() {
+    if (!this->portCanSend) { return; }
+
     String stats = "AT:" + String(this->AT) + ","
                    + "ST:" + String(this->ST) + ","
                    + "A:" + String(this->A) + ","

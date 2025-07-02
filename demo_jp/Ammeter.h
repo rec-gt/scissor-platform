@@ -20,7 +20,7 @@ public:
     this->current = map((avg / 64.), 204.6, 1023, 0, 1000);
 
     // hardcoded, can remove this
-    if (this->current > 0 && this->current < 20) {
+    if (this->current < 20) {
       this->current = random(10, 25);
     }
   }

@@ -30,10 +30,10 @@ private:
   int ST = 2500;         // station temp
   int A = 100;           // current
   int SPT = 8000;        // set-point temperature
-  int SPA = 500;         // set-point current
+  int SPA = 100;         // set-point current
   int C = 1;             // relay cut=0, connect=1
   int M = MODE_RUNNING;  // system mode
-  int simCache = 0;      // simulation only: problem recvBuffer
+  byte simCache = 0;     // simulation only: problem recvBuffer
   int SIM_AT = 0;
   int SIM_ST = 0;
   int SIM_A = 0;
@@ -51,15 +51,9 @@ public:
       this->SIM_ST = recvBuffer[16] | (recvBuffer[17] << 8) | (recvBuffer[18] << 16) | (recvBuffer[19] << 24);
       this->SIM_A = recvBuffer[20] | (recvBuffer[21] << 8) | (recvBuffer[22] << 16) | (recvBuffer[23] << 24);
 
-      // Serial.println(this->SPT);
-      // Serial.println(this->SPA);
-      // Serial.println(this->M);
-      // Serial.println(this->SIM_AT);
-      // Serial.println(this->SIM_ST);
-      // Serial.println(this->SIM_A);
+      Serial.println(String(this->SPT) + ", " + String(this->SPA) + ", " + String(this->M) + ", " + String(this->SIM_AT) + ", " + String(this->SIM_ST) + ", " + String(this->SIM_A));
 
       this->pruneSerialBuffer();
-      this->collectData();
       this->sendStatus();
     }
   }
@@ -69,72 +63,57 @@ public:
   }
 
   void collectData() {
-    this->AT = thermometer1.get();
-    this->ST = thermometer2.get();
-    this->A = ammeter.get();
+    if (this->modeIs(MODE_SIMULATION)) {
+      this->AT = this->SIM_AT;
+      this->ST = this->SIM_ST;
+      this->A = this->SIM_A;
 
-    if (this->modeIs(MODE_RUNNING)) {
-      if (this->AT >= this->SPT || this->ST >= this->SPT || this->A >= this->SPA) {
-        this->setMode(MODE_STOPPED);
+      // error hook
+      if (this->AT >= this->SPT) {
+        this->simCache |= 1 << SIM_STOPPED_BY_AMBIENT_TEMP;
+      }
+      if (this->ST >= this->SPT) {
+        this->simCache |= 1 << SIM_STOPPED_BY_STATION_TEMP;
+      }
+      if (this->A >= this->SPA) {
+        this->simCache |= 1 << SIM_STOPPED_BY_CURRENT;
+      }
+
+      if (this->simCache == SIM_RECOVERED) {
+        this->power(true);
       } else {
+        this->power(false);
+        // error recovery
+        if (this->AT < this->SPT) {
+          this->simCache &= ~(1 << SIM_STOPPED_BY_AMBIENT_TEMP);
+        }
+        if (this->ST < this->SPT) {
+          this->simCache &= ~(1 << SIM_STOPPED_BY_STATION_TEMP);
+        }
+        if (this->A < this->SPA) {
+          this->simCache &= ~(1 << SIM_STOPPED_BY_CURRENT);
+        }
+      }
+    } else {
+      this->AT = thermometer1.get();
+      this->ST = thermometer2.get();
+      this->A = ammeter.get();
+
+      if (this->modeIs(MODE_RUNNING)) {
+        if (this->AT >= this->SPT || this->ST >= this->SPT || this->A >= this->SPA) {
+          if (!this->modeIs(MODE_STOPPED)) {
+            this->setMode(MODE_STOPPED);
+            this->sendStatus();  // must force push
+          }
+        } else {
+          this->power(true);
+        }
+      } else if (this->modeIs(MODE_STOPPED)) {
+        this->power(false);
+      } else if (this->modeIs(MODE_BYPASS)) {
         this->power(true);
       }
-    } else if (this->modeIs(MODE_STOPPED)) {
-      Serial.println("MODE_STOPPED");
-      this->power(false);
-    } else if (this->modeIs(MODE_BYPASS)) {
-      this->power(true);
     }
-
-    // if (this->modeIs(MODE_SIMULATION)) {
-    //   this->AT = this->SIM_AT;
-    //   this->ST = this->SIM_ST;
-    //   this->A = this->SIM_A;
-
-    //   // error hook
-    //   if (this->AT >= this->SPT) {
-    //     this->simCache |= 1 << SIM_STOPPED_BY_AMBIENT_TEMP;
-    //   }
-    //   if (this->ST >= this->SPT) {
-    //     this->simCache |= 1 << SIM_STOPPED_BY_STATION_TEMP;
-    //   }
-    //   if (this->A >= this->SPA) {
-    //     this->simCache |= 1 << SIM_STOPPED_BY_CURRENT;
-    //   }
-    //   if (this->simCache == SIM_RECOVERED) {
-    //     this->power(true);
-    //   } else {
-    //     this->power(false);
-
-    //     // error recovery
-    //     if (this->AT < this->SPT) {
-    //       this->simCache &= ~(1 << SIM_STOPPED_BY_AMBIENT_TEMP);
-    //     }
-    //     if (this->ST < this->SPT) {
-    //       this->simCache &= ~(1 << SIM_STOPPED_BY_STATION_TEMP);
-    //     }
-    //     if (this->A < this->SPA) {
-    //       this->simCache &= ~(1 << SIM_STOPPED_BY_CURRENT);
-    //     }
-    //   }
-    // } else {
-    //   this->AT = thermometer1.get();
-    //   this->ST = thermometer2.get();
-    //   this->A = ammeter.get();
-
-    //   if (this->modeIs(MODE_RUNNING)) {
-    //     if (this->AT >= this->SPT || this->ST >= this->SPT || this->A >= this->SPA) {
-    //       this->setMode(MODE_STOPPED);
-    //     } else {
-    //       this->power(true);
-    //     }
-    //   } else if (this->modeIs(MODE_STOPPED)) {
-    //     Serial.println("MODE_STOPPED");
-    //     this->power(false);
-    //   } else if (this->modeIs(MODE_BYPASS)) {
-    //     this->power(true);
-    //   }
-    // }
   }
 
   void listen() {
@@ -142,6 +121,7 @@ public:
     thermometer1.listen();
     thermometer2.listen();
     ammeter.listen();
+    this->collectData();
   }
 
   void sendStatus() {

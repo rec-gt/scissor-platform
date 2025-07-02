@@ -29,14 +29,15 @@ private:
   int AT = 2500;         // ambient temp
   int ST = 2500;         // station temp
   int A = 100;           // current
-  int SPT = 8000;        // set-point temperature
-  int SPA = 100;         // set-point current
+  int SPT = 5000;        // set-point temperature
+  int SPA = 250;         // set-point current
   int C = 1;             // relay cut=0, connect=1
   int M = MODE_RUNNING;  // system mode
   byte simCache = 0;     // simulation only: problem recvBuffer
-  int SIM_AT = 0;
-  int SIM_ST = 0;
-  int SIM_A = 0;
+  int SIM_AT = 2500;
+  int SIM_ST = 2500;
+  int SIM_A = 1000;
+
   int CRC = 0;
 
   bool portCanSend = false;

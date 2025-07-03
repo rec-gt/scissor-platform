@@ -143,6 +143,9 @@ public:
   void sendStatus() {
     if (!this->portCanSend) { return; }
 
+    int data[8] = { this->AT, this->ST, this->A, this->SPT, this->SPA, this->C, this->M, 37 };
+    LoRaSerial.write((byte*)data, sizeof(data));
+
     String stats = "AT:" + String(this->AT) + ","
                    + "ST:" + String(this->ST) + ","
                    + "A:" + String(this->A) + ","
@@ -150,9 +153,9 @@ public:
                    + "SPA:" + String(this->SPA) + ","
                    + "C:" + String(this->C) + ","
                    + "M:" + String(this->M);
-
-    LoRaSerial.println(stats);
     Serial.println(stats);
+
+    // LoRaSerial.println(stats);
   }
 
   // hardware control / logic

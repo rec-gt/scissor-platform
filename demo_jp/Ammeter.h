@@ -21,7 +21,8 @@ public:
 
     // hardcoded, can remove this
     if (this->current < 20) {
-      this->current = random(10, 25);
+      this->current = 10;
+      // this->current = random(10, 25);
     }
   }
 

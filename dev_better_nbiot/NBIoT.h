@@ -40,24 +40,6 @@ private:
     this->res = "";
   }
 
-  // ========================================
-
-  void hookGetCSQ() {
-    int idx = this->res.indexOf("+CSQ:");
-    if (idx != -1) {
-      int winStart = idx + 6;
-      int winEnd = winStart + 2;
-      this->CSQ = this->res.substring(winStart, winEnd);
-    }
-  }
-
-  void hookGetIMEI() {
-    int idx = this->res.indexOf("+CGSN:");
-    if (idx != -1) {
-      this->IMEI = this->res.substring(7, 7 + 15);
-    }
-  }
-
 public:
   NBIoT() {
     pinMode(this->resetPin, OUTPUT);
@@ -65,7 +47,6 @@ public:
   }
 
   void start() {
-
     if (this->connState == STATE_CAN_INIT) {
       Serial.println("NBIoT START: AT+QRST=1");
       NBIoT_Serial.println("AT+QRST=1");
@@ -108,8 +89,6 @@ public:
         NBIoT_Serial.println("AT+CSCON=0");
         delay(1);
         NBIoT_Serial.println("AT+CEDRXS=0,5");
-        delay(1);
-        NBIoT_Serial.println("AT+CGSN=1");
         delay(1);
         NBIoT_Serial.println("AT+QMTCLOSE=0");
         delay(1);
@@ -155,13 +134,11 @@ public:
   void handleReadMsg() {
     int idx = -1;
 
-    if (this->connState == STATE_CAN_PUB) {
-      idx = this->res.indexOf("+CSQ:");
-      if (idx != -1) {
-        int winStart = idx + 6;
-        int winEnd = winStart + 2;
-        this->CSQ = this->res.substring(winStart, winEnd);
-      }
+    idx = this->res.indexOf("+CSQ:");
+    if (idx != -1) {
+      int winStart = idx + 6;
+      int winEnd = winStart + 2;
+      this->CSQ = this->res.substring(winStart, winEnd);
     }
   }
 

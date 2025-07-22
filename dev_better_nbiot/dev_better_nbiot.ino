@@ -5,7 +5,8 @@
 
 NBIoT nbiot;
 Watchdog watchdog;
-AsyncTimer timer(15 * 1000);
+AsyncTimer timer1(30000);
+AsyncTimer timer2(5000);
 
 void setup() {
   Serial.begin(9600);
@@ -19,9 +20,14 @@ void loop() {
   nbiot.start();
   nbiot.waitMsg();
 
-  if (timer.isExpired()) {
+  if (timer1.isExpired()) {
     nbiot.publish();
-    timer.refresh();
+    timer1.refresh();
+  }
+
+  if (timer2.isExpired()) {
+    nbiot.interact();
+    timer2.refresh();
   }
 
   delay(10);

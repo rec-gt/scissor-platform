@@ -67,7 +67,6 @@ public:
       if (_byte == '\r') {
         this->handleStateChange();
         this->handleReadMsg();
-        this->handleInteract();
         this->clearResBuffer();
       }
     }
@@ -152,13 +151,9 @@ public:
     }
   }
 
-  void handleInteract() {
-    if (this->connState == STATE_CAN_PUB || this->connState == STATE_CAN_CONN || this->connState == STATE_CAN_OPEN) {
-      if (timerNBIoT.isExpired()) {
-        NBIoT_Serial.println("AT+CSQ");
-        NBIoT_Serial.println("AT+CGSN=1");
-        timerNBIoT.refresh();
-      }
+  void interact() {
+    if (this->connState == STATE_CAN_PUB || this->connState == STATE_CAN_CONN) {
+      NBIoT_Serial.println("AT+CSQ");
     }
   }
 

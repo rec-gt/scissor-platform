@@ -5,23 +5,21 @@
 #ifndef NBIoT_h
 #define NBIoT_h
 
-#define NBIoT_Serial Serial1
+#define NBIOT_SERIAL Serial1
 #define TOPIC "rgt/HSWW_TOPIC/out"
 
-#define STATE_CAN_INIT 0
-#define STATE_CAN_START 1
-#define STATE_CAN_OPEN 2
-#define STATE_CAN_CONN 3
-#define STATE_CAN_PUB 4
-#define STATE_CAN_SUB 5
+#define NBIOT_INIT 0
+#define NBIOT_CAN_START 1
+#define NBIOT_CAN_OPEN 2
+#define NBIOT_CAN_CONN 3
+#define NBIOT_CAN_PUB 4
+#define NBIOT_CAN_SUB 5
 
 AsyncTimer timerNBIoT(5 * 1000);
 
 class NBIoT {
 private:
-  byte connState = STATE_CAN_INIT;
-  byte connTrial = 0;
-  byte connCount = 0;
+  byte connState = NBIOT_INIT;
 
   String res = "";
 
@@ -33,7 +31,7 @@ private:
   byte resetPin = 30;
 
   void clearSerialBuffer() {
-    while (NBIoT_Serial.read() > 0) {};
+    while (NBIOT_SERIAL.read() > 0) {};
   }
 
   void clearResBuffer() {
@@ -41,23 +39,38 @@ private:
   }
 
 public:
+  bool initFlag = false;
+
   NBIoT() {
     pinMode(this->resetPin, OUTPUT);
     digitalWrite(this->resetPin, HIGH);
   }
 
+  void init() {
+    this->start();
+    this->clearSerialBuffer();
+    this->clearResBuffer();
+  }
+
   void start() {
-    if (this->connState == STATE_CAN_INIT) {
-      Serial.println("NBIoT START: AT+QRST=1");
-      NBIoT_Serial.println("AT+QRST=1");
+    if (this->connState == NBIOT_INIT) {
+      Serial.print("\r\nNBIoT RESET\r\n");
+      NBIOT_SERIAL.println("AT+QRST=1");
       delay(100);
-      this->connState = STATE_CAN_START;
+      this->connState = NBIOT_CAN_START;
+    } else {
+      this->connState == NBIOT_INIT;
     }
   }
 
-  void waitMsg() {
-    if (NBIoT_Serial.available() > 0) {
-      char _byte = NBIoT_Serial.read();
+  void reset() {
+    digitalWrite(this->resetPin, HIGH);
+    this->connState = NBIOT_INIT;
+  }
+
+  void waitForMsg() {
+    if (NBIOT_SERIAL.available() > 0) {
+      char _byte = NBIOT_SERIAL.read();
 
       Serial.print(_byte);
       if (_byte != '\r' && _byte != '\n') {
@@ -76,56 +89,58 @@ public:
     int idx = -1;
 
     // ====================================
-    if (this->connState == STATE_CAN_START) {
+    if (this->connState == NBIOT_CAN_START) {
       idx = this->res.indexOf("+IP:");
       if (idx > -1) {
-        NBIoT_Serial.println("AT+CFUN=1");
-        delay(1);
-        NBIoT_Serial.println("AT+QSCLK=0");
-        delay(1);
-        NBIoT_Serial.println("AT+CPSMS=0");
-        delay(1);
-        NBIoT_Serial.println("AT+CSCON=0");
-        delay(1);
-        NBIoT_Serial.println("AT+CEDRXS=0,5");
-        delay(1);
-        NBIoT_Serial.println("AT+QMTCLOSE=0");
-        delay(1);
-        NBIoT_Serial.println("AT+QMTDISC=0");
-        delay(1);
-        NBIoT_Serial.println("AT+QMTOPEN=0,8.210.84.24,1880");
-        delay(1);
+        NBIOT_SERIAL.println("AT+CFUN=1");
+        NBIOT_SERIAL.println("AT+QSCLK=0");
+        NBIOT_SERIAL.println("AT+CPSMS=0");
+        NBIOT_SERIAL.println("AT+CSCON=0");
+        NBIOT_SERIAL.println("AT+CEDRXS=0,5");
+        NBIOT_SERIAL.println("AT+QMTCLOSE=0");
+        NBIOT_SERIAL.println("AT+QMTDISC=0");
+        NBIOT_SERIAL.println("AT+QMTOPEN=0,8.210.84.24,1880");
 
-        Serial.println("Opening MQTT...");
+        Serial.print("\r\nOpening MQTT...\r\n");
 
-        this->connState = STATE_CAN_OPEN;
+        this->connState = NBIOT_CAN_OPEN;
       }
     }
 
     // ====================================
 
-    if (this->connState == STATE_CAN_OPEN) {
+    if (this->connState == NBIOT_CAN_OPEN) {
       idx = this->res.indexOf("+QMTOPEN: 0,0");
       if (idx != -1) {
-        NBIoT_Serial.println("AT+QMTCONN=0,dev" + String(IMEI) + ",tswh,1Wo=[6vA0m");
-        this->connState = STATE_CAN_CONN;
+        NBIOT_SERIAL.println("AT+QMTCONN=0,dev" + String(IMEI) + ",tswh,1Wo=[6vA0m");
+        this->connState = NBIOT_CAN_CONN;
       }
     }
 
     // ====================================
 
-    if (this->connState == STATE_CAN_CONN) {
+    if (this->connState == NBIOT_CAN_CONN) {
       idx = this->res.indexOf("+QMTCONN: 0,0,0");
       if (idx != -1) {
-        this->connState = STATE_CAN_PUB;
-        Serial.print("OK connected, can publish");
+        this->connState = NBIOT_CAN_PUB;
+        Serial.print("\r\nOK connected, can publish\r\n");
       }
     }
 
-    if (this->connState == STATE_CAN_PUB) {
+    // ====================================
+
+    if (this->connState == NBIOT_CAN_PUB) {
       idx = this->res.indexOf("ERROR");
       if (idx != -1) {
-        this->connState = STATE_CAN_INIT;
+        this->connState = NBIOT_INIT;
+      }
+    }
+
+    // =================catch ERROR to reset connection===================
+    {
+      idx = this->res.indexOf("ERROR");
+      if (idx != -1) {
+        this->connState = NBIOT_INIT;
       }
     }
   }
@@ -142,18 +157,18 @@ public:
   }
 
   void publish() {
-    if (this->connState == STATE_CAN_PUB) {
+    if (this->connState == NBIOT_CAN_PUB) {
       String content = "{\"seq\":1,\"csq\":" + this->CSQ + ",\"din\":255}";
       int contentLen = content.length();
       String cmd = "AT+QMTPUB=0,0,0,0,rgt/" + String(IMEI) + "/in," + String(contentLen) + "," + content;
       Serial.println("Regular Publish");
-      NBIoT_Serial.println(cmd);
+      NBIOT_SERIAL.println(cmd);
     }
   }
 
   void interact() {
-    if (this->connState == STATE_CAN_PUB || this->connState == STATE_CAN_CONN) {
-      NBIoT_Serial.println("AT+CSQ");
+    if (this->connState == NBIOT_CAN_PUB || this->connState == NBIOT_CAN_CONN) {
+      NBIOT_SERIAL.println("AT+CSQ");
     }
   }
 

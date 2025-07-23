@@ -10,15 +10,16 @@ AsyncTimer timer2(5000);
 
 void setup() {
   Serial.begin(9600);
-  NBIoT_Serial.begin(9600);
+  NBIOT_SERIAL.begin(9600);
   pinMode(9, OUTPUT);
-  delay(300);
   digitalWrite(9, HIGH);
+  delay(300);
+  nbiot.init();
 }
 
 void loop() {
   nbiot.start();
-  nbiot.waitMsg();
+  nbiot.waitForMsg();
 
   if (timer1.isExpired()) {
     nbiot.publish();

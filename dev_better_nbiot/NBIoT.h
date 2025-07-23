@@ -63,10 +63,10 @@ public:
     }
   }
 
-  void reset() {
-    digitalWrite(this->resetPin, HIGH);
-    this->connState = NBIOT_INIT;
-  }
+  // void reset() {
+  //   digitalWrite(this->resetPin, HIGH);
+  //   this->connState = NBIOT_INIT;
+  // }
 
   void waitForMsg() {
     if (NBIOT_SERIAL.available() > 0) {
@@ -129,15 +129,7 @@ public:
 
     // ====================================
 
-    if (this->connState == NBIOT_CAN_PUB) {
-      idx = this->res.indexOf("ERROR");
-      if (idx != -1) {
-        this->connState = NBIOT_INIT;
-      }
-    }
-
-    // =================catch ERROR to reset connection===================
-    {
+    if (this->connState == NBIOT_CAN_CONN || this->connState == NBIOT_CAN_PUB || this->connState == NBIOT_CAN_SUB) {
       idx = this->res.indexOf("ERROR");
       if (idx != -1) {
         this->connState = NBIOT_INIT;

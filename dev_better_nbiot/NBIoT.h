@@ -75,10 +75,11 @@ public:
       if (_byte == '\r') {
         this->handleStateChange();
         this->handleReadMsg();
-        this->handleInteract();
         this->clearResBuffer();
       }
     }
+
+    this->handleInteract();  // must put outside
   }
 
   void handleStateChange() {

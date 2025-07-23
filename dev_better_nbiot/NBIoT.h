@@ -7,7 +7,6 @@
 #define NBIoT_h
 
 #define NBIOT_SERIAL Serial1
-#define TOPIC "rgt/HSWW_TOPIC/out"
 
 #define NBIOT_INIT 0
 #define NBIOT_CAN_START 1
@@ -16,7 +15,7 @@
 #define NBIOT_CAN_PUB 4
 #define NBIOT_CAN_SUB 5
 
-AsyncTimer timerNBIoT(5 * 1000);
+AsyncTimer timerNBIoT(5000);
 
 class NBIoT {
 private:
@@ -26,7 +25,7 @@ private:
 
   unsigned long waitDataMillis = 0;
 
-  String CSQ = "0";
+  String CSQ = "10";
   String IMEI = "861096060571706";
 
   byte resetPin = 30;
@@ -57,19 +56,14 @@ public:
     if (this->connState == NBIOT_INIT) {
       Serial.print("\r\nNBIoT RESET\r\n");
       NBIOT_SERIAL.println("AT+QRST=1");
-      delay(100);
+      delay(10);
       this->connState = NBIOT_CAN_START;
     } else {
       this->connState == NBIOT_INIT;
     }
   }
 
-  // void reset() {
-  //   digitalWrite(this->resetPin, HIGH);
-  //   this->connState = NBIOT_INIT;
-  // }
-
-  void waitForMsg() {
+  void listen() {
     if (NBIOT_SERIAL.available() > 0) {
       char _byte = NBIOT_SERIAL.read();
 
@@ -81,6 +75,7 @@ public:
       if (_byte == '\r') {
         this->handleStateChange();
         this->handleReadMsg();
+        this->handleInteract();
         this->clearResBuffer();
       }
     }
@@ -136,22 +131,6 @@ public:
         this->connState = NBIOT_INIT;
       }
     }
-
-    {
-      if (this->CSQ == "99") {
-        this->connState = NBIOT_INIT;
-      }
-
-      String strNum = this->CSQ;
-      if (!isNumber(strNum)) {
-        this->connState = NBIOT_INIT;
-      }
-
-      int num = strNum.toInt();
-      if (!(num >= 15 && num <= 31)) {
-        this->connState = NBIOT_INIT;
-      }
-    }
   }
 
   void handleReadMsg() {
@@ -162,6 +141,23 @@ public:
       int winStart = idx + 6;
       int winEnd = winStart + 2;
       this->CSQ = this->res.substring(winStart, winEnd);
+
+      if (this->connState == NBIOT_CAN_PUB || this->connState == NBIOT_CAN_SUB) {
+        if (this->CSQ == "99") {
+          this->connState = NBIOT_INIT;
+        }
+
+        String strNum = this->CSQ;
+
+        if (!isNumber(strNum)) {
+          this->connState = NBIOT_INIT;
+        }
+
+        int num = strNum.toInt();
+        if (!(num >= 15 && num <= 31)) {
+          this->connState = NBIOT_INIT;
+        }
+      }
     }
   }
 
@@ -175,9 +171,12 @@ public:
     }
   }
 
-  void interact() {
-    if (this->connState == NBIOT_CAN_PUB || this->connState == NBIOT_CAN_CONN) {
-      NBIOT_SERIAL.println("AT+CSQ");
+  void handleInteract() {
+    if (timerNBIoT.isExpired()) {
+      if (this->connState == NBIOT_CAN_PUB || this->connState == NBIOT_CAN_SUB || this->connState == NBIOT_CAN_CONN) {
+        NBIOT_SERIAL.println("AT+CSQ");
+      }
+      timerNBIoT.refresh();
     }
   }
 

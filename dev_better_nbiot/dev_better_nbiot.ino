@@ -18,17 +18,11 @@ void setup() {
 }
 
 void loop() {
-  nbiot.start();
-  nbiot.waitForMsg();
+  nbiot.listen();
 
   if (timer1.isExpired()) {
     nbiot.publish();
     timer1.refresh();
-  }
-
-  if (timer2.isExpired()) {
-    nbiot.interact();
-    timer2.refresh();
   }
 
   delay(10);

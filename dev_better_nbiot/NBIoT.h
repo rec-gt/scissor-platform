@@ -15,7 +15,7 @@
 #define NBIOT_CAN_PUB 4
 #define NBIOT_CAN_SUB 5
 
-AsyncTimer timerNBIoT(5000);
+AsyncTimer timerNBIoT(5UL * 1000UL);
 
 class NBIoT {
 private:
@@ -26,7 +26,8 @@ private:
   unsigned long waitDataMillis = 0;
 
   String CSQ = "10";
-  String IMEI = "861096060571706";
+  String IMEI = "";
+  // String IMEI = "861096060571706";
 
   byte resetPin = 30;
 
@@ -94,6 +95,7 @@ public:
         NBIOT_SERIAL.println("AT+CPSMS=0");
         NBIOT_SERIAL.println("AT+CSCON=0");
         NBIOT_SERIAL.println("AT+CEDRXS=0,5");
+        NBIOT_SERIAL.println("AT+CGSN=1");
         NBIOT_SERIAL.println("AT+QMTCLOSE=0");
         NBIOT_SERIAL.println("AT+QMTDISC=0");
         NBIOT_SERIAL.println("AT+QMTOPEN=0,8.210.84.24,1880");
@@ -109,7 +111,7 @@ public:
     if (this->connState == NBIOT_CAN_OPEN) {
       idx = this->res.indexOf("+QMTOPEN: 0,0");
       if (idx != -1) {
-        NBIOT_SERIAL.println("AT+QMTCONN=0,dev" + String(IMEI) + ",tswh,1Wo=[6vA0m");
+        NBIOT_SERIAL.println("AT+QMTCONN=0,dev" + String(this->IMEI) + ",tswh,1Wo=[6vA0m");
         this->connState = NBIOT_CAN_CONN;
       }
     }
@@ -137,8 +139,10 @@ public:
   void handleReadMsg() {
     int idx = -1;
 
+    // ================================
+
     idx = this->res.indexOf("+CSQ:");
-    if (idx != -1) {
+    if (idx > -1) {
       int winStart = idx + 6;
       int winEnd = winStart + 2;
       this->CSQ = this->res.substring(winStart, winEnd);
@@ -159,6 +163,12 @@ public:
           this->connState = NBIOT_INIT;
         }
       }
+    }
+
+    // ================================
+    idx = this->res.indexOf("+CGSN:");
+    if (idx > -1) {
+      this->IMEI = this->res.substring(7, 7 + 15);
     }
   }
 

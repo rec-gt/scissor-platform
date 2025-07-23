@@ -123,7 +123,7 @@ public:
       idx = this->res.indexOf("+QMTCONN: 0,0,0");
       if (idx != -1) {
         this->connState = NBIOT_CAN_PUB;
-        Serial.print("\r\nOK connected, can publish\r\n");
+        Serial.print("\r\nCONNECTED, CAN PUBLISH\r\n");
       }
     }
 

@@ -1,6 +1,7 @@
 #include "AsyncTimer.h"
 #include "Enums.h"
 #include "Watchdog.h"
+#include "Utils.h"
 
 #ifndef NBIoT_h
 #define NBIoT_h
@@ -25,7 +26,7 @@ private:
 
   unsigned long waitDataMillis = 0;
 
-  String CSQ = "10";
+  String CSQ = "0";
   String IMEI = "861096060571706";
 
   byte resetPin = 30;
@@ -127,11 +128,27 @@ public:
       }
     }
 
-    // ====================================
+    // ==================FAILURE HANDLING==================
 
     if (this->connState == NBIOT_CAN_CONN || this->connState == NBIOT_CAN_PUB || this->connState == NBIOT_CAN_SUB) {
       idx = this->res.indexOf("ERROR");
       if (idx != -1) {
+        this->connState = NBIOT_INIT;
+      }
+    }
+
+    {
+      if (this->CSQ == "99") {
+        this->connState = NBIOT_INIT;
+      }
+
+      String strNum = this->CSQ;
+      if (!isNumber(strNum)) {
+        this->connState = NBIOT_INIT;
+      }
+
+      int num = strNum.toInt();
+      if (!(num >= 15 && num <= 31)) {
         this->connState = NBIOT_INIT;
       }
     }

@@ -169,6 +169,7 @@ public:
     idx = this->res.indexOf("+CGSN:");
     if (idx > -1) {
       this->IMEI = this->res.substring(7, 7 + 15);
+      Serial.println(this->IMEI);
     }
   }
 

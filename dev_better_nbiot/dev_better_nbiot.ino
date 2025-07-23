@@ -17,7 +17,15 @@ void setup() {
 }
 
 void loop() {
-  nbiot.listen();
+  while (1) {
+    nbiot.listen();
+    if (nbiot.finishInit) {
+      break;
+    } else {
+      delay(10);
+    }
+  }
+
 
   if (timer1.isExpired()) {
     nbiot.publish();

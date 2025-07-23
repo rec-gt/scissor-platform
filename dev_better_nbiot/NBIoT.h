@@ -39,7 +39,7 @@ private:
   }
 
 public:
-  bool initFlag = false;
+  bool finishInit = false;
 
   NBIoT() {
     pinMode(this->resetPin, OUTPUT);
@@ -55,6 +55,9 @@ public:
   void start() {
     if (this->connState == NBIOT_INIT) {
       Serial.print("\r\nNBIoT RESET\r\n");
+      NBIOT_SERIAL.println("AT+QSCLK=0");
+      NBIOT_SERIAL.println("AT+QSCLK=0");
+      NBIOT_SERIAL.println("AT+QSCLK=0");
       NBIOT_SERIAL.println("AT+QRST=1");
       delay(10);
       this->connState = NBIOT_CAN_START;
@@ -86,6 +89,12 @@ public:
     int idx = -1;
 
     // ====================================
+    if (this->connState == NBIOT_INIT) {
+      Serial.print("\r\nNBIoT RESET\r\n");
+      NBIOT_SERIAL.println("AT+QRST=1");
+      this->connState = NBIOT_CAN_START;
+    }
+
     if (this->connState == NBIOT_CAN_START) {
       idx = this->res.indexOf("+IP:");
       if (idx > -1) {
@@ -122,16 +131,20 @@ public:
       idx = this->res.indexOf("+QMTCONN: 0,0,0");
       if (idx != -1) {
         this->connState = NBIOT_CAN_PUB;
+        this->finishInit = true;
         Serial.print("\r\nCONNECTED, CAN PUBLISH\r\n");
       }
     }
 
     // ==================FAILURE HANDLING==================
 
+    idx = this->res.indexOf("+CPIN: NOT READY");
+
     if (this->connState == NBIOT_CAN_CONN || this->connState == NBIOT_CAN_PUB || this->connState == NBIOT_CAN_SUB) {
       idx = this->res.indexOf("ERROR");
       if (idx != -1) {
         this->connState = NBIOT_INIT;
+        Serial.println(this->connState);
       }
     }
   }

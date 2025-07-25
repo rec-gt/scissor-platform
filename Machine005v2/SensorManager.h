@@ -34,44 +34,48 @@ public:
   // === checker ===
 
   bool isOneDetected() {
+    bool _oneDetected = false;
+
     for (int i = 0; i < this->num; i++) {
       if (this->laserSensors[i].isDetected()) {
         this->showOneDetected(i);
-        return true;
+        _oneDetected = true;
+        break;
       }
     }
-    return false;
+
+    return _oneDetected;
   }
 
   bool areAllEscaped() {
-    bool allEscaped = true;
+    bool _allEscaped = true;
 
-    // see if all are escaped
     for (int i = 0; i < this->num; i++) {
-      this->laserSensors[i].setEscapeBuffer(true);
       if (this->laserSensors[i].isDetected()) {
-        allEscaped = false;
+        _allEscaped = false;
+        break;
       }
     }
 
-    // if all are escaped, remove escape-buffer
-    if (allEscaped) {
-      for (int i = 0; i < this->num; i++) {
-        this->laserSensors[i].setEscapeBuffer(false);
-      }
+    for (int i = 0; i < this->num; i++) {
+      this->laserSensors[i].setEscapeBuffer(!_allEscaped);
     }
 
-    return allEscaped;
+    return _allEscaped;
   }
 
   bool areAllHealthy() {
+    bool _allHealthy = true;
+
     for (int i = 0; i < this->num; i++) {
-      if (this->laserSensors[i].healthCheck() == false) {
+      if (!this->laserSensors[i].isHealthy()) {
         this->showOneUnhealthy(i);
-        return false;
+        _allHealthy = false;
+        break;
       }
     }
-    return true;
+
+    return _allHealthy;
   }
 
   // === Setter ===

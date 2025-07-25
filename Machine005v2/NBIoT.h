@@ -20,6 +20,7 @@ AsyncTimer timerRESET(5UL * 1000UL);
 AsyncTimer timerINIT(1UL * 10UL);
 AsyncTimer timerIP(10000UL);
 AsyncTimer timerIMEI(10000UL);
+AsyncTimer timerCSQ(10000UL);
 AsyncTimer timerCGATT(10000UL);
 AsyncTimer timerOPEN(10000UL);
 AsyncTimer timerCONN(10000UL);
@@ -39,6 +40,8 @@ private:
     STATE_FINISH_SETUP,
     STATE_WAITING_IMEI,
     STATE_FINISH_IMEI,
+    STATE_WAITING_CSQ,
+    STATE_FINISH_CSQ,
     STATE_WAITING_CGATT,
     STATE_FINISH_CGATT,
     STATE_WAITING_OPEN,
@@ -87,9 +90,6 @@ public:
     digitalWrite(this->resetPin, LOW);
   }
 
-  void changeStateTo(NBIOT_STATE state) {
-  }
-
   void resetHardware() {
     digitalWrite(this->resetPin, HIGH);
     if (timerRESET.autoExpired(800UL)) {
@@ -103,6 +103,7 @@ public:
   }
 
   void init() {
+    Serial.print("\r\n[NBIOT START]\r\n");
     nbiot_wdt.enable();
     nbiot_wdt.setCallback([]() {
       softReset = true;
@@ -178,6 +179,13 @@ public:
     }
 
     if (this->connState == STATE_FINISH_IMEI) {
+      if (timerCSQ.autoExpired(1000UL)) {
+        NBIOT_SERIAL.println("AT+CSQ");
+        this->connState = STATE_WAITING_CSQ;
+      }
+    }
+
+    if (this->connState == STATE_FINISH_CSQ) {
       if (timerCGATT.autoExpired(1000UL)) {
         NBIOT_SERIAL.println("AT+CGATT?");
         this->connState = STATE_WAITING_CGATT;
@@ -249,6 +257,15 @@ public:
       if (idx > -1) {
         Serial.print("\r\FINISH GETTING IMEI\r\n");
         this->connState = STATE_FINISH_IMEI;
+        nbiot_wdt.pet();
+      }
+    }
+
+    if (this->connState == STATE_WAITING_CSQ) {
+      idx = this->res.indexOf("+CSQ:");
+      if (idx > -1) {
+        Serial.print("\r\FINISH GETTING CSQ\r\n");
+        this->connState = STATE_FINISH_CSQ;
         nbiot_wdt.pet();
       }
     }

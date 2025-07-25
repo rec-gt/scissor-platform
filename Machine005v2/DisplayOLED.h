@@ -28,7 +28,7 @@ public:
     u8g2.setFontDirection(0);
     u8g2.clearDisplay();
 
-    this->print("", "正在加載系統...", "", 1);
+    this->print("", "正在加載系統...", "", DISPLAY_SYS_INIT);
     delay(1000);
   }
 
@@ -45,6 +45,17 @@ public:
       u8g2.print(line3);
       u8g2.sendBuffer();
     }
+  }
+
+  void printForce(char* line1, char* line2, char* line3) {
+    u8g2.clearBuffer();
+    u8g2.setCursor(0, 18);
+    u8g2.print(line1);
+    u8g2.setCursor(0, 40);
+    u8g2.print(line2);
+    u8g2.setCursor(0, 62);
+    u8g2.print(line3);
+    u8g2.sendBuffer();
   }
 
   ~DisplayOLED(){};

@@ -20,8 +20,10 @@ private:
   float measuredDistance;
 
   // for debounce
-  unsigned long lastMillis;
+  unsigned long lastDetectedMillis;
+  unsigned long lastEscapedMillis;
   bool detected = false;
+  bool healthy = false;
 
 public:
   LaserSensor() {}
@@ -41,21 +43,46 @@ public:
     bool measurement = this->measuredDistance <= threshold;
 
     if (measurement) {
-      if ((millis() - this->lastMillis) > 750) {
-        this->detected = true;
+      if (!this->detected) {
+        if ((millis() - this->lastDetectedMillis) > 50) {
+          this->detected = true;
+        }
+      } else {
+        this->lastEscapedMillis = millis();
       }
     } else {
-      this->detected = false;
-      this->lastMillis = millis();
+      if (this->detected) {
+        if ((millis() - this->lastEscapedMillis) > 50) {
+          this->detected = false;
+        }
+      } else {
+        this->lastDetectedMillis = millis();
+      }
+    }
+
+    // if (measurement) {
+    //   if ((millis() - this->lastMillis) > 300) {
+    //     this->detected = true;
+    //   }
+    // } else {
+    //   this->detected = false;
+    //   this->lastMillis = millis();
+    // }
+
+    // === Failure Detection ===
+    if (this->reading > 180) {
+      this->healthy = true;
+    } else {
+      this->healthy = false;
     }
   }
 
   float avgRead() {
     unsigned long avg = 0;
-    for (size_t i = 0; i < 64; i++) {
+    for (size_t i = 0; i < 32; i++) {
       avg += analogRead(this->pin);
     };
-    return avg / 64.;
+    return avg / 32.;
   }
 
   float calcDistance() {
@@ -79,18 +106,16 @@ public:
     return this->detected;
   }
 
+  bool isHealthy() {
+    return this->healthy;
+  }
+
   float getReading() {
     return this->reading;
   }
 
   float getDistance() {
     return this->measuredDistance;
-  }
-
-  // === utils ===
-
-  bool healthCheck() {
-    return analogRead(this->pin) > 50;  // normal sensor reading should be 200+, if sensor fails, reading drops to ~0
   }
 
   ~LaserSensor(){};

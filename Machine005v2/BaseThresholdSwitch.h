@@ -1,12 +1,14 @@
 #include "Arduino.h"
 #ifndef baseThresholdSwitch_h
 #define baseThresholdSwitch_h
+
 class BaseThresholdSwitch {
 private:
   byte pin;
   byte state = HIGH;
   byte lastState = HIGH;
   unsigned long lastMillis;
+
 public:
   BaseThresholdSwitch(byte pin)
     : pin(pin) {

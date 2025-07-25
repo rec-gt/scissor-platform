@@ -62,9 +62,13 @@ void setup() {
   trafficLight.off();
   warningSystem.off();
   displayOLED.init();
-  nbiot.init();
-  displayOLED.print("IoT CSQ", nbiot.CSQ.c_str(), "", DISPLAY_IOT_CSQ);
 
+  displayOLED.print("", "正在加載IoT系統...", "", DISPLAY_IOT_INIT);
+  nbiot.init();
+  displayOLED.print("", "IoT CSQ", nbiot.CSQ.c_str(), DISPLAY_IOT_CSQ);
+  delay(3000);
+  displayOLED.print("", "IoT CGATT", nbiot.CGATT.c_str(), DISPLAY_IOT_CGATT);
+  delay(3000);
   powerLight.on();
   detectSystem.set(SYS_RUNNING);
   delay(500);
@@ -72,11 +76,12 @@ void setup() {
 }
 
 void loop() {
+  // === Debugging ===
+  // sensorManager.printOne(0);
+  // sensorManager.printAll(); // 注意，開啓後會帶來延遲
+
   // === handle NBIoT===
   nbiot.loop();
-
-  // === handling sensors ===
-  sensorManager.listenAll();
 
   // === handling press button ===
   pressButton.listen();
@@ -85,6 +90,9 @@ void loop() {
   baseThresholdSwitch.listen();
   sensorManager.setAllBaseThreshold(baseThresholdSwitch.on());
 
+  // === handling sensors ===
+  sensorManager.listenAll();
+
   // === handling detection system ===
   if (detectSystem.is(SYS_RUNNING)) {
     relay.connect();
@@ -92,7 +100,7 @@ void loop() {
     tenSecondsLight.off();
     trafficLight.listen(sensorManager.getMinDistance());
 
-    detectSystem.publishStatus(3);
+    // detectSystem.publishStatus(3);
 
     if (sensorManager.isOneDetected()) {
       detectSystem.set(SYS_STOPPED);
@@ -108,7 +116,7 @@ void loop() {
     tenSecondsLight.on();
     trafficLight.red();
 
-    detectSystem.publishStatus(1);
+    // detectSystem.publishStatus(1);
 
     if (sensorManager.areAllEscaped()) {  // 1. sensor keep detection, once escape from obstacle, switch to RUNNING
       detectSystem.set(SYS_RUNNING);
@@ -123,9 +131,11 @@ void loop() {
     relay.connect();
     warningSystem.off();
     tenSecondsLight.off();
-    countdownTimer.countdown(countDownCallback);
+    countdownTimer.countdown([]() {
+      detectSystem.set(SYS_RUNNING);
+    });
 
-    detectSystem.publishStatus(2);
+    // detectSystem.publishStatus(2);
 
   } else if (detectSystem.is(SYS_FAILURE)) {
     relay.cut();
@@ -137,16 +147,10 @@ void loop() {
   }
 
   // === send MQTT ===
-  detectSystem.publishStatus();
+  // detectSystem.publishStatus();
 
   // === pet the dog ===
 
-  // === Debugging ===
-  // sensorManager.printOne(0);
-  // sensorManager.printAll();
-  delay(10);
-}
 
-void countDownCallback() {
-  detectSystem.set(SYS_RUNNING);
+  delay(50);
 }

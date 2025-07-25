@@ -63,7 +63,7 @@ void setup() {
   warningSystem.off();
   displayOLED.init();
   nbiot.init();
-  displayOLED.print("IoT CSQ", nbiot.CSQ.c_str(), "", 500);
+  displayOLED.print("IoT CSQ", nbiot.CSQ.c_str(), "", DISPLAY_IOT_CSQ);
 
   powerLight.on();
   detectSystem.set(SYS_RUNNING);

@@ -33,7 +33,7 @@ public:
           "秒"
         };
         char* c = utils.concatCharN(cArr, 3);
-        displayOLED.print("", c, "", (300 + remainingTime));
+        displayOLED.print("", c, "", (DISPLAY_SYS_COUNTDOWN_0 + remainingTime));
       }
     }
 

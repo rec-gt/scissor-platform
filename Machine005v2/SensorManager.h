@@ -93,7 +93,7 @@ public:
 
     char* c = utils.concatCharN(charArr, 3);
 
-    displayOLED.print("", c, "檢測到障礙物", 100 + i);
+    displayOLED.print("", c, "檢測到障礙物", DISPLAY_SYS_DETECTED_0 + i);
   }
 
   void showOneUnhealthy(byte i) {
@@ -105,7 +105,7 @@ public:
 
     char* c = utils.concatCharN(charArr, 3);
 
-    displayOLED.print("", c, "", 500);
+    displayOLED.print("", c, "", DISPLAY_SENSOR_UNHEALTHY);
   }
 
   // === getter ===

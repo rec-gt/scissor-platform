@@ -1,0 +1,26 @@
+#ifndef SystemEnums_h
+#define SystemEnums_h
+
+#define CONST_LONGER_THRESHOLED 900
+#define CONST_SHORTER_THRESHOLED 550
+#define CONST_ESCAPE_BUFFER 100
+
+enum SystemStatus {
+  SYS_INIT,
+  SYS_STARTING,
+  SYS_RUNNING,
+  SYS_STOPPED,
+  SYS_ALLOW_10S,
+  SYS_FAILURE
+};
+
+const char* STATUS_STR[] = { "SYS_INIT", "SYS_STARTING", "SYS_RUNNING", "SYS_STOPPED", "SYS_ALLOW_10S", "SYS_FAILURE" };
+
+enum TrafficStatus {
+  TRAFFIC_OFF,
+  TRAFFIC_RED,
+  TRAFFIC_YELLOW,
+  TRAFFIC_GREEN
+};
+
+#endif

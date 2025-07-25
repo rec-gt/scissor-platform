@@ -63,6 +63,8 @@ void setup() {
   warningSystem.off();
   displayOLED.init();
   nbiot.init();
+  displayOLED.print("IoT CSQ", nbiot.CSQ, "", 500);
+
   powerLight.on();
   detectSystem.set(SYS_RUNNING);
   delay(500);
@@ -141,7 +143,7 @@ void loop() {
 
   // === Debugging ===
   // sensorManager.printOne(0);
-  sensorManager.printAll();
+  // sensorManager.printAll();
   delay(10);
 }
 

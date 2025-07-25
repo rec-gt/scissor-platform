@@ -54,17 +54,14 @@ private:
     STATE_QUERY_STAT_CGATT,
   };
 
+  bool finishInit = false;
+
   byte connState = STATE_DEFAULT;
   byte pubState = STATE_QUERY_DEFAULT;
 
   String res = "";
 
   unsigned long waitDataMillis = 0;
-
-  String CSQ = "";
-  String IMEI = "";
-  // String IMEI = "861096060571706";
-  String CGATT = "";
 
   byte resetPin = 11;
   bool csqReq = false;
@@ -79,7 +76,11 @@ private:
   }
 
 public:
-  bool finishInit = false;
+
+  String CSQ = "";
+  String IMEI = "";
+  // String IMEI = "861096060571706";
+  String CGATT = "";
 
   NBIoT() {
     pinMode(this->resetPin, OUTPUT);

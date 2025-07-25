@@ -25,7 +25,7 @@ public:
     }
 
     if (status == SYS_RUNNING) {
-      displayOLED.print("", "系統運作中", "", 200);
+      displayOLED.print("", "系統運作中", "", DISPLAY_SYS_RUNNING);
     }
 
     this->lastStatus = status;

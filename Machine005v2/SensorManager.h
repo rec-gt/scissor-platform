@@ -29,6 +29,8 @@ public:
     for (int i = 0; i < this->num; i++) {
       this->laserSensors[i].listen();
     }
+    // also listen to 10 sensors status 
+    this->listenSensorsStatus();
   }
 
   // === checker ===
@@ -125,7 +127,7 @@ public:
     return minDistance;
   }
 
-  void getSensorsStatus() {
+  void listenSensorsStatus() {
     byte resX8 = 255;
     for (size_t i = 0; i < 8; i++) {
       if (this->laserSensors[i].isDetected()) {

@@ -62,7 +62,6 @@ void setup() {
   trafficLight.off();
   warningSystem.off();
   displayOLED.init();
-
   displayOLED.print("", "正在加載IoT系統...", "", DISPLAY_IOT_INIT);
   nbiot.init();
   displayOLED.print("", "IoT CSQ", nbiot.CSQ.c_str(), DISPLAY_IOT_CSQ);
@@ -93,6 +92,9 @@ void loop() {
   // === handling sensors ===
   sensorManager.listenAll();
 
+  // === handling publish message ===
+  detectSystem.setPublishMsg();
+
   // === handling detection system ===
   if (detectSystem.is(SYS_RUNNING)) {
     relay.connect();
@@ -100,7 +102,6 @@ void loop() {
     tenSecondsLight.off();
     trafficLight.listen(sensorManager.getMinDistance());
 
-    // detectSystem.publishStatus(3);
 
     if (sensorManager.isOneDetected()) {
       detectSystem.set(SYS_STOPPED);
@@ -115,8 +116,6 @@ void loop() {
     warningSystem.on();
     tenSecondsLight.on();
     trafficLight.red();
-
-    // detectSystem.publishStatus(1);
 
     if (sensorManager.areAllEscaped()) {  // 1. sensor keep detection, once escape from obstacle, switch to RUNNING
       detectSystem.set(SYS_RUNNING);
@@ -135,8 +134,6 @@ void loop() {
       detectSystem.set(SYS_RUNNING);
     });
 
-    // detectSystem.publishStatus(2);
-
   } else if (detectSystem.is(SYS_FAILURE)) {
     relay.cut();
     warningSystem.on();
@@ -146,11 +143,7 @@ void loop() {
     }
   }
 
-  // === send MQTT ===
-  // detectSystem.publishStatus();
-
   // === pet the dog ===
 
-
-  delay(50);
+  delay(100);
 }

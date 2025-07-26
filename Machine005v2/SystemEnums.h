@@ -54,5 +54,12 @@ enum DisplayState {
   DISPLAY_IOT_CGATT,
 };
 
+enum PublishState {
+  NULL_PUBLISH_STATE,
+  PUBLISH_REGULAR,
+  PUBLISH_DETECTED,
+  PUBLISH_ESCAPED,
+};
+
 
 #endif

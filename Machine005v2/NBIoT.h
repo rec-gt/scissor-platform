@@ -91,6 +91,7 @@ private:
 
   bool finishInit = false;
 
+  byte prevConnState = STATE_DEFAULT;
   byte connState = STATE_DEFAULT;
   byte pubState = PIPELINE_DEFAULT;
 
@@ -117,7 +118,7 @@ public:
 
   NBIoT() {
     pinMode(this->resetPin, OUTPUT);
-    digitalWrite(this->resetPin, LOW);
+    digitalWrite(this->resetPin, HIGH);
 
     nbiotDisplay.add(NBIoTDisplayItem(STATE_DEFAULT, DISPLAY_IOT_INIT, "正在加載IoT系統"));
     nbiotDisplay.add(NBIoTDisplayItem(STATE_WAITING_IP, DISPLAY_IOT_WAITING_IP, "WAITING IP..."));
@@ -139,8 +140,9 @@ public:
   }
 
   void resetHardware() {
+    // Serial.print("\r\nRESET HARDWARE\r\n");
     digitalWrite(this->resetPin, HIGH);
-    if (timerRESET.autoExpired(800UL)) {
+    if (timerRESET.autoExpired(500UL)) {
       digitalWrite(this->resetPin, LOW);
     }
   }
@@ -151,7 +153,7 @@ public:
   }
 
   void init() {
-    Serial.print("\r\n NBIOT START \r\n");
+    Serial.print("\r\n=== NBIOT START ===\r\n");
     nbiot_wdt.setCallback([]() {
       softReset = true;
     });
@@ -160,32 +162,35 @@ public:
   }
 
   void handleDisplay() {
-    for (size_t i = 0; i < nbiotDisplay.arraySize; i++) {
-      if (this->connState == nbiotDisplay.items[i].nbiotState) {
-        if (nbiotDisplay.items[i].sentOnce) {
-          continue;
-        }
-
-        nbiotDisplay.items[i].sentOnce = true;
-
-        String msgStr = nbiotDisplay.items[i].msg;
-        if (this->connState == STATE_FINISH_IP) {
-          msgStr += " " + this->IP;
-        } else if (this->connState == STATE_FINISH_IMEI) {
-          msgStr += " " + this->IMEI;
-        } else if (this->connState == STATE_FINISH_CSQ) {
-          msgStr += " " + this->CSQ;
-        } else if (this->connState == STATE_FINISH_CGATT) {
-          msgStr += " " + this->CGATT;
-        } else if (this->connState == STATE_FINISH_CEREG) {
-          msgStr += " " + this->CEREG;
-        }
-
-        char* msg = msgStr.c_str();
-
-        displayOLED.print("", msg, "", nbiotDisplay.items[i].displayState);
-        delay(1000);
-      }
+    if (this->connState == STATE_WAITING_IP) {
+      displayOLED.print("", "WAITING IP...", "", DISPLAY_IOT_WAITING_IP);
+    } else if (this->connState == STATE_FINISH_IP) {
+      displayOLED.print("", "IP", (this->IP).c_str(), DISPLAY_IOT_FINISH_IP);
+      delay(500);
+    } else if (this->connState == STATE_WAITING_IMEI) {
+      displayOLED.print("", "WAITING IMEI...", "", DISPLAY_IOT_WAITING_IMEI);
+    } else if (this->connState == STATE_FINISH_IMEI) {
+      displayOLED.print("", "IMEI", (this->IMEI).c_str(), DISPLAY_IOT_FINISH_IMEI);
+    } else if (this->connState == STATE_WAITING_CSQ) {
+      displayOLED.print("", "WAITING CSQ...", "", DISPLAY_IOT_WAITING_CSQ);
+    } else if (this->connState == STATE_FINISH_CSQ) {
+      displayOLED.print("", "CSQ", (this->CSQ).c_str(), DISPLAY_IOT_FINISH_CSQ);
+    } else if (this->connState == STATE_WAITING_CGATT) {
+      displayOLED.print("", "WAITING CGATT...", "", DISPLAY_IOT_WAITING_CGATT);
+    } else if (this->connState == STATE_FINISH_CGATT) {
+      displayOLED.print("", "CGATT", (this->CGATT).c_str(), DISPLAY_IOT_FINISH_CGATT);
+    } else if (this->connState == STATE_WAITING_CEREG) {
+      displayOLED.print("", "WAITING CEREG...", "", DISPLAY_IOT_WAITING_CEREG);
+    } else if (this->connState == STATE_FINISH_CEREG) {
+      displayOLED.print("", "CEREG", (this->CEREG).c_str(), DISPLAY_IOT_FINISH_CEREG);
+    } else if (this->connState == STATE_WAITING_OPEN) {
+      displayOLED.print("", "IOT OPENING...", "", DISPLAY_IOT_WAITING_OPEN);
+    } else if (this->connState == STATE_FINISH_OPEN) {
+      displayOLED.print("", "FINISH IOT OPEN", "", DISPLAY_IOT_FINISH_OPEN);
+    } else if (this->connState == STATE_WAITING_CONN) {
+      displayOLED.print("", "IOT CONNECTING...", "", DISPLAY_IOT_WAITING_CONN);
+    } else if (this->connState == STATE_FINISH_CONN) {
+      displayOLED.print("", "FINISH IOT CONN", "", DISPLAY_IOT_FINISH_CONN);
     }
   }
 
@@ -215,14 +220,9 @@ public:
     if (this->connState == STATE_DEFAULT) {
       nbiot_wdt.enable();
       this->resetHardware();
-      if (nbiotTimer.autoExpired(1200UL)) {
-        // Serial.print("\r\nNBIOT STATE DEFAULT\r\n");
-        // NBIOT_SERIAL.println("AT+QSCLK=0");
-        // delay(10);
-        // NBIOT_SERIAL.println("AT+CFUN=1");
-        // delay(10);
-        // NBIOT_SERIAL.println("AT+QRST=1");
-        // delay(10);
+      if (nbiotTimer.autoExpired(1000)) {
+        NBIOT_SERIAL.println("AT+QSCLK=0");
+        delay(10);
         this->connState = STATE_WAITING_IP;
       }
     }

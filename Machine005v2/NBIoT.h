@@ -20,17 +20,20 @@ public:
   byte nbiotState = 0;
   byte displayState = 0;
   String msg = "";
+  bool sentOnce = false;
 
   NBIoTDisplayItem() {
     nbiotState = 0;
     displayState = 0;
     msg = "";
+    sentOnce = false;
   }
 
   NBIoTDisplayItem(byte nbiotState, byte displayState, String msg) {
     this->nbiotState = nbiotState;
     this->displayState = displayState;
     this->msg = msg;
+    this->sentOnce = false;
   }
 
   ~NBIoTDisplayItem() {}
@@ -148,7 +151,7 @@ public:
   }
 
   void init() {
-    Serial.print("\r\n[NBIOT STARTING]\r\n");
+    Serial.print("\r\n NBIOT START \r\n");
     nbiot_wdt.setCallback([]() {
       softReset = true;
     });
@@ -159,6 +162,12 @@ public:
   void handleDisplay() {
     for (size_t i = 0; i < nbiotDisplay.arraySize; i++) {
       if (this->connState == nbiotDisplay.items[i].nbiotState) {
+        if (nbiotDisplay.items[i].sentOnce) {
+          continue;
+        }
+
+        nbiotDisplay.items[i].sentOnce = true;
+
         String msgStr = nbiotDisplay.items[i].msg;
         if (this->connState == STATE_FINISH_IP) {
           msgStr += " " + this->IP;
@@ -169,7 +178,7 @@ public:
         } else if (this->connState == STATE_FINISH_CGATT) {
           msgStr += " " + this->CGATT;
         } else if (this->connState == STATE_FINISH_CEREG) {
-          msgStr += " " + this->CGATT;
+          msgStr += " " + this->CEREG;
         }
 
         char* msg = msgStr.c_str();
@@ -186,12 +195,12 @@ public:
       if (softReset) {
         softReset = false;
         this->connState = STATE_DEFAULT;
+        this->pubState = PIPELINE_DEFAULT;
         Serial.print("\r\n[SOFT_RESET]\r\n");
       }
 
       this->ask();
       this->listen();
-
 
       if (this->finishInit) {
         break;
@@ -206,18 +215,14 @@ public:
     if (this->connState == STATE_DEFAULT) {
       nbiot_wdt.enable();
       this->resetHardware();
-      if (nbiotTimer.autoExpired(1000UL)) {
-        Serial.print("\r\nSTARTING NBIOT\r\n");
-        NBIOT_SERIAL.println("AT+QSCLK=0");
-        delay(10);
-        NBIOT_SERIAL.println("AT+CFUN=1");
-        delay(10);
-        NBIOT_SERIAL.println("AT+QRST=1");
-        delay(10);
-        NBIOT_SERIAL.println("AT+QSCLK=0");
-        delay(10);
-        NBIOT_SERIAL.println("AT+CFUN=1");
-        delay(10);
+      if (nbiotTimer.autoExpired(1200UL)) {
+        // Serial.print("\r\nNBIOT STATE DEFAULT\r\n");
+        // NBIOT_SERIAL.println("AT+QSCLK=0");
+        // delay(10);
+        // NBIOT_SERIAL.println("AT+CFUN=1");
+        // delay(10);
+        // NBIOT_SERIAL.println("AT+QRST=1");
+        // delay(10);
         this->connState = STATE_WAITING_IP;
       }
     }
@@ -227,12 +232,6 @@ public:
       NBIOT_SERIAL.println("AT+CFUN=1");
       delay(10);
       NBIOT_SERIAL.println("AT+QSCLK=0");
-      delay(10);
-      NBIOT_SERIAL.println("AT+CFUN=1");
-      delay(10);
-      NBIOT_SERIAL.println("AT+QSCLK=0");
-      delay(10);
-      NBIOT_SERIAL.println("AT+CFUN=1");
       delay(10);
       NBIOT_SERIAL.println("AT+CPSMS=0");
       delay(10);
@@ -273,7 +272,7 @@ public:
 
     if (this->connState == STATE_FINISH_CGATT) {
       if (nbiotTimer.autoExpired(1000UL)) {
-        Serial.print("\r\nOPENING MQTT\r\n");
+        Serial.print("\r\nGETTING CEREG\r\n");
         NBIOT_SERIAL.println("AT+CEREG?");
         this->connState = STATE_WAITING_CEREG;
       }
@@ -341,7 +340,7 @@ public:
 
         char _byte = NBIOT_SERIAL.read();
 
-        // Serial.print(_byte);
+        Serial.print(_byte);
 
         if (_byte != '\r' && _byte != '\n') {
           this->res += _byte;

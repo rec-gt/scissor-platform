@@ -106,6 +106,7 @@ private:
   }
 
 public:
+  String IP = "";
   String CSQ = "";
   String IMEI = "";
   String CGATT = "";
@@ -117,17 +118,17 @@ public:
 
     nbiotDisplay.add(NBIoTDisplayItem(STATE_DEFAULT, DISPLAY_IOT_INIT, "正在加載IoT系統"));
     nbiotDisplay.add(NBIoTDisplayItem(STATE_WAITING_IP, DISPLAY_IOT_WAITING_IP, "WAITING IP..."));
-    nbiotDisplay.add(NBIoTDisplayItem(STATE_FINISH_IP, DISPLAY_IOT_FINISH_IP, "IP OK"));
+    nbiotDisplay.add(NBIoTDisplayItem(STATE_FINISH_IP, DISPLAY_IOT_FINISH_IP, "IP"));
     nbiotDisplay.add(NBIoTDisplayItem(STATE_WAITING_SETUP, DISPLAY_IOT_WAITING_SETUP, "SETTING UP IOT..."));
     nbiotDisplay.add(NBIoTDisplayItem(STATE_FINISH_SETUP, DISPLAY_IOT_FINISH_SETUP, "IOT SETUP OK"));
     nbiotDisplay.add(NBIoTDisplayItem(STATE_WAITING_IMEI, DISPLAY_IOT_WAITING_IMEI, "WAITING IMEI..."));
-    nbiotDisplay.add(NBIoTDisplayItem(STATE_FINISH_IMEI, DISPLAY_IOT_FINISH_IMEI, "IMEI " + String(this->IMEI)));
+    nbiotDisplay.add(NBIoTDisplayItem(STATE_FINISH_IMEI, DISPLAY_IOT_FINISH_IMEI, "IMEI"));
     nbiotDisplay.add(NBIoTDisplayItem(STATE_WAITING_CSQ, DISPLAY_IOT_WAITING_CSQ, "WAITING CSQ..."));
-    nbiotDisplay.add(NBIoTDisplayItem(STATE_FINISH_CSQ, DISPLAY_IOT_FINISH_CSQ, "CSQ " + String(this->CSQ)));
+    nbiotDisplay.add(NBIoTDisplayItem(STATE_FINISH_CSQ, DISPLAY_IOT_FINISH_CSQ, "CSQ"));
     nbiotDisplay.add(NBIoTDisplayItem(STATE_WAITING_CGATT, DISPLAY_IOT_WAITING_CGATT, "WAITING CGATT..."));
-    nbiotDisplay.add(NBIoTDisplayItem(STATE_FINISH_CGATT, DISPLAY_IOT_FINISH_CGATT, "CGATT " + String(this->CGATT)));
+    nbiotDisplay.add(NBIoTDisplayItem(STATE_FINISH_CGATT, DISPLAY_IOT_FINISH_CGATT, "CGATT"));
     nbiotDisplay.add(NBIoTDisplayItem(STATE_WAITING_CEREG, DISPLAY_IOT_WAITING_CEREG, "WAITING CEREG..."));
-    nbiotDisplay.add(NBIoTDisplayItem(STATE_FINISH_CEREG, DISPLAY_IOT_FINISH_CEREG, "CEREG " + String(this->CEREG)));
+    nbiotDisplay.add(NBIoTDisplayItem(STATE_FINISH_CEREG, DISPLAY_IOT_FINISH_CEREG, "CEREG"));
     nbiotDisplay.add(NBIoTDisplayItem(STATE_WAITING_OPEN, DISPLAY_IOT_WAITING_OPEN, "IOT OPENING..."));
     nbiotDisplay.add(NBIoTDisplayItem(STATE_FINISH_OPEN, DISPLAY_IOT_FINISH_OPEN, "IOT OPEN OK"));
     nbiotDisplay.add(NBIoTDisplayItem(STATE_WAITING_CONN, DISPLAY_IOT_WAITING_CONN, "IOT CONNECTING..."));
@@ -156,10 +157,23 @@ public:
   }
 
   void handleDisplay() {
-
     for (size_t i = 0; i < nbiotDisplay.arraySize; i++) {
-      if (connState == nbiotDisplay.items[i].nbiotState) {
-        char* msg = (nbiotDisplay.items[i].msg).c_str();
+      if (this->connState == nbiotDisplay.items[i].nbiotState) {
+        String msgStr = nbiotDisplay.items[i].msg;
+        if (this->connState == STATE_FINISH_IP) {
+          msgStr += " " + this->IP;
+        } else if (this->connState == STATE_FINISH_IMEI) {
+          msgStr += " " + this->IMEI;
+        } else if (this->connState == STATE_FINISH_CSQ) {
+          msgStr += " " + this->CSQ;
+        } else if (this->connState == STATE_FINISH_CGATT) {
+          msgStr += " " + this->CGATT;
+        } else if (this->connState == STATE_FINISH_CEREG) {
+          msgStr += " " + this->CGATT;
+        }
+
+        char* msg = msgStr.c_str();
+
         displayOLED.print("", msg, "", nbiotDisplay.items[i].displayState);
         delay(1000);
       }
@@ -210,7 +224,11 @@ public:
 
     if (this->connState == STATE_FINISH_IP) {
       Serial.print("\r\nCONGIFERING NBIOT\r\n");
+      NBIOT_SERIAL.println("AT+CFUN=1");
+      delay(10);
       NBIOT_SERIAL.println("AT+QSCLK=0");
+      delay(10);
+      NBIOT_SERIAL.println("AT+CFUN=1");
       delay(10);
       NBIOT_SERIAL.println("AT+QSCLK=0");
       delay(10);
@@ -387,6 +405,15 @@ public:
       }
     }
 
+    if (this->connState == STATE_WAITING_CEREG) {
+      idx = this->res.indexOf("+CEREG:");
+      if (idx > -1) {
+        Serial.print("\r\nFINISH GETTING CEREG\r\n");
+        this->connState = STATE_FINISH_CEREG;
+        nbiot_wdt.pet();
+      }
+    }
+
     if (this->connState == STATE_WAITING_OPEN) {
       idx = this->res.indexOf("+QMTOPEN: 0,0");
       if (idx > -1) {
@@ -449,6 +476,12 @@ public:
 
   void handleReadMsg() {
     int idx = -1;
+    idx = this->res.indexOf("+IP:");
+    if (idx > -1) {
+      this->IP = this->res.substring(5, 5 + 16);
+      // Serial.print(this->IP);
+    }
+
     idx = this->res.indexOf("+CGSN:");
     if (idx > -1) {
       this->IMEI = this->res.substring(7, 7 + 15);

@@ -39,7 +39,7 @@ public:
 class NBIoTDisplay {
 public:
   int arraySize = 0;
-  NBIoTDisplayItem items[20];
+  NBIoTDisplayItem items[32];
 
   NBIoTDisplay() {}
 
@@ -65,6 +65,8 @@ private:
     STATE_FINISH_CSQ,
     STATE_WAITING_CGATT,
     STATE_FINISH_CGATT,
+    STATE_WAITING_CEREG,
+    STATE_FINISH_CEREG,
     STATE_WAITING_OPEN,
     STATE_FINISH_OPEN,
     STATE_WAITING_CONN,
@@ -113,16 +115,19 @@ public:
     pinMode(this->resetPin, OUTPUT);
     digitalWrite(this->resetPin, LOW);
 
+    nbiotDisplay.add(NBIoTDisplayItem(STATE_DEFAULT, DISPLAY_IOT_INIT, "正在加載IoT系統"));
     nbiotDisplay.add(NBIoTDisplayItem(STATE_WAITING_IP, DISPLAY_IOT_WAITING_IP, "WAITING IP..."));
-    nbiotDisplay.add(NBIoTDisplayItem(STATE_FINISH_IP, DISPLAY_IOT_FINISH_GET_IP, "IP OK"));
+    nbiotDisplay.add(NBIoTDisplayItem(STATE_FINISH_IP, DISPLAY_IOT_FINISH_IP, "IP OK"));
     nbiotDisplay.add(NBIoTDisplayItem(STATE_WAITING_SETUP, DISPLAY_IOT_WAITING_SETUP, "SETTING UP IOT..."));
-    nbiotDisplay.add(NBIoTDisplayItem(STATE_FINISH_SETUP, DISPLAY_IOT_FINISH_SETUP, "SETTING UP IOT..."));
+    nbiotDisplay.add(NBIoTDisplayItem(STATE_FINISH_SETUP, DISPLAY_IOT_FINISH_SETUP, "IOT SETUP OK"));
     nbiotDisplay.add(NBIoTDisplayItem(STATE_WAITING_IMEI, DISPLAY_IOT_WAITING_IMEI, "WAITING IMEI..."));
-    nbiotDisplay.add(NBIoTDisplayItem(STATE_FINISH_IMEI, DISPLAY_IOT_FINISH_GET_IMEI, "IMEI OK"));
+    nbiotDisplay.add(NBIoTDisplayItem(STATE_FINISH_IMEI, DISPLAY_IOT_FINISH_IMEI, "IMEI " + String(this->IMEI)));
     nbiotDisplay.add(NBIoTDisplayItem(STATE_WAITING_CSQ, DISPLAY_IOT_WAITING_CSQ, "WAITING CSQ..."));
-    nbiotDisplay.add(NBIoTDisplayItem(STATE_FINISH_CSQ, DISPLAY_IOT_FINISH_GET_CSQ, "CSQ OK"));
+    nbiotDisplay.add(NBIoTDisplayItem(STATE_FINISH_CSQ, DISPLAY_IOT_FINISH_CSQ, "CSQ " + String(this->CSQ)));
     nbiotDisplay.add(NBIoTDisplayItem(STATE_WAITING_CGATT, DISPLAY_IOT_WAITING_CGATT, "WAITING CGATT..."));
-    nbiotDisplay.add(NBIoTDisplayItem(STATE_FINISH_CGATT, DISPLAY_IOT_FINISH_GET_CGATT, "CGATT OK"));
+    nbiotDisplay.add(NBIoTDisplayItem(STATE_FINISH_CGATT, DISPLAY_IOT_FINISH_CGATT, "CGATT " + String(this->CGATT)));
+    nbiotDisplay.add(NBIoTDisplayItem(STATE_WAITING_CEREG, DISPLAY_IOT_WAITING_CEREG, "WAITING CEREG..."));
+    nbiotDisplay.add(NBIoTDisplayItem(STATE_FINISH_CEREG, DISPLAY_IOT_FINISH_CEREG, "CEREG " + String(this->CEREG)));
     nbiotDisplay.add(NBIoTDisplayItem(STATE_WAITING_OPEN, DISPLAY_IOT_WAITING_OPEN, "IOT OPENING..."));
     nbiotDisplay.add(NBIoTDisplayItem(STATE_FINISH_OPEN, DISPLAY_IOT_FINISH_OPEN, "IOT OPEN OK"));
     nbiotDisplay.add(NBIoTDisplayItem(STATE_WAITING_CONN, DISPLAY_IOT_WAITING_CONN, "IOT CONNECTING..."));
@@ -151,7 +156,6 @@ public:
   }
 
   void handleDisplay() {
-
 
     for (size_t i = 0; i < nbiotDisplay.arraySize; i++) {
       if (connState == nbiotDisplay.items[i].nbiotState) {
@@ -250,6 +254,14 @@ public:
     }
 
     if (this->connState == STATE_FINISH_CGATT) {
+      if (nbiotTimer.autoExpired(1000UL)) {
+        Serial.print("\r\nOPENING MQTT\r\n");
+        NBIOT_SERIAL.println("AT+CEREG?");
+        this->connState = STATE_WAITING_CEREG;
+      }
+    }
+
+    if (this->connState == STATE_FINISH_CEREG) {
       if (nbiotTimer.autoExpired(1000UL)) {
         Serial.print("\r\nOPENING MQTT\r\n");
         NBIOT_SERIAL.println("AT+QMTOPEN=0,8.210.84.24,1880");

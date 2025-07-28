@@ -62,7 +62,6 @@ void setup() {
   trafficLight.off();
   warningSystem.off();
   displayOLED.init();
-  displayOLED.print("", "正在加載IoT系統", "", DISPLAY_IOT_INIT);
   nbiot.init();
   displayOLED.print("", "IoT CSQ", nbiot.CSQ.c_str(), DISPLAY_IOT_CSQ);
   delay(3000);

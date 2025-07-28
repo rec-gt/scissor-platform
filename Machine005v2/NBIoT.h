@@ -171,26 +171,32 @@ public:
       displayOLED.print("", "WAITING IMEI...", "", DISPLAY_IOT_WAITING_IMEI);
     } else if (this->connState == STATE_FINISH_IMEI) {
       displayOLED.print("", "IMEI", (this->IMEI).c_str(), DISPLAY_IOT_FINISH_IMEI);
+      delay(500);
     } else if (this->connState == STATE_WAITING_CSQ) {
       displayOLED.print("", "WAITING CSQ...", "", DISPLAY_IOT_WAITING_CSQ);
     } else if (this->connState == STATE_FINISH_CSQ) {
       displayOLED.print("", "CSQ", (this->CSQ).c_str(), DISPLAY_IOT_FINISH_CSQ);
+      delay(500);
     } else if (this->connState == STATE_WAITING_CGATT) {
       displayOLED.print("", "WAITING CGATT...", "", DISPLAY_IOT_WAITING_CGATT);
     } else if (this->connState == STATE_FINISH_CGATT) {
       displayOLED.print("", "CGATT", (this->CGATT).c_str(), DISPLAY_IOT_FINISH_CGATT);
+      delay(500);
     } else if (this->connState == STATE_WAITING_CEREG) {
       displayOLED.print("", "WAITING CEREG...", "", DISPLAY_IOT_WAITING_CEREG);
     } else if (this->connState == STATE_FINISH_CEREG) {
       displayOLED.print("", "CEREG", (this->CEREG).c_str(), DISPLAY_IOT_FINISH_CEREG);
+      delay(500);
     } else if (this->connState == STATE_WAITING_OPEN) {
       displayOLED.print("", "IOT OPENING...", "", DISPLAY_IOT_WAITING_OPEN);
     } else if (this->connState == STATE_FINISH_OPEN) {
       displayOLED.print("", "FINISH IOT OPEN", "", DISPLAY_IOT_FINISH_OPEN);
+      delay(500);
     } else if (this->connState == STATE_WAITING_CONN) {
       displayOLED.print("", "IOT CONNECTING...", "", DISPLAY_IOT_WAITING_CONN);
     } else if (this->connState == STATE_FINISH_CONN) {
       displayOLED.print("", "FINISH IOT CONN", "", DISPLAY_IOT_FINISH_CONN);
+      delay(500);
     }
   }
 

@@ -1,6 +1,7 @@
 #include "AsyncTimer.h"
 #include "Utils.h"
 #include "Watchdog.h"
+#include "DisplayOLED.h"
 
 #ifndef NBIoT_h
 #define NBIoT_h
@@ -98,6 +99,22 @@ public:
     this->loop();
   }
 
+  void handleDisplay() {
+    if (this->connState = STATE_FINISH_IP) {
+      displayOLED.print("", "FINISH GETTING IP", "", DISPLAY_IOT_FINISH_GET_IP);
+    } else if (this->connState = STATE_FINISH_IMEI) {
+      displayOLED.print("", "FINISH GETTING IMEI", "", DISPLAY_IOT_FINISH_GET_IMEI);
+    } else if (this->connState = STATE_FINISH_CSQ) {
+      displayOLED.print("", "FINISH GETTING CSQ", "", DISPLAY_IOT_FINISH_GET_CSQ);
+    } else if (this->connState = STATE_FINISH_CGATT) {
+      displayOLED.print("", "FINISH GETTING CGATT", "", DISPLAY_IOT_FINISH_GET_CGATT);
+    } else if (this->connState = STATE_FINISH_OPEN) {
+      displayOLED.print("", "FINISH IOT OPEN", "", DISPLAY_IOT_FINISH_OPEN);
+    } else if (this->connState = STATE_FINISH_CONN) {
+      displayOLED.print("", "FINISH IOT CONN", "", DISPLAY_IOT_FINISH_CONN);
+    }
+  }
+
   void loop() {
     while (1) {
       nbiot_wdt.monitor();
@@ -109,6 +126,7 @@ public:
 
       this->ask();
       this->listen();
+      this->handleDisplay(); // decouple, can remove easily
       if (this->finishInit) {
         break;
       } else {
@@ -245,7 +263,7 @@ public:
         char _byte = NBIOT_SERIAL.read();
 
         // Serial.print(_byte);
-        
+
         if (_byte != '\r' && _byte != '\n') {
           this->res += _byte;
         }

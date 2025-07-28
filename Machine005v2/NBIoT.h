@@ -15,6 +15,42 @@ AsyncTimer nbiotTimer(10000UL);
 
 bool softReset = false;
 
+class NBIoTDisplayItem {
+public:
+  byte nbiotState = 0;
+  byte displayState = 0;
+  String msg = "";
+
+  NBIoTDisplayItem() {
+    nbiotState = 0;
+    displayState = 0;
+    msg = "";
+  }
+
+  NBIoTDisplayItem(byte nbiotState, byte displayState, String msg) {
+    this->nbiotState = nbiotState;
+    this->displayState = displayState;
+    this->msg = msg;
+  }
+
+  ~NBIoTDisplayItem() {}
+};
+
+class NBIoTDisplay {
+public:
+  int arraySize = 0;
+  NBIoTDisplayItem items[20];
+
+  NBIoTDisplay() {}
+
+  void add(NBIoTDisplayItem item) {
+    this->items[this->arraySize] = item;
+    this->arraySize++;
+  }
+};
+
+NBIoTDisplay nbiotDisplay;
+
 class NBIoT {
 private:
   enum NBIOT_STATE {
@@ -76,6 +112,21 @@ public:
   NBIoT() {
     pinMode(this->resetPin, OUTPUT);
     digitalWrite(this->resetPin, LOW);
+
+    nbiotDisplay.add(NBIoTDisplayItem(STATE_WAITING_IP, DISPLAY_IOT_WAITING_IP, "WAITING IP..."));
+    nbiotDisplay.add(NBIoTDisplayItem(STATE_FINISH_IP, DISPLAY_IOT_FINISH_GET_IP, "IP OK"));
+    nbiotDisplay.add(NBIoTDisplayItem(STATE_WAITING_SETUP, DISPLAY_IOT_WAITING_SETUP, "SETTING UP IOT..."));
+    nbiotDisplay.add(NBIoTDisplayItem(STATE_FINISH_SETUP, DISPLAY_IOT_FINISH_SETUP, "SETTING UP IOT..."));
+    nbiotDisplay.add(NBIoTDisplayItem(STATE_WAITING_IMEI, DISPLAY_IOT_WAITING_IMEI, "WAITING IMEI..."));
+    nbiotDisplay.add(NBIoTDisplayItem(STATE_FINISH_IMEI, DISPLAY_IOT_FINISH_GET_IMEI, "IMEI OK"));
+    nbiotDisplay.add(NBIoTDisplayItem(STATE_WAITING_CSQ, DISPLAY_IOT_WAITING_CSQ, "WAITING CSQ..."));
+    nbiotDisplay.add(NBIoTDisplayItem(STATE_FINISH_CSQ, DISPLAY_IOT_FINISH_GET_CSQ, "CSQ OK"));
+    nbiotDisplay.add(NBIoTDisplayItem(STATE_WAITING_CGATT, DISPLAY_IOT_WAITING_CGATT, "WAITING CGATT..."));
+    nbiotDisplay.add(NBIoTDisplayItem(STATE_FINISH_CGATT, DISPLAY_IOT_FINISH_GET_CGATT, "CGATT OK"));
+    nbiotDisplay.add(NBIoTDisplayItem(STATE_WAITING_OPEN, DISPLAY_IOT_WAITING_OPEN, "IOT OPENING..."));
+    nbiotDisplay.add(NBIoTDisplayItem(STATE_FINISH_OPEN, DISPLAY_IOT_FINISH_OPEN, "IOT OPEN OK"));
+    nbiotDisplay.add(NBIoTDisplayItem(STATE_WAITING_CONN, DISPLAY_IOT_WAITING_CONN, "IOT CONNECTING..."));
+    nbiotDisplay.add(NBIoTDisplayItem(STATE_FINISH_CONN, DISPLAY_IOT_FINISH_CONN, "IOT CONN OK"));
   }
 
   void resetHardware() {
@@ -100,18 +151,14 @@ public:
   }
 
   void handleDisplay() {
-    if (this->connState = STATE_FINISH_IP) {
-      displayOLED.print("", "FINISH GETTING IP", "", DISPLAY_IOT_FINISH_GET_IP);
-    } else if (this->connState = STATE_FINISH_IMEI) {
-      displayOLED.print("", "FINISH GETTING IMEI", "", DISPLAY_IOT_FINISH_GET_IMEI);
-    } else if (this->connState = STATE_FINISH_CSQ) {
-      displayOLED.print("", "FINISH GETTING CSQ", "", DISPLAY_IOT_FINISH_GET_CSQ);
-    } else if (this->connState = STATE_FINISH_CGATT) {
-      displayOLED.print("", "FINISH GETTING CGATT", "", DISPLAY_IOT_FINISH_GET_CGATT);
-    } else if (this->connState = STATE_FINISH_OPEN) {
-      displayOLED.print("", "FINISH IOT OPEN", "", DISPLAY_IOT_FINISH_OPEN);
-    } else if (this->connState = STATE_FINISH_CONN) {
-      displayOLED.print("", "FINISH IOT CONN", "", DISPLAY_IOT_FINISH_CONN);
+
+
+    for (size_t i = 0; i < nbiotDisplay.arraySize; i++) {
+      if (connState == nbiotDisplay.items[i].nbiotState) {
+        char* msg = (nbiotDisplay.items[i].msg).c_str();
+        displayOLED.print("", msg, "", nbiotDisplay.items[i].displayState);
+        delay(1000);
+      }
     }
   }
 
@@ -126,11 +173,13 @@ public:
 
       this->ask();
       this->listen();
-      this->handleDisplay(); // decouple, can remove easily
+
+
       if (this->finishInit) {
         break;
       } else {
         delay(1);
+        this->handleDisplay();  // decouple, DO NOT execute after init
       }
     }
   }

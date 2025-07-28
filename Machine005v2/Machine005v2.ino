@@ -140,5 +140,5 @@ void loop() {
 
   // === pet the dog ===
 
-  delay(100);
+  delay(10);
 }

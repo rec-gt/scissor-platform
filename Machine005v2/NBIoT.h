@@ -15,45 +15,6 @@ AsyncTimer nbiotTimer(10000UL);
 
 bool softReset = false;
 
-class NBIoTDisplayItem {
-public:
-  byte nbiotState = 0;
-  byte displayState = 0;
-  String msg = "";
-  bool sentOnce = false;
-
-  NBIoTDisplayItem() {
-    nbiotState = 0;
-    displayState = 0;
-    msg = "";
-    sentOnce = false;
-  }
-
-  NBIoTDisplayItem(byte nbiotState, byte displayState, String msg) {
-    this->nbiotState = nbiotState;
-    this->displayState = displayState;
-    this->msg = msg;
-    this->sentOnce = false;
-  }
-
-  ~NBIoTDisplayItem() {}
-};
-
-class NBIoTDisplay {
-public:
-  int arraySize = 0;
-  NBIoTDisplayItem items[32];
-
-  NBIoTDisplay() {}
-
-  void add(NBIoTDisplayItem item) {
-    this->items[this->arraySize] = item;
-    this->arraySize++;
-  }
-};
-
-NBIoTDisplay nbiotDisplay;
-
 class NBIoT {
 private:
   enum NBIOT_STATE {
@@ -119,28 +80,9 @@ public:
   NBIoT() {
     pinMode(this->resetPin, OUTPUT);
     digitalWrite(this->resetPin, HIGH);
-
-    nbiotDisplay.add(NBIoTDisplayItem(STATE_DEFAULT, DISPLAY_IOT_INIT, "正在加載IoT系統"));
-    nbiotDisplay.add(NBIoTDisplayItem(STATE_WAITING_IP, DISPLAY_IOT_WAITING_IP, "WAITING IP..."));
-    nbiotDisplay.add(NBIoTDisplayItem(STATE_FINISH_IP, DISPLAY_IOT_FINISH_IP, "IP"));
-    nbiotDisplay.add(NBIoTDisplayItem(STATE_WAITING_SETUP, DISPLAY_IOT_WAITING_SETUP, "SETTING UP IOT..."));
-    nbiotDisplay.add(NBIoTDisplayItem(STATE_FINISH_SETUP, DISPLAY_IOT_FINISH_SETUP, "IOT SETUP OK"));
-    nbiotDisplay.add(NBIoTDisplayItem(STATE_WAITING_IMEI, DISPLAY_IOT_WAITING_IMEI, "WAITING IMEI..."));
-    nbiotDisplay.add(NBIoTDisplayItem(STATE_FINISH_IMEI, DISPLAY_IOT_FINISH_IMEI, "IMEI"));
-    nbiotDisplay.add(NBIoTDisplayItem(STATE_WAITING_CSQ, DISPLAY_IOT_WAITING_CSQ, "WAITING CSQ..."));
-    nbiotDisplay.add(NBIoTDisplayItem(STATE_FINISH_CSQ, DISPLAY_IOT_FINISH_CSQ, "CSQ"));
-    nbiotDisplay.add(NBIoTDisplayItem(STATE_WAITING_CGATT, DISPLAY_IOT_WAITING_CGATT, "WAITING CGATT..."));
-    nbiotDisplay.add(NBIoTDisplayItem(STATE_FINISH_CGATT, DISPLAY_IOT_FINISH_CGATT, "CGATT"));
-    nbiotDisplay.add(NBIoTDisplayItem(STATE_WAITING_CEREG, DISPLAY_IOT_WAITING_CEREG, "WAITING CEREG..."));
-    nbiotDisplay.add(NBIoTDisplayItem(STATE_FINISH_CEREG, DISPLAY_IOT_FINISH_CEREG, "CEREG"));
-    nbiotDisplay.add(NBIoTDisplayItem(STATE_WAITING_OPEN, DISPLAY_IOT_WAITING_OPEN, "IOT OPENING..."));
-    nbiotDisplay.add(NBIoTDisplayItem(STATE_FINISH_OPEN, DISPLAY_IOT_FINISH_OPEN, "IOT OPEN OK"));
-    nbiotDisplay.add(NBIoTDisplayItem(STATE_WAITING_CONN, DISPLAY_IOT_WAITING_CONN, "IOT CONNECTING..."));
-    nbiotDisplay.add(NBIoTDisplayItem(STATE_FINISH_CONN, DISPLAY_IOT_FINISH_CONN, "IOT CONN OK"));
   }
 
   void resetHardware() {
-    // Serial.print("\r\nRESET HARDWARE\r\n");
     digitalWrite(this->resetPin, HIGH);
     if (timerRESET.autoExpired(500UL)) {
       digitalWrite(this->resetPin, LOW);
@@ -207,6 +149,7 @@ public:
         softReset = false;
         this->connState = STATE_DEFAULT;
         this->pubState = PIPELINE_DEFAULT;
+        this->resetBuffer();
         Serial.print("\r\n[SOFT_RESET]\r\n");
       }
 
@@ -217,7 +160,7 @@ public:
         break;
       } else {
         delay(1);
-        this->handleDisplay();  // decouple, DO NOT execute after init
+        // this->handleDisplay();  // decouple, DO NOT execute after init
       }
     }
   }
@@ -234,7 +177,7 @@ public:
     }
 
     if (this->connState == STATE_FINISH_IP) {
-      Serial.print("\r\nCONGIFERING NBIOT\r\n");
+      Serial.print("\r\nSETTING UP NBIOT\r\n");
       NBIOT_SERIAL.println("AT+CFUN=1");
       delay(10);
       NBIOT_SERIAL.println("AT+QSCLK=0");
@@ -343,7 +286,7 @@ public:
   void listen() {
     if (NBIOT_SERIAL.available() > 0) {
       while (NBIOT_SERIAL.available() > 0) {
-
+        delay(2);
         char _byte = NBIOT_SERIAL.read();
 
         Serial.print(_byte);
@@ -466,14 +409,13 @@ public:
       }
 
       if (this->pubState == PIPELINE_WAITING_PUBLISH) {
-        int idx = this->res.indexOf("+QMTPUB:");
+        Serial.print(this->res);
+        int idx = this->res.indexOf("+QMTPUB");
+
         if (idx > -1) {
-          String QMTPUB = this->res.substring(9, 9 + 5);
-          if (QMTPUB == "0,0,0") {
-            nbiot_wdt.pet();
-            this->pubState = PIPELINE_DEFAULT;
-            Serial.print("\r\nFINISH REGULAR PUBLISH\r\n");
-          }
+          nbiot_wdt.pet();
+          this->pubState = PIPELINE_DEFAULT;
+          Serial.print("\r\nFINISH REGULAR PUBLISH\r\n");
         }
       }
     }
@@ -543,13 +485,13 @@ public:
       this->CSQ = String(numCSQ);
     }
 
-    idx = this->res.indexOf("+QMTPUB:");
-    if (idx > -1) {
-      String QMTPUB = this->res.substring(9, 9 + 5);
-      if (QMTPUB != "0,0,0") {
-        softReset = true;
-      }
-    }
+    // idx = this->res.indexOf("+QMTPUB:");
+    // if (idx > -1) {
+    //   String QMTPUB = this->res.substring(9, 9 + 5);
+    //   if (QMTPUB != "0,0,0") {
+    //     softReset = true;
+    //   }
+    // }
   }
 
   void handleFailure() {

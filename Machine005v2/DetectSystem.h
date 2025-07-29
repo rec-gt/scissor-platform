@@ -25,9 +25,9 @@ public:
       return;
     }
 
-    // if (status == SYS_RUNNING) {
-    //   displayOLED.print("", "系統運作中", "0120120120", DISPLAY_SYS_RUNNING);
-    // }
+    if (status == SYS_RUNNING) {
+      displayOLED.print("", "系統運作中", "0120120120", DISPLAY_SYS_RUNNING);
+    }
 
     this->lastStatus = status;
     this->status = status;
@@ -40,31 +40,31 @@ public:
   }
 
   void setPublishMsg() {
-    String content = "{\"csq\":";
-    content += nbiot.CSQ;
-    content += ",";
-    content += "\"cgatt\":";
-    content += nbiot.CGATT;
-    content += ",";
-    content += "\"cereg\":\"";
-    content += nbiot.CEREG;
-    content += "\"";
-    content += ",";
-    content += "\"din\":";
-    content += String(sensorManager.sensorStatusX8);
-    content += ",";
-    content += "\"dout\":";
-    content += String(sensorManager.sensorStatusX4);
-    content += "}";
+    publishMsgContent = "{\"csq\":";
+    publishMsgContent += nbiot.CSQ;
+    publishMsgContent += ",";
+    publishMsgContent += "\"cgatt\":";
+    publishMsgContent += nbiot.CGATT;
+    publishMsgContent += ",";
+    publishMsgContent += "\"cereg\":\"";
+    publishMsgContent += nbiot.CEREG;
+    publishMsgContent += "\"";
+    publishMsgContent += ",";
+    publishMsgContent += "\"din\":";
+    publishMsgContent += String(sensorManager.sensorStatusX8);
+    publishMsgContent += ",";
+    publishMsgContent += "\"dout\":";
+    publishMsgContent += String(sensorManager.sensorStatusX4);
+    publishMsgContent += "}";
 
-    int contentLen = content.length();
-    String cmd = "AT+QMTPUB=0,0,0,0,rgt/";
-    cmd += nbiot.IMEI;
-    cmd += "/in,";
-    cmd += String(contentLen);
-    cmd += ",";
-    cmd += content;
-    publishMsg = cmd;
+    int contentLen = publishMsgContent.length();
+
+    publishMsg = "AT+QMTPUB=0,0,0,0,rgt/";
+    publishMsg += nbiot.IMEI;
+    publishMsg += "/in,";
+    publishMsg += String(contentLen);
+    publishMsg += ",";
+    publishMsg += publishMsgContent;
   }
 };
 

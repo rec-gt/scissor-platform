@@ -58,6 +58,8 @@ private:
   byte connState = STATE_WAITING_RESET;
   byte pubState = PIPELINE_DEFAULT;
 
+  // String res = "";
+
   byte resetPin = 11;
 
   void clearSerialBuffer() {
@@ -65,7 +67,7 @@ private:
   }
 
   void clearResBuffer() {
-    resMsg = String("");
+    resMsg = "";
   }
 
 public:
@@ -143,9 +145,8 @@ public:
       if (softReset) {
         this->resetBuffers();
         softReset = false;
-        connStr = String("");
-        publishMsg = String("");
-        publishMsgContent = String("");
+        connStr = "";
+        publishMsg = "";
         this->connState = STATE_WAITING_RESET;
         this->pubState = PIPELINE_DEFAULT;
         Serial.print("\r\n[SOFT_RESET]\r\n");
@@ -245,7 +246,6 @@ public:
       if (nbiotTimer.autoExpired(1000UL)) {
         Serial.print("\r\nCONNECTING MQTT\r\n");
         NBIOT_SERIAL.println(connStr);
-        connStr = String("");
         this->connState = STATE_WAITING_CONN;
       }
     }
@@ -288,8 +288,6 @@ public:
           Serial.print("Serial: ");
           Serial.print(publishMsg);
           NBIOT_SERIAL.println(publishMsg);
-          publishMsg = String("");
-          publishMsgContent = String("");
           delay(50);
           // this->ioLock = false;
           Serial.print(resMsg);
@@ -449,13 +447,9 @@ public:
         softReset = true;
       }
 
-
       connStr = "AT+QMTCONN=0,dev_";
-      connStr.concat(this->IMEI);
-      connStr.concat(",tswh,1Wo=[6vA0m");
-      // connStr += this->IMEI;
-      // connStr += ",tswh,1Wo=[6vA0m";
-      // connStr = "AT+QMTCONN=0,dev_861096060465131,tswh,1Wo=[6vA0m";
+      connStr += this->IMEI;
+      connStr += ",tswh,1Wo=[6vA0m";
     }
 
     idx = resMsg.indexOf("+CGATT:");

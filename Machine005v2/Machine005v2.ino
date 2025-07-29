@@ -67,6 +67,12 @@ void setup() {
   powerLight.on();
   detectSystem.set(SYS_RUNNING);
   delay(500);
+
+  // === global variable ===
+  connStr.reserve(255);
+  publishMsg.reserve(255);
+  publishMsgContent.reserve(255);
+  
   // === watchdog ===
 }
 
@@ -104,9 +110,9 @@ void loop() {
       detectSystem.set(SYS_STOPPED);
     }
 
-    // if (!sensorManager.areAllHealthy()) {
-    //   detectSystem.set(SYS_FAILURE);
-    // }
+    if (!sensorManager.areAllHealthy()) {
+      detectSystem.set(SYS_FAILURE);
+    }
 
   } else if (detectSystem.is(SYS_STOPPED)) {
     relay.cut();
@@ -141,11 +147,7 @@ void loop() {
   }
 
   // === pet the dog ===
-
-  detectSystem.set(SYS_RUNNING);
-  delay(100);
-
   // detectSystem.set(random(2) == 1 ? SYS_STOPPED : SYS_RUNNING);
 
-  // Serial.println("STRESS_TEST STRESS_TEST STRESS_TEST STRESS_TEST STRESS_TEST STRESS_TEST STRESS_TEST STRESS_TEST STRESS_TEST STRESS_TEST STRESS_TEST STRESS_TEST STRESS_TEST STRESS_TEST STRESS_TEST STRESS_TEST STRESS_TEST STRESS_TEST STRESS_TEST STRESS_TEST STRESS_TEST STRESS_TEST STRESS_TEST ");
+  delay(10);
 }

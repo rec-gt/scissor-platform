@@ -15,6 +15,9 @@ AsyncTimer nbiotTimer(10000UL);
 
 bool softReset = false;
 
+char nbiotBuffer[1024];
+int bufferIndex = 0;
+
 class NBIoT {
 private:
   enum NBIOT_STATE {
@@ -58,6 +61,8 @@ private:
   byte connState = STATE_WAITING_RESET;
   byte pubState = PIPELINE_DEFAULT;
 
+  // String res = "";
+
   byte resetPin = 11;
 
   void clearSerialBuffer() {
@@ -65,10 +70,12 @@ private:
   }
 
   void clearResBuffer() {
-    resMsg = String("");
+    resMsg = "";
   }
 
 public:
+  char cIP[32];
+
   String IP = "";
   String CSQ = "";
   String IMEI = "";
@@ -136,20 +143,63 @@ public:
     }
   }
 
+  void clearBuffer() {
+    bufferIndex = 0;
+    nbiotBuffer[0] = '\0';
+  }
+
+  void readSerialData() {
+    while (NBIOT_SERIAL.available() > 0) {
+      char incomingChar = NBIOT_SERIAL.read();
+    }
+  }
+
+  int searchString(char* target) {
+    char* found = strstr(nbiotBuffer, target);
+    if (found != NULL) {
+      int index = found - nbiotBuffer;
+      return index;
+    }
+    return -1;
+  }
+
+  void extractSubstring(char* source, int startPos, int endPos, char* output, int outputSize) {
+    if (startPos < 0 || endPos < startPos || endPos >= strlen(source) || (endPos - startPos + 1) >= outputSize) {
+      Serial.println("Invalid range or output buffer too small");
+      output[0] = '\0';
+      return;
+    }
+
+    strncpy(output, source + startPos, endPos - startPos + 1);
+    output[endPos - startPos + 1] = '\0';
+  }
+
+  void extractCharRange(int startPos, int endPos, char* output, int outputSize) {
+    if (endPos < bufferIndex && (endPos - startPos + 1) < outputSize) {
+      strncpy(output, nbiotBuffer + startPos, endPos - startPos + 1);
+      output[endPos - startPos + 1] = '\0';  // Null terminate
+      Serial.print("Extracted chars: ");
+      Serial.println(output);
+    } else {
+      Serial.println("Invalid range or output buffer too small");
+    }
+  }
+
   void loop() {
     while (1) {
       nbiot_wdt.monitor();
 
-      if (softReset) {
-        this->resetBuffers();
-        softReset = false;
-        connStr = String("");
-        publishMsg = String("");
-        publishMsgContent = String("");
-        this->connState = STATE_WAITING_RESET;
-        this->pubState = PIPELINE_DEFAULT;
-        Serial.print("\r\n[SOFT_RESET]\r\n");
-      }
+
+
+      // if (softReset) {
+      //   this->resetBuffers();
+      //   softReset = false;
+      //   connStr = "";
+      //   publishMsg = "";
+      //   this->connState = STATE_WAITING_RESET;
+      //   this->pubState = PIPELINE_DEFAULT;
+      //   Serial.print("\r\n[SOFT_RESET]\r\n");
+      // }
 
       this->ask();
       this->listen();
@@ -245,7 +295,6 @@ public:
       if (nbiotTimer.autoExpired(1000UL)) {
         Serial.print("\r\nCONNECTING MQTT\r\n");
         NBIOT_SERIAL.println(connStr);
-        connStr = String("");
         this->connState = STATE_WAITING_CONN;
       }
     }
@@ -288,8 +337,6 @@ public:
           Serial.print("Serial: ");
           Serial.print(publishMsg);
           NBIOT_SERIAL.println(publishMsg);
-          publishMsg = String("");
-          publishMsgContent = String("");
           delay(50);
           // this->ioLock = false;
           Serial.print(resMsg);
@@ -307,13 +354,15 @@ public:
         Serial.print(_byte);
 
         if (_byte != '\r' && _byte != '\n') {
-          resMsg += _byte;
+          nbiotBuffer[bufferIndex] = _byte;
+          nbiotBuffer[bufferIndex + 1] = '\0';
+          bufferIndex++;
         }
 
         if (_byte == '\r') {
           this->answer();
           this->handleReadMsg();
-          this->clearResBuffer();
+          this->clearBuffer();
         }
         delay(1);
       }
@@ -324,8 +373,13 @@ public:
     int idx = -1;
 
     if (this->connState == STATE_WAITING_IP) {
-      idx = resMsg.indexOf("+IP:");
+      char* target = "+IP:";
+      int idx = this->searchString(target);
       if (idx > -1) {
+        int startPos = idx + strlen(target);
+        int endPos = startPos + 16;
+        char extracted[100];
+        this->extractSubstring(nbiotBuffer, startPos, endPos, extracted, sizeof(extracted));
         Serial.print("\r\nFINISH WAITING IP\r\n");
         this->connState = STATE_FINISH_IP;
         nbiot_wdt.pet();
@@ -449,13 +503,9 @@ public:
         softReset = true;
       }
 
-
       connStr = "AT+QMTCONN=0,dev_";
-      connStr.concat(this->IMEI);
-      connStr.concat(",tswh,1Wo=[6vA0m");
-      // connStr += this->IMEI;
-      // connStr += ",tswh,1Wo=[6vA0m";
-      // connStr = "AT+QMTCONN=0,dev_861096060465131,tswh,1Wo=[6vA0m";
+      connStr += this->IMEI;
+      connStr += ",tswh,1Wo=[6vA0m";
     }
 
     idx = resMsg.indexOf("+CGATT:");

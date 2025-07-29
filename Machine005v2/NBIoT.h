@@ -64,7 +64,7 @@ private:
   String publishMsg = "";
 
   void clearSerialBuffer() {
-    while (NBIOT_SERIAL.read() > 0) {};
+    while (NBIOT_SERIAL.read() > 0) { delay(1); };
   }
 
   void clearResBuffer() {
@@ -77,7 +77,7 @@ public:
   String IMEI = "";
   String CGATT = "";
   String CEREG = "";
-
+  bool ioLock = false;
 
   NBIoT() {
     pinMode(this->resetPin, OUTPUT);
@@ -87,6 +87,7 @@ public:
   void resetBuffers() {
     this->clearSerialBuffer();
     this->clearResBuffer();
+    delay(10);
   }
 
   void init() {
@@ -143,9 +144,11 @@ public:
       nbiot_wdt.monitor();
 
       if (softReset) {
+        this->resetBuffers();
         softReset = false;
         this->connState = STATE_WAITING_RESET;
         this->pubState = PIPELINE_DEFAULT;
+        Serial.print(this->res);
         Serial.print("\r\n[SOFT_RESET]\r\n");
       }
 
@@ -168,7 +171,6 @@ public:
         digitalWrite(this->resetPin, HIGH);
         this->connState = STATE_FINISH_RESET;
         delay(100);
-        this->resetBuffers();
       }
     }
 
@@ -244,6 +246,7 @@ public:
       if (nbiotTimer.autoExpired(1000UL)) {
         Serial.print("\r\nCONNECTING MQTT\r\n");
         NBIOT_SERIAL.println("AT+QMTCONN=0,dev_" + String(this->IMEI) + ",tswh,1Wo=[6vA0m");
+        delay(10);
         this->connState = STATE_WAITING_CONN;
       }
     }
@@ -281,7 +284,10 @@ public:
       if (this->pubState == PIPELINE_FINISH_CEREG) {
         if (nbiotTimer.autoExpired(15000)) {
           Serial.print("\r\nEXECUTE REGULAR PUBLISH\r\n");
+          this->ioLock = true;
           NBIOT_SERIAL.println(this->publishMsg);
+          delay(50);
+          this->ioLock = false;
           this->pubState = PIPELINE_WAITING_PUBLISH;
         }
       }
@@ -302,7 +308,6 @@ public:
         if (_byte == '\r') {
           this->answer();
           this->handleReadMsg();
-          this->handleFailure();
           this->clearResBuffer();
         }
         delay(1);
@@ -494,25 +499,6 @@ public:
       if (QMTPUB != "0,0,0") {
         softReset = true;
       }
-    }
-  }
-
-  void handleFailure() {
-    int idx = -1;
-
-    idx = this->res.indexOf("+QMTOPEN: 0,-1");
-    if (idx > -1) {
-      softReset = true;
-    }
-
-    idx = this->res.indexOf("+QNBIOTEVENT:");
-    if (idx > -1) {
-      softReset = true;
-    }
-
-    idx = this->res.indexOf("+CPIN: NOT READY");
-    if (idx > -1) {
-      softReset = true;
     }
   }
 

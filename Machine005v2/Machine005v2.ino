@@ -143,7 +143,7 @@ void loop() {
   // === pet the dog ===
 
   detectSystem.set(SYS_RUNNING);
-  delay(50);
+  delay(100);
 
   // detectSystem.set(random(2) == 1 ? SYS_STOPPED : SYS_RUNNING);
 

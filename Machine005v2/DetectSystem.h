@@ -31,7 +31,6 @@ public:
     this->lastStatus = status;
     this->status = status;
 
-    Serial.print("System current status: ");
     Serial.println(STATUS_STR[status]);
   }
 

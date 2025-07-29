@@ -10,7 +10,6 @@
 
 Watchdog nbiot_wdt(30UL * 1000UL);
 
-AsyncTimer timerRESET(5UL * 1000UL);
 AsyncTimer nbiotTimer(10000UL);
 
 bool softReset = false;
@@ -19,6 +18,8 @@ class NBIoT {
 private:
   enum NBIOT_STATE {
     STATE_DEFAULT,
+    STATE_WAITING_RESET,
+    STATE_FINISH_RESET,
     STATE_WAITING_IP,
     STATE_FINISH_IP,
     STATE_WAITING_SETUP,
@@ -53,7 +54,7 @@ private:
   bool finishInit = false;
 
   byte prevConnState = STATE_DEFAULT;
-  byte connState = STATE_DEFAULT;
+  byte connState = STATE_WAITING_RESET;
   byte pubState = PIPELINE_DEFAULT;
 
   String res = "";
@@ -77,29 +78,24 @@ public:
   String CGATT = "";
   String CEREG = "";
 
+
   NBIoT() {
     pinMode(this->resetPin, OUTPUT);
     digitalWrite(this->resetPin, HIGH);
   }
 
-  void resetHardware() {
-    digitalWrite(this->resetPin, HIGH);
-    if (timerRESET.autoExpired(500UL)) {
-      digitalWrite(this->resetPin, LOW);
-    }
-  }
-
-  void resetBuffer() {
+  void resetBuffers() {
     this->clearSerialBuffer();
     this->clearResBuffer();
   }
 
   void init() {
     Serial.print("\r\n=== NBIOT START ===\r\n");
+    nbiot_wdt.enable();
     nbiot_wdt.setCallback([]() {
       softReset = true;
     });
-    this->resetBuffer();
+    this->resetBuffers();
     this->loop();
   }
 
@@ -145,11 +141,11 @@ public:
   void loop() {
     while (1) {
       nbiot_wdt.monitor();
+
       if (softReset) {
         softReset = false;
-        this->connState = STATE_DEFAULT;
+        this->connState = STATE_WAITING_RESET;
         this->pubState = PIPELINE_DEFAULT;
-        this->resetBuffer();
         Serial.print("\r\n[SOFT_RESET]\r\n");
       }
 
@@ -160,16 +156,25 @@ public:
         break;
       } else {
         delay(1);
-        // this->handleDisplay();  // decouple, DO NOT execute after init
+        this->handleDisplay();  // decouple, DO NOT execute after init
       }
     }
   }
 
   void ask() {
-    if (this->connState == STATE_DEFAULT) {
-      nbiot_wdt.enable();
-      this->resetHardware();
+    if (this->connState == STATE_WAITING_RESET) {
+      digitalWrite(this->resetPin, LOW);
       if (nbiotTimer.autoExpired(1000)) {
+        digitalWrite(this->resetPin, HIGH);
+        this->connState = STATE_FINISH_RESET;
+        delay(100);
+        this->resetBuffers();
+      }
+    }
+
+    if (this->connState == STATE_FINISH_RESET) {
+      if (nbiotTimer.autoExpired(1000)) {
+        Serial.print("\r\nWAITING IP\r\n");
         NBIOT_SERIAL.println("AT+QSCLK=0");
         delay(10);
         this->connState = STATE_WAITING_IP;
@@ -286,7 +291,6 @@ public:
   void listen() {
     if (NBIOT_SERIAL.available() > 0) {
       while (NBIOT_SERIAL.available() > 0) {
-        delay(2);
         char _byte = NBIOT_SERIAL.read();
 
         Serial.print(_byte);
@@ -381,8 +385,9 @@ public:
     }
 
     if (this->connState == STATE_WAITING_PUBSUB) {
+      int idx = -1;
       if (this->pubState == PIPELINE_WAITING_CSQ) {
-        int idx = this->res.indexOf("+CSQ:");
+        idx = this->res.indexOf("+CSQ:");
         if (idx > -1) {
           Serial.print("\r\nFINISH GETTING CSQ\r\n");
           this->pubState = PIPELINE_FINISH_CSQ;
@@ -391,7 +396,7 @@ public:
       }
 
       if (this->pubState == PIPELINE_WAITING_CGATT) {
-        int idx = this->res.indexOf("+CGATT:");
+        idx = this->res.indexOf("+CGATT:");
         if (idx > -1) {
           Serial.print("\r\nFINISH GETTING CGATT\r\n");
           this->pubState = PIPELINE_FINISH_CGATT;
@@ -400,7 +405,7 @@ public:
       }
 
       if (this->pubState == PIPELINE_WAITING_CEREG) {
-        int idx = this->res.indexOf("+CEREG:");
+        idx = this->res.indexOf("+CEREG:");
         if (idx > -1) {
           Serial.print("\r\nFINISH GETTING CEREG\r\n");
           this->pubState = PIPELINE_FINISH_CEREG;
@@ -409,13 +414,11 @@ public:
       }
 
       if (this->pubState == PIPELINE_WAITING_PUBLISH) {
-        Serial.print(this->res);
-        int idx = this->res.indexOf("+QMTPUB");
-
+        idx = this->res.indexOf("+QMTPUB:");
         if (idx > -1) {
-          nbiot_wdt.pet();
           this->pubState = PIPELINE_DEFAULT;
           Serial.print("\r\nFINISH REGULAR PUBLISH\r\n");
+          nbiot_wdt.pet();
         }
       }
     }
@@ -485,13 +488,13 @@ public:
       this->CSQ = String(numCSQ);
     }
 
-    // idx = this->res.indexOf("+QMTPUB:");
-    // if (idx > -1) {
-    //   String QMTPUB = this->res.substring(9, 9 + 5);
-    //   if (QMTPUB != "0,0,0") {
-    //     softReset = true;
-    //   }
-    // }
+    idx = this->res.indexOf("+QMTPUB:");
+    if (idx > -1) {
+      String QMTPUB = this->res.substring(9, 9 + 5);
+      if (QMTPUB != "0,0,0") {
+        softReset = true;
+      }
+    }
   }
 
   void handleFailure() {

@@ -106,7 +106,8 @@ void loop() {
       detectSystem.set(SYS_FAILURE);
     }
 
-  } else if (detectSystem.is(SYS_STOPPED)) {
+  }
+   else if (detectSystem.is(SYS_STOPPED)) {
     relay.cut();
     warningSystem.on();
     tenSecondsLight.on();

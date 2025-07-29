@@ -4,6 +4,7 @@
 #include "SensorManager.h"
 #include "TrafficLight.h"
 #include "NBIoT.h"
+#include "Globals.h"
 
 #ifndef detectSystem_h
 #define detectSystem_h
@@ -39,12 +40,31 @@ public:
   }
 
   void setPublishMsg() {
-    String content = "{\"csq\":" + nbiot.CSQ + "," + "\"cgatt\":" + nbiot.CGATT + "," + "\"cereg\":\"" + nbiot.CEREG + "\"" + "," + "\"din\":" + String(sensorManager.sensorStatusX8) + "," + "\"dout\":"
-                     + String(sensorManager.sensorStatusX4) + "}";
-    int contentLen = content.length();
-    String cmd = "AT+QMTPUB=0,0,0,0,rgt/" + String(nbiot.IMEI) + "/in," + String(contentLen) + "," + content;
+    String content = "{\"csq\":";
+    content += nbiot.CSQ;
+    content += ",";
+    content += "\"cgatt\":";
+    content += nbiot.CGATT;
+    content += ",";
+    content += "\"cereg\":\"";
+    content += nbiot.CEREG;
+    content += "\"";
+    content += ",";
+    content += "\"din\":";
+    content += String(sensorManager.sensorStatusX8);
+    content += ",";
+    content += "\"dout\":";
+    content += String(sensorManager.sensorStatusX4);
+    content += "}";
 
-    nbiot.setPublishMsg(cmd);
+    int contentLen = content.length();
+    String cmd = "AT+QMTPUB=0,0,0,0,rgt/";
+    cmd += nbiot.IMEI;
+    cmd += "/in,";
+    cmd += String(contentLen);
+    cmd += ",";
+    cmd += content;
+    publishMsg = cmd;
   }
 };
 

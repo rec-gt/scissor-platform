@@ -2,6 +2,7 @@
 #include "Utils.h"
 #include "Watchdog.h"
 #include "DisplayOLED.h"
+#include "Globals.h"
 
 #ifndef NBIoT_h
 #define NBIoT_h
@@ -60,8 +61,6 @@ private:
   String res = "";
 
   byte resetPin = 11;
-
-  String publishMsg = "";
 
   void clearSerialBuffer() {
     while (NBIOT_SERIAL.read() > 0) { delay(1); };
@@ -146,9 +145,10 @@ public:
       if (softReset) {
         this->resetBuffers();
         softReset = false;
+        connStr = "";
+        publishMsg = "";
         this->connState = STATE_WAITING_RESET;
         this->pubState = PIPELINE_DEFAULT;
-        Serial.print(this->res);
         Serial.print("\r\n[SOFT_RESET]\r\n");
       }
 
@@ -245,8 +245,7 @@ public:
     if (this->connState == STATE_FINISH_OPEN) {
       if (nbiotTimer.autoExpired(1000UL)) {
         Serial.print("\r\nCONNECTING MQTT\r\n");
-        NBIOT_SERIAL.println("AT+QMTCONN=0,dev_" + String(this->IMEI) + ",tswh,1Wo=[6vA0m");
-        delay(10);
+        NBIOT_SERIAL.println(connStr);
         this->connState = STATE_WAITING_CONN;
       }
     }
@@ -284,10 +283,14 @@ public:
       if (this->pubState == PIPELINE_FINISH_CEREG) {
         if (nbiotTimer.autoExpired(15000)) {
           Serial.print("\r\nEXECUTE REGULAR PUBLISH\r\n");
-          this->ioLock = true;
-          NBIOT_SERIAL.println(this->publishMsg);
-          delay(50);
-          this->ioLock = false;
+          // this->ioLock = true;
+          // delay(30);
+          Serial.print("Serial: ");
+          Serial.print(publishMsg);
+          NBIOT_SERIAL.println(publishMsg);
+          // delay(50);
+          // this->ioLock = false;
+          Serial.print(this->res);
           this->pubState = PIPELINE_WAITING_PUBLISH;
         }
       }
@@ -419,6 +422,7 @@ public:
       }
 
       if (this->pubState == PIPELINE_WAITING_PUBLISH) {
+        Serial.print(this->res);
         idx = this->res.indexOf("+QMTPUB:");
         if (idx > -1) {
           this->pubState = PIPELINE_DEFAULT;
@@ -444,6 +448,10 @@ public:
       if (!utils.isNumeric(this->IMEI)) {
         softReset = true;
       }
+      
+      connStr = "AT+QMTCONN=0,dev_";
+      connStr += this->IMEI;
+      connStr += ",tswh,1Wo=[6vA0m";
 
       // Serial.print(this->IMEI);
     }
@@ -500,10 +508,6 @@ public:
         softReset = true;
       }
     }
-  }
-
-  void setPublishMsg(String msg) {
-    this->publishMsg = msg;
   }
 
   ~NBIoT() {}

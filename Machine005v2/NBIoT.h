@@ -58,7 +58,7 @@ private:
   byte connState = STATE_WAITING_RESET;
   byte pubState = PIPELINE_DEFAULT;
 
-  String res = "";
+  // String res = "";
 
   byte resetPin = 11;
 
@@ -67,7 +67,7 @@ private:
   }
 
   void clearResBuffer() {
-    this->res = "";
+    resMsg = "";
   }
 
 public:
@@ -158,7 +158,7 @@ public:
       if (this->finishInit) {
         break;
       } else {
-        delay(1);
+        delay(10);
         this->handleDisplay();  // decouple, DO NOT execute after init
       }
     }
@@ -284,13 +284,13 @@ public:
         if (nbiotTimer.autoExpired(15000)) {
           Serial.print("\r\nEXECUTE REGULAR PUBLISH\r\n");
           // this->ioLock = true;
-          // delay(30);
+          delay(50);
           Serial.print("Serial: ");
           Serial.print(publishMsg);
           NBIOT_SERIAL.println(publishMsg);
-          // delay(50);
+          delay(50);
           // this->ioLock = false;
-          Serial.print(this->res);
+          Serial.print(resMsg);
           this->pubState = PIPELINE_WAITING_PUBLISH;
         }
       }
@@ -305,7 +305,7 @@ public:
         Serial.print(_byte);
 
         if (_byte != '\r' && _byte != '\n') {
-          this->res += _byte;
+          resMsg += _byte;
         }
 
         if (_byte == '\r') {
@@ -322,7 +322,7 @@ public:
     int idx = -1;
 
     if (this->connState == STATE_WAITING_IP) {
-      idx = this->res.indexOf("+IP:");
+      idx = resMsg.indexOf("+IP:");
       if (idx > -1) {
         Serial.print("\r\nFINISH WAITING IP\r\n");
         this->connState = STATE_FINISH_IP;
@@ -339,7 +339,7 @@ public:
     }
 
     if (this->connState == STATE_WAITING_IMEI) {
-      idx = this->res.indexOf("+CGSN:");
+      idx = resMsg.indexOf("+CGSN:");
       if (idx > -1) {
         Serial.print("\r\nFINISH GETTING IMEI\r\n");
         this->connState = STATE_FINISH_IMEI;
@@ -348,7 +348,7 @@ public:
     }
 
     if (this->connState == STATE_WAITING_CSQ) {
-      idx = this->res.indexOf("+CSQ:");
+      idx = resMsg.indexOf("+CSQ:");
       if (idx > -1) {
         Serial.print("\r\nFINISH GETTING CSQ\r\n");
         this->connState = STATE_FINISH_CSQ;
@@ -357,7 +357,7 @@ public:
     }
 
     if (this->connState == STATE_WAITING_CGATT) {
-      idx = this->res.indexOf("+CGATT:");
+      idx = resMsg.indexOf("+CGATT:");
       if (idx > -1) {
         Serial.print("\r\nFINISH GETTING CGATT\r\n");
         this->connState = STATE_FINISH_CGATT;
@@ -366,7 +366,7 @@ public:
     }
 
     if (this->connState == STATE_WAITING_CEREG) {
-      idx = this->res.indexOf("+CEREG:");
+      idx = resMsg.indexOf("+CEREG:");
       if (idx > -1) {
         Serial.print("\r\nFINISH GETTING CEREG\r\n");
         this->connState = STATE_FINISH_CEREG;
@@ -375,7 +375,7 @@ public:
     }
 
     if (this->connState == STATE_WAITING_OPEN) {
-      idx = this->res.indexOf("+QMTOPEN: 0,0");
+      idx = resMsg.indexOf("+QMTOPEN: 0,0");
       if (idx > -1) {
         Serial.print("\r\nFINISH OPENING MQTT\r\n");
         this->connState = STATE_FINISH_OPEN;
@@ -384,7 +384,7 @@ public:
     }
 
     if (this->connState == STATE_WAITING_CONN) {
-      idx = this->res.indexOf("+QMTCONN: 0,0,0");
+      idx = resMsg.indexOf("+QMTCONN: 0,0,0");
       if (idx > -1) {
         Serial.print("\r\nFINISH CONNECTING MQTT\r\n");
         this->connState = STATE_FINISH_CONN;
@@ -395,7 +395,7 @@ public:
     if (this->connState == STATE_WAITING_PUBSUB) {
       int idx = -1;
       if (this->pubState == PIPELINE_WAITING_CSQ) {
-        idx = this->res.indexOf("+CSQ:");
+        idx = resMsg.indexOf("+CSQ:");
         if (idx > -1) {
           Serial.print("\r\nFINISH GETTING CSQ\r\n");
           this->pubState = PIPELINE_FINISH_CSQ;
@@ -404,7 +404,7 @@ public:
       }
 
       if (this->pubState == PIPELINE_WAITING_CGATT) {
-        idx = this->res.indexOf("+CGATT:");
+        idx = resMsg.indexOf("+CGATT:");
         if (idx > -1) {
           Serial.print("\r\nFINISH GETTING CGATT\r\n");
           this->pubState = PIPELINE_FINISH_CGATT;
@@ -413,7 +413,7 @@ public:
       }
 
       if (this->pubState == PIPELINE_WAITING_CEREG) {
-        idx = this->res.indexOf("+CEREG:");
+        idx = resMsg.indexOf("+CEREG:");
         if (idx > -1) {
           Serial.print("\r\nFINISH GETTING CEREG\r\n");
           this->pubState = PIPELINE_FINISH_CEREG;
@@ -422,8 +422,7 @@ public:
       }
 
       if (this->pubState == PIPELINE_WAITING_PUBLISH) {
-        Serial.print(this->res);
-        idx = this->res.indexOf("+QMTPUB:");
+        idx = resMsg.indexOf("+QMTPUB:");
         if (idx > -1) {
           this->pubState = PIPELINE_DEFAULT;
           Serial.print("\r\nFINISH REGULAR PUBLISH\r\n");
@@ -435,53 +434,47 @@ public:
 
   void handleReadMsg() {
     int idx = -1;
-    idx = this->res.indexOf("+IP:");
+    idx = resMsg.indexOf("+IP:");
     if (idx > -1) {
-      this->IP = this->res.substring(5, 5 + 16);
-      // Serial.print(this->IP);
+      this->IP = resMsg.substring(5, 5 + 16);
     }
 
-    idx = this->res.indexOf("+CGSN:");
+    idx = resMsg.indexOf("+CGSN:");
     if (idx > -1) {
-      this->IMEI = this->res.substring(7, 7 + 15);
+      this->IMEI = resMsg.substring(7, 7 + 15);
 
       if (!utils.isNumeric(this->IMEI)) {
         softReset = true;
       }
-      
+
       connStr = "AT+QMTCONN=0,dev_";
       connStr += this->IMEI;
       connStr += ",tswh,1Wo=[6vA0m";
-
-      // Serial.print(this->IMEI);
     }
 
-    idx = this->res.indexOf("+CGATT:");
+    idx = resMsg.indexOf("+CGATT:");
     if (idx > -1) {
-      this->CGATT = this->res.substring(8, 8 + 1);
-      // Serial.print(this->CGATT);
+      this->CGATT = resMsg.substring(8, 8 + 1);
 
       if (this->CGATT != "1") {
         softReset = true;
       }
     }
 
-    idx = this->res.indexOf("+CEREG:");
+    idx = resMsg.indexOf("+CEREG:");
     if (idx > -1) {
-      this->CEREG = this->res.substring(8, 8 + 3);
-      // Serial.print(this->CEREG);
+      this->CEREG = resMsg.substring(8, 8 + 3);
 
       if (this->CEREG != "0,1") {
         softReset = true;
       }
     }
 
-    idx = this->res.indexOf("+CSQ:");
+    idx = resMsg.indexOf("+CSQ:");
     if (idx > -1) {
       int winStart = idx + 6;
       int winEnd = winStart + 2;
-      this->CSQ = this->res.substring(winStart, winEnd);
-      // Serial.print(this->CSQ);
+      this->CSQ = resMsg.substring(winStart, winEnd);
 
       if (this->CSQ == "99") {
         softReset = true;
@@ -501,9 +494,9 @@ public:
       this->CSQ = String(numCSQ);
     }
 
-    idx = this->res.indexOf("+QMTPUB:");
+    idx = resMsg.indexOf("+QMTPUB:");
     if (idx > -1) {
-      String QMTPUB = this->res.substring(9, 9 + 5);
+      String QMTPUB = resMsg.substring(9, 9 + 5);
       if (QMTPUB != "0,0,0") {
         softReset = true;
       }

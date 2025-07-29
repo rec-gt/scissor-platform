@@ -104,9 +104,9 @@ void loop() {
       detectSystem.set(SYS_STOPPED);
     }
 
-    if (!sensorManager.areAllHealthy()) {
-      detectSystem.set(SYS_FAILURE);
-    }
+    // if (!sensorManager.areAllHealthy()) {
+    //   detectSystem.set(SYS_FAILURE);
+    // }
 
   } else if (detectSystem.is(SYS_STOPPED)) {
     relay.cut();

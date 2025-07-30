@@ -12,7 +12,7 @@
 #include "TrafficLight.h"
 #include "Utils.h"
 #include "Globals.h"
-#include "Watchdog.h"
+#include <avr/wdt.h>
 
 DetectSystem detectSystem;
 
@@ -53,8 +53,6 @@ LaserSensor sensors[] = {
 
 LaserSensorManager sensorManager(sensors, sizeof(sensors) / sizeof(sensors[0]));
 
-Watchdog mcu_wdt(10000);
-
 void setup() {
   analogReference(DEFAULT);
   Serial.begin(9600);
@@ -76,10 +74,10 @@ void setup() {
   publishMsg.reserve(1024);
   publishMsgContent.reserve(1024);
 
-
   // === watchdog ===
-  mcu_wdt.enable();
+  wdt_enable(WDTO_8S);
 
+  // ======
   displayOLED.print("", "系統運作中", "", DISPLAY_SYS_RUNNING);
 }
 
@@ -87,9 +85,6 @@ void loop() {
   // === Debugging ===
   // sensorManager.printOne(0);
   // sensorManager.printAll(); // 注意，開啓後會帶來延遲
-
-  // Watchdog
-  mcu_wdt.monitor();
 
   // === handle NBIoT===
   nbiot.loop();
@@ -154,8 +149,8 @@ void loop() {
     }
   }
 
-  // === pet the dog ===
-  mcu_wdt.pet();
+  // === pet the watchdog ===
+  wdt_reset();
 
   delay(10);
 }

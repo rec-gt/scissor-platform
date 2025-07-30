@@ -3,7 +3,6 @@
 #include "SystemEnums.h"
 #include "NBIoT.h"
 #include "LaserSensor.h"
-// #include "DetectSystem.h"
 
 #ifndef sensorManager_h
 #define sensorManager_h

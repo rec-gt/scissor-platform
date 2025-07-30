@@ -17,6 +17,7 @@ private:
 public:
   byte sensorStatusX8 = 0;
   byte sensorStatusX4 = 0;
+  byte problemSensor = 0;
 
   LaserSensorManager(LaserSensor sensors[], size_t num)
     : num(num) {
@@ -29,7 +30,7 @@ public:
     for (int i = 0; i < this->num; i++) {
       this->laserSensors[i].listen();
     }
-    // also listen to 10 sensors status 
+    // also listen to 10 sensors status
     this->listenSensorsStatus();
   }
 
@@ -40,7 +41,7 @@ public:
 
     for (int i = 0; i < this->num; i++) {
       if (this->laserSensors[i].isDetected()) {
-        this->showOneDetected(i);
+        this->problemSensor = i;
         _oneDetected = true;
         break;
       }
@@ -71,7 +72,8 @@ public:
 
     for (int i = 0; i < this->num; i++) {
       if (!this->laserSensors[i].isHealthy()) {
-        this->showOneUnhealthy(i);
+        // this->showOneUnhealthy(i);
+        this->problemSensor = i;
         _allHealthy = false;
         break;
       }
@@ -90,7 +92,9 @@ public:
 
   // === checker ===
 
-  void showOneDetected(byte i) {
+  void showOneDetected() {
+    int i = this->problemSensor;
+    
     char* charArr[] = {
       " ",
       utils.num2Char(i + 0),

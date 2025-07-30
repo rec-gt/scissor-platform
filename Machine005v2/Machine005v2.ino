@@ -70,9 +70,9 @@ void setup() {
 
   // === global variable ===
   connStr.reserve(255);
-  publishMsg.reserve(255);
-  publishMsgContent.reserve(255);
-  
+  publishMsg.reserve(1024);
+  publishMsgContent.reserve(1024);
+
   // === watchdog ===
 }
 
@@ -119,6 +119,8 @@ void loop() {
     warningSystem.on();
     tenSecondsLight.on();
     trafficLight.red();
+
+    // sensorManager.showOneDetected();
 
     if (sensorManager.areAllEscaped()) {  // 1. sensor keep detection, once escape from obstacle, switch to RUNNING
       detectSystem.set(SYS_RUNNING);

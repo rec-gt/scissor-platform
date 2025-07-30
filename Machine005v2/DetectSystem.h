@@ -40,31 +40,31 @@ public:
   }
 
   void setPublishMsg() {
-    publishMsgContent = "{\"csq\":";
-    publishMsgContent += nbiot.CSQ;
-    publishMsgContent += ",";
-    publishMsgContent += "\"cgatt\":";
-    publishMsgContent += nbiot.CGATT;
-    publishMsgContent += ",";
-    publishMsgContent += "\"cereg\":\"";
-    publishMsgContent += nbiot.CEREG;
-    publishMsgContent += "\"";
-    publishMsgContent += ",";
-    publishMsgContent += "\"din\":";
-    publishMsgContent += String(sensorManager.sensorStatusX8);
-    publishMsgContent += ",";
-    publishMsgContent += "\"dout\":";
-    publishMsgContent += String(sensorManager.sensorStatusX4);
-    publishMsgContent += "}";
+    publishMsgContent = String("{\"csq\":");
+    publishMsgContent.concat(nbiot.CSQ);
+    publishMsgContent.concat(",");
+    publishMsgContent.concat("\"cgatt\":");
+    publishMsgContent.concat(nbiot.CGATT);
+    publishMsgContent.concat(",");
+    publishMsgContent.concat("\"cereg\":\"");
+    publishMsgContent.concat(nbiot.CEREG);
+    publishMsgContent.concat("\"");
+    publishMsgContent.concat(",");
+    publishMsgContent.concat("\"din\":");
+    publishMsgContent.concat(String(sensorManager.sensorStatusX8));
+    publishMsgContent.concat(",");
+    publishMsgContent.concat("\"dout\":");
+    publishMsgContent.concat(String(sensorManager.sensorStatusX4));
+    publishMsgContent.concat("}");
 
     int contentLen = publishMsgContent.length();
 
-    publishMsg = "AT+QMTPUB=0,0,0,0,rgt/";
-    publishMsg += nbiot.IMEI;
-    publishMsg += "/in,";
-    publishMsg += String(contentLen);
-    publishMsg += ",";
-    publishMsg += publishMsgContent;
+    publishMsg = String("AT+QMTPUB=0,0,0,0,rgt/");
+    publishMsg.concat(nbiot.IMEI);
+    publishMsg.concat("/in,");
+    publishMsg.concat(String(contentLen));
+    publishMsg.concat(",");
+    publishMsg.concat(publishMsgContent);
   }
 };
 

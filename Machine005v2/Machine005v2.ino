@@ -64,7 +64,7 @@ void setup() {
   NBIOT_SERIAL.begin(9600);
 
   // === nbiot config ===
-  // nbiot.debug();
+  nbiot.debug();
 
   // === System Starting ===
   relay.cut();
@@ -125,7 +125,7 @@ void loop() {
       detectSystem.set(SYS_FAILURE);
     }
 
-    if (sysTimer.autoExpired(3000)) {
+    if (sysTimer.autoExpired(5000)) {
       if (forcePublishState != FORCE_PUBLISH_RUNNING) {
         Serial.print("\r\nForce publish running\r\n");
         nbiot.forcePublish();
@@ -150,7 +150,7 @@ void loop() {
       countdownTimer.set();
     }
 
-    if (sysTimer.autoExpired(3000)) {
+    if (sysTimer.autoExpired(5000)) {
       if (forcePublishState != FORCE_PUBLISH_STOPPED) {
         Serial.print("\r\nForce publish stopped\r\n");
         nbiot.forcePublish();

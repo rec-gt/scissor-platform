@@ -181,6 +181,8 @@ void loop() {
     displayOLED.print("", "FAILURE", "", DISPLAY_SENSOR_UNHEALTHY);
   }
 
+  detectSystem.set(random(2) == 1 ? SYS_FAILURE : SYS_RUNNING);
+
   // === pet the watchdog ===
   wdt_reset();
 

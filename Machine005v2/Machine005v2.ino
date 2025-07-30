@@ -158,6 +158,8 @@ void loop() {
       }
     }
 
+    displayOLED.print("", "系統暫停運作", "", DISPLAY_SYS_STOPPED);
+
   } else if (detectSystem.is(SYS_ALLOW_10S)) {
     relay.connect();
     warningSystem.off();
@@ -175,6 +177,8 @@ void loop() {
     if (sensorManager.areAllHealthy()) {
       detectSystem.set(SYS_RUNNING);
     }
+
+    displayOLED.print("", "FAILURE", "", DISPLAY_SENSOR_UNHEALTHY);
   }
 
   // === pet the watchdog ===

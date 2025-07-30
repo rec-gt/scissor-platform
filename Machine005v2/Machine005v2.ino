@@ -10,6 +10,7 @@
 #include "NBIoT.h"
 #include "WarningSystem.h"
 #include "TrafficLight.h"
+#include "AsyncTimer.h"
 #include "Utils.h"
 #include "Globals.h"
 #include <avr/wdt.h>
@@ -52,6 +53,8 @@ LaserSensor sensors[] = {
 };
 
 LaserSensorManager sensorManager(sensors, sizeof(sensors) / sizeof(sensors[0]));
+
+AsyncTimer mcuTimer(5000);
 
 void setup() {
   analogReference(DEFAULT);
@@ -109,13 +112,13 @@ void loop() {
     tenSecondsLight.off();
     trafficLight.listen(sensorManager.getMinDistance());
 
-    if (sensorManager.isOneDetected()) {
-      detectSystem.set(SYS_STOPPED);
-    }
+    // if (sensorManager.isOneDetected()) {
+    //   detectSystem.set(SYS_STOPPED);
+    // }
 
-    if (!sensorManager.areAllHealthy()) {
-      detectSystem.set(SYS_FAILURE);
-    }
+    // if (!sensorManager.areAllHealthy()) {
+    //   detectSystem.set(SYS_FAILURE);
+    // }
 
   } else if (detectSystem.is(SYS_STOPPED)) {
     relay.cut();
@@ -123,14 +126,14 @@ void loop() {
     tenSecondsLight.on();
     trafficLight.red();
 
-    if (sensorManager.areAllEscaped()) {  // 1. sensor keep detection, once escape from obstacle, switch to RUNNING
-      detectSystem.set(SYS_RUNNING);
-    }
+    // if (sensorManager.areAllEscaped()) {  // 1. sensor keep detection, once escape from obstacle, switch to RUNNING
+    //   detectSystem.set(SYS_RUNNING);
+    // }
 
-    if (pressButton.isPressed()) {  // 2. press button to get 10s moving time
-      detectSystem.set(SYS_ALLOW_10S);
-      countdownTimer.set();
-    }
+    // if (pressButton.isPressed()) {  // 2. press button to get 10s moving time
+    //   detectSystem.set(SYS_ALLOW_10S);
+    //   countdownTimer.set();
+    // }
 
   } else if (detectSystem.is(SYS_ALLOW_10S)) {
     relay.connect();
@@ -149,6 +152,12 @@ void loop() {
     if (sensorManager.areAllHealthy()) {
       detectSystem.set(SYS_RUNNING);
     }
+  }
+
+
+  if (mcuTimer.isExpired()) {
+    detectSystem.set(random(2) == 1 ? SYS_STOPPED : SYS_RUNNING);
+    mcuTimer.refresh();
   }
 
   // === pet the watchdog ===

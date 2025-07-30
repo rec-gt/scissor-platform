@@ -36,6 +36,12 @@ public:
   }
 
   void setPublishMsg() {
+    if (this->status == SYS_RUNNING) {
+      sensorManager.sensorStatusX4 |= ~(1 << 3);  // status = true, running
+    } else {
+      sensorManager.sensorStatusX4 &= ~(1 << 3);  // status = false, stopped
+    }
+
     publishMsgContent = "{\"csq\":";
     publishMsgContent.concat(nbiot.CSQ);
     publishMsgContent.concat(",");
@@ -51,10 +57,7 @@ public:
     publishMsgContent.concat(",");
     publishMsgContent.concat("\"dout\":");
     publishMsgContent.concat(String(sensorManager.sensorStatusX4));
-    publishMsgContent.concat(",");
-    publishMsgContent.concat("\"ain\":[");
-    publishMsgContent.concat(String(this->status));
-    publishMsgContent.concat(",0,0,0]}");
+    publishMsgContent.concat("}");
 
     int contentLen = publishMsgContent.length();
 

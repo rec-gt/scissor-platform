@@ -126,11 +126,13 @@ void loop() {
     tenSecondsLight.on();
     trafficLight.red();
 
-    if (sensorManager.areAllEscaped()) {  // 1. sensor keep detection, once escape from obstacle, switch to RUNNING
+    // 1. sensor keep detection, once escape from obstacle, switch to RUNNING
+    if (sensorManager.areAllEscaped()) {
       detectSystem.set(SYS_RUNNING);
     }
 
-    if (pressButton.isPressed()) {  // 2. press button to get 10s moving time
+    // 2. press button to get 10s moving time
+    if (pressButton.isPressed()) {
       detectSystem.set(SYS_ALLOW_10S);
       countdownTimer.set();
     }

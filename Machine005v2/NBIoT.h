@@ -518,6 +518,8 @@ public:
       String QMTPUB = resMsg.substring(9, 9 + 5);
       if (QMTPUB != "0,0,0") {
         softReset = true;
+      } else {
+        nbiot_wdt.pet();
       }
     }
   }
@@ -525,7 +527,7 @@ public:
   void forcePublish() {
     NBIOT_SERIAL.println(publishMsg);
   }
-  
+
   ~NBIoT() {}
 };
 

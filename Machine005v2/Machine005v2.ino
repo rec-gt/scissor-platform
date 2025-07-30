@@ -150,22 +150,22 @@ void loop() {
   }
 
 
-  if (detectSystem.is(SYS_RUNNING)) {
-    if (displayTimer.autoExpired(300)) {
-      if (!nbiot.ioLock) {
-        displayOLED.print("", "系統運作中", "0120120120", DISPLAY_SYS_RUNNING);
-      }
-    }
-  } else if (detectSystem.is(SYS_STOPPED)) {
-    if (displayTimer.autoExpired(300)) {
-      if (!nbiot.ioLock) {
-        sensorManager.showOneDetected();
-      }
-    }
-  }
+  // if (detectSystem.is(SYS_RUNNING)) {
+  //   if (displayTimer.autoExpired(300)) {
+  //     if (!nbiot.ioLock) {
+  //       displayOLED.print("", "系統運作中", "0120120120", DISPLAY_SYS_RUNNING);
+  //     }
+  //   }
+  // } else if (detectSystem.is(SYS_STOPPED)) {
+  //   if (displayTimer.autoExpired(300)) {
+  //     if (!nbiot.ioLock) {
+  //       sensorManager.showOneDetected();
+  //     }
+  //   }
+  // }
 
   // === pet the dog ===
   detectSystem.set(random(2) == 1 ? SYS_STOPPED : SYS_RUNNING);
 
-  delay(50);
+  delay(10);
 }

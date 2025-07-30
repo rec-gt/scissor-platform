@@ -25,10 +25,6 @@ public:
       return;
     }
 
-    if (status == SYS_RUNNING) {
-      displayOLED.print("", "系統運作中", "0120120120", DISPLAY_SYS_RUNNING);
-    }
-
     this->lastStatus = status;
     this->status = status;
 

@@ -39,7 +39,7 @@ public:
     if (!this->initSuccess) {
       return;
     }
-    
+
     if (currState != this->lastState) {
       this->lastState = currState;
 
@@ -51,7 +51,6 @@ public:
       u8g2.setCursor(0, 62);
       u8g2.print(line3);
       u8g2.sendBuffer();
-      delay(30);
     }
   }
 

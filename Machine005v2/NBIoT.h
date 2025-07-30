@@ -283,15 +283,13 @@ public:
       if (this->pubState == PIPELINE_FINISH_CEREG) {
         if (nbiotTimer.autoExpired(4000)) {
           Serial.print("\r\nEXECUTE REGULAR PUBLISH\r\n");
-          // this->ioLock = true;
-          delay(50);
+          this->ioLock = true;
           Serial.print("Serial: ");
           Serial.print(publishMsg);
           NBIOT_SERIAL.println(publishMsg);
           publishMsg = String("");
           publishMsgContent = String("");
           delay(50);
-          // this->ioLock = false;
           Serial.print(resMsg);
           this->pubState = PIPELINE_WAITING_PUBLISH;
         }
@@ -426,6 +424,7 @@ public:
       if (this->pubState == PIPELINE_WAITING_PUBLISH) {
         idx = resMsg.indexOf("+QMTPUB:");
         if (idx > -1) {
+          this->ioLock = false;
           this->pubState = PIPELINE_DEFAULT;
           Serial.print("\r\nFINISH REGULAR PUBLISH\r\n");
           nbiot_wdt.pet();

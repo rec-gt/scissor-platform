@@ -69,12 +69,12 @@ void setup() {
   detectSystem.set(SYS_RUNNING);
   delay(500);
 
-  // === global variable ===
+  // === Global Variable Init ===
   connStr.reserve(255);
   publishMsg.reserve(1024);
   publishMsgContent.reserve(1024);
 
-  // === watchdog ===
+  // === Watchdog Init ===
   wdt_enable(WDTO_8S);
 
   // ======
@@ -136,6 +136,8 @@ void loop() {
     relay.connect();
     warningSystem.off();
     tenSecondsLight.off();
+    trafficLight.greenYellow();
+
     countdownTimer.countdown([]() {
       detectSystem.set(SYS_RUNNING);
     });

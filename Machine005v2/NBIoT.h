@@ -265,7 +265,7 @@ public:
 
     if (this->connState == STATE_WAITING_PUBSUB) {
       if (this->pubState == PIPELINE_DEFAULT) {
-        if (nbiotTimer.autoExpired(2000)) {
+        if (nbiotTimer.autoExpired(5000)) {
           Serial.print("\r\nQUERYING CSQ\r\n");
           NBIOT_SERIAL.println("AT+CSQ");
           this->pubState = PIPELINE_WAITING_CSQ;
@@ -273,7 +273,7 @@ public:
       }
 
       if (this->pubState == PIPELINE_FINISH_CSQ) {
-        if (nbiotTimer.autoExpired(2000)) {
+        if (nbiotTimer.autoExpired(5000)) {
           Serial.print("\r\nQUERYING CGATT\r\n");
           NBIOT_SERIAL.println("AT+CGATT?");
           this->pubState = PIPELINE_WAITING_CGATT;
@@ -281,7 +281,7 @@ public:
       }
 
       if (this->pubState == PIPELINE_FINISH_CGATT) {
-        if (nbiotTimer.autoExpired(2000)) {
+        if (nbiotTimer.autoExpired(5000)) {
           Serial.print("\r\nQUERYING CEREG\r\n");
           NBIOT_SERIAL.println("AT+CEREG?");
           this->pubState = PIPELINE_WAITING_CEREG;
@@ -289,7 +289,7 @@ public:
       }
 
       if (this->pubState == PIPELINE_FINISH_CEREG) {
-        if (nbiotTimer.autoExpired(4000)) {
+        if (nbiotTimer.autoExpired(15000)) {
           Serial.print("\r\nEXECUTE REGULAR PUBLISH\r\n");
           Serial.print("Serial: ");
           Serial.print(publishMsg);
@@ -498,7 +498,7 @@ public:
       }
 
       int numCSQ = strNum.toInt();
-      if (!(numCSQ >= 10 && numCSQ <= 31)) {
+      if (!(numCSQ >= 8 && numCSQ <= 31)) {
         softReset = true;
       }
 

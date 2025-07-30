@@ -12,7 +12,7 @@
 #include "TrafficLight.h"
 #include "Utils.h"
 #include "Globals.h"
-#include "AsyncTimer.h"
+#include "Watchdog.h"
 
 DetectSystem detectSystem;
 
@@ -38,8 +38,6 @@ CountdownTimer countdownTimer;
 
 NBIoT nbiot;
 
-AsyncTimer displayTimer(10000UL);
-
 LaserSensor sensors[] = {
   LaserSensor(A0),
   LaserSensor(A1),
@@ -54,6 +52,8 @@ LaserSensor sensors[] = {
 };
 
 LaserSensorManager sensorManager(sensors, sizeof(sensors) / sizeof(sensors[0]));
+
+Watchdog mcu_wdt(10000);
 
 void setup() {
   analogReference(DEFAULT);
@@ -76,7 +76,11 @@ void setup() {
   publishMsg.reserve(1024);
   publishMsgContent.reserve(1024);
 
+
   // === watchdog ===
+  mcu_wdt.enable();
+
+  displayOLED.print("", "系統運作中", "", DISPLAY_SYS_RUNNING);
 }
 
 void loop() {
@@ -84,9 +88,11 @@ void loop() {
   // sensorManager.printOne(0);
   // sensorManager.printAll(); // 注意，開啓後會帶來延遲
 
+  // Watchdog
+  mcu_wdt.monitor();
+
   // === handle NBIoT===
   nbiot.loop();
-
 
   // === handling press button ===
   pressButton.listen();
@@ -108,14 +114,13 @@ void loop() {
     tenSecondsLight.off();
     trafficLight.listen(sensorManager.getMinDistance());
 
+    if (sensorManager.isOneDetected()) {
+      detectSystem.set(SYS_STOPPED);
+    }
 
-    // if (sensorManager.isOneDetected()) {
-    //   detectSystem.set(SYS_STOPPED);
-    // }
-
-    // if (!sensorManager.areAllHealthy()) {
-    //   detectSystem.set(SYS_FAILURE);
-    // }
+    if (!sensorManager.areAllHealthy()) {
+      detectSystem.set(SYS_FAILURE);
+    }
 
   } else if (detectSystem.is(SYS_STOPPED)) {
     relay.cut();
@@ -123,9 +128,9 @@ void loop() {
     tenSecondsLight.on();
     trafficLight.red();
 
-    // if (sensorManager.areAllEscaped()) {  // 1. sensor keep detection, once escape from obstacle, switch to RUNNING
-    //   detectSystem.set(SYS_RUNNING);
-    // }
+    if (sensorManager.areAllEscaped()) {  // 1. sensor keep detection, once escape from obstacle, switch to RUNNING
+      detectSystem.set(SYS_RUNNING);
+    }
 
     if (pressButton.isPressed()) {  // 2. press button to get 10s moving time
       detectSystem.set(SYS_ALLOW_10S);
@@ -149,23 +154,8 @@ void loop() {
     }
   }
 
-
-  // if (detectSystem.is(SYS_RUNNING)) {
-  //   if (displayTimer.autoExpired(300)) {
-  //     if (!nbiot.ioLock) {
-  //       displayOLED.print("", "系統運作中", "0120120120", DISPLAY_SYS_RUNNING);
-  //     }
-  //   }
-  // } else if (detectSystem.is(SYS_STOPPED)) {
-  //   if (displayTimer.autoExpired(300)) {
-  //     if (!nbiot.ioLock) {
-  //       sensorManager.showOneDetected();
-  //     }
-  //   }
-  // }
-
   // === pet the dog ===
-  detectSystem.set(random(2) == 1 ? SYS_STOPPED : SYS_RUNNING);
+  mcu_wdt.pet();
 
   delay(10);
 }

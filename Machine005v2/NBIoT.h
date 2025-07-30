@@ -65,7 +65,7 @@ private:
   }
 
   void clearResBuffer() {
-    resMsg = String("");
+    resMsg = "";
   }
 
 public:
@@ -74,7 +74,6 @@ public:
   String IMEI = "";
   String CGATT = "";
   String CEREG = "";
-  bool ioLock = false;
 
   NBIoT() {
     pinMode(this->resetPin, OUTPUT);
@@ -143,9 +142,9 @@ public:
       if (softReset) {
         this->resetBuffers();
         softReset = false;
-        connStr = String("");
-        publishMsg = String("");
-        publishMsgContent = String("");
+        connStr = "";
+        publishMsg = "";
+        publishMsgContent = "";
         this->connState = STATE_WAITING_RESET;
         this->pubState = PIPELINE_DEFAULT;
         Serial.print("\r\n[SOFT_RESET]\r\n");
@@ -165,7 +164,7 @@ public:
 
   bool isAsked() {
     if (this->connState == this->prevConnState) {
-      return false
+      return false;
     } else {
       this->prevConnState = this->connState;
       return true;
@@ -254,7 +253,7 @@ public:
       if (nbiotTimer.autoExpired(1000UL)) {
         Serial.print("\r\nCONNECTING MQTT\r\n");
         NBIOT_SERIAL.println(connStr);
-        connStr = String("");
+        connStr = "";
         this->connState = STATE_WAITING_CONN;
       }
     }
@@ -295,8 +294,8 @@ public:
           Serial.print("Serial: ");
           Serial.print(publishMsg);
           NBIOT_SERIAL.println(publishMsg);
-          publishMsg = String("");
-          publishMsgContent = String("");
+          publishMsg = "";
+          publishMsgContent = "";
           delay(50);
           Serial.print(resMsg);
           this->pubState = PIPELINE_WAITING_PUBLISH;

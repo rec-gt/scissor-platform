@@ -72,7 +72,6 @@ public:
 
     for (int i = 0; i < this->num; i++) {
       if (!this->laserSensors[i].isHealthy()) {
-        // this->showOneUnhealthy(i);
         this->problemSensor = i;
         _allHealthy = false;
         break;

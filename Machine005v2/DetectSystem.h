@@ -36,7 +36,7 @@ public:
   }
 
   void setPublishMsg() {
-    publishMsgContent = String("{\"csq\":");
+    publishMsgContent = "{\"csq\":";
     publishMsgContent.concat(nbiot.CSQ);
     publishMsgContent.concat(",");
     publishMsgContent.concat("\"cgatt\":");
@@ -55,7 +55,7 @@ public:
 
     int contentLen = publishMsgContent.length();
 
-    publishMsg = String("AT+QMTPUB=0,0,0,0,rgt/");
+    publishMsg = "AT+QMTPUB=0,0,0,0,rgt/";
     publishMsg.concat(nbiot.IMEI);
     publishMsg.concat("/in,");
     publishMsg.concat(String(contentLen));

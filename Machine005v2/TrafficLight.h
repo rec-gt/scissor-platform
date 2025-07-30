@@ -50,6 +50,24 @@ public:
     }
   }
 
+  void redYellow() {
+    if (this->lastStatus != TRAFFIC_RED_YELLOW) {
+      this->lastStatus = TRAFFIC_RED_YELLOW;
+      digitalWrite(redPin, HIGH);
+      digitalWrite(yellowPin, HIGH);
+      digitalWrite(greenPin, LOW);
+    }
+  }
+
+  void greenYellow() {
+    if (this->lastStatus != TRAFFIC_GREEN_YELLOW) {
+      this->lastStatus = TRAFFIC_GREEN_YELLOW;
+      digitalWrite(redPin, LOW);
+      digitalWrite(yellowPin, HIGH);
+      digitalWrite(greenPin, HIGH);
+    }
+  }
+
   void off() {  // because of 5v relay, LOW == connect, HIGH == cut
     if (this->lastStatus != TRAFFIC_OFF) {
       this->lastStatus = TRAFFIC_OFF;

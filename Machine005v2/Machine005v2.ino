@@ -142,7 +142,7 @@ void loop() {
 
   } else if (detectSystem.is(SYS_FAILURE)) {
     relay.cut();
-    warningSystem.on();
+    trafficLight.redYellow();
 
     if (sensorManager.areAllHealthy()) {
       detectSystem.set(SYS_RUNNING);

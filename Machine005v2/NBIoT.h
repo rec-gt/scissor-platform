@@ -60,6 +60,8 @@ private:
 
   byte resetPin = 11;
 
+  bool debugMode = false;
+
   void clearSerialBuffer() {
     while (NBIOT_SERIAL.read() > 0) { delay(1); };
   }
@@ -84,6 +86,10 @@ public:
     this->clearSerialBuffer();
     this->clearResBuffer();
     delay(10);
+  }
+
+  void debug() {
+    this->debugMode = true;
   }
 
   void init() {
@@ -309,7 +315,9 @@ public:
       while (NBIOT_SERIAL.available() > 0) {
         char _byte = NBIOT_SERIAL.read();
 
-        Serial.print(_byte);
+        if (this->debugMode) {
+          Serial.print(_byte);
+        }
 
         if (_byte != '\r' && _byte != '\n') {
           resMsg += _byte;
@@ -514,6 +522,10 @@ public:
     }
   }
 
+  void forcePublish() {
+    NBIOT_SERIAL.println(publishMsg);
+  }
+  
   ~NBIoT() {}
 };
 

@@ -54,12 +54,17 @@ LaserSensor sensors[] = {
 
 LaserSensorManager sensorManager(sensors, sizeof(sensors) / sizeof(sensors[0]));
 
-AsyncTimer mcuTimer(500);
+AsyncTimer sysTimer(500);
+
+PublishState forcePublishState = FORCE_PUBLISH_DISABLED;
 
 void setup() {
   analogReference(DEFAULT);
   Serial.begin(9600);
   NBIOT_SERIAL.begin(9600);
+
+  // === nbiot config ===
+  // nbiot.debug();
 
   // === System Starting ===
   relay.cut();
@@ -120,6 +125,14 @@ void loop() {
       detectSystem.set(SYS_FAILURE);
     }
 
+    if (sysTimer.autoExpired(3000)) {
+      if (forcePublishState != FORCE_PUBLISH_RUNNING) {
+        Serial.print("\r\nForce publish running\r\n");
+        nbiot.forcePublish();
+        forcePublishState = FORCE_PUBLISH_RUNNING;
+      }
+    }
+
   } else if (detectSystem.is(SYS_STOPPED)) {
     relay.cut();
     warningSystem.on();
@@ -135,6 +148,14 @@ void loop() {
     if (pressButton.isPressed()) {
       detectSystem.set(SYS_ALLOW_10S);
       countdownTimer.set();
+    }
+
+    if (sysTimer.autoExpired(3000)) {
+      if (forcePublishState != FORCE_PUBLISH_STOPPED) {
+        Serial.print("\r\nForce publish stopped\r\n");
+        nbiot.forcePublish();
+        forcePublishState = FORCE_PUBLISH_STOPPED;
+      }
     }
 
   } else if (detectSystem.is(SYS_ALLOW_10S)) {

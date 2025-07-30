@@ -52,9 +52,9 @@ public:
     publishMsgContent.concat("\"dout\":");
     publishMsgContent.concat(String(sensorManager.sensorStatusX4));
     publishMsgContent.concat(",");
-    publishMsgContent.concat("\"sw\":");
+    publishMsgContent.concat("\"ain\":[");
     publishMsgContent.concat(String(this->status));
-    publishMsgContent.concat("}");
+    publishMsgContent.concat(",0,0,0]}");
 
     int contentLen = publishMsgContent.length();
 

@@ -147,9 +147,11 @@ void loop() {
     }
 
     if (forcePublishState != FORCE_PUBLISH_STOPPED) {
-      Serial.print("\r\nFORCE PUBLISH STOPPED\r\n");
-      nbiot.forcePublish();
-      forcePublishState = FORCE_PUBLISH_STOPPED;
+      if (sysTimer.autoExpired(500)) {
+        Serial.print("\r\nFORCE PUBLISH STOPPED\r\n");
+        forcePublishState = FORCE_PUBLISH_STOPPED;
+        nbiot.forcePublish();
+      }
     }
 
   } else if (detectSystem.is(SYS_ALLOW_10S)) {

@@ -547,13 +547,12 @@ public:
 
   void forcePublish() {
     if (this->connState == STATE_WAITING_PUBSUB) {
-      if (nbiotTimer.autoExpired(5000)) {
-        if (this->pubState == PIPELINE_WAITING_PREPARE_PUBMSG
-            || this->pubState == PIPELINE_FINISH_PREPARE_PUBMSG
-            || this->pubState == PIPELINE_WAITING_PUBLISH
-            || this->pubState == PIPELINE_FINISH_PUBLISH) {
-          return;
-        }
+      if (this->pubState == PIPELINE_WAITING_PREPARE_PUBMSG
+          || this->pubState == PIPELINE_FINISH_PREPARE_PUBMSG
+          || this->pubState == PIPELINE_WAITING_PUBLISH
+          || this->pubState == PIPELINE_FINISH_PUBLISH) {
+        return;
+      } else {
         NBIOT_SERIAL.println(publishMsgForce);
         NBIOT_SERIAL.flush();
       }

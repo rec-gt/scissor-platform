@@ -92,7 +92,7 @@ void setup() {
 void loop() {
   // === Debugging ===
   // sensorManager.printOne(0);
-  // sensorManager.printAll(); // 注意，開啓後會帶來延遲
+  sensorManager.printAll(); // 注意，開啓後會帶來延遲
 
   // === handle NBIoT===
   nbiot.loop();
@@ -158,8 +158,6 @@ void loop() {
       }
     }
 
-    displayOLED.print("", "系統暫停運作", "", DISPLAY_SYS_STOPPED);
-
   } else if (detectSystem.is(SYS_ALLOW_10S)) {
     relay.connect();
     warningSystem.off();
@@ -177,11 +175,7 @@ void loop() {
     if (sensorManager.areAllHealthy()) {
       detectSystem.set(SYS_RUNNING);
     }
-
-    displayOLED.print("", "FAILURE", "", DISPLAY_SENSOR_UNHEALTHY);
   }
-
-  detectSystem.set(random(2) == 1 ? SYS_FAILURE : SYS_RUNNING);
 
   // === pet the watchdog ===
   wdt_reset();

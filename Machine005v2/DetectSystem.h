@@ -61,12 +61,18 @@ public:
 
     int contentLen = publishMsgContent.length();
 
-    publishMsg = "AT+QMTPUB=0,0,0,0,rgt/";
-    publishMsg.concat(nbiot.IMEI);
-    publishMsg.concat("/in,");
-    publishMsg.concat(String(contentLen));
-    publishMsg.concat(",");
-    publishMsg.concat(publishMsgContent);
+    publishMsgPrepare = "AT+QMTPUB=0,0,0,0,rgt/";
+    publishMsgPrepare.concat(nbiot.IMEI);
+    publishMsgPrepare.concat("/in,");
+    publishMsgPrepare.concat(String(contentLen));
+
+    
+    // publishMsg = "AT+QMTPUB=0,0,0,0,rgt/";
+    // publishMsg.concat(nbiot.IMEI);
+    // publishMsg.concat("/in,");
+    // publishMsg.concat(String(contentLen));
+    // publishMsg.concat(",");
+    // publishMsg.concat(publishMsgContent);
   }
 };
 

@@ -26,7 +26,7 @@ public:
   }
 
   void listenAll() {
-    for (int i = 0; i < this->num; i++) {
+    for (size_t i = 0; i < this->num; i++) {
       this->laserSensors[i].listen();
     }
     // also listen to 10 sensors status
@@ -38,7 +38,7 @@ public:
   bool isOneDetected() {
     bool _oneDetected = false;
 
-    for (int i = 0; i < this->num; i++) {
+    for (size_t i = 0; i < this->num; i++) {
       if (this->laserSensors[i].isDetected()) {
         this->problemSensor = i;
         _oneDetected = true;
@@ -52,14 +52,14 @@ public:
   bool areAllEscaped() {
     bool _allEscaped = true;
 
-    for (int i = 0; i < this->num; i++) {
+    for (size_t i = 0; i < this->num; i++) {
       if (this->laserSensors[i].isDetected()) {
         _allEscaped = false;
         break;
       }
     }
 
-    for (int i = 0; i < this->num; i++) {
+    for (size_t i = 0; i < this->num; i++) {
       this->laserSensors[i].setEscapeBuffer(!_allEscaped);
     }
 
@@ -69,7 +69,7 @@ public:
   bool areAllHealthy() {
     bool _allHealthy = true;
 
-    for (int i = 0; i < this->num; i++) {
+    for (size_t i = 0; i < this->num; i++) {
       if (!this->laserSensors[i].isHealthy()) {
         this->problemSensor = i;
         _allHealthy = false;
@@ -83,7 +83,7 @@ public:
   // === Setter ===
 
   void setAllBaseThreshold(bool toggle) {
-    for (int i = 0; i < this->num; i++) {
+    for (size_t i = 0; i < this->num; i++) {
       this->laserSensors[i].setBaseThreshold(toggle);
     }
   }
@@ -165,7 +165,7 @@ public:
   }
 
   void printAll() {
-    for (int i = 0; i < this->num; i++) {
+    for (size_t i = 0; i < this->num; i++) {
       this->printOne(i);
     }
   }

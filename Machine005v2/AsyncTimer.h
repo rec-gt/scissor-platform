@@ -17,7 +17,7 @@ public:
     return millis() - this->prevMillis > this->timeout;
   }
 
-  bool refresh(void) {
+  void refresh(void) {
     this->prevMillis = millis();
   }
 

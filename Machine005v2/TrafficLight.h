@@ -78,7 +78,7 @@ public:
   }
 
   void listen(int distance) {
-    int _delay = 500;
+    unsigned int _delay = 500;
     if (distance <= 550) {  // enter the RED signal range
       if (millis() - this->lastMillis > _delay) {
         this->red();

@@ -79,8 +79,8 @@ void setup() {
 
   // === Global Variable Init ===
   connStr.reserve(255);
-  publishMsgForce.reserve(1024);
-  publishMsgContent.reserve(1024);
+  publishMsgForce.reserve(255);
+  publishMsgContent.reserve(255);
 
   // === Watchdog Init ===
   wdt_enable(WDTO_8S);

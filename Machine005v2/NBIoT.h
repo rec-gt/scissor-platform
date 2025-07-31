@@ -473,7 +473,7 @@ public:
       }
 
       if (this->pubState == PIPELINE_WAITING_PUBLISH) {
-        idx = resMsg.indexOf("+QMTPUB:");
+        idx = resMsg.indexOf("OK");
         if (idx > -1) {
           this->pubState = PIPELINE_DEFAULT;
           Serial.print("\r\nFINISH REGULAR PUBLISH\r\n");
@@ -498,13 +498,9 @@ public:
         softReset = true;
       }
 
-
       connStr = "AT+QMTCONN=0,dev_";
       connStr.concat(this->IMEI);
       connStr.concat(",tswh,1Wo=[6vA0m");
-      // connStr += this->IMEI;
-      // connStr += ",tswh,1Wo=[6vA0m";
-      // connStr = "AT+QMTCONN=0,dev_861096060465131,tswh,1Wo=[6vA0m";
     }
 
     idx = resMsg.indexOf("+CGATT:");
@@ -547,16 +543,6 @@ public:
       }
 
       this->CSQ = String(numCSQ);
-    }
-
-    idx = resMsg.indexOf("+QMTPUB:");
-    if (idx > -1) {
-      String QMTPUB = resMsg.substring(9, 9 + 5);
-      if (QMTPUB != "0,0,0") {
-        softReset = true;
-      } else {
-        nbiot_wdt.pet();
-      }
     }
   }
 

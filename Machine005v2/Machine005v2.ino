@@ -92,7 +92,7 @@ void setup() {
 void loop() {
   // === Debugging ===
   // sensorManager.printOne(0);
-  sensorManager.printAll(); // 注意，開啓後會帶來延遲
+  // sensorManager.printAll(); // 注意，開啓後會帶來延遲
 
   // === handle NBIoT===
   nbiot.loop();

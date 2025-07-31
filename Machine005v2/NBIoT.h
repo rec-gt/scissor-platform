@@ -553,6 +553,7 @@ public:
           || this->pubState == PIPELINE_FINISH_PUBLISH) {
         return;
       } else {
+        Serial.print("\r\nFORCE PUBLISH STOPPED\r\n");
         NBIOT_SERIAL.println(publishMsgForce);
         NBIOT_SERIAL.flush();
       }

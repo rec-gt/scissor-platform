@@ -148,7 +148,6 @@ void loop() {
 
     if (forcePublishState != FORCE_PUBLISH_STOPPED) {
       if (sysTimer.autoExpired(500)) {
-        Serial.print("\r\nFORCE PUBLISH STOPPED\r\n");
         forcePublishState = FORCE_PUBLISH_STOPPED;
         nbiot.forcePublish();
       }

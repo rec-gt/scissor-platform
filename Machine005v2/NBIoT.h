@@ -543,6 +543,14 @@ public:
 
       this->CSQ = String(numCSQ);
     }
+
+    idx = resMsg.indexOf("+QMTPUB:");
+    if (idx > -1) {
+      String QMTPUB = resMsg.substring(9, 9 + 5);
+      if (QMTPUB != "0,0,0") {
+        softReset = true;
+      }
+    }
   }
 
   void forcePublish() {

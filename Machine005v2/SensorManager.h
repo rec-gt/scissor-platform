@@ -104,7 +104,9 @@ public:
     displayOLED.print("", c, "檢測到障礙物", DISPLAY_SYS_DETECTED_0 + i);
   }
 
-  void showOneUnhealthy(byte i) {
+  void showOneUnhealthy() {
+    int i = this->problemSensor;
+
     char* charArr[] = {
       " ",
       utils.num2Char(i),

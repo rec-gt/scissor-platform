@@ -147,11 +147,13 @@ void loop() {
     }
 
     if (forcePublishState != FORCE_PUBLISH_STOPPED) {
-      if (sysTimer.autoExpired(500)) {
+      if (sysTimer.autoExpired(1000)) {
         forcePublishState = FORCE_PUBLISH_STOPPED;
         nbiot.forcePublish();
       }
     }
+
+    sensorManager.showOneDetected();
 
   } else if (detectSystem.is(SYS_ALLOW_10S)) {
     relay.connect();
@@ -166,6 +168,8 @@ void loop() {
   } else if (detectSystem.is(SYS_FAILURE)) {
     relay.cut();
     trafficLight.redYellow();
+
+    sensorManager.showOneUnhealthy();
 
     if (sensorManager.areAllHealthy()) {
       detectSystem.set(SYS_RUNNING);

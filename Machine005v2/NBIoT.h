@@ -340,7 +340,6 @@ public:
     if (NBIOT_SERIAL.available() > 0) {
       while (NBIOT_SERIAL.available() > 0) {
         char _byte = NBIOT_SERIAL.read();
-        delay(2);
 
         if (this->debugMode) {
           Serial.print(_byte);
@@ -355,6 +354,7 @@ public:
           this->handleReadMsg();
           this->clearResBuffer();
         }
+        // delay(1);
       }
     }
   }
@@ -546,8 +546,18 @@ public:
   }
 
   void forcePublish() {
-    NBIOT_SERIAL.println(publishMsgForce);
-    NBIOT_SERIAL.flush();
+    if (this->connState == STATE_WAITING_PUBSUB) {
+      if (nbiotTimer.autoExpired(5000)) {
+        if (this->pubState == PIPELINE_WAITING_PREPARE_PUBMSG
+            || this->pubState == PIPELINE_FINISH_PREPARE_PUBMSG
+            || this->pubState == PIPELINE_WAITING_PUBLISH
+            || this->pubState == PIPELINE_FINISH_PUBLISH) {
+          return;
+        }
+        NBIOT_SERIAL.println(publishMsgForce);
+        NBIOT_SERIAL.flush();
+      }
+    }
   }
 
   ~NBIoT() {}

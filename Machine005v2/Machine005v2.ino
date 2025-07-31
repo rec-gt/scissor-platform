@@ -125,12 +125,8 @@ void loop() {
       detectSystem.set(SYS_FAILURE);
     }
 
-    if (sysTimer.autoExpired(5000)) {
-      if (forcePublishState != FORCE_PUBLISH_RUNNING) {
-        Serial.print("\r\nForce publish running\r\n");
-        nbiot.forcePublish();
-        forcePublishState = FORCE_PUBLISH_RUNNING;
-      }
+    if (forcePublishState != FORCE_PUBLISH_RUNNING) {
+      forcePublishState = FORCE_PUBLISH_RUNNING;
     }
 
   } else if (detectSystem.is(SYS_STOPPED)) {
@@ -150,12 +146,10 @@ void loop() {
       countdownTimer.set();
     }
 
-    if (sysTimer.autoExpired(5000)) {
-      if (forcePublishState != FORCE_PUBLISH_STOPPED) {
-        Serial.print("\r\nForce publish stopped\r\n");
-        nbiot.forcePublish();
-        forcePublishState = FORCE_PUBLISH_STOPPED;
-      }
+    if (forcePublishState != FORCE_PUBLISH_STOPPED) {
+      Serial.print("\r\nFORCE PUBLISH STOPPED\r\n");
+      nbiot.forcePublish();
+      forcePublishState = FORCE_PUBLISH_STOPPED;
     }
 
   } else if (detectSystem.is(SYS_ALLOW_10S)) {

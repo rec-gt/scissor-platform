@@ -48,6 +48,8 @@ private:
     PIPELINE_FINISH_CGATT,
     PIPELINE_WAITING_CEREG,
     PIPELINE_FINISH_CEREG,
+    PIPELINE_WAITING_PREPARE_PUBMSG,
+    PIPELINE_FINISH_PREPARE_PUBMSG,
     PIPELINE_WAITING_PUBLISH,
     PIPELINE_FINISH_PUBLISH,
   };
@@ -148,9 +150,6 @@ public:
       if (softReset) {
         this->resetBuffers();
         softReset = false;
-        connStr = "";
-        publishMsg = "";
-        publishMsgContent = "";
         this->connState = STATE_WAITING_RESET;
         this->pubState = PIPELINE_DEFAULT;
         Serial.print("\r\n[SOFT_RESET]\r\n");
@@ -259,7 +258,7 @@ public:
       if (nbiotTimer.autoExpired(1000UL)) {
         Serial.print("\r\nCONNECTING MQTT\r\n");
         NBIOT_SERIAL.println(connStr);
-        connStr = "";
+        NBIOT_SERIAL.flush();
         this->connState = STATE_WAITING_CONN;
       }
     }
@@ -295,25 +294,54 @@ public:
       }
 
       if (this->pubState == PIPELINE_FINISH_CEREG) {
-        if (nbiotTimer.autoExpired(15000)) {
+        if (nbiotTimer.autoExpired(13000)) {
+          Serial.print("\r\PREPARE REGULAR PUBLISH\r\n");
+          NBIOT_SERIAL.println(publishMsgPrepare);
+          NBIOT_SERIAL.flush();
+          this->pubState = PIPELINE_WAITING_PREPARE_PUBMSG;
+        }
+      }
+
+      if (this->pubState == PIPELINE_FINISH_PREPARE_PUBMSG) {
+        if (nbiotTimer.autoExpired(2000)) {
           Serial.print("\r\nEXECUTE REGULAR PUBLISH\r\n");
-          Serial.print("Serial: ");
-          Serial.print(publishMsg);
-          NBIOT_SERIAL.println(publishMsg);
-          publishMsg = "";
-          publishMsgContent = "";
-          delay(50);
-          Serial.print(resMsg);
+          NBIOT_SERIAL.println(publishMsgContent);
+          NBIOT_SERIAL.flush();
           this->pubState = PIPELINE_WAITING_PUBLISH;
         }
       }
     }
   }
 
+  // void listen() {
+  //   if (NBIOT_SERIAL.available() > 0) {
+  //     while (NBIOT_SERIAL.available() > 0) {
+  //       char _byte = NBIOT_SERIAL.read();
+
+  //       if (this->debugMode) {
+  //         // Serial.print(_byte);
+  //         Serial.println(resMsg);
+  //       }
+
+  //       if (_byte != '\r' && _byte != '\n') {
+  //         resMsg += _byte;
+  //       }
+
+  //       if (_byte == '\r') {
+  //         this->answer();
+  //         this->handleReadMsg();
+  //         this->clearResBuffer();
+  //       }
+  //       delay(1);
+  //     }
+  //   }
+  // }
+
   void listen() {
     if (NBIOT_SERIAL.available() > 0) {
       while (NBIOT_SERIAL.available() > 0) {
         char _byte = NBIOT_SERIAL.read();
+        delay(2);
 
         if (this->debugMode) {
           Serial.print(_byte);
@@ -328,7 +356,6 @@ public:
           this->handleReadMsg();
           this->clearResBuffer();
         }
-        delay(1);
       }
     }
   }
@@ -436,8 +463,17 @@ public:
         }
       }
 
+      if (this->pubState == PIPELINE_WAITING_PREPARE_PUBMSG) {
+        idx = resMsg.indexOf(">");
+        if (idx > -1) {
+          this->pubState = PIPELINE_FINISH_PREPARE_PUBMSG;
+          nbiot_wdt.pet();
+        }
+      }
+
       if (this->pubState == PIPELINE_WAITING_PUBLISH) {
-        idx = resMsg.indexOf("+QMTPUB:");
+        // idx = resMsg.indexOf("+QMTPUB: 0,0,0");
+        idx = resMsg.indexOf("OK");
         if (idx > -1) {
           this->pubState = PIPELINE_DEFAULT;
           Serial.print("\r\nFINISH REGULAR PUBLISH\r\n");
@@ -462,13 +498,9 @@ public:
         softReset = true;
       }
 
-
       connStr = "AT+QMTCONN=0,dev_";
       connStr.concat(this->IMEI);
       connStr.concat(",tswh,1Wo=[6vA0m");
-      // connStr += this->IMEI;
-      // connStr += ",tswh,1Wo=[6vA0m";
-      // connStr = "AT+QMTCONN=0,dev_861096060465131,tswh,1Wo=[6vA0m";
     }
 
     idx = resMsg.indexOf("+CGATT:");
@@ -512,20 +544,11 @@ public:
 
       this->CSQ = String(numCSQ);
     }
-
-    idx = resMsg.indexOf("+QMTPUB:");
-    if (idx > -1) {
-      String QMTPUB = resMsg.substring(9, 9 + 5);
-      if (QMTPUB != "0,0,0") {
-        softReset = true;
-      } else {
-        nbiot_wdt.pet();
-      }
-    }
   }
 
   void forcePublish() {
-    NBIOT_SERIAL.println(publishMsg);
+    NBIOT_SERIAL.println(publishMsgForce);
+    NBIOT_SERIAL.flush();
   }
 
   ~NBIoT() {}

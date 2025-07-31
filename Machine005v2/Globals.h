@@ -3,7 +3,8 @@
 
 extern String resMsg = "";
 extern String publishMsgContent = "";
-extern String publishMsg = "";
+extern String publishMsgPrepare = "";
+extern String publishMsgForce = "";
 extern String connStr = "";
 
 #endif

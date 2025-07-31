@@ -79,7 +79,7 @@ void setup() {
 
   // === Global Variable Init ===
   connStr.reserve(255);
-  publishMsg.reserve(1024);
+  publishMsgForce.reserve(1024);
   publishMsgContent.reserve(1024);
 
   // === Watchdog Init ===

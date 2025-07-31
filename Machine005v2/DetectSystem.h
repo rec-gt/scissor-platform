@@ -66,13 +66,10 @@ public:
     publishMsgPrepare.concat("/in,");
     publishMsgPrepare.concat(String(contentLen));
 
-    
-    // publishMsg = "AT+QMTPUB=0,0,0,0,rgt/";
-    // publishMsg.concat(nbiot.IMEI);
-    // publishMsg.concat("/in,");
-    // publishMsg.concat(String(contentLen));
-    // publishMsg.concat(",");
-    // publishMsg.concat(publishMsgContent);
+
+    publishMsgForce = publishMsgPrepare;
+    publishMsgForce.concat(",");
+    publishMsgForce.concat(publishMsgContent);
   }
 };
 

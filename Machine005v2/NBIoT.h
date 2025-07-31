@@ -150,9 +150,6 @@ public:
       if (softReset) {
         this->resetBuffers();
         softReset = false;
-        connStr = "";
-        publishMsg = "";
-        publishMsgContent = "";
         this->connState = STATE_WAITING_RESET;
         this->pubState = PIPELINE_DEFAULT;
         Serial.print("\r\n[SOFT_RESET]\r\n");
@@ -261,7 +258,7 @@ public:
       if (nbiotTimer.autoExpired(1000UL)) {
         Serial.print("\r\nCONNECTING MQTT\r\n");
         NBIOT_SERIAL.println(connStr);
-        connStr = "";
+        NBIOT_SERIAL.flush();
         this->connState = STATE_WAITING_CONN;
       }
     }
@@ -300,6 +297,7 @@ public:
         if (nbiotTimer.autoExpired(13000)) {
           Serial.print("\r\PREPARE REGULAR PUBLISH\r\n");
           NBIOT_SERIAL.println(publishMsgPrepare);
+          NBIOT_SERIAL.flush();
           this->pubState = PIPELINE_WAITING_PREPARE_PUBMSG;
         }
       }
@@ -308,6 +306,7 @@ public:
         if (nbiotTimer.autoExpired(2000)) {
           Serial.print("\r\nEXECUTE REGULAR PUBLISH\r\n");
           NBIOT_SERIAL.println(publishMsgContent);
+          NBIOT_SERIAL.flush();
           this->pubState = PIPELINE_WAITING_PUBLISH;
         }
       }
@@ -473,6 +472,7 @@ public:
       }
 
       if (this->pubState == PIPELINE_WAITING_PUBLISH) {
+        // idx = resMsg.indexOf("+QMTPUB: 0,0,0");
         idx = resMsg.indexOf("OK");
         if (idx > -1) {
           this->pubState = PIPELINE_DEFAULT;
@@ -547,7 +547,7 @@ public:
   }
 
   void forcePublish() {
-    NBIOT_SERIAL.println(publishMsg);
+    NBIOT_SERIAL.println(publishMsgForce);
     NBIOT_SERIAL.flush();
   }
 

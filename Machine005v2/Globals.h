@@ -4,7 +4,7 @@
 extern String resMsg = "";
 extern String publishMsgContent = "";
 extern String publishMsgPrepare = "";
-extern String publishMsg = "";
+extern String publishMsgForce = "";
 extern String connStr = "";
 
 #endif

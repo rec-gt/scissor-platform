@@ -66,7 +66,6 @@ public:
     publishMsgPrepare.concat("/in,");
     publishMsgPrepare.concat(String(contentLen));
 
-
     publishMsgForce = publishMsgPrepare;
     publishMsgForce.concat(",");
     publishMsgForce.concat(publishMsgContent);

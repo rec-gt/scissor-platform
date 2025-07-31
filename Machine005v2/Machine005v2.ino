@@ -153,7 +153,7 @@ void loop() {
       }
     }
 
-    sensorManager.showOneDetected();
+    // sensorManager.showOneDetected();
 
   } else if (detectSystem.is(SYS_ALLOW_10S)) {
     relay.connect();
@@ -169,7 +169,7 @@ void loop() {
     relay.cut();
     trafficLight.redYellow();
 
-    sensorManager.showOneUnhealthy();
+    // sensorManager.showOneUnhealthy();
 
     if (sensorManager.areAllHealthy()) {
       detectSystem.set(SYS_RUNNING);

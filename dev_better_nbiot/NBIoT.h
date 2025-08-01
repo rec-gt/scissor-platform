@@ -78,6 +78,8 @@ private:
 
   bool debug = false;
 
+  String recvSubContent = "";
+
   void clearSerialBuffer() {
     while (NBIoTSerial.read() > 0) { delay(1); };
   }
@@ -230,6 +232,7 @@ public:
     if (this->connState == STATE_FINISH_SUB) {
       this->finishInit = true;
       this->connState = STATE_FINISH_NBIOT_INIT;
+      Serial.print("\r\nFINISH INIT NBIOT\r\n");
     }
 
     if (this->connState == STATE_FINISH_NBIOT_INIT) {
@@ -527,11 +530,16 @@ public:
     // === handle SUB received msg and parse it's content ===
     idx = serialRes.indexOf("+QMTRECV:");
     if (idx > -1) {
-      subRecvContent = serialRes.substring(10, 10 + 100);
+      unsigned int startPos = serialRes.indexOf("[");
+      unsigned int endPos = serialRes.indexOf("]", startPos);
+      if (startPos != -1 && endPos != -1) {
+        this->recvSubContent = subRecvContent.substring(startPos + 1, endPos);
+        Serial.println(this->recvSubContent);
+      } else {
+        this->recvSubContent = "";
+      }
     }
   }
-
-
 
   void forcePublish() {
     if (this->connState == STATE_FINISH_NBIOT_INIT) {

@@ -16,15 +16,18 @@ void setup() {
   nbiot.init();
 }
 
-void loop() {
-  nbiot.loop();
-
+void stressTest() {
   for (size_t i = 0; i < 100; i++) {
     Serial.print("STRESS TEST ");
     if (i % 10 == 0) {
       Serial.println();
     }
   }
+}
+
+void loop() {
+  nbiot.loop();
+  // stressTest();
 
   delay(10);
 }

@@ -532,8 +532,6 @@ public:
     if (idx > -1) {
       int startPos = serialRes.indexOf("[");
       int endPos = serialRes.indexOf("]", startPos);
-      Serial.print(startPos);
-      Serial.print(endPos);
 
       if (startPos > -1 && endPos > -1) {
         this->recvSubContent = serialRes.substring(startPos + 1, endPos);

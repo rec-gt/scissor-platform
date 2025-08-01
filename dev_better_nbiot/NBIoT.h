@@ -12,7 +12,7 @@ Watchdog nbiot_wdt(30000UL);
 
 AsyncTimer nbiotTimer(10000UL);
 
-bool softReset = false;
+bool nbiotSoftReset = false;
 
 class NBIoT {
 private:
@@ -38,7 +38,7 @@ private:
     STATE_FINISH_CONN,
     STATE_WAITING_SUB,
     STATE_FINISH_SUB,
-    STATE_WAITING_PUBSUB,
+    STATE_FINISH_NBIOT_INIT,
   };
 
   enum PUBSUB_PIPELINE {
@@ -55,9 +55,22 @@ private:
     PIPELINE_FINISH_PUBLISH,
   };
 
+  enum PUB_PIPELINE {
+    PUB_PIPELINE_DEFAULT,
+    PUB_PIPELINE_WAITING_PREPARE_PUBMSG,
+    PUB_PIPELINE_FINISH_PREPARE_PUBMSG,
+    PUB_PIPELINE_WAITING_PUBLISH,
+    PUB_PIPELINE_FINISH_PUBLISH,
+  };
+
+  enum SUB_PIPELINE {
+    SUB_PIPELINE_DEFAULT,
+    SUB_PIPELINE_HANDLE_RECV_MSG,
+    SUB_PIPELINE_FINISH_RECV_MSG,
+  };
+
   bool finishInit = false;
 
-  byte prevConnState = STATE_DEFAULT;
   byte connState = STATE_WAITING_RESET;
   byte pubState = PIPELINE_DEFAULT;
 
@@ -70,7 +83,7 @@ private:
   }
 
   void clearResBuffer() {
-    resMsg = "";
+    serialRes = "";
   }
 
 public:
@@ -99,7 +112,7 @@ public:
     Serial.print("\r\n=== NBIOT START ===\r\n");
     nbiot_wdt.enable();
     nbiot_wdt.setCallback([]() {
-      softReset = true;
+      nbiotSoftReset = true;
     });
     this->resetBuffers();
     this->loop();
@@ -109,14 +122,6 @@ public:
     while (1) {
       nbiot_wdt.monitor();
 
-      if (softReset) {
-        this->resetBuffers();
-        softReset = false;
-        this->connState = STATE_WAITING_RESET;
-        this->pubState = PIPELINE_DEFAULT;
-        Serial.print("\r\n[SOFT_RESET]\r\n");
-      }
-
       this->ask();
       this->listen();
 
@@ -124,7 +129,6 @@ public:
         break;
       } else {
         delay(10);
-        // this->handleDisplay();  // decouple, DO NOT execute after init
       }
     }
   }
@@ -225,10 +229,10 @@ public:
 
     if (this->connState == STATE_FINISH_SUB) {
       this->finishInit = true;
-      this->connState = STATE_WAITING_PUBSUB;
+      this->connState = STATE_FINISH_NBIOT_INIT;
     }
 
-    if (this->connState == STATE_WAITING_PUBSUB) {
+    if (this->connState == STATE_FINISH_NBIOT_INIT) {
       if (this->pubState == PIPELINE_DEFAULT) {
         if (nbiotTimer.autoExpired(5000)) {
           Serial.print("\r\nQUERYING CSQ\r\n");
@@ -256,7 +260,7 @@ public:
       if (this->pubState == PIPELINE_FINISH_CEREG) {
         if (nbiotTimer.autoExpired(13000)) {
           Serial.print("\r\nEXECUTE REGULAR PUBLISH\r\n");
-          NBIoTSerial.println(publishMsgPrepare);
+          NBIoTSerial.println(pubMsgPrepare);
           NBIoTSerial.flush();
           this->pubState = PIPELINE_WAITING_PREPARE_PUBMSG;
         }
@@ -264,7 +268,7 @@ public:
 
       if (this->pubState == PIPELINE_FINISH_PREPARE_PUBMSG) {
         if (nbiotTimer.autoExpired(2000)) {
-          NBIoTSerial.println(publishMsgContent);
+          NBIoTSerial.println(pubMsgContent);
           NBIoTSerial.flush();
           this->pubState = PIPELINE_WAITING_PUBLISH;
         }
@@ -282,7 +286,7 @@ public:
         }
 
         if (_byte != '\r' && _byte != '\n') {
-          resMsg += _byte;
+          serialRes += _byte;
         }
 
         if (_byte == '\r') {
@@ -290,8 +294,15 @@ public:
           this->handleReadMsg();
           this->clearResBuffer();
         }
-        // delay(1);
       }
+    }
+
+    if (nbiotSoftReset) {
+      this->resetBuffers();
+      nbiotSoftReset = false;
+      this->connState = STATE_WAITING_RESET;
+      this->pubState = PIPELINE_DEFAULT;
+      Serial.print("\r\n[SOFT_RESET]\r\n");
     }
   }
 
@@ -299,7 +310,7 @@ public:
     int idx = -1;
 
     if (this->connState == STATE_WAITING_IP) {
-      idx = resMsg.indexOf("+IP:");
+      idx = serialRes.indexOf("+IP:");
       if (idx > -1) {
         Serial.print("\r\nFINISH WAITING IP\r\n");
         this->connState = STATE_FINISH_IP;
@@ -316,7 +327,7 @@ public:
     }
 
     if (this->connState == STATE_WAITING_IMEI) {
-      idx = resMsg.indexOf("+CGSN:");
+      idx = serialRes.indexOf("+CGSN:");
       if (idx > -1) {
         Serial.print("\r\nFINISH GETTING IMEI\r\n");
         this->connState = STATE_FINISH_IMEI;
@@ -325,7 +336,7 @@ public:
     }
 
     if (this->connState == STATE_WAITING_CSQ) {
-      idx = resMsg.indexOf("+CSQ:");
+      idx = serialRes.indexOf("+CSQ:");
       if (idx > -1) {
         Serial.print("\r\nFINISH GETTING CSQ\r\n");
         this->connState = STATE_FINISH_CSQ;
@@ -334,7 +345,7 @@ public:
     }
 
     if (this->connState == STATE_WAITING_CGATT) {
-      idx = resMsg.indexOf("+CGATT:");
+      idx = serialRes.indexOf("+CGATT:");
       if (idx > -1) {
         Serial.print("\r\nFINISH GETTING CGATT\r\n");
         this->connState = STATE_FINISH_CGATT;
@@ -343,7 +354,7 @@ public:
     }
 
     if (this->connState == STATE_WAITING_CEREG) {
-      idx = resMsg.indexOf("+CEREG:");
+      idx = serialRes.indexOf("+CEREG:");
       if (idx > -1) {
         Serial.print("\r\nFINISH GETTING CEREG\r\n");
         this->connState = STATE_FINISH_CEREG;
@@ -352,27 +363,36 @@ public:
     }
 
     if (this->connState == STATE_WAITING_OPEN) {
-      idx = resMsg.indexOf("+QMTOPEN: 0,0");
+      idx = serialRes.indexOf("+QMTOPEN: 0,0");
       if (idx > -1) {
-        Serial.print("\r\nFINISH OPENING MQTT\r\n");
+        Serial.print("\r\nOPENED MQTT\r\n");
         this->connState = STATE_FINISH_OPEN;
         nbiot_wdt.pet();
       }
     }
 
     if (this->connState == STATE_WAITING_CONN) {
-      idx = resMsg.indexOf("+QMTCONN: 0,0,0");
+      idx = serialRes.indexOf("+QMTCONN: 0,0,0");
       if (idx > -1) {
-        Serial.print("\r\nFINISH CONNECTING MQTT\r\n");
+        Serial.print("\r\nCONNECTED MQTT\r\n");
         this->connState = STATE_FINISH_CONN;
         nbiot_wdt.pet();
       }
     }
 
-    if (this->connState == STATE_WAITING_PUBSUB) {
+    if (this->connState == STATE_WAITING_SUB) {
+      idx = serialRes.indexOf("+QMTSUB: 0,1,0,0");
+      if (idx > -1) {
+        Serial.print("\r\nSUB TOPIC OK\r\n");
+        this->connState = STATE_FINISH_SUB;
+        nbiot_wdt.pet();
+      }
+    }
+
+    if (this->connState == STATE_FINISH_NBIOT_INIT) {
       int idx = -1;
       if (this->pubState == PIPELINE_WAITING_CSQ) {
-        idx = resMsg.indexOf("+CSQ:");
+        idx = serialRes.indexOf("+CSQ:");
         if (idx > -1) {
           Serial.print("\r\nFINISH GETTING CSQ\r\n");
           this->pubState = PIPELINE_FINISH_CSQ;
@@ -381,7 +401,7 @@ public:
       }
 
       if (this->pubState == PIPELINE_WAITING_CGATT) {
-        idx = resMsg.indexOf("+CGATT:");
+        idx = serialRes.indexOf("+CGATT:");
         if (idx > -1) {
           Serial.print("\r\nFINISH GETTING CGATT\r\n");
           this->pubState = PIPELINE_FINISH_CGATT;
@@ -390,7 +410,7 @@ public:
       }
 
       if (this->pubState == PIPELINE_WAITING_CEREG) {
-        idx = resMsg.indexOf("+CEREG:");
+        idx = serialRes.indexOf("+CEREG:");
         if (idx > -1) {
           Serial.print("\r\nFINISH GETTING CEREG\r\n");
           this->pubState = PIPELINE_FINISH_CEREG;
@@ -399,7 +419,7 @@ public:
       }
 
       if (this->pubState == PIPELINE_WAITING_PREPARE_PUBMSG) {
-        idx = resMsg.indexOf(">");
+        idx = serialRes.indexOf(">");
         if (idx > -1) {
           this->pubState = PIPELINE_FINISH_PREPARE_PUBMSG;
           nbiot_wdt.pet();
@@ -407,8 +427,8 @@ public:
       }
 
       if (this->pubState == PIPELINE_WAITING_PUBLISH) {
-        // idx = resMsg.indexOf("+QMTPUB: 0,0,0");
-        idx = resMsg.indexOf("OK");
+        // idx = serialRes.indexOf("+QMTPUB: 0,0,0");
+        idx = serialRes.indexOf("OK");
         if (idx > -1) {
           this->pubState = PIPELINE_DEFAULT;
           Serial.print("\r\nFINISH REGULAR PUBLISH\r\n");
@@ -420,17 +440,20 @@ public:
 
   void handleReadMsg() {
     int idx = -1;
-    idx = resMsg.indexOf("+IP:");
+
+    // === handle IP ===
+    idx = serialRes.indexOf("+IP:");
     if (idx > -1) {
-      this->IP = resMsg.substring(5, 5 + 16);
+      this->IP = serialRes.substring(5, 5 + 16);
     }
 
-    idx = resMsg.indexOf("+CGSN:");
+    // === handle IMEI ===
+    idx = serialRes.indexOf("+CGSN:");
     if (idx > -1) {
-      this->IMEI = resMsg.substring(7, 7 + 15);
+      this->IMEI = serialRes.substring(7, 7 + 15);
 
       if (!utils.isNumeric(this->IMEI)) {
-        softReset = true;
+        nbiotSoftReset = true;
       }
 
       connStr = "AT+QMTCONN=0,dev_";
@@ -438,59 +461,83 @@ public:
       connStr.concat(",tswh,1Wo=[6vA0m");
     }
 
-    idx = resMsg.indexOf("+CGATT:");
+    // === handle CGATT ===
+    idx = serialRes.indexOf("+CGATT:");
     if (idx > -1) {
-      this->CGATT = resMsg.substring(8, 8 + 1);
+      this->CGATT = serialRes.substring(8, 8 + 1);
 
       if (this->CGATT != "1") {
-        softReset = true;
+        nbiotSoftReset = true;
       }
     }
 
-    idx = resMsg.indexOf("+CEREG:");
+    // === handle CEREG ===
+    idx = serialRes.indexOf("+CEREG:");
     if (idx > -1) {
-      this->CEREG = resMsg.substring(8, 8 + 3);
+      this->CEREG = serialRes.substring(8, 8 + 3);
 
       if (this->CEREG != "0,1") {
-        softReset = true;
+        nbiotSoftReset = true;
       }
     }
 
-    idx = resMsg.indexOf("+CSQ:");
+    // === handle CSQ ===
+    idx = serialRes.indexOf("+CSQ:");
     if (idx > -1) {
       int winStart = idx + 6;
       int winEnd = winStart + 2;
-      this->CSQ = resMsg.substring(winStart, winEnd);
+      this->CSQ = serialRes.substring(winStart, winEnd);
 
       if (this->CSQ == "99") {
-        softReset = true;
+        nbiotSoftReset = true;
       }
 
       String strNum = this->CSQ;
 
       if (!utils.isNumeric(strNum)) {
-        softReset = true;
+        nbiotSoftReset = true;
       }
 
       int numCSQ = strNum.toInt();
       if (!(numCSQ >= 8 && numCSQ <= 31)) {
-        softReset = true;
+        nbiotSoftReset = true;
       }
 
       this->CSQ = String(numCSQ);
     }
 
-    idx = resMsg.indexOf("+QMTPUB:");
+    // === handle publish ACK ===
+    idx = serialRes.indexOf("+QMTPUB:");
     if (idx > -1) {
-      String QMTPUB = resMsg.substring(9, 9 + 5);
+      String QMTPUB = serialRes.substring(9, 9 + 5);
       if (QMTPUB != "0,0,0") {
-        softReset = true;
+        nbiotSoftReset = true;
+      }
+    }
+
+    // === handle SUB ACK ===
+    idx = serialRes.indexOf("+QMTSUB:");
+    if (idx > -1) {
+      String QMTSUB = serialRes.substring(9, 9 + 7);
+      if (QMTSUB != "0,1,0,0") {
+        nbiotSoftReset = true;
+      }
+    }
+
+    // === handle SUB received msg and parse it's content ===
+    idx = serialRes.indexOf("+QMTRECV:");
+    if (idx > -1) {
+      String QMTSUB = serialRes.substring(9, 9 + 7);
+      if (QMTSUB != "0,1,0,0") {
+        nbiotSoftReset = true;
       }
     }
   }
 
+
+
   void forcePublish() {
-    if (this->connState == STATE_WAITING_PUBSUB) {
+    if (this->connState == STATE_FINISH_NBIOT_INIT) {
       if (this->pubState == PIPELINE_WAITING_PREPARE_PUBMSG
           || this->pubState == PIPELINE_FINISH_PREPARE_PUBMSG
           || this->pubState == PIPELINE_WAITING_PUBLISH
@@ -498,7 +545,7 @@ public:
         return;
       } else {
         Serial.print("\r\nFORCE PUBLISH STOPPED\r\n");
-        NBIoTSerial.println(publishMsgForce);
+        NBIoTSerial.println(pubMsgForce);
         NBIoTSerial.flush();
       }
     }

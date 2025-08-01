@@ -11,7 +11,9 @@ void setup() {
   Serial.begin(9600);
   NBIoTSerial.begin(9600);
 
+  // === NBIOT ===
   nbiot.debugMode();
+
   nbiot.init();
 }
 

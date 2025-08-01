@@ -24,7 +24,6 @@ void loop() {
     if (i % 10 == 0) {
       Serial.println();
     }
-    delay(10);
   }
 
   delay(10);

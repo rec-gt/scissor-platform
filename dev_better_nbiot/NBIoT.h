@@ -530,10 +530,13 @@ public:
     // === handle SUB received msg and parse it's content ===
     idx = serialRes.indexOf("+QMTRECV:");
     if (idx > -1) {
-      unsigned int startPos = serialRes.indexOf("[");
-      unsigned int endPos = serialRes.indexOf("]", startPos);
-      if (startPos != -1 && endPos != -1) {
-        this->recvSubContent = subRecvContent.substring(startPos + 1, endPos);
+      int startPos = serialRes.indexOf("[");
+      int endPos = serialRes.indexOf("]", startPos);
+      Serial.print(startPos);
+      Serial.print(endPos);
+
+      if (startPos > -1 && endPos > -1) {
+        this->recvSubContent = serialRes.substring(startPos + 1, endPos);
         Serial.println(this->recvSubContent);
       } else {
         this->recvSubContent = "";

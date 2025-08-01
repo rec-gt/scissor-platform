@@ -18,11 +18,14 @@ void setup() {
 
 void loop() {
   nbiot.loop();
-  
-  for (size_t i = 0; i < 50; i++) {
+
+  for (size_t i = 0; i < 100; i++) {
     Serial.print("STRESS TEST ");
+    if (i % 10 == 0) {
+      Serial.println();
+    }
     delay(10);
   }
-  
+
   delay(10);
 }

@@ -381,7 +381,7 @@ public:
     }
 
     if (this->connState == STATE_WAITING_SUB) {
-      idx = serialRes.indexOf("+QMTSUB: 0,1,0,0");
+      idx = serialRes.indexOf("+QMTSUB:");
       if (idx > -1) {
         Serial.print("\r\nSUB TOPIC OK\r\n");
         this->connState = STATE_FINISH_SUB;
@@ -527,10 +527,7 @@ public:
     // === handle SUB received msg and parse it's content ===
     idx = serialRes.indexOf("+QMTRECV:");
     if (idx > -1) {
-      String QMTSUB = serialRes.substring(9, 9 + 7);
-      if (QMTSUB != "0,1,0,0") {
-        nbiotSoftReset = true;
-      }
+      subRecvContent = serialRes.substring(10, 10 + 100);
     }
   }
 

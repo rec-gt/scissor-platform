@@ -5,7 +5,6 @@
 
 NBIoT nbiot;
 Watchdog watchdog(30000);
-AsyncTimer timer1(30000);
 
 void setup() {
   Serial.begin(9600);

@@ -64,7 +64,7 @@ void setup() {
   NBIOT_SERIAL.begin(9600);
 
   // === nbiot config ===
-  nbiot.debug();
+  // nbiot.debug();
 
   // === System Starting ===
   relay.cut();
@@ -147,13 +147,11 @@ void loop() {
     }
 
     if (forcePublishState != FORCE_PUBLISH_STOPPED) {
-      if (sysTimer.autoExpired(1000)) {
+      if (sysTimer.autoExpired(2000)) {
         forcePublishState = FORCE_PUBLISH_STOPPED;
         nbiot.forcePublish();
       }
     }
-
-    // sensorManager.showOneDetected();
 
   } else if (detectSystem.is(SYS_ALLOW_10S)) {
     relay.connect();
@@ -168,8 +166,6 @@ void loop() {
   } else if (detectSystem.is(SYS_FAILURE)) {
     relay.cut();
     trafficLight.redYellow();
-
-    // sensorManager.showOneUnhealthy();
 
     if (sensorManager.areAllHealthy()) {
       detectSystem.set(SYS_RUNNING);

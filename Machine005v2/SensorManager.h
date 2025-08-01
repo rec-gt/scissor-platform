@@ -92,7 +92,7 @@ public:
 
   void showOneDetected() {
     int i = this->problemSensor;
-    
+
     char* charArr[] = {
       " ",
       utils.num2Char(i + 0),
@@ -166,8 +166,16 @@ public:
 
   void printAll() {
     for (size_t i = 0; i < this->num; i++) {
-      this->printOne(i);
+      // this->printOne(i);
+      Serial.print("[");
+      Serial.print(i);
+      Serial.print("  ");
+      Serial.print(this->laserSensors[i].getDistance());
+      Serial.print("]");
+      Serial.print("  ");
     }
+    Serial.println();
+    Serial.flush();
   }
 };
 

@@ -4,33 +4,18 @@
 #include "AsyncTimer.h"
 
 NBIoT nbiot;
-Watchdog watchdog;
-AsyncTimer timer1(30UL * 1000UL);
+Watchdog watchdog(30000);
+AsyncTimer timer1(30000);
 
 void setup() {
   Serial.begin(9600);
-  NBIOT_SERIAL.begin(9600);
-  pinMode(9, OUTPUT);
-  digitalWrite(9, HIGH);
-  delay(300);
+  NBIoTSerial.begin(9600);
+
+  nbiot.debugMode();
   nbiot.init();
 }
 
 void loop() {
-  while (1) {
-    nbiot.listen();
-    if (nbiot.finishInit) {
-      break;
-    } else {
-      delay(10);
-    }
-  }
-
-
-  if (timer1.isExpired()) {
-    nbiot.publish();
-    timer1.refresh();
-  }
-
+  nbiot.loop();
   delay(10);
 }

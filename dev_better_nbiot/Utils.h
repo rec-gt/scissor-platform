@@ -1,23 +1,45 @@
 #ifndef Utils_h
 #define Utils_h
 
-int getBitIndex(int num) {
-  if (num == 0) { return 0; }
-  int idx = 0;
-  while ((num & 1) != 1) {
-    num = num >> 1;
-    idx++;
-  }
-  return 7 - idx;
-}
+class Utils {
+public:
+  Utils(void){};
 
-boolean isNumber(String str) {
-  for (int i = 0; i < str.length(); i++) {
-    if (!isDigit(str.charAt(i))) {
-      return false;
+  char* concatCharN(char** charArr, size_t arrSize) {
+    int totalCharLen = 0;
+    for (size_t i = 0; i < arrSize; i++) {
+      totalCharLen += strlen(charArr[i]);
     }
+    char* newChar = new char[totalCharLen + 1];
+
+    newChar[0] = '\0';
+
+    for (size_t i = 0; i < arrSize; i++) {
+      strcat(newChar, charArr[i]);
+    }
+
+    return newChar;
   }
-  return true;
-}
+
+  char* num2Char(int num) {
+    char cstr[16];
+    char* c = itoa(num, cstr, 10);
+    return c;
+  }
+
+  bool isNumeric(String str) {
+    for (size_t i = 0; i < str.length(); i++) {
+      if (!isDigit(str.charAt(i))) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+  ~Utils(){};
+};
+
+extern Utils utils;
 
 #endif

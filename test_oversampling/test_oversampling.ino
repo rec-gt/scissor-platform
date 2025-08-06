@@ -1,18 +1,20 @@
-  float overSamplingRead() {
-    float avg = 0;
-    for (int i = 0; i < 64; i++) {
-      avg += analogRead(this->pin);
-    };
-    avg = (avg + 8) / 16;
-    return avg;
-  }
+float overSamplingRead() {
+  float avg = 0;
+  for (int i = 0; i < 256; i++) {
+    avg += analogRead(A11);
+  };
+  avg = (avg + 8) / 256;
+  return avg;
+}
 
 void setup() {
-  // put your setup code here, to run once:
-
+  Serial.begin(9600);
+  pinMode(A11, INPUT);
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
-
+  float reading = overSamplingRead();
+  Serial.println(reading);
+  // Serial.println(analogRead(A11));
+  delay(1000);
 }

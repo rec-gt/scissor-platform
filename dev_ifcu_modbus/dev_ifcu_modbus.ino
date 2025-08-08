@@ -2,8 +2,11 @@
 #include <ArduinoModbus.h>
 #include "IFCU.h"
 #include "Globals.h"
+#include "NBIoT.h"
 
-IFCU ifcu1(31);
+NBIoT nbiot;
+
+IFCU ifcu(31);
 
 void setup() {
   Serial.begin(9600);
@@ -13,8 +16,13 @@ void setup() {
     while (1) {};
   }
 
-  ifcu1.on();
+  nbiot.debug();
+  nbiot.init(1);
+
+  ifcu.on();
 }
 
 void loop() {
+  ifcu.read();
+  delay(1000);
 }

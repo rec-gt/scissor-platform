@@ -1,13 +1,12 @@
+#include "Globals.h"
+
 #ifndef IFCU_H
 #define IFCU_H
-
-RS485Class rs485(Serial1, 2, 3, 4);
-ModbusRTUClientClass mbClient(rs485);
 
 class IFCU {
 private:
   byte slaveId;
-  
+
   void handleWrite4x(int slaveId, int addr, int value) {
     if (!mbClient.holdingRegisterWrite(slaveId, addr, value)) {
       Serial.println(mbClient.lastError());
@@ -17,10 +16,15 @@ private:
   }
 
 public:
-  void IFCU(int slaveId)
+  IFCU(byte slaveId)
     : slaveId(slaveId);
 
   void on() {
+    this->handleWrite4x(31, 40000, 1);
+  }
+
+  void off() {
+    this->handleWrite4x(31, 40000, 0);
   }
 };
 

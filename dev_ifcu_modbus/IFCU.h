@@ -7,13 +7,12 @@ class IFCU {
 private:
   byte slaveId;
 
-  static constexpr byte holdingRegisterValuesNumber = 13;
-  long holdingRegisterValues[holdingRegisterValuesNumber] = {};
-  long HOLDING_REGISTERS_START_ADDRESS = 40000;
-  long INPUT_REGISTERS_START_ADDRESS = 30000;
-
-  static constexpr byte inputRegisterValuesNumber = 16;
-  long inputRegisterValues[inputRegisterValuesNumber] = {};
+  static constexpr long HOLDING_REGISTERS_START_ADDRESS = 40000;
+  static constexpr long INPUT_REGISTERS_START_ADDRESS = 30000;
+  static constexpr byte holdingRegisterCount = 13;
+  static constexpr byte inputRegisterValuesCount = 16;
+  long holdingRegisterValues[holdingRegisterCount] = {};
+  long inputRegisterValues[inputRegisterValuesCount] = {};
 
 
   void handleWrite4x(int addr, int value) {
@@ -29,30 +28,33 @@ public:
     : slaveId(slaveId){};
 
   void read() {
-
-    if (!mbClient.requestFrom(this->slaveId, HOLDING_REGISTERS, HOLDING_REGISTERS_START_ADDRESS, holdingRegisterValuesNumber)) {
+    if (!mbClient.requestFrom(this->slaveId, HOLDING_REGISTERS, HOLDING_REGISTERS_START_ADDRESS, holdingRegisterCount)) {
       Serial.println(mbClient.lastError());
     } else {
-      for (uint16_t i = 0; i < holdingRegisterValuesNumber; i++) {
-        uint16_t value = mbClient.read();
-        Serial.print("Register ");
-        Serial.print(HOLDING_REGISTERS_START_ADDRESS + i);
-        Serial.print(": ");
-        Serial.println(value);
+      for (uint16_t i = 0; i < holdingRegisterCount; i++) {
+        this->holdingRegisterValues[i] = mbClient.read();
       }
     }
 
-    if (!mbClient.requestFrom(this->slaveId, INPUT_REGISTERS, INPUT_REGISTERS_START_ADDRESS, holdingRegisterValuesNumber)) {
+    if (!mbClient.requestFrom(this->slaveId, INPUT_REGISTERS, INPUT_REGISTERS_START_ADDRESS, inputRegisterValuesCount)) {
       Serial.println(mbClient.lastError());
     } else {
-      for (uint16_t i = 0; i < holdingRegisterValuesNumber; i++) {
-        uint16_t value = mbClient.read();
-        Serial.print("Register ");
-        Serial.print(INPUT_REGISTERS_START_ADDRESS + i);
-        Serial.print(": ");
-        Serial.println(value);
+      for (uint16_t i = 0; i < inputRegisterValuesCount; i++) {
+        this->inputRegisterValues[i] = mbClient.read();
       }
     }
+
+    for (uint16_t i = 0; i < holdingRegisterCount; i++) {
+      Serial.print(this->holdingRegisterValues[i]);
+      Serial.print(", ");
+    }
+    Serial.println();
+
+    for (uint16_t i = 0; i < inputRegisterValuesCount; i++) {
+      Serial.print(this->inputRegisterValues[i]);
+      Serial.print(", ");
+    }
+    Serial.println();
   }
 
   void on() {

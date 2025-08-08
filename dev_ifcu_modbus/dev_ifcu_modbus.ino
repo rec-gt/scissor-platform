@@ -12,6 +12,8 @@ void setup() {
     Serial.println("Failed to start Modbus RTU Client!");
     while (1) {};
   }
+
+  ifcu1.on();
 }
 
 void loop() {

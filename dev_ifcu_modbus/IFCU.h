@@ -7,8 +7,8 @@ class IFCU {
 private:
   byte slaveId;
 
-  void handleWrite4x(int slaveId, int addr, int value) {
-    if (!mbClient.holdingRegisterWrite(slaveId, addr, value)) {
+  void handleWrite4x(int addr, int value) {
+    if (!mbClient.holdingRegisterWrite(this->slaveId, addr, value)) {
       Serial.println(mbClient.lastError());
     } else {
       Serial.println("Response OK");
@@ -17,14 +17,14 @@ private:
 
 public:
   IFCU(byte slaveId)
-    : slaveId(slaveId);
+    : slaveId(slaveId){};
 
   void on() {
-    this->handleWrite4x(31, 40000, 1);
+    this->handleWrite4x(40000, 1);
   }
 
   void off() {
-    this->handleWrite4x(31, 40000, 0);
+    this->handleWrite4x(40000, 0);
   }
 };
 

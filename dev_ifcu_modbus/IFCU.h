@@ -6,7 +6,6 @@
 
 class IFCU {
 private:
-  int prevCmd = -1;
   unsigned long prevMillis = millis();
 
   byte slaveId;
@@ -71,6 +70,7 @@ public:
   // ===== monitor upcoming command =====
   void monitor() {
     String msg = nbiot.readRecvMsg();
+
     if (msg.length() <= 0) {
       return;
     }
@@ -82,36 +82,31 @@ public:
     Serial.print(" CMD: ");
     Serial.print(cmd);
 
-    if (this->prevCmd != cmd) {
-
-      this->prevCmd = cmd;
-
-      switch (cmd) {
-        case IFCU_ON:
-          this->handleOnOff(IFCU_ON);
-          break;
-        case IFCU_OFF:
-          this->handleOnOff(IFCU_OFF);
-          break;
-        case IFCU_MODE_AUTO_COOL:
-          this->handleChangeMode(IFCU_MODE_AUTO_COOL);
-          break;
-        case IFCU_MODE_MANUAL_COOL:
-          this->handleChangeMode(IFCU_MODE_MANUAL_COOL);
-          break;
-        case IFCU_MODE_FAN_ONLY:
-          this->handleChangeMode(IFCU_MODE_FAN_ONLY);
-          break;
-        case IFCU_FAN_SPEED_LOW:
-          this->handleChangeFanSpeed(IFCU_FAN_SPEED_LOW);
-          break;
-        case IFCU_FAN_SPEED_MEDIUM:
-          this->handleChangeFanSpeed(IFCU_FAN_SPEED_MEDIUM);
-          break;
-        case IFCU_FAN_SPEED_HIGH:
-          this->handleChangeFanSpeed(IFCU_FAN_SPEED_HIGH);
-          break;
-      }
+    switch (cmd) {
+      case IFCU_ON:
+        this->handleOnOff(IFCU_ON);
+        break;
+      case IFCU_OFF:
+        this->handleOnOff(IFCU_OFF);
+        break;
+      case IFCU_MODE_AUTO_COOL:
+        this->handleChangeMode(IFCU_MODE_AUTO_COOL);
+        break;
+      case IFCU_MODE_MANUAL_COOL:
+        this->handleChangeMode(IFCU_MODE_MANUAL_COOL);
+        break;
+      case IFCU_MODE_FAN_ONLY:
+        this->handleChangeMode(IFCU_MODE_FAN_ONLY);
+        break;
+      case IFCU_FAN_SPEED_LOW:
+        this->handleChangeFanSpeed(IFCU_FAN_SPEED_LOW);
+        break;
+      case IFCU_FAN_SPEED_MEDIUM:
+        this->handleChangeFanSpeed(IFCU_FAN_SPEED_MEDIUM);
+        break;
+      case IFCU_FAN_SPEED_HIGH:
+        this->handleChangeFanSpeed(IFCU_FAN_SPEED_HIGH);
+        break;
     }
   }
 

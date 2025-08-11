@@ -23,14 +23,8 @@ void setup() {
 }
 
 void loop() {
-  // ifcu.debug();
-  ifcu.read();
+  nbiot.loop();
+  // ifcu.read();
 
-  delay(1000);
-  // ifcu.handleChangeMode(IFCU_MODE_FAN_ONLY);
-  // delay(1000);
-  // ifcu.handleChangeFanSpeed(IFCU_FAN_SPEED_MEDIUM);
-  // delay(1000);
-  // ifcu.handleChangeSetPointTemp(IFCU_ACTION_INCREASE_TEMP);
-  // delay(1000);
+  delay(10);
 }

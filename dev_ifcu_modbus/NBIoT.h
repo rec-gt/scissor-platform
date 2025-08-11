@@ -110,6 +110,7 @@ public:
   String CEREG = "";
 
   NBIoT() {
+    NBIoTSerial.begin(9600);
     pinMode(this->resetPin, OUTPUT);
     digitalWrite(this->resetPin, HIGH);
   }

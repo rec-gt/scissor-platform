@@ -61,10 +61,10 @@ PublishState forcePublishState = FORCE_PUBLISH_DISABLED;
 void setup() {
   analogReference(DEFAULT);
   Serial.begin(9600);
-  NBIOT_SERIAL.begin(9600);
+  NBIoTSerial.begin(9600);
 
   // === nbiot config ===
-  // nbiot.debug();
+  nbiot.debug();
 
   // === System Starting ===
   relay.cut();
@@ -72,15 +72,15 @@ void setup() {
   trafficLight.off();
   warningSystem.off();
   displayOLED.init();
-  nbiot.init();
+  nbiot.init(1);
   powerLight.on();
   detectSystem.set(SYS_RUNNING);
   delay(500);
 
   // === Global Variable Init ===
   connStr.reserve(255);
-  publishMsgForce.reserve(255);
-  publishMsgContent.reserve(255);
+  pubMsgForce.reserve(255);
+  pubMsgContent.reserve(255);
 
   // === Watchdog Init ===
   wdt_enable(WDTO_8S);
@@ -174,6 +174,12 @@ void loop() {
 
   // === pet the watchdog ===
   wdt_reset();
+
+  if (random() % 2 == 0) {
+    detectSystem.set(SYS_RUNNING);
+  } else {
+    detectSystem.set(SYS_STOPPED);
+  }
 
   delay(10);
 }

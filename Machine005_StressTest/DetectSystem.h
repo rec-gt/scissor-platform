@@ -42,33 +42,33 @@ public:
       sensorManager.sensorStatusX4 &= ~(1 << 3);  // status = false, stopped
     }
 
-    publishMsgContent = "{\"csq\":";
-    publishMsgContent.concat(nbiot.CSQ);
-    publishMsgContent.concat(",");
-    publishMsgContent.concat("\"cgatt\":");
-    publishMsgContent.concat(nbiot.CGATT);
-    publishMsgContent.concat(",");
-    publishMsgContent.concat("\"cereg\":\"");
-    publishMsgContent.concat(nbiot.CEREG);
-    publishMsgContent.concat("\"");
-    publishMsgContent.concat(",");
-    publishMsgContent.concat("\"din\":");
-    publishMsgContent.concat(String(sensorManager.sensorStatusX8));
-    publishMsgContent.concat(",");
-    publishMsgContent.concat("\"dout\":");
-    publishMsgContent.concat(String(sensorManager.sensorStatusX4));
-    publishMsgContent.concat("}");
+    pubMsgContent = "{\"csq\":";
+    pubMsgContent.concat(nbiot.CSQ);
+    pubMsgContent.concat(",");
+    pubMsgContent.concat("\"cgatt\":");
+    pubMsgContent.concat(nbiot.CGATT);
+    pubMsgContent.concat(",");
+    pubMsgContent.concat("\"cereg\":\"");
+    pubMsgContent.concat(nbiot.CEREG);
+    pubMsgContent.concat("\"");
+    pubMsgContent.concat(",");
+    pubMsgContent.concat("\"din\":");
+    pubMsgContent.concat(String(sensorManager.sensorStatusX8));
+    pubMsgContent.concat(",");
+    pubMsgContent.concat("\"dout\":");
+    pubMsgContent.concat(String(sensorManager.sensorStatusX4));
+    pubMsgContent.concat("}");
 
-    int contentLen = publishMsgContent.length();
+    int contentLen = pubMsgContent.length();
 
-    publishMsgPrepare = "AT+QMTPUB=0,0,0,0,rgt/";
-    publishMsgPrepare.concat(nbiot.IMEI);
-    publishMsgPrepare.concat("/in,");
-    publishMsgPrepare.concat(String(contentLen));
+    pubMsgPrepare = "AT+QMTPUB=0,0,0,0,rgt/";
+    pubMsgPrepare.concat(nbiot.IMEI);
+    pubMsgPrepare.concat("/in,");
+    pubMsgPrepare.concat(String(contentLen));
 
-    publishMsgForce = publishMsgPrepare;
-    publishMsgForce.concat(",");
-    publishMsgForce.concat(publishMsgContent);
+    pubMsgForce = pubMsgPrepare;
+    pubMsgForce.concat(",");
+    pubMsgForce.concat(pubMsgContent);
   }
 };
 

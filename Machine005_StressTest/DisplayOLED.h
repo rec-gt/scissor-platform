@@ -8,17 +8,28 @@
 #ifndef displayOLED_h
 #define displayOLED_h
 
-U8G2_SH1106_128X64_NONAME_F_HW_I2C u8g2(U8G2_R0, U8X8_PIN_NONE);
+#define RESET_PIN 8
+
+U8G2_SSD1309_128X64_NONAME0_F_4W_HW_SPI u8g2(U8G2_R0, /* cs=*/10, /* dc=*/9, /* reset=*/RESET_PIN);
 
 class DisplayOLED {
 private:
   int lastState = 0;
   bool initSuccess = false;
 
+  void resetDisplay() {
+    digitalWrite(RESET_PIN, LOW);
+    delay(10);
+    digitalWrite(RESET_PIN, HIGH);
+    delay(100);
+  }
+
 public:
   DisplayOLED() {}
 
   void init() {
+    this->resetDisplay();
+
     if (!u8g2.begin()) {
       Serial.println("Display Failed");
       while (1) {}  // Block the whole process

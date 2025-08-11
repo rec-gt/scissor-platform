@@ -46,6 +46,8 @@ public:
       }
     }
 
+    this->showOneDetected();
+
     return _oneDetected;
   }
 
@@ -76,6 +78,8 @@ public:
         break;
       }
     }
+
+    this->showOneUnhealthy();
 
     return _allHealthy;
   }

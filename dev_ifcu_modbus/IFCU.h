@@ -15,7 +15,7 @@ private:
   long holdingRegisterValues[HOLDING_REGISTER_COUNT] = {};
 
   static constexpr long INPUT_REGISTERS_START_ADDRESS = 30001;
-  static constexpr byte INPUT_REGISTER_VALUES_COUNT = 6;
+  static constexpr byte INPUT_REGISTER_VALUES_COUNT = 7;
   long inputRegisterValues[INPUT_REGISTER_VALUES_COUNT] = {};
 
   enum INPUT_REGISTER {
@@ -25,7 +25,7 @@ private:
     OPERATION_MODE,
     MANUAL_MODE_FAN_SPEED,
     ROOM_TEMP,
-    SET_TEMP,
+    INPUT_REGISTER_SET_TEMP,
   };
 
   void handleWrite4x(unsigned int addr, unsigned int value) {
@@ -160,7 +160,7 @@ public:
   }
 
   void handleChangeSetPointTemp(IFCU_ENUMS action, byte step = 50) {
-    unsigned int currSetPointTemp = this->inputRegisterValues[SET_TEMP];
+    unsigned int currSetPointTemp = this->inputRegisterValues[INPUT_REGISTER_SET_TEMP];
 
     switch (action) {
       case IFCU_ACTION_INCREASE_TEMP:
@@ -189,8 +189,7 @@ public:
     pubMsgContent.concat(",");
     pubMsgContent.concat(String(this->inputRegisterValues[ROOM_TEMP]));
     pubMsgContent.concat(",");
-    Serial.print(this->inputRegisterValues[SET_TEMP]);
-    pubMsgContent.concat(String(this->inputRegisterValues[SET_TEMP]));
+    pubMsgContent.concat(String(this->inputRegisterValues[INPUT_REGISTER_SET_TEMP]));
     pubMsgContent.concat(",");
     pubMsgContent.concat(String(this->inputRegisterValues[MANUAL_MODE_FAN_SPEED]));
     pubMsgContent.concat("]");
@@ -245,7 +244,7 @@ public:
 
     Serial.println(this->inputRegisterValues[OPERATION_MODE]);
     Serial.println(this->inputRegisterValues[ROOM_TEMP]);
-    Serial.println(this->inputRegisterValues[SET_TEMP]);
+    Serial.println(this->inputRegisterValues[INPUT_REGISTER_SET_TEMP]);
     Serial.println(this->inputRegisterValues[MANUAL_MODE_FAN_SPEED]);
     Serial.println(this->checkOnOff());
   }

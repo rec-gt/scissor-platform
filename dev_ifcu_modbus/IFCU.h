@@ -3,6 +3,20 @@
 #ifndef IFCU_H
 #define IFCU_H
 
+
+
+// #define MANUAL_COOL_SPEED_LOW 68
+// #define MANUAL_COOL_SPEED_MEDIUM 69
+// #define MANUAL_COOL_SPEED_HIGH 70
+
+// #define AUTO_COOL_SPEED_LOW 68
+// #define AUTO_COOL_SPEED_MEDIUM 69
+// #define AUTO_COOL_SPEED_HIGH 70
+
+// #define FAN_ONLY_SPEED_LOW 72
+// #define FAN_ONLY_COOL_SPEED_MEDIUM 73
+// #define FAN_ONLY_COOL_SPEED_HIGH 74
+
 class IFCU {
 private:
   byte slaveId;
@@ -21,7 +35,7 @@ private:
     OPERATION_MODE,
     MANUAL_MODE_FAN_SPEED,
     ROOM_TEMP,
-    SET_POINT_TEMP,
+    SET_TEMP,
   };
 
   void handleWrite4x(unsigned int addr, unsigned int value) {
@@ -30,6 +44,10 @@ private:
     } else {
       Serial.println("Response OK");
     }
+  }
+
+  bool checkOnOff() {
+    return this->inputRegisterValues[SYSTEM_MODE] & 0b01000000 != 0;  // 0 = off, not 0 = on
   }
 
 public:
@@ -53,17 +71,23 @@ public:
       }
     }
 
-    for (uint16_t i = 0; i < holdingRegisterCount; i++) {
-      Serial.print(this->holdingRegisterValues[i]);
-      Serial.print(", ");
-    }
-    Serial.println();
+    // for (uint16_t i = 0; i < holdingRegisterCount; i++) {
+    //   Serial.print(this->holdingRegisterValues[i]);
+    //   Serial.print(", ");
+    // }
+    // Serial.println();
 
-    for (uint16_t i = 0; i < inputRegisterValuesCount; i++) {
-      Serial.print(this->inputRegisterValues[i]);
-      Serial.print(", ");
-    }
-    Serial.println();
+    // for (uint16_t i = 0; i < inputRegisterValuesCount; i++) {
+    //   Serial.print(this->inputRegisterValues[i]);
+    //   Serial.print(", ");
+    // }
+    // Serial.println();
+
+    // Serial.println(this->inputRegisterValues[OPERATION_MODE]);
+    // Serial.println(this->inputRegisterValues[ROOM_TEMP]);
+    // Serial.println(this->inputRegisterValues[SET_TEMP]);
+    // Serial.println(this->inputRegisterValues[MANUAL_MODE_FAN_SPEED]);
+    Serial.println(this->checkOnOff());
   }
 
   // ===== handle operations =====
@@ -113,7 +137,7 @@ public:
   }
 
   void handleChangeSetPointTemp(IFCU_ENUMS action, byte step = 50) {
-    unsigned int currSetPointTemp = this->inputRegisterValues[SET_POINT_TEMP];
+    unsigned int currSetPointTemp = this->inputRegisterValues[SET_TEMP];
 
     switch (action) {
       case IFCU_ACTION_INCREASE_TEMP:

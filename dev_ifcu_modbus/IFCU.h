@@ -1,32 +1,22 @@
 #include "Globals.h"
+#include "NBIoT.h"
 
 #ifndef IFCU_H
 #define IFCU_H
 
-
-
-// #define MANUAL_COOL_SPEED_LOW 68
-// #define MANUAL_COOL_SPEED_MEDIUM 69
-// #define MANUAL_COOL_SPEED_HIGH 70
-
-// #define AUTO_COOL_SPEED_LOW 68
-// #define AUTO_COOL_SPEED_MEDIUM 69
-// #define AUTO_COOL_SPEED_HIGH 70
-
-// #define FAN_ONLY_SPEED_LOW 72
-// #define FAN_ONLY_COOL_SPEED_MEDIUM 73
-// #define FAN_ONLY_COOL_SPEED_HIGH 74
-
 class IFCU {
 private:
+  unsigned long prevMillis = millis();
+
   byte slaveId;
 
   static constexpr long HOLDING_REGISTERS_START_ADDRESS = 40000;
-  static constexpr long INPUT_REGISTERS_START_ADDRESS = 30000;
-  static constexpr byte holdingRegisterCount = 13;
-  static constexpr byte inputRegisterValuesCount = 16;
-  long holdingRegisterValues[holdingRegisterCount] = {};
-  long inputRegisterValues[inputRegisterValuesCount] = {};
+  static constexpr byte HOLDING_REGISTER_COUNT = 13;
+  long holdingRegisterValues[HOLDING_REGISTER_COUNT] = {};
+
+  static constexpr long INPUT_REGISTERS_START_ADDRESS = 30001;
+  static constexpr byte INPUT_REGISTER_VALUES_COUNT = 6;
+  long inputRegisterValues[INPUT_REGISTER_VALUES_COUNT] = {};
 
   enum INPUT_REGISTER {
     FW_VER,
@@ -55,40 +45,31 @@ public:
   IFCU(byte slaveId)
     : slaveId(slaveId){};
 
+  // ===== read data from control box =====
   void read() {
-    if (!mbClient.requestFrom(this->slaveId, HOLDING_REGISTERS, HOLDING_REGISTERS_START_ADDRESS, holdingRegisterCount)) {
-      Serial.println(mbClient.lastError());
-    } else {
-      for (uint16_t i = 0; i < holdingRegisterCount; i++) {
-        this->holdingRegisterValues[i] = mbClient.read();
+    if (millis() - this->prevMillis > 1000) {
+
+      if (!mbClient.requestFrom(this->slaveId, INPUT_REGISTERS, INPUT_REGISTERS_START_ADDRESS, INPUT_REGISTER_VALUES_COUNT)) {
+        Serial.println(mbClient.lastError());
+      } else {
+        for (uint16_t i = 0; i < INPUT_REGISTER_VALUES_COUNT; i++) {
+          this->inputRegisterValues[i] = mbClient.read();
+        }
       }
-    }
 
-    if (!mbClient.requestFrom(this->slaveId, INPUT_REGISTERS, INPUT_REGISTERS_START_ADDRESS, inputRegisterValuesCount)) {
-      Serial.println(mbClient.lastError());
-    } else {
-      for (uint16_t i = 0; i < inputRegisterValuesCount; i++) {
-        this->inputRegisterValues[i] = mbClient.read();
+      for (uint16_t i = 0; i < INPUT_REGISTER_VALUES_COUNT; i++) {
+        Serial.print(this->inputRegisterValues[i]);
+        Serial.print(", ");
       }
+      Serial.println();
+
+      this->prevMillis = millis();
     }
+  }
 
-    // for (uint16_t i = 0; i < holdingRegisterCount; i++) {
-    //   Serial.print(this->holdingRegisterValues[i]);
-    //   Serial.print(", ");
-    // }
-    // Serial.println();
-
-    // for (uint16_t i = 0; i < inputRegisterValuesCount; i++) {
-    //   Serial.print(this->inputRegisterValues[i]);
-    //   Serial.print(", ");
-    // }
-    // Serial.println();
-
-    // Serial.println(this->inputRegisterValues[OPERATION_MODE]);
-    // Serial.println(this->inputRegisterValues[ROOM_TEMP]);
-    // Serial.println(this->inputRegisterValues[SET_TEMP]);
-    // Serial.println(this->inputRegisterValues[MANUAL_MODE_FAN_SPEED]);
-    Serial.println(this->checkOnOff());
+  // ===== monitor upcoming command =====
+  void monitor() {
+    nbiot.readRecvMsg();
   }
 
   // ===== handle operations =====
@@ -148,6 +129,43 @@ public:
         this->handleWrite4x(40004, currSetPointTemp - step);
         break;
     }
+  }
+
+  // ===== debug =====
+  void debug() {
+    if (!mbClient.requestFrom(this->slaveId, HOLDING_REGISTERS, HOLDING_REGISTERS_START_ADDRESS, HOLDING_REGISTER_COUNT)) {
+      Serial.println(mbClient.lastError());
+    } else {
+      for (uint16_t i = 0; i < HOLDING_REGISTER_COUNT; i++) {
+        this->holdingRegisterValues[i] = mbClient.read();
+      }
+    }
+
+    if (!mbClient.requestFrom(this->slaveId, INPUT_REGISTERS, INPUT_REGISTERS_START_ADDRESS, INPUT_REGISTER_VALUES_COUNT)) {
+      Serial.println(mbClient.lastError());
+    } else {
+      for (uint16_t i = 0; i < INPUT_REGISTER_VALUES_COUNT; i++) {
+        this->inputRegisterValues[i] = mbClient.read();
+      }
+    }
+
+    for (uint16_t i = 0; i < HOLDING_REGISTER_COUNT; i++) {
+      Serial.print(this->holdingRegisterValues[i]);
+      Serial.print(", ");
+    }
+    Serial.println();
+
+    for (uint16_t i = 0; i < INPUT_REGISTER_VALUES_COUNT; i++) {
+      Serial.print(this->inputRegisterValues[i]);
+      Serial.print(", ");
+    }
+    Serial.println();
+
+    Serial.println(this->inputRegisterValues[OPERATION_MODE]);
+    Serial.println(this->inputRegisterValues[ROOM_TEMP]);
+    Serial.println(this->inputRegisterValues[SET_TEMP]);
+    Serial.println(this->inputRegisterValues[MANUAL_MODE_FAN_SPEED]);
+    Serial.println(this->checkOnOff());
   }
 };
 

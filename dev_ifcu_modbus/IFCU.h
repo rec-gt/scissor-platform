@@ -70,11 +70,22 @@ public:
 
   // ===== monitor upcoming command =====
   void monitor() {
-    int cmd = atoi(nbiot.readRecvMsg().c_str());
+    String msg = nbiot.readRecvMsg();
+    if (msg.length() <= 0) {
+      return;
+    }
+
+    int cmd = msg.toInt();
+
+    Serial.print("MSG: ");
+    Serial.print(msg);
+    Serial.print(" CMD: ");
+    Serial.print(cmd);
+
     if (this->prevCmd != cmd) {
-      
+
       this->prevCmd = cmd;
-      
+
       switch (cmd) {
         case IFCU_ON:
           this->handleOnOff(IFCU_ON);

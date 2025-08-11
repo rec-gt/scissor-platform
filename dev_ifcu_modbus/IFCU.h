@@ -63,7 +63,25 @@ public:
   }
 
   void handleChangeMode(IFCU_ENUMS mode) {
-    this->handleWrite4x(40002, mode);
+    switch (mode) {
+      case IFCU_MODE_AUTO_COOL:
+        this->handleWrite4x(40002, 0);
+        break;
+      case IFCU_MODE_MANUAL_COOL:
+        this->handleWrite4x(40002, 1);
+        break;
+      case IFCU_MODE_FAN_ONLY:
+        this->handleWrite4x(40002, 2);
+        break;
+      case IFCU_MODE_AUTO_HEAT:
+        this->handleWrite4x(40002, 4);
+        break;
+      case IFCU_MODE_MANUAL_HEAT:
+        this->handleWrite4x(40002, 5);
+        break;
+      default:
+        this->handleWrite4x(40002, 0);
+    }
   }
 
   void handleChangeFanSpeed(IFCU_ENUMS fanSpeed) {

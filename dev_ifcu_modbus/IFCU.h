@@ -57,12 +57,32 @@ public:
     Serial.println();
   }
 
-  void on() {
-    this->handleWrite4x(40000, 1);
+  // ===== handle operations =====
+  void handleOnOff(IFCU_ENUMS toggle) {
+    this->handleWrite4x(40000, toggle == IFCU_ON ? 1 : 0);
   }
 
-  void off() {
-    this->handleWrite4x(40000, 0);
+  void handleChangeMode(IFCU_ENUMS mode) {
+    this->handleWrite4x(40002, mode);
+  }
+
+  void handleChangeFanSpeed(IFCU_ENUMS fanSpeed) {
+    switch (fanSpeed) {
+      case IFCU_FAN_SPEED_LOW:
+        this->handleWrite4x(40003, 0);
+        break;
+      case IFCU_FAN_SPEED_MEDIUM:
+        this->handleWrite4x(40003, 1);
+        break;
+      case IFCU_FAN_SPEED_HIGH:
+        this->handleWrite4x(40003, 2);
+        break;
+      case IFCU_FAN_SPEED_TEN_SPEED:
+        this->handleWrite4x(40003, 3);
+        break;
+      default:
+        this->handleWrite4x(40003, 1);
+    }
   }
 };
 

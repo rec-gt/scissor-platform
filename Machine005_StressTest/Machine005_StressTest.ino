@@ -177,9 +177,7 @@ void loop() {
 
   if (random() % 2 == 0) {
     detectSystem.set(SYS_RUNNING);
-  } else {
-    detectSystem.set(SYS_STOPPED);
   }
 
-  delay(10);
+  delay(200);
 }

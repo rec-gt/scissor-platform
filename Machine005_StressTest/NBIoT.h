@@ -292,6 +292,7 @@ public:
 
   void listen() {
     if (NBIoTSerial.available() > 0) {
+      
       while (NBIoTSerial.available() > 0) {
         char c = NBIoTSerial.read();
 
@@ -307,6 +308,7 @@ public:
           this->answer();
           this->handleReadMsg();
           this->clearResBuffer();
+      
         }
       }
     }

@@ -18,11 +18,16 @@ void setup() {
 
   nbiot.debug();
   nbiot.init(1);
-
-  ifcu.on();
 }
 
 void loop() {
+  ifcu.handleOnOff(IFCU_ON);
+  delay(1000);
+  ifcu.handleChangeMode(IFCU_MODE_FAN_ONLY);
+  delay(1000);
+  ifcu.handleChangeFanSpeed(IFCU_FAN_SPEED_MEDIUM);
+  delay(1000);
+
   ifcu.read();
   delay(1000);
 }

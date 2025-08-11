@@ -4,6 +4,7 @@
 #include "Wire.h"
 #include "Adafruit_GFX.h"
 #include "Utils.h"
+#include "Globals.h"
 
 #ifndef displayOLED_h
 #define displayOLED_h
@@ -51,6 +52,8 @@ public:
       return;
     }
 
+    delay(50);
+    
     if (currState != this->lastState) {
       this->lastState = currState;
 

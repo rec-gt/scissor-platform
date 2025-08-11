@@ -88,8 +88,6 @@ private:
 
   bool debugMode = false;
 
-  String recvSubContent = "";
-
   void clearSerialBuffer() {
     while (NBIoTSerial.read() > 0) { delay(1); };
   }
@@ -544,10 +542,10 @@ public:
       int endPos = serialRes.indexOf("]", startPos);
 
       if (startPos > -1 && endPos > -1) {
-        this->recvSubContent = serialRes.substring(startPos + 1, endPos);
-        Serial.println(this->recvSubContent);
+        subRecvContent = serialRes.substring(startPos + 1, endPos);
+        Serial.println(subRecvContent);
       } else {
-        this->recvSubContent = "";
+        subRecvContent = "";
       }
     }
   }
@@ -564,6 +562,10 @@ public:
         this->printlnFlush(pubMsgForce);
       }
     }
+  }
+
+  String readRecvMsg() {
+    return subRecvContent;
   }
 
   ~NBIoT() {}

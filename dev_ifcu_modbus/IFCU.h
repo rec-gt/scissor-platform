@@ -47,7 +47,8 @@ private:
   }
 
   bool checkOnOff() {
-    return this->inputRegisterValues[SYSTEM_MODE] & 0b01000000 != 0;  // 0 = off, not 0 = on
+    // 0 = off, not 0 = on, map to "0/false" & "1/true"
+    return (this->inputRegisterValues[SYSTEM_MODE] & 0b01000000) != 0;
   }
 
 public:

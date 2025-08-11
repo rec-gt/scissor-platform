@@ -14,8 +14,17 @@ private:
   long holdingRegisterValues[holdingRegisterCount] = {};
   long inputRegisterValues[inputRegisterValuesCount] = {};
 
+  enum INPUT_REGISTER = {
+    FW_VER,
+    SYSTEM_MODE,
+    SYSTEM_OPTION,
+    OPERATION_MODE,
+    MANUAL_MODE_FAN_SPEED,
+    ROOM_TEMP,
+    SET_POINT_TEMP,
+  };
 
-  void handleWrite4x(int addr, int value) {
+  void handleWrite4x(unsigned int addr, unsigned int value) {
     if (!mbClient.holdingRegisterWrite(this->slaveId, addr, value)) {
       Serial.println(mbClient.lastError());
     } else {
@@ -100,6 +109,19 @@ public:
         break;
       default:
         this->handleWrite4x(40003, 1);
+    }
+  }
+
+  void handleChangeSetPointTemp(IFCU_ENUMS action, byte step = 50) {
+    unsigned int currSetPointTemp = this->inputRegisterValues[SET_POINT_TEMP];
+
+    switch (action) {
+      case IFCU_ACTION_INCREASE_TEMP:
+        this->handleWrite4x(40004, currSetPointTemp + step);
+        break;
+      case IFCU_ACTION_DECREASE_TEMP:
+        this->handleWrite4x(40004, currSetPointTemp - step);
+        break;
     }
   }
 };

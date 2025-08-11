@@ -189,6 +189,7 @@ public:
     pubMsgContent.concat(",");
     pubMsgContent.concat(String(this->inputRegisterValues[ROOM_TEMP]));
     pubMsgContent.concat(",");
+    Serial.print(this->inputRegisterValues[SET_TEMP]);
     pubMsgContent.concat(String(this->inputRegisterValues[SET_TEMP]));
     pubMsgContent.concat(",");
     pubMsgContent.concat(String(this->inputRegisterValues[MANUAL_MODE_FAN_SPEED]));

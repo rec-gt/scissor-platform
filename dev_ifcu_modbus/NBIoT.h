@@ -544,7 +544,6 @@ public:
 
       if (startPos > -1 && endPos > -1) {
         subRecvContent = serialRes.substring(startPos + 1, endPos);
-        Serial.println(subRecvContent);
       } else {
         subRecvContent = "";
       }
@@ -566,7 +565,9 @@ public:
   }
 
   String readRecvMsg() {
-    return subRecvContent;
+    String res = subRecvContent;
+    subRecvContent = "";
+    return res;
   }
 
   ~NBIoT() {}

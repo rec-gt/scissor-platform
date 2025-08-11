@@ -169,6 +169,36 @@ public:
     }
   }
 
+  void preparePubMsg() {
+    pubMsgContent = "{\"csq\":";
+    pubMsgContent.concat(nbiot.CSQ);
+    pubMsgContent.concat(",");
+    pubMsgContent.concat("\"cgatt\":");
+    pubMsgContent.concat(nbiot.CGATT);
+    pubMsgContent.concat(",");
+    pubMsgContent.concat("\"cereg\":\"");
+    pubMsgContent.concat(nbiot.CEREG);
+    pubMsgContent.concat("\"");
+    pubMsgContent.concat(",");
+    pubMsgContent.concat("\"ain\":");
+    pubMsgContent.concat("[1,2,3,4]");
+    pubMsgContent.concat(",");
+    pubMsgContent.concat("\"current\":");
+    pubMsgContent.concat("[1,2,3,4]");
+    pubMsgContent.concat("}");
+
+    int contentLen = pubMsgContent.length();
+
+    pubMsgPrepare = "AT+QMTPUB=0,0,0,0,rgt/";
+    pubMsgPrepare.concat(nbiot.IMEI);
+    pubMsgPrepare.concat("/in,");
+    pubMsgPrepare.concat(String(contentLen));
+
+    pubMsgForce = pubMsgPrepare;
+    pubMsgForce.concat(",");
+    pubMsgForce.concat(pubMsgContent);
+  }
+
   // ===== debug =====
   void debug() {
     if (!mbClient.requestFrom(this->slaveId, HOLDING_REGISTERS, HOLDING_REGISTERS_START_ADDRESS, HOLDING_REGISTER_COUNT)) {

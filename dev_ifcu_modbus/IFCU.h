@@ -56,7 +56,10 @@ public:
           this->inputRegisterValues[i] = mbClient.read();
         }
       }
+      
+      this->preparePubMsg();
 
+      // === debug ===
       for (uint16_t i = 0; i < INPUT_REGISTER_VALUES_COUNT; i++) {
         Serial.print(this->inputRegisterValues[i]);
         Serial.print(", ");

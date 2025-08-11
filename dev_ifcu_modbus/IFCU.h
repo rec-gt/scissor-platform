@@ -14,7 +14,7 @@ private:
   long holdingRegisterValues[holdingRegisterCount] = {};
   long inputRegisterValues[inputRegisterValuesCount] = {};
 
-  enum INPUT_REGISTER = {
+  enum INPUT_REGISTER {
     FW_VER,
     SYSTEM_MODE,
     SYSTEM_OPTION,

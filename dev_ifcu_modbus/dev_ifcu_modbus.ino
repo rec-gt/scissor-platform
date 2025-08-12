@@ -24,7 +24,9 @@ void setup() {
 
 void loop() {
   nbiot.loop();
+
   ifcu.read();
   ifcu.monitor();
+  
   delay(10);
 }

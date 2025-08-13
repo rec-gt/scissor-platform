@@ -7,6 +7,7 @@
 class IFCU {
 private:
   unsigned long prevMillis = millis();
+  int queryCount = -1;
 
   byte slaveId;
 
@@ -67,6 +68,10 @@ public:
       Serial.println();
 
       this->prevMillis = millis();
+
+      if (this->queryCount != -1) {
+        this->queryCount++;
+      }
     }
   }
 
@@ -80,8 +85,6 @@ public:
 
     int cmd = msg.toInt();
 
-    Serial.print("MSG: ");
-    Serial.print(msg);
     Serial.print(" CMD: ");
     Serial.print(cmd);
 
@@ -111,15 +114,22 @@ public:
         this->handleWrite4x(40003, 2);
         break;
       case IFCU_ACTION_INCREASE_TEMP:
-        Serial.print((unsigned long)(this->inputRegisterValues[INPUT_REGISTER_SET_TEMP] + 50));
-        this->handleWrite4x(40004, (unsigned long)(this->inputRegisterValues[INPUT_REGISTER_SET_TEMP] + 50));
+        this->handleWrite4x(40004, this->inputRegisterValues[INPUT_REGISTER_SET_TEMP] + 50);
         break;
       case IFCU_ACTION_DECREASE_TEMP:
-        Serial.print("here");
-        Serial.print(this->inputRegisterValues[INPUT_REGISTER_SET_TEMP]);
-        Serial.print((unsigned long)(this->inputRegisterValues[INPUT_REGISTER_SET_TEMP] - 50));
-        this->handleWrite4x(40004, (unsigned long)(this->inputRegisterValues[INPUT_REGISTER_SET_TEMP] - 50));
+        this->handleWrite4x(40004, this->inputRegisterValues[INPUT_REGISTER_SET_TEMP] - 50);
         break;
+    }
+
+    this->queryCount = 0;
+  }
+
+  void handleForcePublish() {
+    if (this->queryCount != -1) {  // !=-1 means forcePublish is unlocked
+      if (this->queryCount > 3) {
+        nbiot.forcePublish();
+        this->queryCount = -1;  // lock it back after being used
+      }
     }
   }
 
@@ -143,11 +153,11 @@ public:
     pubMsgContent.concat("[");
     pubMsgContent.concat(String(this->inputRegisterValues[OPERATION_MODE]));
     pubMsgContent.concat(",");
+    pubMsgContent.concat(String(this->inputRegisterValues[MANUAL_MODE_FAN_SPEED]));
+    pubMsgContent.concat(",");
     pubMsgContent.concat(String(this->inputRegisterValues[ROOM_TEMP]));
     pubMsgContent.concat(",");
     pubMsgContent.concat(String(this->inputRegisterValues[INPUT_REGISTER_SET_TEMP]));
-    pubMsgContent.concat(",");
-    pubMsgContent.concat(String(this->inputRegisterValues[MANUAL_MODE_FAN_SPEED]));
     pubMsgContent.concat("]");
     pubMsgContent.concat(",");
     pubMsgContent.concat("\"current\":");

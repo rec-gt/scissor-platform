@@ -27,6 +27,7 @@ void loop() {
 
   ifcu.read();
   ifcu.monitor();
+  ifcu.handleForcePublish();
   
   delay(10);
 }

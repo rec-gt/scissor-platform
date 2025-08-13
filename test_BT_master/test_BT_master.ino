@@ -23,7 +23,7 @@ void setup() {
 
 
   response = "";
-  BT_Serial.print("AT+NAMEIFCU16FCKYT");
+  BT_Serial.print("AT+NAMEIFCUTEST");
   delay(1000);
   while (BT_Serial.available()) {
     response += (char)BT_Serial.read();
@@ -32,14 +32,6 @@ void setup() {
 
   response = "";
   BT_Serial.print("AT+PIN123456");
-  delay(1000);
-  while (BT_Serial.available()) {
-    response += (char)BT_Serial.read();
-  }
-  Serial.println(response);
-
-  response = "";
-  BT_Serial.print("AT+ROLE=M");
   delay(1000);
   while (BT_Serial.available()) {
     response += (char)BT_Serial.read();

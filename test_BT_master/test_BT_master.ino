@@ -1,4 +1,4 @@
-#define BT_Serial Serial1
+#define BT_Serial Serial3
 
 String response;
 void setup() {
@@ -23,7 +23,7 @@ void setup() {
 
 
   response = "";
-  BT_Serial.print("AT+NAMEWTF");
+  BT_Serial.print("AT+NAMEIFCU16FCKYT");
   delay(1000);
   while (BT_Serial.available()) {
     response += (char)BT_Serial.read();
@@ -31,7 +31,7 @@ void setup() {
   Serial.println(response);
 
   response = "";
-  BT_Serial.print("AT+PIN1111");
+  BT_Serial.print("AT+PIN123456");
   delay(1000);
   while (BT_Serial.available()) {
     response += (char)BT_Serial.read();

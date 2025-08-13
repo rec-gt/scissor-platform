@@ -1,5 +1,6 @@
 #include "Globals.h"
 #include "NBIoT.h"
+#include "BLE.h"
 
 #ifndef IFCU_H
 #define IFCU_H
@@ -7,7 +8,6 @@
 class IFCU {
 private:
   unsigned long prevMillis = millis();
-  int queryCount = -1;
 
   byte slaveId;
 
@@ -58,7 +58,8 @@ public:
         }
       }
 
-      this->preparePubMsg();
+      this->prepareSendMsg();
+      ble.sendMsg();
 
       // === debug ===
       for (uint16_t i = 0; i < INPUT_REGISTER_VALUES_COUNT; i++) {
@@ -68,10 +69,6 @@ public:
       Serial.println();
 
       this->prevMillis = millis();
-
-      if (this->queryCount != -1) {
-        this->queryCount++;
-      }
     }
   }
 
@@ -120,17 +117,9 @@ public:
         this->handleWrite4x(40004, this->inputRegisterValues[INPUT_REGISTER_SET_TEMP] - 50);
         break;
     }
-
-    this->queryCount = 0;
   }
 
   void handleForcePublish() {
-    if (this->queryCount != -1) {  // !=-1 means forcePublish is unlocked
-      if (this->queryCount > 3) {
-        nbiot.forcePublish();
-        this->queryCount = -1;  // lock it back after being used
-      }
-    }
   }
 
   // ===== handle operations =====
@@ -138,44 +127,17 @@ public:
     this->handleWrite4x(40000, toggle == IFCU_ON ? 1 : 0);
   }
 
-  void preparePubMsg() {
-    pubMsgContent = "{\"csq\":";
-    pubMsgContent.concat(nbiot.CSQ);
-    pubMsgContent.concat(",");
-    pubMsgContent.concat("\"cgatt\":");
-    pubMsgContent.concat(nbiot.CGATT);
-    pubMsgContent.concat(",");
-    pubMsgContent.concat("\"cereg\":\"");
-    pubMsgContent.concat(nbiot.CEREG);
-    pubMsgContent.concat("\"");
-    pubMsgContent.concat(",");
-    pubMsgContent.concat("\"ain\":");
-    pubMsgContent.concat("[");
-    pubMsgContent.concat(String(this->inputRegisterValues[OPERATION_MODE]));
-    pubMsgContent.concat(",");
-    pubMsgContent.concat(String(this->inputRegisterValues[MANUAL_MODE_FAN_SPEED]));
-    pubMsgContent.concat(",");
-    pubMsgContent.concat(String(this->inputRegisterValues[ROOM_TEMP]));
-    pubMsgContent.concat(",");
-    pubMsgContent.concat(String(this->inputRegisterValues[INPUT_REGISTER_SET_TEMP]));
-    pubMsgContent.concat("]");
-    pubMsgContent.concat(",");
-    pubMsgContent.concat("\"current\":");
-    pubMsgContent.concat("[");
-    pubMsgContent.concat(String(this->checkOnOff()));
-    pubMsgContent.concat("]");
-    pubMsgContent.concat("}");
-
-    int contentLen = pubMsgContent.length();
-
-    pubMsgPrepare = "AT+QMTPUB=0,0,0,0,rgt/";
-    pubMsgPrepare.concat(nbiot.IMEI);
-    pubMsgPrepare.concat("/in,");
-    pubMsgPrepare.concat(String(contentLen));
-
-    pubMsgForce = pubMsgPrepare;
-    pubMsgForce.concat(",");
-    pubMsgForce.concat(pubMsgContent);
+  void prepareSendMsg() {
+    bleSend.concat("[");
+    bleSend.concat(String(this->inputRegisterValues[OPERATION_MODE]));
+    bleSend.concat(",");
+    bleSend.concat(String(this->inputRegisterValues[MANUAL_MODE_FAN_SPEED]));
+    bleSend.concat(",");
+    bleSend.concat(String(this->inputRegisterValues[ROOM_TEMP]));
+    bleSend.concat(",");
+    bleSend.concat(String(this->inputRegisterValues[INPUT_REGISTER_SET_TEMP]));
+    bleSend.concat("]");
+    bleSend.concat("\r\n");
   }
 
   // ===== debug =====

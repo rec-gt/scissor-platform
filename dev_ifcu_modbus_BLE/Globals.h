@@ -33,4 +33,8 @@ enum IFCU_ENUMS {
   IFCU_ACTION_DECREASE_TEMP,
 };
 
+/*=== For BLE ===*/
+String bleSend = "";
+String bleRecv = "";
+
 #endif

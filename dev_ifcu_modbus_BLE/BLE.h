@@ -30,7 +30,7 @@ private:
 
 public:
   BLE() {
-    BLESerial.begin(4800);
+   
   }
 
   void listen() {
@@ -38,17 +38,35 @@ public:
       while (BLESerial.available() > 0) {
         char c = BLESerial.read();
 
-        Serial.print(c);
-
         if (c != '\r' && c != '\n') {
           serialRes += c;
         }
 
         if (c == '\r') {
+          this->readRecv();
           this->clearResBuffer();
         }
       }
     }
+  }
+
+  void readRecv() {
+    int startPos = serialRes.indexOf("[");
+    int endPos = serialRes.indexOf("]", startPos);
+
+    if (startPos > -1 && endPos > -1) {
+      subRecvContent = serialRes.substring(startPos + 1, endPos);
+      Serial.print(subRecvContent);
+    } else {
+      subRecvContent = "";
+    }
+  }
+
+
+  void sendMsg() {
+    BLESerial.print(bleSend);
+    BLESerial.flush();
+    bleSend = "";
   }
 
   ~BLE() {}

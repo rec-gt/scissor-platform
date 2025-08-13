@@ -18,11 +18,14 @@ void setup() {
     while (1) {};
   }
 
+  BLESerial.begin(9600);
   delay(1000);
 }
 
+
 void loop() {
   ble.listen();
+
   ifcu.read();
   ifcu.monitor();
 

@@ -2,8 +2,10 @@
 #include <ArduinoModbus.h>
 #include "IFCU.h"
 #include "Globals.h"
+#include "BLE.h"
 #include "NBIoT.h"
 
+BLE ble;
 NBIoT nbiot;
 
 IFCU ifcu(31);
@@ -16,18 +18,13 @@ void setup() {
     while (1) {};
   }
 
-  nbiot.debug();
-  nbiot.init(1);
-
   delay(1000);
 }
 
 void loop() {
-  nbiot.loop();
-
+  ble.listen();
   ifcu.read();
   ifcu.monitor();
-  ifcu.handleForcePublish();
-  
+
   delay(10);
 }

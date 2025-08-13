@@ -14,7 +14,7 @@ private:
   static constexpr byte HOLDING_REGISTER_COUNT = 13;
   long holdingRegisterValues[HOLDING_REGISTER_COUNT] = {};
 
-  static constexpr long INPUT_REGISTERS_START_ADDRESS = 30001;
+  static constexpr long INPUT_REGISTERS_START_ADDRESS = 30000;
   static constexpr byte INPUT_REGISTER_VALUES_COUNT = 7;
   long inputRegisterValues[INPUT_REGISTER_VALUES_COUNT] = {};
 
@@ -87,39 +87,11 @@ public:
 
     switch (cmd) {
       case IFCU_ON:
-        this->handleOnOff(IFCU_ON);
+        this->handleWrite4x(40000, 1);
         break;
       case IFCU_OFF:
-        this->handleOnOff(IFCU_OFF);
+        this->handleWrite4x(40000, 0);
         break;
-      case IFCU_MODE_AUTO_COOL:
-        this->handleChangeMode(IFCU_MODE_AUTO_COOL);
-        break;
-      case IFCU_MODE_MANUAL_COOL:
-        this->handleChangeMode(IFCU_MODE_MANUAL_COOL);
-        break;
-      case IFCU_MODE_FAN_ONLY:
-        this->handleChangeMode(IFCU_MODE_FAN_ONLY);
-        break;
-      case IFCU_FAN_SPEED_LOW:
-        this->handleChangeFanSpeed(IFCU_FAN_SPEED_LOW);
-        break;
-      case IFCU_FAN_SPEED_MEDIUM:
-        this->handleChangeFanSpeed(IFCU_FAN_SPEED_MEDIUM);
-        break;
-      case IFCU_FAN_SPEED_HIGH:
-        this->handleChangeFanSpeed(IFCU_FAN_SPEED_HIGH);
-        break;
-    }
-  }
-
-  // ===== handle operations =====
-  void handleOnOff(IFCU_ENUMS toggle) {
-    this->handleWrite4x(40000, toggle == IFCU_ON ? 1 : 0);
-  }
-
-  void handleChangeMode(IFCU_ENUMS mode) {
-    switch (mode) {
       case IFCU_MODE_AUTO_COOL:
         this->handleWrite4x(40002, 0);
         break;
@@ -129,19 +101,6 @@ public:
       case IFCU_MODE_FAN_ONLY:
         this->handleWrite4x(40002, 2);
         break;
-      case IFCU_MODE_AUTO_HEAT:
-        this->handleWrite4x(40002, 4);
-        break;
-      case IFCU_MODE_MANUAL_HEAT:
-        this->handleWrite4x(40002, 5);
-        break;
-      default:
-        this->handleWrite4x(40002, 0);
-    }
-  }
-
-  void handleChangeFanSpeed(IFCU_ENUMS fanSpeed) {
-    switch (fanSpeed) {
       case IFCU_FAN_SPEED_LOW:
         this->handleWrite4x(40003, 0);
         break;
@@ -151,25 +110,22 @@ public:
       case IFCU_FAN_SPEED_HIGH:
         this->handleWrite4x(40003, 2);
         break;
-      case IFCU_FAN_SPEED_TEN_SPEED:
-        this->handleWrite4x(40003, 3);
+      case IFCU_ACTION_INCREASE_TEMP:
+        Serial.print((unsigned long)(this->inputRegisterValues[INPUT_REGISTER_SET_TEMP] + 50));
+        this->handleWrite4x(40004, (unsigned long)(this->inputRegisterValues[INPUT_REGISTER_SET_TEMP] + 50));
         break;
-      default:
-        this->handleWrite4x(40003, 1);
+      case IFCU_ACTION_DECREASE_TEMP:
+        Serial.print("here");
+        Serial.print(this->inputRegisterValues[INPUT_REGISTER_SET_TEMP]);
+        Serial.print((unsigned long)(this->inputRegisterValues[INPUT_REGISTER_SET_TEMP] - 50));
+        this->handleWrite4x(40004, (unsigned long)(this->inputRegisterValues[INPUT_REGISTER_SET_TEMP] - 50));
+        break;
     }
   }
 
-  void handleChangeSetPointTemp(IFCU_ENUMS action, byte step = 50) {
-    unsigned int currSetPointTemp = this->inputRegisterValues[INPUT_REGISTER_SET_TEMP];
-
-    switch (action) {
-      case IFCU_ACTION_INCREASE_TEMP:
-        this->handleWrite4x(40004, currSetPointTemp + step);
-        break;
-      case IFCU_ACTION_DECREASE_TEMP:
-        this->handleWrite4x(40004, currSetPointTemp - step);
-        break;
-    }
+  // ===== handle operations =====
+  void handleOnOff(IFCU_ENUMS toggle) {
+    this->handleWrite4x(40000, toggle == IFCU_ON ? 1 : 0);
   }
 
   void preparePubMsg() {

@@ -33,28 +33,26 @@ void listen() {
     }
 
     if (_byte == '\r') {
-      const char* charPtr1;
-      const char* charPtr2;
-      const char* charPtr3;
-      Serial.println(buffer);
+      String firstPart = "";
+      String secondPart = "";
+      String thirdPart = "";
 
       int firstDelimiterIndex = buffer.indexOf(';');
 
       if (firstDelimiterIndex != -1) {
-        String firstPart = buffer.substring(0, firstDelimiterIndex);
-        charPtr1 = firstPart.c_str();
+        firstPart = buffer.substring(0, firstDelimiterIndex);
 
         int secondDelimiterIndex = buffer.indexOf(';', firstDelimiterIndex + 1);
         if (secondDelimiterIndex != -1) {
-          String secondPart = buffer.substring(firstDelimiterIndex + 1, secondDelimiterIndex);
-          charPtr2 = secondPart.c_str();
-
-          String thirdPart = buffer.substring(secondDelimiterIndex + 1);
-          charPtr3 = thirdPart.c_str();
+          secondPart = buffer.substring(firstDelimiterIndex + 1, secondDelimiterIndex);
+          thirdPart = buffer.substring(secondDelimiterIndex + 1);
         }
+      } else {
+        firstPart = buffer;
       }
 
-      displayOLED.print(charPtr1, charPtr2, charPtr3);
+      displayOLED.print(firstPart.c_str(), secondPart.c_str(), thirdPart.c_str());
+
       buffer = "";
     }
 

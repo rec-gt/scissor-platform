@@ -30,7 +30,7 @@ private:
 
 public:
   BLE() {
-   
+    this->clearSerialBuffer();
   }
 
   void listen() {
@@ -64,8 +64,7 @@ public:
 
 
   void sendMsg() {
-    BLESerial.print(bleSend);
-    BLESerial.flush();
+    this->printlnFlush(bleSend);
     bleSend = "";
   }
 

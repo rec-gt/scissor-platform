@@ -93,10 +93,35 @@ void setup() {
   Serial.begin(9600);
 }
 
+byte cnt = 0;
 void loop() {
   for (size_t i = 0; i < AI_NUMS; i++) {
-    for (byte j = 0; j < 255; j++) {
-      analogOutputs[i].set(j);
-    }
+    analogOutputs[i].set(0);
   }
+  delay(1000);
+
+  for (size_t i = 0; i < AI_NUMS; i++) {
+    analogOutputs[i].set(50);
+  }
+  delay(1000);
+
+  for (size_t i = 0; i < AI_NUMS; i++) {
+    analogOutputs[i].set(100);
+  }
+  delay(1000);
+
+  for (size_t i = 0; i < AI_NUMS; i++) {
+    analogOutputs[i].set(150);
+  }
+  delay(1000);
+
+  for (size_t i = 0; i < AI_NUMS; i++) {
+    analogOutputs[i].set(200);
+  }
+  delay(1000);
+
+  for (size_t i = 0; i < AI_NUMS; i++) {
+    analogOutputs[i].set(250);
+  }
+  delay(1000);
 }

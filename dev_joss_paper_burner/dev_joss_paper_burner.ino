@@ -107,8 +107,6 @@ void loop() {
     Serial.print(": ");
     Serial.print(analogInputs[i].getValue());
     Serial.print(", ");
-    // Serial.println(map(analogInputs[i].getValue(), 204.6, 1023., 100, 5000));
-    // Serial.println(map(analogInputs[i].getValue(), 0, 1023., 0, 5000));
     // Serial.println(map(analogInputs[i].getValue(), 0, 16368, 0, 50000));// for 0-5V
     Serial.println(map(analogInputs[i].getValue(), 3360, 16368, 10000, 50000)); // for 4-20mA
   }

@@ -13,4 +13,18 @@ void debugDI() {
     Serial.println();
   }
 }
+
+void debugDO() {
+  for (size_t i = 0; i < DI_NUMS; i++) {
+    digitalOutputs[i].connect();
+  }
+
+  delay(2000);
+
+  for (size_t i = 0; i < DI_NUMS; i++) {
+    digitalOutputs[i].cut();
+  }
+}
+
+
 #endif

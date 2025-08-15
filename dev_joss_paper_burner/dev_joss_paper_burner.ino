@@ -68,6 +68,14 @@ DigitalOutput digitalOutputs[DO_NUMS]{
   DigitalOutput(DO_PIN_8),
 };
 
+AnalogOutput analogOutputs[AO_NUMS]{
+  AnalogOutput(AO_PIN_1),
+  AnalogOutput(AO_PIN_2),
+  AnalogOutput(AO_PIN_3),
+  AnalogOutput(AO_PIN_4),
+
+};
+
 AnalogInput analogInput1(AI_PIN_1);
 AnalogInput analogInput2(AI_PIN_2);
 AnalogInput analogInput3(AI_PIN_3);
@@ -81,25 +89,14 @@ AnalogInput analogInput10(AI_PIN_10);
 AnalogInput analogInput11(AI_PIN_11);
 AnalogInput analogInput12(AI_PIN_12);
 
-AnalogOutput analogOutput1(AO_PIN_1);
-AnalogOutput analogOutput2(AO_PIN_2);
-AnalogOutput analogOutput3(AO_PIN_3);
-AnalogOutput analogOutput4(AO_PIN_4);
-
 void setup() {
   Serial.begin(9600);
 }
 
 void loop() {
-  for (size_t i = 0; i < DI_NUMS; i++) {
-    digitalOutputs[i].connect();
+  for (size_t i = 0; i < AI_NUMS; i++) {
+    for (byte j = 0; j < 255; j++) {
+      analogOutputs[i].set(j);
+    }
   }
-
-  delay(2000);
-
-  for (size_t i = 0; i < DI_NUMS; i++) {
-    digitalOutputs[i].cut();
-  }
-
-  delay(2000);
 }

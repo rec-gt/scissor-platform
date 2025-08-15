@@ -108,8 +108,8 @@ void loop() {
     Serial.print(analogInputs[i].getValue());
     Serial.print(", ");
     // Serial.println(map(analogInputs[i].getValue(), 204.6, 1023., 100, 5000));
-    Serial.println(map(analogInputs[i].getValue(), 0, 1023., 0, 5000));
-
+    // Serial.println(map(analogInputs[i].getValue(), 0, 1023., 0, 5000));
+    Serial.println(map(analogInputs[i].getValue(), 0, 16368, 0, 50000));
   }
 
   delay(1000);

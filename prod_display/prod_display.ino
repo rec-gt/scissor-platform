@@ -1,6 +1,6 @@
 #include "DisplayOLED.h"
 
-#define PERIPHERAL_SERIAL Serial3
+#define PERIPHERAL_SERIAL Serial1
 
 DisplayOLED displayOLED;
 
@@ -28,7 +28,8 @@ void sendHeartbeat() {
 void listen() {
   while (PERIPHERAL_SERIAL.available() > 0) {
     char _byte = PERIPHERAL_SERIAL.read();
-
+    Serial.print(_byte);
+    
     if (_byte != '\r' && _byte != '\n') {
       buffer += _byte;
     }

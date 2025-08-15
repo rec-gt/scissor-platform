@@ -3,7 +3,7 @@
 class AnalogInput {
 private:
   byte pin;
-  unsigned int value;
+  uint16_t value;
 
 public:
   AnalogInput(byte pin)
@@ -12,15 +12,17 @@ public:
   }
 
   void listen() {
-    unsigned long sum = 0;
+    uint32_t sum = 0;
 
     for (int i = 0; i < OVERSAMPLING_FACTOR; i++) {
       sum += analogRead(this->pin);
     }
 
-    this->value = sum >> SHIFT_BITS;
+    this->value = (sum / OVERSAMPLING_FACTOR) << SHIFT_BITS;
 
-    Serial.println(this->value);
+    // this->value = sum >> SHIFT_BITS;
+
+    // this->value = analogRead(this->pin);
   }
 
   unsigned int getValue() {

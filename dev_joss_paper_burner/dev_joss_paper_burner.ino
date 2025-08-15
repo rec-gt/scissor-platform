@@ -76,24 +76,41 @@ AnalogOutput analogOutputs[AO_NUMS]{
 
 };
 
-AnalogInput analogInput1(AI_PIN_1);
-AnalogInput analogInput2(AI_PIN_2);
-AnalogInput analogInput3(AI_PIN_3);
-AnalogInput analogInput4(AI_PIN_4);
-AnalogInput analogInput5(AI_PIN_5);
-AnalogInput analogInput6(AI_PIN_6);
-AnalogInput analogInput7(AI_PIN_7);
-AnalogInput analogInput8(AI_PIN_8);
-AnalogInput analogInput9(AI_PIN_9);
-AnalogInput analogInput10(AI_PIN_10);
-AnalogInput analogInput11(AI_PIN_11);
-AnalogInput analogInput12(AI_PIN_12);
+AnalogInput analogInputs[AI_NUMS] = {
+  AnalogInput(AI_PIN_1),
+  AnalogInput(AI_PIN_2),
+  AnalogInput(AI_PIN_3),
+  AnalogInput(AI_PIN_4),
+  AnalogInput(AI_PIN_5),
+  AnalogInput(AI_PIN_6),
+  AnalogInput(AI_PIN_7),
+  AnalogInput(AI_PIN_8),
+  AnalogInput(AI_PIN_9),
+  AnalogInput(AI_PIN_10),
+  AnalogInput(AI_PIN_11),
+  AnalogInput(AI_PIN_12),
+};
+
 
 void setup() {
   Serial.begin(9600);
+  analogReference(EXTERNAL);
 }
 
-byte cnt = 0;
 void loop() {
- 
+  for (size_t i = 0; i < AI_NUMS; i++) {
+    analogInputs[i].listen();
+  }
+
+  for (size_t i = 0; i < AI_NUMS; i++) {
+    Serial.print(i);
+    Serial.print(": ");
+    Serial.print(analogInputs[i].getValue());
+    Serial.print(", ");
+    // Serial.println(map(analogInputs[i].getValue(), 204.6, 1023., 100, 5000));
+    Serial.println(map(analogInputs[i].getValue(), 0, 1023., 0, 5000));
+
+  }
+
+  delay(1000);
 }

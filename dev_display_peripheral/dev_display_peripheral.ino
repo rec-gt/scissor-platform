@@ -1,11 +1,15 @@
 #include "DisplayOLED.h"
+
 #define PERIPHERAL_SERIAL Serial3
 
 DisplayOLED displayOLED;
 
-String buffer = "";
-
 unsigned long prevMillis = 0;
+
+String buffer = "";
+String line1 = "";
+String line2 = "";
+String line3 = "";
 
 void setup() {
   Serial.begin(9600);
@@ -13,10 +17,8 @@ void setup() {
   displayOLED.init();
 }
 
-void asyncHeartbeat() {
+void sendHeartbeat() {
   if (millis() - prevMillis > 1000) {
-    Serial.println("send heartbeat");
-    Serial.flush();
     PERIPHERAL_SERIAL.println("HB");
     PERIPHERAL_SERIAL.flush();
     prevMillis = millis();
@@ -25,7 +27,6 @@ void asyncHeartbeat() {
 
 void listen() {
   while (PERIPHERAL_SERIAL.available() > 0) {
-
     char _byte = PERIPHERAL_SERIAL.read();
 
     if (_byte != '\r' && _byte != '\n') {
@@ -33,36 +34,43 @@ void listen() {
     }
 
     if (_byte == '\r') {
-      String firstPart = "";
-      String secondPart = "";
-      String thirdPart = "";
+      int delimiterIdx1 = buffer.indexOf(";");
 
-      int firstDelimiterIndex = buffer.indexOf(';');
+      if (delimiterIdx1 != -1) {
+        line1 = buffer.substring(0, delimiterIdx1);
 
-      if (firstDelimiterIndex != -1) {
-        firstPart = buffer.substring(0, firstDelimiterIndex);
+        int delimiterIdx2 = buffer.indexOf(";", delimiterIdx1 + 1);
 
-        int secondDelimiterIndex = buffer.indexOf(';', firstDelimiterIndex + 1);
-        if (secondDelimiterIndex != -1) {
-          secondPart = buffer.substring(firstDelimiterIndex + 1, secondDelimiterIndex);
-          thirdPart = buffer.substring(secondDelimiterIndex + 1);
+        if (delimiterIdx2 != -1) {
+          line2 = buffer.substring(delimiterIdx1 + 1, delimiterIdx2);
+          line3 = buffer.substring(delimiterIdx2 + 1);
+
+          int delimiterIdx3 = buffer.indexOf(";", delimiterIdx2 + 1);
+          if (delimiterIdx3 != -1) {
+            line3 = buffer.substring(delimiterIdx2 + 1, delimiterIdx3);
+          }
+
+        } else {
+          line2 = buffer.substring(delimiterIdx1 + 1, delimiterIdx2);
         }
+
       } else {
-        firstPart = buffer;
+        line1 = buffer;
       }
 
-      displayOLED.print(firstPart.c_str(), secondPart.c_str(), thirdPart.c_str());
-
+      displayOLED.print(line1.c_str(), line2.c_str(), line3.c_str());
       buffer = "";
+      line1 = "";
+      line2 = "";
+      line3 = "";
     }
 
     delay(1);
   }
-  Serial.println();
 }
 
 void loop() {
   listen();
-  asyncHeartbeat();
+  sendHeartbeat();
   delay(10);
 }

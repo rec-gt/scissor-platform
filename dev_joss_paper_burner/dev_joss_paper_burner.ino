@@ -34,26 +34,39 @@
 #define AO_PIN_3 6
 #define AO_PIN_4 7
 
+
+#define DI_NUMS 8
+#define DO_NUMS 8
+#define AI_NUMS 12
+#define AO_NUMS 4
+
 #include "DigitalOutput.h"
 #include "DigitalInput.h"
+#include "AnalogInput.h"
+#include "AnalogOutput.h"
 
-DigitalInput digitalInput1(DI_PIN_1);
-DigitalInput digitalInput2(DI_PIN_2);
-DigitalInput digitalInput3(DI_PIN_3);
-DigitalInput digitalInput4(DI_PIN_4);
-DigitalInput digitalInput5(DI_PIN_5);
-DigitalInput digitalInput6(DI_PIN_6);
-DigitalInput digitalInput7(DI_PIN_7);
-DigitalInput digitalInput8(DI_PIN_8);
 
-DigitalOutput digitalOutput1(DO_PIN_1);
-DigitalOutput digitalOutput2(DO_PIN_2);
-DigitalOutput digitalOutput3(DO_PIN_3);
-DigitalOutput digitalOutput4(DO_PIN_4);
-DigitalOutput digitalOutput5(DO_PIN_5);
-DigitalOutput digitalOutput6(DO_PIN_6);
-DigitalOutput digitalOutput7(DO_PIN_7);
-DigitalOutput digitalOutput8(DO_PIN_8);
+DigitalInput digitalInputs[DI_NUMS] = {
+  DigitalInput(DI_PIN_1),
+  DigitalInput(DI_PIN_2),
+  DigitalInput(DI_PIN_3),
+  DigitalInput(DI_PIN_4),
+  DigitalInput(DI_PIN_5),
+  DigitalInput(DI_PIN_6),
+  DigitalInput(DI_PIN_7),
+  DigitalInput(DI_PIN_8),
+};
+
+DigitalOutput digitalOutputs[DO_NUMS]{
+  DigitalOutput(DO_PIN_1),
+  DigitalOutput(DO_PIN_2),
+  DigitalOutput(DO_PIN_3),
+  DigitalOutput(DO_PIN_4),
+  DigitalOutput(DO_PIN_5),
+  DigitalOutput(DO_PIN_6),
+  DigitalOutput(DO_PIN_7),
+  DigitalOutput(DO_PIN_8),
+};
 
 AnalogInput analogInput1(AI_PIN_1);
 AnalogInput analogInput2(AI_PIN_2);
@@ -68,14 +81,25 @@ AnalogInput analogInput10(AI_PIN_10);
 AnalogInput analogInput11(AI_PIN_11);
 AnalogInput analogInput12(AI_PIN_12);
 
+AnalogOutput analogOutput1(AO_PIN_1);
+AnalogOutput analogOutput2(AO_PIN_2);
+AnalogOutput analogOutput3(AO_PIN_3);
+AnalogOutput analogOutput4(AO_PIN_4);
+
 void setup() {
   Serial.begin(9600);
-
-  pinMode(AO_PIN_1, OUTPUT);
-  pinMode(AO_PIN_2, OUTPUT);
-  pinMode(AO_PIN_3, OUTPUT);
-  pinMode(AO_PIN_4, OUTPUT);
 }
 
 void loop() {
+  for (size_t i = 0; i < DI_NUMS; i++) {
+    digitalOutputs[i].connect();
+  }
+
+  delay(2000);
+
+  for (size_t i = 0; i < DI_NUMS; i++) {
+    digitalOutputs[i].cut();
+  }
+
+  delay(2000);
 }

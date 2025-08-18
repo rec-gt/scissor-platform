@@ -11,6 +11,15 @@ U8G2_SSD1309_128X64_NONAME0_1_HW_I2C u8g2(U8G2_R0, U8X8_PIN_NONE);
 
 class DisplayOLED {
 private:
+  String padString(String str, int length) {
+    int originalLength = str.length();
+
+    while (str.length() < length) {
+      str += " ";
+    }
+
+    return str;
+  }
 
 public:
   bool hbToggle = true;
@@ -28,7 +37,7 @@ public:
     u8g2.clearDisplay();
   }
 
-  void draw(byte diValue, byte doValue, uint16_t ai1, uint16_t ai2, uint16_t ai3, uint16_t ai4, uint16_t ai5, uint16_t ai6, uint16_t ai7, uint16_t ai8, uint16_t ai9, uint16_t ai10, uint16_t ai11, uint16_t ai12) {
+  void draw(byte diValue, byte doValue, unsigned int ai1, unsigned int ai2, unsigned int ai3, unsigned int ai4, unsigned int ai5, unsigned int ai6, unsigned int ai7, unsigned int ai8, unsigned int ai9, unsigned int ai10, unsigned int ai11, unsigned int ai12) {
     u8g2.firstPage();
     do {
       int y = 7;
@@ -54,20 +63,34 @@ public:
       /*=== AI ===*/
       y = 29;
       u8g2.drawStr(0, y, "Ai");
-      u8g2.drawStr(12, y, ai1);
-      u8g2.drawStr(42, y, ai2);
-      u8g2.drawStr(72, y, ai3);
-      u8g2.drawStr(102, y, ai4);
+      u8g2.setCursor(12, y);
+      u8g2.print(ai1);
+      u8g2.setCursor(12, y);
+      u8g2.print(ai1);
+      u8g2.setCursor(42, y);
+      u8g2.print(ai2);
+      u8g2.setCursor(72, y);
+      u8g2.print(ai3);
+      u8g2.setCursor(102, y);
+      u8g2.print(ai4);
       y = 37;
-      u8g2.drawStr(12, y, ai5);
-      u8g2.drawStr(42, y, ai6);
-      u8g2.drawStr(72, y, ai7);
-      u8g2.drawStr(102, y, ai8);
+      u8g2.setCursor(12, y);
+      u8g2.print(ai5);
+      u8g2.setCursor(42, y);
+      u8g2.print(ai6);
+      u8g2.setCursor(72, y);
+      u8g2.print(ai7);
+      u8g2.setCursor(102, y);
+      u8g2.print(ai8);
       y = 45;
-      u8g2.drawStr(12, y, ai9);
-      u8g2.drawStr(42, y, ai10);
-      u8g2.drawStr(72, y, ai11);
-      u8g2.drawStr(102, y, ai12);
+      u8g2.setCursor(12, y);
+      u8g2.print(ai9);
+      u8g2.setCursor(42, y);
+      u8g2.print(ai10);
+      u8g2.setCursor(72, y);
+      u8g2.print(ai11);
+      u8g2.setCursor(102, y);
+      u8g2.print(ai12);
       u8g2.drawLine(0, 47, 128, 47);
 
       /*=== AO ===*/

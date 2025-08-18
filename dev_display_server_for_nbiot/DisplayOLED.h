@@ -37,7 +37,27 @@ public:
     u8g2.clearDisplay();
   }
 
-  void draw(byte diValue, byte doValue, unsigned int ai1, unsigned int ai2, unsigned int ai3, unsigned int ai4, unsigned int ai5, unsigned int ai6, unsigned int ai7, unsigned int ai8, unsigned int ai9, unsigned int ai10, unsigned int ai11, unsigned int ai12) {
+  void draw(
+    byte iotConn,
+    byte iotCsq,
+    byte diValue,
+    byte doValue,
+    uint16_t ai1,
+    uint16_t ai2,
+    uint16_t ai3,
+    uint16_t ai4,
+    uint16_t ai5,
+    uint16_t ai6,
+    uint16_t ai7,
+    uint16_t ai8,
+    uint16_t ai9,
+    uint16_t ai10,
+    uint16_t ai11,
+    uint16_t ai12,
+    uint16_t ao1,
+    uint16_t ao2,
+    uint16_t ao3,
+    uint16_t ao4) {
     u8g2.firstPage();
     do {
       int y = 7;
@@ -63,8 +83,6 @@ public:
       /*=== AI ===*/
       y = 29;
       u8g2.drawStr(0, y, "Ai");
-      u8g2.setCursor(12, y);
-      u8g2.print(ai1);
       u8g2.setCursor(12, y);
       u8g2.print(ai1);
       u8g2.setCursor(42, y);
@@ -96,16 +114,20 @@ public:
       /*=== AO ===*/
       y = 56;
       u8g2.drawStr(0, y, "Ao");
-      u8g2.drawStr(12, y, "99999");
-      u8g2.drawStr(42, y, "99999");
+      u8g2.setCursor(12, y);
+      u8g2.print(ao1);
+      u8g2.setCursor(42, y);
+      u8g2.print(ao2);
       u8g2.drawStr(76, y, "IoT CSQ");
       u8g2.drawStr(116, y, "22");
       y = 64;
-      u8g2.drawStr(12, y, "99999");
-      u8g2.drawStr(42, y, "99999");
+      u8g2.setCursor(12, y);
+      u8g2.print(ao3);
+      u8g2.setCursor(42, y);
+      u8g2.print(ao4);
       u8g2.drawStr(76, y, this->hbToggle ? "Hrb" : "   ");
-      u8g2.drawStr(96, y, "CONN");
-      u8g2.drawStr(121, y, "C");
+      u8g2.drawStr(96, y, iotCsq);
+      u8g2.drawStr(121, y, iotConn == 1 ? "C" : "D");
     } while (u8g2.nextPage());
   }
 

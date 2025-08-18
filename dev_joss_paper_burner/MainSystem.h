@@ -62,12 +62,13 @@ public:
     this->AOPayload = "[";
     for (size_t i = 0; i < AO_NUMS; i++) {
       this->AOPayload += analogOutputs[i].getValue();
-      if (i < AI_NUMS - 1) {
+      if (i < AO_NUMS - 1) {
         this->AOPayload += ",";
       }
     }
     this->AOPayload += "]";
 
+    /*=== Debug ===*/
     Serial.print(this->DIPayload);
     Serial.print(" | ");
     Serial.print(this->DOPayload);

@@ -48,7 +48,8 @@ public:
       u8g2.drawStr(12, 37, "20000 20000");
       u8g2.drawStr(72, 27, "IoT");
       u8g2.drawStr(90, 27, "CSQ 22");
-      u8g2.drawStr(90, 37, "  CONN");
+      u8g2.drawStr(72, 37, "HB*");
+      u8g2.drawStr(90, 37, "CONN C");
       u8g2.drawLine(0, 39, 128, 39);
 
       u8g2.drawStr(0, 48, "AI");

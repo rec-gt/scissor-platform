@@ -13,6 +13,8 @@ class DisplayOLED {
 private:
 
 public:
+  bool hbToggle = true;
+
   DisplayOLED() {}
 
   void init() {
@@ -87,7 +89,7 @@ public:
       y = 64;
       u8g2.drawStr(12, y, "99999");
       u8g2.drawStr(42, y, "99999");
-      u8g2.drawStr(76, y, "+HB");
+      u8g2.drawStr(76, y, this->hbToggle ? "Hrb" : "   ");
       u8g2.drawStr(96, y, "CONN");
       u8g2.drawStr(121, y, "C");
     } while (u8g2.nextPage());

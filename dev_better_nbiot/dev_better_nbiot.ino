@@ -11,7 +11,7 @@ void setup() {
 
   // === For NBIoT ===
   nbiot.debug();
-  nbiot.init(1);
+  nbiot.init(true);
 }
 
 void stressTest() {

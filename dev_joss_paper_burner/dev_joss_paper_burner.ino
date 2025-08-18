@@ -34,7 +34,6 @@
 #define AO_PIN_3 6
 #define AO_PIN_4 7
 
-
 #define DI_NUMS 8
 #define DO_NUMS 8
 #define AI_NUMS 12
@@ -45,7 +44,6 @@
 #include "DigitalInput.h"
 #include "AnalogInput.h"
 #include "AnalogOutput.h"
-
 
 DigitalInput digitalInputs[DI_NUMS] = {
   DigitalInput(DI_PIN_1),
@@ -74,7 +72,6 @@ AnalogOutput analogOutputs[AO_NUMS]{
   AnalogOutput(AO_PIN_2),
   AnalogOutput(AO_PIN_3),
   AnalogOutput(AO_PIN_4),
-
 };
 
 AnalogInput analogInputs[AI_NUMS] = {

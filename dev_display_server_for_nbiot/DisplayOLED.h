@@ -38,15 +38,14 @@ public:
 
       /*=== DI ===*/
       y = 18;
+
+
+      byte diValue = 255;
+
       u8g2.drawStr(0, y, "Di");
-      u8g2.drawStr(12, y, "0");
-      u8g2.drawStr(17, y, "0");
-      u8g2.drawStr(22, y, "0");
-      u8g2.drawStr(27, y, "0");
-      u8g2.drawStr(32, y, "0");
-      u8g2.drawStr(37, y, "0");
-      u8g2.drawStr(42, y, "0");
-      u8g2.drawStr(47, y, "0");
+      for (size_t i = 7; i > 0; i--) {
+        u8g2.drawStr(12 + 5 * (7 - i), y, bitRead(diValue, i) ? "1" : "0");
+      }
 
       /*=== DO ===*/
       u8g2.drawStr(75, y, "Do");

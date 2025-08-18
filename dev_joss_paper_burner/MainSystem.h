@@ -20,11 +20,8 @@ private:
   unsigned long AOPayload[AO_NUMS] = {};
 
 public:
-  MainSystem(DigitalInput *digitalInputs, DigitalOutput *digitalOutputs, AnalogInput *analogInputs, AnalogOutput *analogOutputs) {
-    this->digitalInputs = digitalInputs;
-    this->digitalOutputs = digitalOutputs;
-    this->analogInputs = analogInputs;
-    this->analogOutputs = analogOutputs;
+  MainSystem(DigitalInput *digitalInputs, DigitalOutput *digitalOutputs, AnalogInput *analogInputs, AnalogOutput *analogOutputs)
+    : digitalInputs(digitalInputs), digitalOutputs(digitalOutputs), analogInputs(analogInputs), analogOutputs(analogOutputs) {
   }
 
   void listen() {

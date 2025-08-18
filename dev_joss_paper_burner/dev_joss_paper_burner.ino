@@ -97,9 +97,15 @@ NBIoT nbiot;
 
 void setup() {
   Serial.begin(9600);
+  
+  /*=== NBIoT ===*/
   NBIoTSerial.begin(9600);
   nbiot.debug();
   nbiot.init(true);
+  
+  /*=== Display ===*/
+  DisplaySerial.begin(9600);
+
   // analogReference(EXTERNAL);
 }
 
@@ -107,18 +113,8 @@ void loop() {
   /*=== Register NBIoT ===*/
   nbiot.loop();
 
-  /*=== Listen Inputs ===*/
-  mainSystem.listen();
+  /*=== Register MainSystem ===*/
+  mainSystem.loop();
 
-  /*=== Prepare for NBIoT Publish ===*/
-  mainSystem.preparePubMsg();
-
-  /*=== NBIoT Subscribe (for DO & AO only)===*/
-  mainSystem.commandHook();
-
-  /*=== Display (for NBIoT, DO, AO, DI, AI)===*/
-  // mainSystem.handleDisplayMsg();
-
-
-  delay(500);
+  delay(10);
 }

@@ -5,8 +5,8 @@
 #include "Globals.h"
 #include "NBIoT.h"
 
-#ifndef MAINSYSTEM_H
-#define MAINSYSTEM_H
+#ifndef MainSystem_H
+#define MainSystem_H
 
 class MainSystem {
 private:
@@ -26,10 +26,19 @@ public:
   }
 
   void loop() {
+    /*=== Listen Input Ports ===*/
     this->listen();
+
+    /*=== For publish, pre-build payloads ===*/
     this->buildPayloads();
+
+    /*=== For publish, prepare pub msg ===*/
     this->preparePubMsg();
+
+    /*=== For subscribe (DO & AO only) ===*/
     this->commandHook();
+
+    /*=== Display (for NBIoT, DO, AO, DI, AI)===*/
   }
 
   void listen() {

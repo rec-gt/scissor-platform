@@ -1,5 +1,5 @@
-#ifndef GLOBALS_H
-#define GLOBALS_H
+#ifndef Globals_H
+#define Globals_H
 
 /*=== For AI ===*/
 #define SHIFT_BITS 4

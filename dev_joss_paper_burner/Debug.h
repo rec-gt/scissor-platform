@@ -1,5 +1,5 @@
-#ifndef DEBUG_H
-#define DEBUG_H
+#ifndef Debug_H
+#define Debug_H
 
 void debugDI() {
   for (size_t i = 0; i < DI_NUM; i++) {

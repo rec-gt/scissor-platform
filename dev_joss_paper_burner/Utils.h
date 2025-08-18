@@ -1,5 +1,5 @@
-#ifndef UTILS_H
-#define UTILS_H
+#ifndef Utils_H
+#define Utils_H
 
 class Utils {
 public:

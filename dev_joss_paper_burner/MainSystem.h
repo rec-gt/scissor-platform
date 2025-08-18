@@ -26,8 +26,11 @@ public:
 
     this->DOPayload = 0;
     for (size_t i = 0; i < DO_NUMS; i++) {
-      this->DIPayload |= digitalOutputs[i].getState() << i;
+      this->DOPayload |= digitalOutputs[i].getState() << i;
     }
+    Serial.print(this->DIPayload);
+    Serial.print(" | ");
+    Serial.print(this->DOPayload);
   }
 
   void preparePubMsg() {

@@ -103,7 +103,7 @@ void loop() {
 
   /*=== NBIoT Publish (for DI, AI)===*/
   mainSystem.preparePubMsg();
-
+  Serial.print(pubMsgContent);
   /*=== NBIoT Subscribe (for DO, AO)===*/
   /*====== DO ======*/
   /*====== AO ======*/

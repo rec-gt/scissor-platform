@@ -40,6 +40,7 @@
 #define AI_NUMS 12
 #define AO_NUMS 4
 
+#include "Globals.h"
 #include "DigitalOutput.h"
 #include "DigitalInput.h"
 #include "AnalogInput.h"
@@ -77,18 +78,18 @@ AnalogOutput analogOutputs[AO_NUMS]{
 };
 
 AnalogInput analogInputs[AI_NUMS] = {
-  AnalogInput(AI_PIN_1),
-  AnalogInput(AI_PIN_2),
-  AnalogInput(AI_PIN_3),
-  AnalogInput(AI_PIN_4),
-  AnalogInput(AI_PIN_5),
-  AnalogInput(AI_PIN_6),
-  AnalogInput(AI_PIN_7),
-  AnalogInput(AI_PIN_8),
-  AnalogInput(AI_PIN_9),
-  AnalogInput(AI_PIN_10),
-  AnalogInput(AI_PIN_11),
-  AnalogInput(AI_PIN_12),
+  AnalogInput(AI_PIN_1, AI_MAPPING_MODE_0_10V),
+  AnalogInput(AI_PIN_2, AI_MAPPING_MODE_0_10V),
+  AnalogInput(AI_PIN_3, AI_MAPPING_MODE_0_10V),
+  AnalogInput(AI_PIN_4, AI_MAPPING_MODE_0_10V),
+  AnalogInput(AI_PIN_5, AI_MAPPING_MODE_0_10V),
+  AnalogInput(AI_PIN_6, AI_MAPPING_MODE_0_10V),
+  AnalogInput(AI_PIN_7, AI_MAPPING_MODE_0_10V),
+  AnalogInput(AI_PIN_8, AI_MAPPING_MODE_0_10V),
+  AnalogInput(AI_PIN_9, AI_MAPPING_MODE_0_10V),
+  AnalogInput(AI_PIN_10, AI_MAPPING_MODE_0_10V),
+  AnalogInput(AI_PIN_11, AI_MAPPING_MODE_0_10V),
+  AnalogInput(AI_PIN_12, AI_MAPPING_MODE_0_10V),
 };
 
 
@@ -105,9 +106,13 @@ void loop() {
   for (size_t i = 0; i < AI_NUMS; i++) {
     Serial.print(i);
     Serial.print(": ");
-    Serial.print(analogInputs[i].getValue());
+    Serial.print(analogInputs[i].getWeightedReading());
     Serial.print(", ");
-    Serial.println(map(analogInputs[i].getValue(), 0, 16368, 0, 50000));// for 0-5V
+    Serial.print(analogInputs[i].getWeightedValue());
+    Serial.print(" | ");
+    analogInputs[i].printEWMA();
+    Serial.println();
+    // Serial.println(map(analogInputs[i].getValue(), 0, 16368, 0, 50000));// for 0-5V
     // Serial.println(map(analogInputs[i].getValue(), 3360, 16368, 10000, 50000)); // for 4-20mA
   }
 

@@ -79,12 +79,17 @@ public:
 
       /*=== AO ===*/
       y = 56;
-      u8g2.drawStr(0, 56, "Ao");
-      u8g2.drawStr(12, 56, "99999 99999");
-      u8g2.drawStr(76, 56, "IoT CSQ 22");
+      u8g2.drawStr(0, y, "Ao");
+      u8g2.drawStr(12, y, "99999");
+      u8g2.drawStr(42, y, "99999");
+      u8g2.drawStr(76, y, "IoT CSQ");
+      u8g2.drawStr(116, y, "22");
       y = 64;
-      u8g2.drawStr(12, 64, "99999 99999");
-      u8g2.drawStr(76, 64, "+HB CONN C");
+      u8g2.drawStr(12, y, "99999");
+      u8g2.drawStr(42, y, "99999");
+      u8g2.drawStr(76, y, "+HB");
+      u8g2.drawStr(96, y, "CONN");
+      u8g2.drawStr(121, y, "C");
     } while (u8g2.nextPage());
   }
 

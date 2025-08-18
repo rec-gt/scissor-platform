@@ -28,7 +28,7 @@ public:
     u8g2.clearDisplay();
   }
 
-  void draw(byte diValue, byte doValue) {
+  void draw(byte diValue, byte doValue, uint16_t ai1, uint16_t ai2, uint16_t ai3, uint16_t ai4, uint16_t ai5, uint16_t ai6, uint16_t ai7, uint16_t ai8, uint16_t ai9, uint16_t ai10, uint16_t ai11, uint16_t ai12) {
     u8g2.firstPage();
     do {
       int y = 7;
@@ -54,20 +54,20 @@ public:
       /*=== AI ===*/
       y = 29;
       u8g2.drawStr(0, y, "Ai");
-      u8g2.drawStr(12, y, "99999");
-      u8g2.drawStr(42, y, "99999");
-      u8g2.drawStr(72, y, "99999");
-      u8g2.drawStr(102, y, "99999");
+      u8g2.drawStr(12, y, ai1);
+      u8g2.drawStr(42, y, ai2);
+      u8g2.drawStr(72, y, ai3);
+      u8g2.drawStr(102, y, ai4);
       y = 37;
-      u8g2.drawStr(12, y, "99999");
-      u8g2.drawStr(42, y, "99999");
-      u8g2.drawStr(72, y, "99999");
-      u8g2.drawStr(102, y, "99999");
+      u8g2.drawStr(12, y, ai5);
+      u8g2.drawStr(42, y, ai6);
+      u8g2.drawStr(72, y, ai7);
+      u8g2.drawStr(102, y, ai8);
       y = 45;
-      u8g2.drawStr(12, y, "99999");
-      u8g2.drawStr(42, y, "99999");
-      u8g2.drawStr(72, y, "99999");
-      u8g2.drawStr(102, y, "99999");
+      u8g2.drawStr(12, y, ai9);
+      u8g2.drawStr(42, y, ai10);
+      u8g2.drawStr(72, y, ai11);
+      u8g2.drawStr(102, y, ai12);
       u8g2.drawLine(0, 47, 128, 47);
 
       /*=== AO ===*/

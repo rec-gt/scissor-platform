@@ -19,10 +19,6 @@ public:
     }
 
     this->value = (sum / OVERSAMPLING_FACTOR) << SHIFT_BITS;
-
-    // this->value = sum >> SHIFT_BITS;
-
-    // this->value = analogRead(this->pin);
   }
 
   unsigned int getValue() {

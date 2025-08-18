@@ -94,7 +94,7 @@ AnalogInput analogInputs[AI_NUMS] = {
 
 void setup() {
   Serial.begin(9600);
-  analogReference(EXTERNAL);
+  // analogReference(EXTERNAL);
 }
 
 void loop() {
@@ -107,8 +107,8 @@ void loop() {
     Serial.print(": ");
     Serial.print(analogInputs[i].getValue());
     Serial.print(", ");
-    // Serial.println(map(analogInputs[i].getValue(), 0, 16368, 0, 50000));// for 0-5V
-    Serial.println(map(analogInputs[i].getValue(), 3360, 16368, 10000, 50000)); // for 4-20mA
+    Serial.println(map(analogInputs[i].getValue(), 0, 16368, 0, 50000));// for 0-5V
+    // Serial.println(map(analogInputs[i].getValue(), 3360, 16368, 10000, 50000)); // for 4-20mA
   }
 
   delay(500);

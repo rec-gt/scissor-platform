@@ -29,7 +29,8 @@ public:
   void draw() {
     u8g2.firstPage();
     do {
-      u8g2.drawStr(0, 7, "RGT NBIoT Controller v2.0");
+      u8g2.drawStr(0, 7, "RGT NBIoT Controller");
+      u8g2.drawStr(108, 7, "V2.0");
       u8g2.drawLine(0, 9, 128, 9);
 
       /*=== DI ===*/
@@ -44,15 +45,15 @@ public:
       u8g2.drawStr(47, 18, "0");
 
       /*=== DO ===*/
-      u8g2.drawStr(72, 18, "Do");
-      u8g2.drawStr(84, 18, "0");
-      u8g2.drawStr(17, 18, "0");
-      u8g2.drawStr(22, 18, "0");
-      u8g2.drawStr(27, 18, "0");
-      u8g2.drawStr(32, 18, "0");
-      u8g2.drawStr(37, 18, "0");
-      u8g2.drawStr(42, 18, "0");
-      u8g2.drawStr(47, 18, "0");
+      u8g2.drawStr(75, 18, "Do");
+      u8g2.drawStr(87, 18, "0");
+      u8g2.drawStr(92, 18, "0");
+      u8g2.drawStr(97, 18, "0");
+      u8g2.drawStr(102, 18, "0");
+      u8g2.drawStr(107, 18, "0");
+      u8g2.drawStr(112, 18, "0");
+      u8g2.drawStr(117, 18, "0");
+      u8g2.drawStr(122, 18, "0");
       u8g2.drawLine(0, 20, 128, 20);
 
       /*=== AI ===*/

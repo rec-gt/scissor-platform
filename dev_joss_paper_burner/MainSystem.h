@@ -93,16 +93,16 @@ public:
     pubMsgContent.concat("\"");
     pubMsgContent.concat(",");
     pubMsgContent.concat("\"din\":");
-    pubMsgContent.concat("255");
+    pubMsgContent.concat(String(this->DIPayload));
     pubMsgContent.concat(",");
     pubMsgContent.concat("\"dout\":");
-    pubMsgContent.concat("255");
+    pubMsgContent.concat(String(this->DOPayload));
     pubMsgContent.concat(",");
     pubMsgContent.concat("\"ain\":");
-    pubMsgContent.concat("[1,2,3,4,5,6,7,8]");
+    pubMsgContent.concat(this->AIPayload);
     pubMsgContent.concat(",");
     pubMsgContent.concat("\"current\":");
-    pubMsgContent.concat("[1,2,3,4,5,6,7,8]");
+    pubMsgContent.concat(this->AOPayload);
     pubMsgContent.concat("}");
 
     int contentLen = pubMsgContent.length();

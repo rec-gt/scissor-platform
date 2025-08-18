@@ -113,5 +113,8 @@ void loop() {
   /*====== DO ======*/
   /*====== AO ======*/
 
+  /*=== Display (for NBIoT, DO, AO, DI, AI)===*/
+
+
   delay(500);
 }

@@ -7,7 +7,7 @@
 #ifndef displayOLED_h
 #define displayOLED_h
 
-U8G2_SSD1309_128X64_NONAME0_2_HW_I2C u8g2(U8G2_R0, U8X8_PIN_NONE);
+U8G2_SSD1309_128X64_NONAME0_1_HW_I2C u8g2(U8G2_R0, U8X8_PIN_NONE);
 
 class DisplayOLED {
 private:
@@ -37,8 +37,8 @@ public:
       u8g2.drawStr(2, 6, "RGT NBIoT Controller v2.0");
       u8g2.drawLine(0, 7, 128, 7);
 
-      u8g2.drawStr(0, 6 + 9, "DI:OXOXOXOX");
-      u8g2.drawStr(64, 6 + 9, "DO:OXOXOXOX");
+      u8g2.drawStr(0, 6 + 9, "DI:OOOOOOOO");
+      u8g2.drawStr(64, 6 + 9, "DO:OOOOOOOO");
       u8g2.drawLine(0, 7 + 9, 128, 7 + 9);
 
       u8g2.drawStr(0, 6 + 9 * 2, "AO:2000 2000");
@@ -47,9 +47,6 @@ public:
       u8g2.drawStr(64, 6 + 9 * 3, "       CONN C");
 
       u8g2.drawLine(0, 7 + 9 * 3, 128, 7 + 9 * 3);
-
-
-
     } while (u8g2.nextPage());
   }
 

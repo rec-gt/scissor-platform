@@ -70,7 +70,6 @@ void listen() {
 }
 
 void loop() {
-  listen();
   sendHeartbeat();
   delay(1000);
 }

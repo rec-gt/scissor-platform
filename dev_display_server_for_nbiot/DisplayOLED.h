@@ -33,20 +33,20 @@ public:
       u8g2.drawLine(0, 9, 128, 9);
 
       u8g2.drawStr(0, 18, "Di");
-      u8g2.drawStr(12, 18, "00000000");
+      u8g2.drawStr(12, 18, "11111111");
       u8g2.drawStr(72, 18, "Do");
-      u8g2.drawStr(84, 18, "00000000");
-      u8g2.drawLine(0, 19, 128, 19);
+      u8g2.drawStr(84, 18, "11111111");
+      u8g2.drawLine(0, 20, 128, 20);
 
       u8g2.drawStr(0, 29, "Ai");
-      u8g2.drawStr(12, 29, "    0     0     0     0");
-      u8g2.drawStr(12, 37, "    0     0     0     0");
-      u8g2.drawStr(12, 45, "    0     0     0     0");
+      u8g2.drawStr(12, 29, "99999 99999 99999 99999");
+      u8g2.drawStr(12, 37, "99999 99999 99999 99999");
+      u8g2.drawStr(12, 45, "99999 99999 99999 99999");
       u8g2.drawLine(0, 47, 128, 47);
 
       u8g2.drawStr(0, 56, "Ao");
-      u8g2.drawStr(12, 56, "    0     0");
-      u8g2.drawStr(12, 64, "    0     0");
+      u8g2.drawStr(12, 56, "99999 99999");
+      u8g2.drawStr(12, 64, "99999 99999");
       u8g2.drawStr(76, 56, "IoT CSQ 22");
       u8g2.drawStr(76, 64, "+HB CONN C");
     } while (u8g2.nextPage());

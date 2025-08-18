@@ -32,24 +32,23 @@ public:
       u8g2.drawStr(0, 7, "RGT NBIoT Controller v2.0");
       u8g2.drawLine(0, 8, 128, 8);
 
-      u8g2.drawStr(0, 17, "DI");
+      u8g2.drawStr(0, 17, "Di");
       u8g2.drawStr(12, 17, "00000000");
-      u8g2.drawStr(72, 17, "DO");
+      u8g2.drawStr(72, 17, "Do");
       u8g2.drawStr(84, 17, "00000000");
       u8g2.drawLine(0, 18, 128, 18);
 
-      u8g2.drawStr(0, 27, "AO");
-      u8g2.drawStr(12, 27, "    0     0");
-      u8g2.drawStr(12, 37, "    0     0");
-      u8g2.drawStr(72, 27, "IoT  CSQ 22");
-      u8g2.drawStr(72, 37, "HB+  CONN C");
-      u8g2.drawLine(0, 39, 128, 39);
+      u8g2.drawStr(0, 27, "Ai");
+      u8g2.drawStr(12, 27, "    0     0     0     0");
+      u8g2.drawStr(12, 35, "    0     0     0     0");
+      u8g2.drawStr(12, 43, "    0     0     0     0");
+      u8g2.drawLine(0, 44, 128, 46);
 
-      u8g2.drawStr(0, 48, "AI");
-      u8g2.drawStr(12, 48, "    0     0     0     0");
-      u8g2.drawStr(12, 56, "    0     0     0     0");
-      u8g2.drawStr(12, 64, "    0     0     0     0");
-
+      u8g2.drawStr(0, 54, "Ao");
+      u8g2.drawStr(12, 54, "    0     0");
+      u8g2.drawStr(12, 64, "    0     0");
+      u8g2.drawStr(72, 54, "IoT  CSQ 22");
+      u8g2.drawStr(72, 64, "HB+  CONN C");
     } while (u8g2.nextPage());
   }
 

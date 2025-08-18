@@ -6,7 +6,7 @@
 
 #define AI_MAPPING_MODE_4_20MA 0
 #define AI_MAPPING_MODE_0_10V 1
-#define AI_EWMA_SAMPLE_SIZE 5
+#define AI_EWMA_SAMPLE_SIZE 4
 #define AI_EWMA_ALPHA 0.2
 // 經驗數值
 // Serial.println(map(analogInputs[i].getValue(), 0, 16368, 0, 50000));// for 0-5V

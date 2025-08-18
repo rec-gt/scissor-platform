@@ -46,10 +46,10 @@ public:
     }
   }
 
-  unsigned int getValue(bool w = true) {
+  unsigned int getValue(bool w = true) {  // turn ewma on or off
     switch (this->mappingMode) {
       case AI_MAPPING_MODE_4_20MA:
-        this->value = map(w ? this->weightedReading : this->reading, 0, 16368, 0, 50000);
+        this->value = map(w ? this->weightedReading : this->reading, 0, 16368, 4, 20000);
         break;
       case AI_MAPPING_MODE_0_10V:
         this->value = map(w ? this->weightedReading : this->reading, 3360, 16368, 10000, 50000);

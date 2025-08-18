@@ -99,19 +99,12 @@ void setup() {
 }
 
 void loop() {
-  for (size_t i = 0; i < AI_NUMS; i++) {
-    analogInputs[i].listen();
+  for (size_t i = 0; i < DI_NUMS; i++) {
+    digitalInputs[i].listen();
   }
 
   for (size_t i = 0; i < AI_NUMS; i++) {
-    Serial.print(i);
-    Serial.print(": ");
-    Serial.print(analogInputs[i].getWeightedReading());
-    Serial.print(", ");
-    Serial.print(analogInputs[i].getWeightedValue());
-    Serial.print(" | ");
-    analogInputs[i].debug();
-    Serial.println();
+    analogInputs[i].listen();
   }
 
   delay(500);

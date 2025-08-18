@@ -88,8 +88,6 @@ private:
 
   bool debugMode = false;
 
-  String recvSubContent = "";
-
   void clearSerialBuffer() {
     while (NBIoTSerial.read() > 0) { delay(1); };
   }
@@ -112,6 +110,7 @@ public:
   String CEREG = "";
 
   NBIoT() {
+    NBIoTSerial.begin(9600);
     pinMode(this->resetPin, OUTPUT);
     digitalWrite(this->resetPin, HIGH);
   }
@@ -276,6 +275,7 @@ public:
       if (this->pubState == PIPELINE_FINISH_CEREG) {
         if (nbiotTimer.autoExpired(13000)) {
           Serial.print("\r\nEXECUTE REGULAR PUBLISH\r\n");
+          Serial.print(pubMsgContent);
           this->printlnFlush(pubMsgPrepare);
           this->pubState = PIPELINE_WAITING_PREPARE_PUBMSG;
         }
@@ -548,10 +548,10 @@ public:
       int endPos = serialRes.indexOf("]", startPos);
 
       if (startPos > -1 && endPos > -1) {
-        this->recvSubContent = serialRes.substring(startPos + 1, endPos);
-        Serial.println(this->recvSubContent);
+        subRecvContent = serialRes.substring(startPos + 1, endPos);
+        Serial.print(subRecvContent);
       } else {
-        this->recvSubContent = "";
+        subRecvContent = "";
       }
     }
   }
@@ -568,6 +568,12 @@ public:
         this->printlnFlush(pubMsgForce);
       }
     }
+  }
+
+  String readRecvMsg() {
+    String res = subRecvContent;
+    subRecvContent = "";
+    return res;
   }
 
   ~NBIoT() {}

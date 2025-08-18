@@ -3,6 +3,7 @@
 #include "AnalogInput.h"
 #include "AnalogOutput.h"
 #include "Globals.h"
+#include "NBIoT.h"
 
 #ifndef MAINSYSTEM_H
 #define MAINSYSTEM_H
@@ -22,6 +23,13 @@ private:
 public:
   MainSystem(DigitalInput *digitalInputs, DigitalOutput *digitalOutputs, AnalogInput *analogInputs, AnalogOutput *analogOutputs)
     : digitalInputs(digitalInputs), digitalOutputs(digitalOutputs), analogInputs(analogInputs), analogOutputs(analogOutputs) {
+  }
+
+  void loop() {
+    this->listen();
+    this->buildPayloads();
+    this->preparePubMsg();
+    this->commandHook();
   }
 
   void listen() {
@@ -80,16 +88,14 @@ public:
   }
 
   void preparePubMsg() {
-    this->buildPayloads();
-
     pubMsgContent = "{\"csq\":";
-    pubMsgContent.concat("nbiot.CSQ");
+    pubMsgContent.concat(nbiot.CSQ);
     pubMsgContent.concat(",");
     pubMsgContent.concat("\"cgatt\":");
-    pubMsgContent.concat("nbiot.CGATT");
+    pubMsgContent.concat(nbiot.CGATT);
     pubMsgContent.concat(",");
     pubMsgContent.concat("\"cereg\":\"");
-    pubMsgContent.concat("nbiot.CEREG");
+    pubMsgContent.concat(nbiot.CEREG);
     pubMsgContent.concat("\"");
     pubMsgContent.concat(",");
     pubMsgContent.concat("\"din\":");
@@ -108,13 +114,23 @@ public:
     int contentLen = pubMsgContent.length();
 
     pubMsgPrepare = "AT+QMTPUB=0,0,0,0,rgt/";
-    pubMsgPrepare.concat("nbiot.IMEI");
+    pubMsgPrepare.concat(nbiot.IMEI);
     pubMsgPrepare.concat("/in,");
     pubMsgPrepare.concat(String(contentLen));
 
     pubMsgForce = pubMsgPrepare;
     pubMsgForce.concat(",");
     pubMsgForce.concat(pubMsgContent);
+  }
+
+  void commandHook() {
+    String msg = nbiot.readRecvMsg();
+
+    if (msg.length() <= 0) {
+      return;
+    }
+
+    Serial.println(msg);
   }
 
   ~MainSystem() {}

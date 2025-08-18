@@ -114,7 +114,7 @@ void loop() {
   mainSystem.preparePubMsg();
 
   /*=== NBIoT Subscribe (for DO & AO only)===*/
-  // mainSystem.handleSubMsg();
+  mainSystem.commandHook();
 
   /*=== Display (for NBIoT, DO, AO, DI, AI)===*/
   // mainSystem.handleDisplayMsg();

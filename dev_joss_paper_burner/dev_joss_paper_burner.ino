@@ -99,6 +99,7 @@ void setup() {
 }
 
 void loop() {
+  /*=== Listen Inputs ===*/
   for (size_t i = 0; i < DI_NUMS; i++) {
     digitalInputs[i].listen();
   }
@@ -106,6 +107,14 @@ void loop() {
   for (size_t i = 0; i < AI_NUMS; i++) {
     analogInputs[i].listen();
   }
+
+  /*=== NBIoT Publish (for DI, AI)===*/
+  /*====== DI ======*/
+  /*====== AI ======*/
+
+  /*=== NBIoT Subscribe (for DO, AO)===*/
+  /*====== DO ======*/
+  /*====== AO ======*/
 
   delay(500);
 }

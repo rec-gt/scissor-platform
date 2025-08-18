@@ -33,7 +33,14 @@ public:
       u8g2.drawLine(0, 9, 128, 9);
 
       u8g2.drawStr(0, 18, "Di");
-      u8g2.drawStr(12, 18, "11111111");
+      u8g2.drawStr(12, 18, "0");
+      u8g2.drawStr(17, 18, "0");
+      u8g2.drawStr(22, 18, "0");
+      u8g2.drawStr(27, 18, "0");
+      u8g2.drawStr(32, 18, "0");
+      u8g2.drawStr(37, 18, "0");
+      u8g2.drawStr(42, 18, "0");
+      u8g2.drawStr(47, 18, "0");
       u8g2.drawStr(72, 18, "Do");
       u8g2.drawStr(84, 18, "11111111");
       u8g2.drawLine(0, 20, 128, 20);

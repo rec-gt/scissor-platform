@@ -40,14 +40,15 @@ public:
       u8g2.drawStr(0, 17, "DI");
       u8g2.drawStr(12, 17, "00000000");
       u8g2.drawStr(72, 17, "DO");
-      u8g2.drawStr(72 + 12, 17, "00000000");
+      u8g2.drawStr(84, 17, "00000000");
       u8g2.drawLine(0, 18, 128, 18);
 
       u8g2.drawStr(0, 27, "AO");
       u8g2.drawStr(12, 27, "20000 20000");
       u8g2.drawStr(12, 37, "20000 20000");
-      u8g2.drawStr(0, 27, "IoT");
-      u8g2.drawStr(79 + 12, 27, "CSQ 22 C");
+      u8g2.drawStr(72, 27, "IoT");
+      u8g2.drawStr(90, 27, "CSQ 22");
+      u8g2.drawStr(90, 37, "  CONN");
       u8g2.drawLine(0, 39, 128, 39);
 
       u8g2.drawStr(0, 48, "AI");

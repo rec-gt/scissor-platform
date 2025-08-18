@@ -30,19 +30,19 @@ public:
     u8g2.firstPage();
     do {
       u8g2.drawStr(0, 7, "RGT NBIoT Controller v2.0");
-      u8g2.drawLine(0, 8, 128, 8);
+      u8g2.drawLine(0, 9, 128, 9);
 
-      u8g2.drawStr(0, 17, "Di");
-      u8g2.drawStr(12, 17, "00000000");
-      u8g2.drawStr(72, 17, "Do");
-      u8g2.drawStr(84, 17, "00000000");
-      u8g2.drawLine(0, 18, 128, 18);
+      u8g2.drawStr(0, 18, "Di");
+      u8g2.drawStr(12, 18, "00000000");
+      u8g2.drawStr(72, 18, "Do");
+      u8g2.drawStr(84, 18, "00000000");
+      u8g2.drawLine(0, 19, 128, 19);
 
-      u8g2.drawStr(0, 28, "Ai");
-      u8g2.drawStr(12, 28, "    0     0     0     0");
-      u8g2.drawStr(12, 36, "    0     0     0     0");
-      u8g2.drawStr(12, 44, "    0     0     0     0");
-      u8g2.drawLine(0, 46, 128, 46);
+      u8g2.drawStr(0, 29, "Ai");
+      u8g2.drawStr(12, 29, "    0     0     0     0");
+      u8g2.drawStr(12, 37, "    0     0     0     0");
+      u8g2.drawStr(12, 45, "    0     0     0     0");
+      u8g2.drawLine(0, 47, 128, 47);
 
       u8g2.drawStr(0, 56, "Ao");
       u8g2.drawStr(12, 56, "    0     0");

@@ -28,7 +28,7 @@ public:
     u8g2.clearDisplay();
   }
 
-  void draw() {
+  void draw(byte diValue, byte doValue) {
     u8g2.firstPage();
     do {
       int y = 7;
@@ -39,24 +39,16 @@ public:
       /*=== DI ===*/
       y = 18;
 
-
-      byte diValue = 255;
-
       u8g2.drawStr(0, y, "Di");
-      for (size_t i = 7; i > 0; i--) {
-        u8g2.drawStr(12 + 5 * (7 - i), y, bitRead(diValue, i) ? "1" : "0");
+      for (size_t i = 0; i < 8; i++) {
+        u8g2.drawStr(12 + 5 * i, y, bitRead(diValue, i) ? "1" : "0");
       }
 
       /*=== DO ===*/
       u8g2.drawStr(75, y, "Do");
-      u8g2.drawStr(87, y, "0");
-      u8g2.drawStr(92, y, "0");
-      u8g2.drawStr(97, y, "0");
-      u8g2.drawStr(102, y, "0");
-      u8g2.drawStr(107, y, "0");
-      u8g2.drawStr(112, y, "0");
-      u8g2.drawStr(117, y, "0");
-      u8g2.drawStr(122, y, "0");
+      for (size_t i = 0; i < 8; i++) {
+        u8g2.drawStr(87 + 5 * i, y, bitRead(doValue, i) ? "1" : "0");
+      }
       u8g2.drawLine(0, 20, 128, 20);
 
       /*=== AI ===*/

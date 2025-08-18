@@ -72,6 +72,6 @@ void listen() {
 void loop() {
   sendHeartbeat();
   displayOLED.hbToggle = !displayOLED.hbToggle;
-  displayOLED.draw();
+  displayOLED.draw(131, 166);
   delay(1000);
 }

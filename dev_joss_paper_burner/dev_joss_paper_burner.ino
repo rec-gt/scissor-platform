@@ -98,6 +98,7 @@ NBIoT nbiot;
 void setup() {
   Serial.begin(9600);
   NBIoTSerial.begin(9600);
+  nbiot.debug();
   nbiot.init(true);
   // analogReference(EXTERNAL);
 }

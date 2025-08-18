@@ -472,6 +472,10 @@ public:
       connStr = "AT+QMTCONN=0,dev_";
       connStr.concat(this->IMEI);
       connStr.concat(",tswh,1Wo=[6vA0m");
+
+      subStr = "AT+QMTSUB=0,1,rgt/";
+      subStr.concat(this->IMEI);
+      subStr.concat("/out,0");
     }
 
     // === handle CGATT ===

@@ -16,8 +16,8 @@ private:
 
   byte DIPayload = 0;
   byte DOPayload = 0;
-  unsigned long AIPayload[AI_NUMS] = {};
-  unsigned long AOPayload[AO_NUMS] = {};
+  String AIPayload = "";
+  String AOPayload = "";
 
 public:
   MainSystem(DigitalInput *digitalInputs, DigitalOutput *digitalOutputs, AnalogInput *analogInputs, AnalogOutput *analogOutputs)
@@ -31,22 +31,50 @@ public:
 
     for (size_t i = 0; i < AI_NUMS; i++) {
       analogInputs[i].listen();
+      analogInputs[i].getReading();
     }
   }
 
   void buildPayloads() {
+    /*=== DI ===*/
     this->DIPayload = 0;
     for (size_t i = 0; i < DI_NUMS; i++) {
       this->DIPayload |= digitalInputs[i].getState() << i;
     }
 
+    /*=== DO ===*/
     this->DOPayload = 0;
     for (size_t i = 0; i < DO_NUMS; i++) {
       this->DOPayload |= digitalOutputs[i].getState() << i;
     }
+
+    /*=== AI ===*/
+    this->AIPayload = "[";
+    for (size_t i = 0; i < AI_NUMS; i++) {
+      this->AIPayload += analogInputs[i].getValue();
+      if (i < AI_NUMS - 1) {
+        this->AIPayload += ",";
+      }
+    }
+    this->AIPayload += "]";
+
+    /*=== AO ===*/
+    this->AOPayload = "[";
+    for (size_t i = 0; i < AO_NUMS; i++) {
+      this->AOPayload += analogOutputs[i].getValue();
+      if (i < AI_NUMS - 1) {
+        this->AOPayload += ",";
+      }
+    }
+    this->AOPayload += "]";
+
     Serial.print(this->DIPayload);
     Serial.print(" | ");
     Serial.print(this->DOPayload);
+    Serial.print(" | ");
+    Serial.print(this->AIPayload);
+    Serial.print(" | ");
+    Serial.print(this->AOPayload);
     Serial.println();
   }
 

@@ -19,6 +19,10 @@ public:
   void set(unsigned int value) {
     analogWrite(this->pin, value);
   }
+
+  unsigned int getValue() {
+    return this->value;
+  }
 };
 
 #endif

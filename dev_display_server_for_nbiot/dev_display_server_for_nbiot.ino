@@ -70,8 +70,7 @@ void listen() {
 }
 
 void loop() {
-  displayOLED.draw();
   listen();
   sendHeartbeat();
-  delay(10);
+  delay(1000);
 }

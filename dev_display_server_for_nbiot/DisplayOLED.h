@@ -27,13 +27,29 @@ public:
     // u8g2.setFontDirection(0);
     u8g2.clearDisplay();
 
+    this->draw();
+    delay(1000);
   }
 
   void draw() {
     u8g2.firstPage();
     do {
-      u8g2.drawLine(0, 8, 128, 8);
-      u8g2.drawStr(0, 6, "RGT NBIoT Controller v2.0");
+      u8g2.drawStr(2, 6, "RGT NBIoT Controller v2.0");
+      u8g2.drawLine(0, 7, 128, 7);
+
+      u8g2.drawStr(0, 6 + 9, "DI:OXOXOXOX");
+      u8g2.drawStr(64, 6 + 9, "DO:OXOXOXOX");
+      u8g2.drawLine(0, 7 + 9, 128, 7 + 9);
+
+      u8g2.drawStr(0, 6 + 9 * 2, "AO:2000 2000");
+      u8g2.drawStr(0, 6 + 9 * 3, "   2000 2000");
+      u8g2.drawStr(64, 6 + 9 * 2, "NBIoT: CSQ 22");
+      u8g2.drawStr(64, 6 + 9 * 3, "       CONN C");
+
+      u8g2.drawLine(0, 7 + 9 * 3, 128, 7 + 9 * 3);
+
+
+
     } while (u8g2.nextPage());
   }
 

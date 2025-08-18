@@ -119,15 +119,18 @@ public:
       u8g2.setCursor(42, y);
       u8g2.print(ao2);
       u8g2.drawStr(76, y, "IoT CSQ");
-      u8g2.drawStr(116, y, "22");
+      u8g2.setCursor(116, y);
+      u8g2.print(this->iotCsq);
       y = 64;
       u8g2.setCursor(12, y);
       u8g2.print(ao3);
       u8g2.setCursor(42, y);
       u8g2.print(ao4);
       u8g2.drawStr(76, y, this->hbToggle ? "Hrb" : "   ");
-      u8g2.drawStr(96, y, iotCsq);
-      u8g2.drawStr(121, y, iotConn == 1 ? "C" : "D");
+      u8g2.drawStr(96, y, "CONN");
+      u8g2.setCursor(121, y);
+      u8g2.print(this->iotCsq);
+
     } while (u8g2.nextPage());
   }
 

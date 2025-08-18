@@ -45,6 +45,7 @@
 #include "AnalogInput.h"
 #include "AnalogOutput.h"
 #include "MainSystem.h"
+#include "NBIoT.h"
 
 DigitalInput digitalInputs[DI_NUMS] = {
   DigitalInput(DI_PIN_1),
@@ -92,23 +93,30 @@ AnalogInput analogInputs[AI_NUMS] = {
 
 MainSystem mainSystem(digitalInputs, digitalOutputs, analogInputs, analogOutputs);
 
+NBIoT nbiot;
+
 void setup() {
   Serial.begin(9600);
+  NBIoTSerial.begin(9600);
+  nbiot.init(true);
   // analogReference(EXTERNAL);
 }
 
 void loop() {
+  /*=== Register NBIoT ===*/
+  nbiot.loop();
+
   /*=== Listen Inputs ===*/
   mainSystem.listen();
 
-  /*=== NBIoT Publish (for DI, AI)===*/
+  /*=== Prepare for NBIoT Publish ===*/
   mainSystem.preparePubMsg();
-  // nbiot.publish()
 
-  /*=== NBIoT Subscribe (for DO, AO)===*/
-  mainSystem.preparePubMsg();
+  /*=== NBIoT Subscribe (for DO & AO only)===*/
+  // mainSystem.handleSubMsg();
 
   /*=== Display (for NBIoT, DO, AO, DI, AI)===*/
+  // mainSystem.handleDisplayMsg();
 
 
   delay(500);

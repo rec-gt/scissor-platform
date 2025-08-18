@@ -46,6 +46,7 @@
 #include "AnalogOutput.h"
 #include "MainSystem.h"
 #include "NBIoT.h"
+#include "DisplayClient.h"
 
 DigitalInput digitalInputs[DI_NUMS] = {
   DigitalInput(DI_PIN_1),
@@ -95,14 +96,16 @@ MainSystem mainSystem(digitalInputs, digitalOutputs, analogInputs, analogOutputs
 
 NBIoT nbiot;
 
+DisplayClient displayClient;
+
 void setup() {
   Serial.begin(9600);
-  
+
   /*=== NBIoT ===*/
   NBIoTSerial.begin(9600);
   nbiot.debug();
   nbiot.init(true);
-  
+
   /*=== Display ===*/
   DisplaySerial.begin(9600);
 

@@ -4,6 +4,7 @@
 #include "AnalogOutput.h"
 #include "Globals.h"
 #include "NBIoT.h"
+#include "DisplayClient.h"
 
 #ifndef MainSystem_H
 #define MainSystem_H

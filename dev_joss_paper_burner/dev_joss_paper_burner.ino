@@ -90,7 +90,7 @@ AnalogInput analogInputs[AI_NUMS] = {
   AnalogInput(AI_PIN_12, AI_MAPPING_MODE_0_10V),
 };
 
-MainSystem mainSystem(digitalInputs, digitalOutputs, analogOutputs, analogInputs);
+MainSystem mainSystem(digitalInputs, digitalOutputs, analogInputs, analogOutputs);
 
 void setup() {
   Serial.begin(9600);
@@ -102,8 +102,7 @@ void loop() {
   mainSystem.listen();
 
   /*=== NBIoT Publish (for DI, AI)===*/
-  /*====== DI ======*/
-  /*====== AI ======*/
+  mainSystem.preparePubMsg();
 
   /*=== NBIoT Subscribe (for DO, AO)===*/
   /*====== DO ======*/

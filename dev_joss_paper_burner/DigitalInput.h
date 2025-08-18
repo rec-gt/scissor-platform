@@ -8,6 +8,8 @@ private:
   unsigned long prevMillis;
 
 public:
+  DigitalInput() {}
+
   DigitalInput(byte pin)
     : pin(pin) {
     pinMode(pin, INPUT);

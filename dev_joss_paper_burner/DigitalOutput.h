@@ -7,6 +7,8 @@ private:
   bool prevState = false;  // true = connect, false = cut
 
 public:
+  DigitalOutput() {}
+
   DigitalOutput(byte pin)
     : pin(pin) {
     pinMode(pin, OUTPUT);
@@ -27,7 +29,7 @@ public:
   void cut() {
     this->control(false);
   }
-  
+
   bool getState() {
     return this->prevState;
   }

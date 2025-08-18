@@ -15,6 +15,8 @@ private:
   uint16_t weightedValue;
 
 public:
+  AnalogInput() {}
+  
   AnalogInput(byte pin, byte mappingMode = AI_MAPPING_MODE_4_20MA)
     : pin(pin), mappingMode(mappingMode) {
     pinMode(pin, INPUT);

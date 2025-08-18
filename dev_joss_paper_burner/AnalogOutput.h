@@ -9,6 +9,8 @@ private:
   unsigned int value;
 
 public:
+  AnalogOutput() {}
+
   AnalogOutput(byte pin)
     : pin(pin) {
     pinMode(pin, OUTPUT);

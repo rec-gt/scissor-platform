@@ -1,18 +1,18 @@
-#include "Globals.h"
 #include "DigitalInput.h"
 #include "DigitalOutput.h"
 #include "AnalogInput.h"
 #include "AnalogOutput.h"
+#include "Globals.h"
 
 #ifndef MAINSYSTEM_H
 #define MAINSYSTEM_H
 
 class MainSystem {
 private:
-  DigitalInput digitalInputs[DI_NUMS];
-  DigitalOutput digitalOutputs[DO_NUMS];
-  AnalogInput analogInputs[AO_NUMS];
-  AnalogOutput analogOutputs[AI_NUMS];
+  DigitalInput *digitalInputs;
+  DigitalOutput *digitalOutputs;
+  AnalogInput *analogInputs;
+  AnalogOutput *analogOutputs;
 
   byte DIPayload = 0;
   byte DOPayload = 0;
@@ -20,19 +20,11 @@ private:
   unsigned long AOPayload[AO_NUMS] = {};
 
 public:
-  MainSystem(DigitalInput digitalInputs[], DigitalOutput digitalOutputs[], AnalogInput analogInputs[], AnalogOutput analogOutputs[]) {
-    for (size_t i = 0; i < DI_NUMS; i++) {
-      this->digitalInputs[i] = digitalInputs[i];
-    }
-    for (size_t i = 0; i < DO_NUMS; i++) {
-      this->digitalOutputs[i] = digitalOutputs[i];
-    }
-    for (size_t i = 0; i < AI_NUMS; i++) {
-      this->analogInputs[i] = analogInputs[i];
-    }
-    for (size_t i = 0; i < AO_NUMS; i++) {
-      this->analogOutputs[i] = analogOutputs[i];
-    }
+  MainSystem(DigitalInput *digitalInputs, DigitalOutput *digitalOutputs, AnalogInput *analogInputs, AnalogOutput *analogOutputs) {
+    this->digitalInputs = digitalInputs;
+    this->digitalOutputs = digitalOutputs;
+    this->analogInputs = analogInputs;
+    this->analogOutputs = analogOutputs;
   }
 
   void listen() {
@@ -58,9 +50,12 @@ public:
     Serial.print(this->DIPayload);
     Serial.print(" | ");
     Serial.print(this->DOPayload);
+    Serial.println();
   }
 
   void preparePubMsg() {
+    this->buildPayloads();
+
     pubMsgContent = "{\"csq\":";
     pubMsgContent.concat("nbiot.CSQ");
     pubMsgContent.concat(",");

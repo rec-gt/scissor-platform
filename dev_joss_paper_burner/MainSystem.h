@@ -9,14 +9,41 @@
 
 class MainSystem {
 private:
-
-public:
-  MainSystem(DigitalInput digitalInputs, DigitalOutput digitalOutputs, AnalogInput analogInputs, AnalogOutput analogOutputs) {}
+  DigitalInput digitalInputs[DI_NUMS];
+  DigitalOutput digitalOutputs[DO_NUMS];
+  AnalogInput analogInputs[AO_NUMS];
+  AnalogOutput analogOutputs[AI_NUMS];
 
   byte DIPayload = 0;
   byte DOPayload = 0;
   unsigned long AIPayload[AI_NUMS] = {};
   unsigned long AOPayload[AO_NUMS] = {};
+
+public:
+  MainSystem(DigitalInput digitalInputs[], DigitalOutput digitalOutputs[], AnalogInput analogInputs[], AnalogOutput analogOutputs[]) {
+    for (size_t i = 0; i < DI_NUMS; i++) {
+      this->digitalInputs[i] = digitalInputs[i];
+    }
+    for (size_t i = 0; i < DO_NUMS; i++) {
+      this->digitalOutputs[i] = digitalOutputs[i];
+    }
+    for (size_t i = 0; i < AI_NUMS; i++) {
+      this->analogInputs[i] = analogInputs[i];
+    }
+    for (size_t i = 0; i < AO_NUMS; i++) {
+      this->analogOutputs[i] = analogOutputs[i];
+    }
+  }
+
+  void listen() {
+    for (size_t i = 0; i < DI_NUMS; i++) {
+      digitalInputs[i].listen();
+    }
+
+    for (size_t i = 0; i < AI_NUMS; i++) {
+      analogInputs[i].listen();
+    }
+  }
 
   void buildPayloads() {
     this->DIPayload = 0;

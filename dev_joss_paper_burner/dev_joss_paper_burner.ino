@@ -110,10 +110,8 @@ void loop() {
     Serial.print(", ");
     Serial.print(analogInputs[i].getWeightedValue());
     Serial.print(" | ");
-    analogInputs[i].printEWMA();
+    analogInputs[i].debug();
     Serial.println();
-    // Serial.println(map(analogInputs[i].getValue(), 0, 16368, 0, 50000));// for 0-5V
-    // Serial.println(map(analogInputs[i].getValue(), 3360, 16368, 10000, 50000)); // for 4-20mA
   }
 
   delay(500);

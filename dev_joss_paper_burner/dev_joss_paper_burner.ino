@@ -40,10 +40,11 @@
 #define AO_NUMS 4
 
 #include "Globals.h"
-#include "DigitalOutput.h"
 #include "DigitalInput.h"
+#include "DigitalOutput.h"
 #include "AnalogInput.h"
 #include "AnalogOutput.h"
+#include "MainSystem.h"
 
 DigitalInput digitalInputs[DI_NUMS] = {
   DigitalInput(DI_PIN_1),
@@ -89,6 +90,7 @@ AnalogInput analogInputs[AI_NUMS] = {
   AnalogInput(AI_PIN_12, AI_MAPPING_MODE_0_10V),
 };
 
+MainSystem mainSystem(digitalInputs, digitalOutputs, analogOutputs, analogInputs);
 
 void setup() {
   Serial.begin(9600);

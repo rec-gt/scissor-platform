@@ -1,3 +1,6 @@
+#ifndef DigitalOutput_H
+#define DigitalOutput_H
+
 class DigitalOutput {
 private:
   byte pin;
@@ -24,4 +27,10 @@ public:
   void cut() {
     this->control(false);
   }
+  
+  bool getState() {
+    return this->prevState;
+  }
 };
+
+#endif

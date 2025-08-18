@@ -1,5 +1,8 @@
 #include "Globals.h"
 
+#ifndef AnalogOutput_H
+#define AnalogOutput_H
+
 class AnalogOutput {
 private:
   byte pin;
@@ -15,3 +18,5 @@ public:
     analogWrite(this->pin, value);
   }
 };
+
+#endif

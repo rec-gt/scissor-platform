@@ -1,3 +1,6 @@
+#ifndef DigitalInput_H
+#define DigitalInput_H
+
 class DigitalInput {
 private:
   byte pin;
@@ -26,3 +29,5 @@ public:
     return this->state;
   }
 };
+
+#endif

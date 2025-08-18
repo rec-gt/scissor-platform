@@ -34,19 +34,27 @@ public:
   void draw() {
     u8g2.firstPage();
     do {
-      u8g2.drawStr(2, 6, "RGT NBIoT Controller v2.0");
-      u8g2.drawLine(0, 7, 128, 7);
+      u8g2.drawStr(0, 7, "RGT NBIoT Controller v2.0");
+      u8g2.drawLine(0, 8, 128, 8);
 
-      u8g2.drawStr(0, 6 + 9, "DI:OOOOOOOO");
-      u8g2.drawStr(64, 6 + 9, "DO:OOOOOOOO");
-      u8g2.drawLine(0, 7 + 9, 128, 7 + 9);
+      u8g2.drawStr(0, 17, "DI");
+      u8g2.drawStr(12, 17, "00000000");
+      u8g2.drawStr(72, 17, "DO");
+      u8g2.drawStr(72 + 12, 17, "00000000");
+      u8g2.drawLine(0, 18, 128, 18);
 
-      u8g2.drawStr(0, 6 + 9 * 2, "AO:2000 2000");
-      u8g2.drawStr(0, 6 + 9 * 3, "   2000 2000");
-      u8g2.drawStr(64, 6 + 9 * 2, "NBIoT: CSQ 22");
-      u8g2.drawStr(64, 6 + 9 * 3, "       CONN C");
+      u8g2.drawStr(0, 27, "AO");
+      u8g2.drawStr(12, 27, "20000 20000");
+      u8g2.drawStr(12, 37, "20000 20000");
+      u8g2.drawStr(0, 27, "IoT");
+      u8g2.drawStr(79 + 12, 27, "CSQ 22 C");
+      u8g2.drawLine(0, 39, 128, 39);
 
-      u8g2.drawLine(0, 7 + 9 * 3, 128, 7 + 9 * 3);
+      u8g2.drawStr(0, 48, "AI");
+      u8g2.drawStr(12, 48, "20000 20000 20000 20000");
+      u8g2.drawStr(12, 56, "20000 20000 20000 20000");
+      u8g2.drawStr(12, 64, "20000 20000 20000 20000");
+
     } while (u8g2.nextPage());
   }
 

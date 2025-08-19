@@ -58,6 +58,7 @@ public:
       }
 
       this->prepareSendMsg();
+      web.sendMsg();
 
       // === debug ===
       for (uint16_t i = 0; i < INPUT_REGISTER_VALUES_COUNT; i++) {
@@ -126,7 +127,6 @@ public:
   }
 
   void prepareSendMsg() {
-    webSend.concat("[");
     webSend.concat(String(this->checkOnOff()));
     webSend.concat(",");
     webSend.concat(String(this->inputRegisterValues[OPERATION_MODE]));
@@ -136,8 +136,6 @@ public:
     webSend.concat(String(this->inputRegisterValues[INPUT_REGISTER_SET_TEMP]));
     webSend.concat(",");
     webSend.concat(String(this->inputRegisterValues[MANUAL_MODE_FAN_SPEED]));
-    webSend.concat("]");
-    webSend.concat("\r\n");
   }
 
   // ===== debug =====

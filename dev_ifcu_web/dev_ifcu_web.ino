@@ -11,14 +11,16 @@ IPAddress LocalIP(192, 168, 1, 1);
 IPAddress Gateway(192, 168, 1, 1);
 IPAddress SubNet(255, 255, 255, 0);
 
-const int controlPin = 2;
+String onOffState = "";
+String roomTemp = "";
+String setPoint = "";
+String mode = "";
+String fanSpeed = "";
 
 void setup() {
   Serial.begin(115200);
+  Serial2.begin(115200, SERIAL_8N1, 16, 17);
   delay(1000);
-
-  pinMode(controlPin, OUTPUT);
-  digitalWrite(controlPin, LOW);
 
   WiFi.mode(WIFI_AP);
 
@@ -33,7 +35,49 @@ void setup() {
   server.begin();
 }
 
+String serialRes = "";
+int values[5];
+int valueIdx = 0;
+
 void loop() {
+  if (Serial2.available()) {
+    while (Serial2.available()) {
+      char c = Serial2.read();
+
+      if (c != '\r' && c != '\n') {
+        serialRes += c;
+      }
+
+      if (c == '\r') {
+        while (serialRes.length() > 0) {
+          int commaIndex = serialRes.indexOf(',');
+          String valueStr = serialRes.substring(0, commaIndex);
+
+          values[valueIdx] = valueStr.toInt();  // Convert the substring to an integer and store it
+          valueIdx++;
+
+          if (commaIndex == -1) break;  // Break the loop if no more commas are found
+
+          serialRes = serialRes.substring(commaIndex + 1);  // Update the data string to the remaining part after the comma
+          valueIdx = 0;
+        }
+
+        Serial.print(values[0]);
+        Serial.print(", ");
+        Serial.print(values[1]);
+        Serial.print(", ");
+        Serial.print(values[2]);
+        Serial.print(", ");
+        Serial.print(values[3]);
+        Serial.print(", ");
+        Serial.print(values[4]);
+        serialRes = "";
+      }
+    }
+  }
+
+  /* ========== Web Server ========= */
+
   WiFiClient client = server.available();
   if (client) {
     Serial.println("New client connected!");
@@ -255,6 +299,7 @@ void loop() {
 
     // Serve the data endpoint
     else if (request.indexOf("GET /data") >= 0) {
+
       client.print("HTTP/1.1 200 OK\r\n");
       client.print("Content-Type: text/plain\r\n");
       client.print("Connection: close\r\n\r\n");
@@ -277,10 +322,12 @@ void loop() {
       if (request.indexOf("/cmd?c=") >= 0) {
         int startIndex = request.indexOf("/cmd?c=") + 7;
         String cmd = request.substring(startIndex, startIndex + 1);
-        
+
         client.print("OK");
-        
-        if (cmd == "1") {
+
+        if (cmd == "0") {
+          Serial.println("cmd 1 received!");
+        } else if (cmd == "1") {
           Serial.println("cmd 1 received!");
         } else if (cmd == "2") {
           Serial.println("cmd 2 received!");

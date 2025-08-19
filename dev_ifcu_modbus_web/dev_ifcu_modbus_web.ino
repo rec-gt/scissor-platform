@@ -10,13 +10,13 @@ IFCU ifcu(31);
 
 void setup() {
   Serial.begin(9600);
+  WebSerial.begin(115200);
 
   if (!mbClient.begin(9600)) {
     Serial.println("Failed to start Modbus RTU Client!");
     while (1) {};
   }
 
-  WebSerial.begin(9600);
   delay(1000);
 }
 

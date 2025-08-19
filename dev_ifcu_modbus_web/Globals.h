@@ -4,6 +4,7 @@
 
 /*=== For Main System ===*/
 String serialRes = "";
+String recvCmd = "";
 
 /*=== For Modbus ===*/
 RS485Class rs485(Serial2, 2, 3, 4);

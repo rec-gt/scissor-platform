@@ -37,6 +37,7 @@ public:
     if (WebSerial.available() > 0) {
       while (WebSerial.available() > 0) {
         char c = WebSerial.read();
+        Serial.print(c);
 
         if (c != '\r' && c != '\n') {
           serialRes += c;
@@ -56,13 +57,45 @@ public:
     if (idx > -1) {
       this->sendMsg();
     }
+
+    idx = serialRes.indexOf("CMD:1");
+    if (idx > -1) {
+      recvCmd = "1";
+    }
+
+    idx = serialRes.indexOf("CMD:2");
+    if (idx > -1) {
+      recvCmd = "2";
+    }
+
+    idx = serialRes.indexOf("CMD:3");
+    if (idx > -1) {
+      recvCmd = "3";
+    }
+
+    idx = serialRes.indexOf("CMD:4");
+    if (idx > -1) {
+      recvCmd = "4";
+    }
+
+    idx = serialRes.indexOf("CMD:5");
+    if (idx > -1) {
+      recvCmd = "5";
+    }
   }
 
   String readCmd() {
-    return "-1";
+    if (recvCmd.length() > 0) {
+      String tmp = recvCmd;
+      recvCmd = "";
+      return tmp;
+    }
+
+    return "";
   }
 
   void sendMsg() {
+    Serial.println(webSend);
     this->printlnFlush(webSend);
     webSend = "";
   }

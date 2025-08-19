@@ -36,7 +36,7 @@ void setup() {
 }
 
 String serialRes = "";
-int values[5];
+String values[5];
 int valueIdx = 0;
 
 void loop() {
@@ -50,16 +50,15 @@ void loop() {
 
       if (c == '\r') {
         while (serialRes.length() > 0) {
-          int commaIndex = serialRes.indexOf(',');
+          int commaIndex = serialRes.indexOf(",");
           String valueStr = serialRes.substring(0, commaIndex);
 
-          values[valueIdx] = valueStr.toInt();  // Convert the substring to an integer and store it
+          values[valueIdx] = valueStr;  // Convert the substring to an integer and store it
           valueIdx++;
 
           if (commaIndex == -1) break;  // Break the loop if no more commas are found
 
           serialRes = serialRes.substring(commaIndex + 1);  // Update the data string to the remaining part after the comma
-          valueIdx = 0;
         }
 
         Serial.print(values[0]);
@@ -72,6 +71,7 @@ void loop() {
         Serial.print(", ");
         Serial.print(values[4]);
         serialRes = "";
+        valueIdx = 0;
       }
     }
   }

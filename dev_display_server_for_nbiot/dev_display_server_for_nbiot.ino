@@ -70,8 +70,9 @@ void listen() {
 }
 
 void loop() {
+  listen();
   sendHeartbeat();
   displayOLED.hbToggle = !displayOLED.hbToggle;
   displayOLED.draw(1, 18 + random(5), random(256), random(256), random(20000), random(20000), random(20000), random(20000), random(20000), random(20000), random(20000), random(20000), random(20000), random(20000), random(20000), random(20000), random(20000), random(20000), random(20000), random(20000));
-  delay(1000);
+  delay(500);
 }

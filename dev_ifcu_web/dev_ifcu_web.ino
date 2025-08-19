@@ -61,15 +61,9 @@ void loop() {
           serialRes = serialRes.substring(commaIndex + 1);  // Update the data string to the remaining part after the comma
         }
 
-        Serial.print(values[0]);
-        Serial.print(", ");
-        Serial.print(values[1]);
-        Serial.print(", ");
-        Serial.print(values[2]);
-        Serial.print(", ");
-        Serial.print(values[3]);
-        Serial.print(", ");
-        Serial.print(values[4]);
+        values[2] = String(values[2].toInt() / 100., 1);
+        values[3] = String(values[3].toInt() / 100., 1);
+
         serialRes = "";
         valueIdx = 0;
       }
@@ -212,8 +206,8 @@ void loop() {
           let data = JSON.parse(await response.text());
         //   data = [1, 22, 22, 0, 1];
           document.getElementById("on-off").innerHTML = [
-            `<div class="on-off-on" onclick="sendCMD(1)">ON</div>`,
-            `<div class="on-off-off" onclick="sendCMD(0)">OFF</div>`,
+            `<div class="on-off-off" onclick="sendCMD(1)">OFF</div>`,
+            `<div class="on-off-on" onclick="sendCMD(0)">ON</div>`
           ][data[0]];
           document.getElementById("room-temp").textContent = data[1];
           document.getElementById("set-point").textContent = data[2];
@@ -271,8 +265,8 @@ void loop() {
             <div class="center">
               <div class="center" style="height: 50px">
                 <select id="mode" onchange="sendCMD(4)">
-                  <option value="0">Manual</option>
-                  <option value="1">Auto</option>
+                  <option value="0">Auto</option>
+                  <option value="1">Manual</option>
                   <option value="2">Fan</option>
                 </select>
               </div>
@@ -305,15 +299,15 @@ void loop() {
       client.print("Connection: close\r\n\r\n");
       String response = "";
       response += "[";
-      response += String(random(2));
+      response += values[0];
       response += ",";
-      response += String(random(30));
+      response += values[2];
       response += ",";
-      response += String(random(30));
+      response += values[3];
       response += ",";
-      response += String(random(3));
+      response += values[1];
       response += ",";
-      response += String(random(3));
+      response += values[4];
       response += "]";
       client.print(response);
     }

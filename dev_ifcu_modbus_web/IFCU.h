@@ -129,11 +129,11 @@ public:
   void prepareSendMsg() {
     webSend.concat(String(this->checkOnOff()));
     webSend.concat(",");
-    webSend.concat(String(this->inputRegisterValues[OPERATION_MODE]));
-    webSend.concat(",");
     webSend.concat(String(this->inputRegisterValues[ROOM_TEMP]));
     webSend.concat(",");
     webSend.concat(String(this->inputRegisterValues[INPUT_REGISTER_SET_TEMP]));
+    webSend.concat(",");
+    webSend.concat(String(this->inputRegisterValues[OPERATION_MODE]));
     webSend.concat(",");
     webSend.concat(String(this->inputRegisterValues[MANUAL_MODE_FAN_SPEED]));
   }

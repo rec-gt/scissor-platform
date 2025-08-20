@@ -2,8 +2,8 @@
 #include <WiFi.h>
 #include <WiFiClient.h>
 
-const char* ssid = "ifcu_16f_ckyt";
-const char* password = "router_password";
+const char* ssid = "ifcu_16f_test";
+const char* password = "never_gonna_give_you_up";
 
 WiFiServer server(80);
 
@@ -11,11 +11,9 @@ IPAddress LocalIP(192, 168, 1, 1);
 IPAddress Gateway(192, 168, 1, 1);
 IPAddress SubNet(255, 255, 255, 0);
 
-String onOffState = "";
-String roomTemp = "";
-String setPoint = "";
-String mode = "";
-String fanSpeed = "";
+String serialRecv = "";
+String values[5];
+int valueIdx = 0;
 
 void setup() {
   Serial.begin(115200);
@@ -28,16 +26,12 @@ void setup() {
   WiFi.softAP(ssid, password);
   IPAddress ip = WiFi.softAPIP();
 
-  Serial.println();
+  server.begin();
+
   Serial.print("AP IP address: ");
   Serial.println(ip);
-
-  server.begin();
 }
 
-String serialRes = "";
-String values[5];
-int valueIdx = 0;
 
 void loop() {
   if (Serial2.available()) {
@@ -45,27 +39,27 @@ void loop() {
       char c = Serial2.read();
 
       if (c != '\r' && c != '\n') {
-        serialRes += c;
+        serialRecv += c;
       }
 
       if (c == '\r') {
-        while (serialRes.length() > 0) {
-          int commaIndex = serialRes.indexOf(",");
-          String valueStr = serialRes.substring(0, commaIndex);
+        while (serialRecv.length() > 0) {
+          int commaIndex = serialRecv.indexOf(",");
+          String valueStr = serialRecv.substring(0, commaIndex);
 
-          values[valueIdx] = valueStr;  // Convert the substring to an integer and store it
+          values[valueIdx] = valueStr;
           valueIdx++;
 
-          if (commaIndex == -1) break;  // Break the loop if no more commas are found
+          if (commaIndex == -1) break;
 
-          serialRes = serialRes.substring(commaIndex + 1);  // Update the data string to the remaining part after the comma
+          serialRecv = serialRecv.substring(commaIndex + 1); 
         }
 
-        values[2] = String(values[2].toInt() / 100., 1);
-        values[3] = String(values[3].toInt() / 100., 1);
+        values[1] = String(values[1].toInt() / 100.0, 1);
+        values[2] = String(values[2].toInt() / 100.0, 1);
 
-        serialRes = "";
         valueIdx = 0;
+        serialRecv = "";
       }
     }
   }
@@ -301,11 +295,11 @@ void loop() {
       response += "[";
       response += values[0];
       response += ",";
+      response += values[1];
+      response += ",";
       response += values[2];
       response += ",";
       response += values[3];
-      response += ",";
-      response += values[1];
       response += ",";
       response += values[4];
       response += "]";

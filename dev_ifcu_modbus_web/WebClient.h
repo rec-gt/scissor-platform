@@ -10,10 +10,6 @@
 
 class WebClient {
 private:
-  bool finishInit = false;
-
-  bool debugMode = false;
-
   void clearSerialBuffer() {
     while (WebClientSerial.read() > 0) { delay(1); };
   }
@@ -33,57 +29,6 @@ public:
     this->clearSerialBuffer();
   }
 
-  void listen() {
-    if (WebClientSerial.available() > 0) {
-      while (WebClientSerial.available() > 0) {
-        char c = WebClientSerial.read();
-        Serial.print(c);
-
-        if (c != '\r' && c != '\n') {
-          serialRes += c;
-        }
-
-        if (c == '\r') {
-          this->readRecv();
-          this->clearResBuffer();
-        }
-      }
-    }
-  }
-
-  void readRecv() {
-    int idx = serialRes.indexOf("[ASK]");
-
-    if (idx > -1) {
-      this->sendBuffer();
-    }
-
-    idx = serialRes.indexOf("CMD:1");
-    if (idx > -1) {
-      recvCmd = "1";
-    }
-
-    idx = serialRes.indexOf("CMD:2");
-    if (idx > -1) {
-      recvCmd = "2";
-    }
-
-    idx = serialRes.indexOf("CMD:3");
-    if (idx > -1) {
-      recvCmd = "3";
-    }
-
-    idx = serialRes.indexOf("CMD:4");
-    if (idx > -1) {
-      recvCmd = "4";
-    }
-
-    idx = serialRes.indexOf("CMD:5");
-    if (idx > -1) {
-      recvCmd = "5";
-    }
-  }
-
   String readCmd() {
     if (recvCmd.length() > 0) {
       String tmp = recvCmd;
@@ -95,13 +40,13 @@ public:
   }
 
   void sendBuffer() {
+    const uint8_t START_MARKER = 0xFF;
+
     for (uint16_t i = 0; i < sizeof(webClientSendBytes); i++) {
       Serial.print(webClientSendBytes[i]);
       Serial.print(", ");
     }
     Serial.println();
-
-    const uint8_t START_MARKER = 0xFF;
 
     uint8_t checksum = 0;
     for (uint8_t i = 0; i < 7; i++) {
@@ -111,6 +56,64 @@ public:
     WebClientSerial.write(START_MARKER);
     WebClientSerial.write(webClientSendBytes, sizeof(webClientSendBytes));
     WebClientSerial.write(checksum);
+  }
+
+  void recvBuffer() {
+    while (WebClientSerial.available() > 0) {
+      char c = WebClientSerial.read();
+      Serial.print(c);
+
+      if (c != '\r' && c != '\n') {
+        serialRes += c;
+      }
+
+      if (c == '\r') {
+        int idx = -1;
+
+        idx = serialRes.indexOf("CMD:0");
+        if (idx > -1) {
+          
+          recvCmd = "0";
+        }
+
+        idx = serialRes.indexOf("CMD:1");
+        if (idx > -1) {
+          recvCmd = "1";
+        }
+
+        idx = serialRes.indexOf("CMD:2");
+        if (idx > -1) {
+          recvCmd = "2";
+        }
+
+        idx = serialRes.indexOf("CMD:3");
+        if (idx > -1) {
+          recvCmd = "3";
+        }
+
+        idx = serialRes.indexOf("CMD:4");
+        if (idx > -1) {
+          recvCmd = "4";
+        }
+
+        idx = serialRes.indexOf("CMD:5");
+        if (idx > -1) {
+          recvCmd = "5";
+        }
+
+        idx = serialRes.indexOf("CMD:11");
+        if (idx > -1) {
+          recvCmd = "11";
+        }
+
+        idx = serialRes.indexOf("CMD:12");
+        if (idx > -1) {
+          recvCmd = "12";
+        }
+
+        this->clearResBuffer();
+      }
+    }
   }
 
   ~WebClient() {}

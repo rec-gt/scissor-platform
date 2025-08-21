@@ -113,6 +113,7 @@ public:
         this->handleWrite4x(40003, 2);
         break;
       case IFCU_ACTION_INCREASE_TEMP:
+      
         this->handleWrite4x(40004, this->inputRegisterValues[INPUT_REGISTER_SET_TEMP] + 50);
         break;
       case IFCU_ACTION_DECREASE_TEMP:

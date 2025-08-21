@@ -156,7 +156,7 @@ void loop() {
           const response = await fetch(`/cmd?c=${c}`);
           const data = await response.text();
           if (data) {
-            alert("Ok");
+            // alert("Ok");
           }
         } catch (error) {
           console.error("Error in cmd:", error);
@@ -211,10 +211,10 @@ void loop() {
               </div>
             </div>
             <div class="center" style="justify-content: space-between">
-              <div class="switch" onclick="sendCMD(2)">◀</div>
+              <div class="switch" onclick="sendCMD(12)">◀</div>
               <div id="set-point">25.5</div>
               <div>°C</div>
-              <div class="switch" onclick="sendCMD(3)">▶</div>
+              <div class="switch" onclick="sendCMD(11)">▶</div>
             </div>
           </div>
         </div>
@@ -278,10 +278,11 @@ void loop() {
     else if (request.indexOf("GET /cmd") >= 0) {
       if (request.indexOf("/cmd?c=") >= 0) {
         int startIndex = request.indexOf("/cmd?c=") + 7;
-        String cmd = request.substring(startIndex, startIndex + 1);
-        Serial2.println(cmd);
-        Serial.print("receive cmd: ");
-        Serial.print(cmd);
+        String cmd = request.substring(startIndex, startIndex + 2);
+        String sendBuffer = "CMD:";
+        sendBuffer += cmd;
+        Serial2.println(sendBuffer);
+        Serial.println(sendBuffer);
         client.print("OK");
       }
     }

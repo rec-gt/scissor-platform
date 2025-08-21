@@ -1,5 +1,5 @@
 #include "Globals.h"
-#include "Web.h"
+#include "WebClient.h"
 
 #ifndef IFCU_H
 #define IFCU_H
@@ -45,6 +45,11 @@ public:
   IFCU(byte slaveId)
     : slaveId(slaveId){};
 
+  void listen() {
+    this->read();
+    this->monitor(webClient.readCmd());
+  }
+
   // ===== read data from control box =====
   void read() {
     if (millis() - this->prevMillis > 1000) {
@@ -57,8 +62,8 @@ public:
         }
       }
 
-      this->prepareSendMsg();
-      web.sendMsg();
+      this->prepareSendBuffer();
+      webClient.sendBuffer();
 
       // === debug ===
       for (uint16_t i = 0; i < INPUT_REGISTER_VALUES_COUNT; i++) {
@@ -72,9 +77,7 @@ public:
   }
 
   // ===== monitor upcoming command =====
-  void monitor() {
-    String msg = web.readCmd();
-
+  void monitor(String msg) {
     if (msg.length() <= 0) {
       return;
     }
@@ -118,24 +121,29 @@ public:
     }
   }
 
-  void handleForcePublish() {
-  }
-
   // ===== handle operations =====
   void handleOnOff(IFCU_ENUMS toggle) {
     this->handleWrite4x(40000, toggle == IFCU_ON ? 1 : 0);
   }
 
-  void prepareSendMsg() {
-    webSend.concat(String(this->checkOnOff()));
-    webSend.concat(",");
-    webSend.concat(String(this->inputRegisterValues[ROOM_TEMP]));
-    webSend.concat(",");
-    webSend.concat(String(this->inputRegisterValues[INPUT_REGISTER_SET_TEMP]));
-    webSend.concat(",");
-    webSend.concat(String(this->inputRegisterValues[OPERATION_MODE]));
-    webSend.concat(",");
-    webSend.concat(String(this->inputRegisterValues[MANUAL_MODE_FAN_SPEED]));
+  void prepareSendBuffer() {
+    webClientSendBytes[0] = this->checkOnOff();
+    webClientSendBytes[1] = this->inputRegisterValues[ROOM_TEMP] & 0xFF;
+    webClientSendBytes[2] = (this->inputRegisterValues[ROOM_TEMP] >> 8) & 0xFF;
+    webClientSendBytes[3] = this->inputRegisterValues[INPUT_REGISTER_SET_TEMP] & 0xFF;
+    webClientSendBytes[4] = (this->inputRegisterValues[INPUT_REGISTER_SET_TEMP] >> 8) & 0xFF;
+    webClientSendBytes[5] = this->inputRegisterValues[OPERATION_MODE];
+    webClientSendBytes[6] = this->inputRegisterValues[MANUAL_MODE_FAN_SPEED];
+
+    // webClientSendBuffer.concat(String(this->checkOnOff()));
+    // webClientSendBuffer.concat(",");
+    // webClientSendBuffer.concat(String(this->inputRegisterValues[ROOM_TEMP]));
+    // webClientSendBuffer.concat(",");
+    // webClientSendBuffer.concat(String(this->inputRegisterValues[INPUT_REGISTER_SET_TEMP]));
+    // webClientSendBuffer.concat(",");
+    // webClientSendBuffer.concat(String(this->inputRegisterValues[OPERATION_MODE]));
+    // webClientSendBuffer.concat(",");
+    // webClientSendBuffer.concat(String(this->inputRegisterValues[MANUAL_MODE_FAN_SPEED]));
   }
 
   // ===== debug =====

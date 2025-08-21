@@ -18,20 +18,22 @@ int valueIdx = 0;
 void setup() {
   Serial.begin(115200);
   Serial2.begin(115200, SERIAL_8N1, 16, 17);
-  delay(1000);
 
   WiFi.mode(WIFI_AP);
 
   WiFi.softAPConfig(LocalIP, Gateway, SubNet);
   WiFi.softAP(ssid, password);
   IPAddress ip = WiFi.softAPIP();
-
-  server.begin();
-
   Serial.print("AP IP address: ");
   Serial.println(ip);
+
+  server.begin();
 }
 
+void splitString(String str, size_t size) {
+  String values[size];
+  int valueIdx = 0;
+}
 
 void loop() {
   if (Serial2.available()) {
@@ -52,7 +54,7 @@ void loop() {
 
           if (commaIndex == -1) break;
 
-          serialRecv = serialRecv.substring(commaIndex + 1); 
+          serialRecv = serialRecv.substring(commaIndex + 1);
         }
 
         values[1] = String(values[1].toInt() / 100.0, 1);

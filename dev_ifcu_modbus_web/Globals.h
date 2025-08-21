@@ -27,8 +27,13 @@ enum IFCU_ENUMS {
   IFCU_ACTION_DECREASE_TEMP,
 };
 
-/*=== For Web ===*/
-String webSend = "";
+/*=== For Web Client ===*/
+String webClientSendBuffer = "";
+byte webClientSendBytes[7];  // 1 + 2 + 2 + 1 + 1
 String webRecv = "";
+
+void resetWebClientSendBuffer() {
+  webClientSendBuffer = "";
+}
 
 #endif

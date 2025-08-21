@@ -2,15 +2,15 @@
 #include <ArduinoModbus.h>
 #include "IFCU.h"
 #include "Globals.h"
-#include "Web.h"
+#include "WebClient.h"
 
-Web web;
+WebClient webClient;
 
 IFCU ifcu(31);
 
 void setup() {
   Serial.begin(9600);
-  WebSerial.begin(115200);
+  WebClientSerial.begin(115200);
 
   if (!mbClient.begin(9600)) {
     Serial.println("Failed to start Modbus RTU Client!");
@@ -22,10 +22,8 @@ void setup() {
 
 
 void loop() {
-  web.listen();
-
-  ifcu.read();
-  ifcu.monitor();
+  webClient.listen();
+  ifcu.listen();
 
   delay(10);
 }

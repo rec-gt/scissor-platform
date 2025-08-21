@@ -3,19 +3,19 @@
 #include "Watchdog.h"
 #include "Globals.h"
 
-#ifndef Web_h
-#define Web_h
+#ifndef WebClient_h
+#define WebClient_h
 
-#define WebSerial Serial1
+#define WebClientSerial Serial1
 
-class Web {
+class WebClient {
 private:
   bool finishInit = false;
 
   bool debugMode = false;
 
   void clearSerialBuffer() {
-    while (WebSerial.read() > 0) { delay(1); };
+    while (WebClientSerial.read() > 0) { delay(1); };
   }
 
   void clearResBuffer() {
@@ -23,20 +23,20 @@ private:
   }
 
   void printlnFlush(String cmd, unsigned int delayTime = 2) {
-    WebSerial.println(cmd);
-    WebSerial.flush();
+    WebClientSerial.println(cmd);
+    WebClientSerial.flush();
     delay(delayTime);
   }
 
 public:
-  Web() {
+  WebClient() {
     this->clearSerialBuffer();
   }
 
   void listen() {
-    if (WebSerial.available() > 0) {
-      while (WebSerial.available() > 0) {
-        char c = WebSerial.read();
+    if (WebClientSerial.available() > 0) {
+      while (WebClientSerial.available() > 0) {
+        char c = WebClientSerial.read();
         Serial.print(c);
 
         if (c != '\r' && c != '\n') {
@@ -55,7 +55,7 @@ public:
     int idx = serialRes.indexOf("[ASK]");
 
     if (idx > -1) {
-      this->sendMsg();
+      this->sendBuffer();
     }
 
     idx = serialRes.indexOf("CMD:1");
@@ -94,15 +94,14 @@ public:
     return "";
   }
 
-  void sendMsg() {
-    Serial.println(webSend);
-    this->printlnFlush(webSend);
-    webSend = "";
+  void sendBuffer() {
+    Serial.write(webClientSendBytes, sizeof(webClientSendBytes));
+    Serial.flush();
   }
 
-  ~Web() {}
+  ~WebClient() {}
 };
 
-extern Web web;
+extern WebClient webClient;
 
 #endif

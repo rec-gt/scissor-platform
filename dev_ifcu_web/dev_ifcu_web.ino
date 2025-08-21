@@ -1,6 +1,7 @@
 
 #include <WiFi.h>
 #include <WiFiClient.h>
+#include "SerialRecv.h"
 
 const char* ssid = "ifcu_16f_test";
 const char* password = "never_gonna_give_you_up";
@@ -11,11 +12,7 @@ IPAddress LocalIP(192, 168, 1, 1);
 IPAddress Gateway(192, 168, 1, 1);
 IPAddress SubNet(255, 255, 255, 0);
 
-
-const uint8_t START_MARKER = 0xFF;  // Start marker byte
-const uint8_t FRAME_SIZE = 8;       // 7 data bytes + 1 checksum byte
-String values[5];
-int valueIdx = 0;
+SerialRecv serialRecv;
 
 void setup() {
   Serial.begin(115200);
@@ -33,45 +30,8 @@ void setup() {
 }
 
 void loop() {
-  static bool receiving = false;      // Are we currently receiving a frame?
-  static uint8_t byteIndex = 0;       // Index to track received bytes
-  static uint8_t buffer[FRAME_SIZE];  // Buffer to store received bytes
-
-  // Check if data is available
-  while (Serial2.available() > 0) {
-    uint8_t receivedByte = Serial2.read();
-
-    if (receiving) {
-      buffer[byteIndex++] = receivedByte;  // Store the byte in the buffer
-
-      // Check if we have received the entire frame
-      if (byteIndex == FRAME_SIZE) {
-        receiving = false;  // Stop receiving
-        byteIndex = 0;      // Reset byte index
-
-        // Validate checksum
-        uint8_t checksum = 0;
-        for (uint8_t i = 0; i < 7; i++) {
-          checksum += buffer[i];
-        }
-
-        if (checksum == buffer[7]) {  // Compare calculated checksum with received
-          values[0] = buffer[0];
-          values[1] = buffer[1] | (buffer[2] << 8);
-          values[2] = buffer[3] | (buffer[4] << 8);
-          values[3] = buffer[5];
-          values[4] = buffer[6];
-        } else {
-          Serial.println("Checksum failed! Discarding frame...");
-        }
-      }
-    } else if (receivedByte == START_MARKER) {
-      // Start receiving when we detect the START_MARKER
-      receiving = true;
-      byteIndex = 0;
-    }
-  }
-
+  serialRecv.listen();
+  
   /* ========== Web Server ========= */
 
   WiFiClient client = server.available();
@@ -301,15 +261,15 @@ void loop() {
       client.print("Connection: close\r\n\r\n");
       String response = "";
       response += "[";
-      response += String(values[0]);
+      response += String(serialRecv.values[0]);
       response += ",";
-      response += String(values[1]);
+      response += String(serialRecv.values[1]);
       response += ",";
-      response += String(values[2]);
+      response += String(serialRecv.values[2]);
       response += ",";
-      response += String(values[3]);
+      response += String(serialRecv.values[3]);
       response += ",";
-      response += String(values[4]);
+      response += String(serialRecv.values[4]);
       response += "]";
       client.print(response);
     }

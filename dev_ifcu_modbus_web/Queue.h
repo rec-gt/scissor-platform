@@ -1,32 +1,45 @@
+#ifndef Queue_h
+#define Queue_h
+
 class Queue {
 
 private:
-  byte queue[10];
-  byte index = 0;
-
+  byte queue[5];
+  byte idx = -1;
 public:
-  Queue(size_t size)
-    : size(size){};
+  byte length = 0;
+
+  Queue(){};
 
   void push(byte data) {
-    if (index > 10) {
+    if (idx >= 9) {
       return;
     }
 
-    queue[index++] = data;
+    queue[idx++] = data;
+    length++;
   }
 
   byte pop() {
+    if (idx <= 0) {
+      return;
+    }
+
     byte res = queue[0];
 
-    for (byte i = 1; i < 10; i++) {
+    for (byte i = 1; i < 5; i++) {
       queue[i - 1] = queue[i];
     }
 
-    index--;
+    idx--;
+    length--;
 
     return res;
   }
 
   ~Queue();
 };
+
+extern Queue queue;
+
+#end

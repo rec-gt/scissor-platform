@@ -2,6 +2,7 @@
 #include "Utils.h"
 #include "Watchdog.h"
 #include "Globals.h"
+#include "Queue.h"
 
 #ifndef WebClient_h
 #define WebClient_h
@@ -72,43 +73,22 @@ public:
 
         idx = serialRes.indexOf("CMD:0");
         if (idx > -1) {
-          
-          recvCmd = "0";
+          queue.push(0);
         }
 
         idx = serialRes.indexOf("CMD:1");
         if (idx > -1) {
-          recvCmd = "1";
-        }
-
-        idx = serialRes.indexOf("CMD:2");
-        if (idx > -1) {
-          recvCmd = "2";
-        }
-
-        idx = serialRes.indexOf("CMD:3");
-        if (idx > -1) {
-          recvCmd = "3";
-        }
-
-        idx = serialRes.indexOf("CMD:4");
-        if (idx > -1) {
-          recvCmd = "4";
-        }
-
-        idx = serialRes.indexOf("CMD:5");
-        if (idx > -1) {
-          recvCmd = "5";
+          queue.push(1);
         }
 
         idx = serialRes.indexOf("CMD:11");
         if (idx > -1) {
-          recvCmd = "11";
+          queue.push(11);
         }
 
         idx = serialRes.indexOf("CMD:12");
         if (idx > -1) {
-          recvCmd = "12";
+          queue.push(12);
         }
 
         this->clearResBuffer();

@@ -3,10 +3,13 @@
 #include "IFCU.h"
 #include "Globals.h"
 #include "WebClient.h"
+#include "Queue.h"
 
 WebClient webClient;
 
 IFCU ifcu(31);
+
+Queue queue;
 
 void setup() {
   Serial.begin(9600);

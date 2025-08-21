@@ -1,5 +1,6 @@
 #include "Globals.h"
 #include "WebClient.h"
+#include "Queue.h"
 
 #ifndef IFCU_H
 #define IFCU_H
@@ -78,6 +79,10 @@ public:
 
   // ===== monitor upcoming command =====
   void monitor(String msg) {
+    if (queue.idx >= 0) {
+      queue.pop();
+    }
+
     if (msg.length() <= 0) {
       return;
     }
@@ -113,7 +118,7 @@ public:
         this->handleWrite4x(40003, 2);
         break;
       case IFCU_ACTION_INCREASE_TEMP:
-      
+
         this->handleWrite4x(40004, this->inputRegisterValues[INPUT_REGISTER_SET_TEMP] + 50);
         break;
       case IFCU_ACTION_DECREASE_TEMP:

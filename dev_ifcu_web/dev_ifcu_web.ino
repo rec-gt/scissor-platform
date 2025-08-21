@@ -2,6 +2,7 @@
 #include <WiFi.h>
 #include <WiFiClient.h>
 #include "SerialRecv.h"
+#include "Globals.h"
 
 const char* ssid = "ifcu_16f_test";
 const char* password = "never_gonna_give_you_up";
@@ -31,7 +32,7 @@ void setup() {
 
 void loop() {
   serialRecv.listen();
-  
+
   /* ========== Web Server ========= */
 
   WiFiClient client = server.available();
@@ -168,8 +169,8 @@ void loop() {
           let data = JSON.parse(await response.text());
         //   data = [1, 22, 22, 0, 1];
           document.getElementById("on-off").innerHTML = [
-            `<div class="on-off-off" onclick="sendCMD(1)">OFF</div>`,
-            `<div class="on-off-on" onclick="sendCMD(0)">ON</div>`
+            `<div class="on-off-off" onclick="sendCMD(0)">OFF</div>`,
+            `<div class="on-off-on" onclick="sendCMD(1)">ON</div>`
           ][data[0]];
           document.getElementById("room-temp").textContent = data[1];
           document.getElementById("set-point").textContent = data[2];
@@ -263,9 +264,9 @@ void loop() {
       response += "[";
       response += String(serialRecv.values[0]);
       response += ",";
-      response += String(serialRecv.values[1]);
+      response += String(serialRecv.values[1] / 100.0, 1);
       response += ",";
-      response += String(serialRecv.values[2]);
+      response += String(serialRecv.values[2] / 100.0, 1);
       response += ",";
       response += String(serialRecv.values[3]);
       response += ",";
@@ -278,20 +279,10 @@ void loop() {
       if (request.indexOf("/cmd?c=") >= 0) {
         int startIndex = request.indexOf("/cmd?c=") + 7;
         String cmd = request.substring(startIndex, startIndex + 1);
-
+        Serial2.println(cmd);
+        Serial.print("receive cmd: ");
+        Serial.print(cmd);
         client.print("OK");
-
-        if (cmd == "0") {
-          Serial.println("cmd 1 received!");
-        } else if (cmd == "1") {
-          Serial.println("cmd 1 received!");
-        } else if (cmd == "2") {
-          Serial.println("cmd 2 received!");
-        } else if (cmd == "3") {
-          Serial.println("cmd 3 received!");
-        } else {
-          Serial.println("Unknown cmd received!");
-        }
       }
     }
 

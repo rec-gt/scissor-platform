@@ -240,9 +240,7 @@ void loop() {
 
       async function pushData() {
         try {
-          const str = `${parseInt(onOff)}${spt}${[2, 3, 4][parseInt(mode)]}${
-            [7, 8, 9][parseInt(fanSpeed)]
-          }`;
+          const str = `${parseInt(onOff)}${spt}${mode}${fanSpeed}`;
           const response = await fetch(`/push?v=${str}`);
         } catch (error) {
           console.error("Error fetching data:", error);

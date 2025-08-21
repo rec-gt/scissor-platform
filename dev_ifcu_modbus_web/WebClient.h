@@ -79,10 +79,12 @@ public:
         mbClient.holdingRegisterWrite(31, 40003, serialRes.substring(6, 7).toInt());
         delay(10);
 
-        Serial.print(serialRes.substring(0, 1).toInt());
         Serial.print(serialRes.substring(1, 5).toInt());
+        Serial.print(", ");
         Serial.print(serialRes.substring(5, 6).toInt());
+        Serial.print(", ");
         Serial.print(serialRes.substring(6, 7).toInt());
+        Serial.print(", ");
 
         this->clearResBuffer();
       }

@@ -134,16 +134,6 @@ public:
     webClientSendBytes[4] = (this->inputRegisterValues[INPUT_REGISTER_SET_TEMP] >> 8) & 0xFF;
     webClientSendBytes[5] = this->inputRegisterValues[OPERATION_MODE];
     webClientSendBytes[6] = this->inputRegisterValues[MANUAL_MODE_FAN_SPEED];
-
-    // webClientSendBuffer.concat(String(this->checkOnOff()));
-    // webClientSendBuffer.concat(",");
-    // webClientSendBuffer.concat(String(this->inputRegisterValues[ROOM_TEMP]));
-    // webClientSendBuffer.concat(",");
-    // webClientSendBuffer.concat(String(this->inputRegisterValues[INPUT_REGISTER_SET_TEMP]));
-    // webClientSendBuffer.concat(",");
-    // webClientSendBuffer.concat(String(this->inputRegisterValues[OPERATION_MODE]));
-    // webClientSendBuffer.concat(",");
-    // webClientSendBuffer.concat(String(this->inputRegisterValues[MANUAL_MODE_FAN_SPEED]));
   }
 
   // ===== debug =====

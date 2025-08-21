@@ -36,35 +36,60 @@ void splitString(String str, size_t size) {
 }
 
 void loop() {
-  if (Serial2.available()) {
-    while (Serial2.available()) {
-      char c = Serial2.read();
+  if (Serial2.available() >= 7) {
+    uint8_t data[7];
 
-      if (c != '\r' && c != '\n') {
-        serialRecv += c;
-      }
+    Serial2.readBytes(data, 7);
 
-      if (c == '\r') {
-        while (serialRecv.length() > 0) {
-          int commaIndex = serialRecv.indexOf(",");
-          String valueStr = serialRecv.substring(0, commaIndex);
+    uint8_t int1 = data[0];
+    uint16_t int2 = data[1] | (data[2] << 8);
+    uint16_t int3 = data[3] | (data[4] << 8);
+    uint8_t int4 = data[5];
+    uint8_t int5 = data[6];
 
-          values[valueIdx] = valueStr;
-          valueIdx++;
+    Serial.print("int1: ");
+    Serial.println(int1);
+    Serial.print("int2: ");
+    Serial.println(int2);
+    Serial.print("int3: ");
+    Serial.println(int3);
+    Serial.print("int4: ");
+    Serial.println(int4);
+    Serial.print("int5: ");
+    Serial.println(int5);
 
-          if (commaIndex == -1) break;
-
-          serialRecv = serialRecv.substring(commaIndex + 1);
-        }
-
-        values[1] = String(values[1].toInt() / 100.0, 1);
-        values[2] = String(values[2].toInt() / 100.0, 1);
-
-        valueIdx = 0;
-        serialRecv = "";
-      }
-    }
+    // while (Serial.read() >= 0) {};
   }
+
+  // if (Serial2.available()) {
+  //   while (Serial2.available()) {
+  //     char c = Serial2.read();
+
+  //     if (c != '\r' && c != '\n') {
+  //       serialRecv += c;
+  //     }
+
+  //     if (c == '\r') {
+  //       while (serialRecv.length() > 0) {
+  //         int commaIndex = serialRecv.indexOf(",");
+  //         String valueStr = serialRecv.substring(0, commaIndex);
+
+  //         values[valueIdx] = valueStr;
+  //         valueIdx++;
+
+  //         if (commaIndex == -1) break;
+
+  //         serialRecv = serialRecv.substring(commaIndex + 1);
+  //       }
+
+  //       values[1] = String(values[1].toInt() / 100.0, 1);
+  //       values[2] = String(values[2].toInt() / 100.0, 1);
+
+  //       valueIdx = 0;
+  //       serialRecv = "";
+  //     }
+  //   }
+  // }
 
   /* ========== Web Server ========= */
 

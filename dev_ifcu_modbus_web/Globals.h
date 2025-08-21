@@ -28,12 +28,7 @@ enum IFCU_ENUMS {
 };
 
 /*=== For Web Client ===*/
-String webClientSendBuffer = "";
 byte webClientSendBytes[7];  // 1 + 2 + 2 + 1 + 1
 String webRecv = "";
-
-void resetWebClientSendBuffer() {
-  webClientSendBuffer = "";
-}
 
 #endif

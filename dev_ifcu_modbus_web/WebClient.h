@@ -95,8 +95,11 @@ public:
   }
 
   void sendBuffer() {
-    Serial.write(webClientSendBytes, sizeof(webClientSendBytes));
-    Serial.flush();
+    for (uint16_t i = 0; i < sizeof(webClientSendBytes); i++) {
+      Serial.print(webClientSendBytes[i]);
+      Serial.print(", ");
+    }
+    WebClientSerial.write(webClientSendBytes, sizeof(webClientSendBytes));
   }
 
   ~WebClient() {}

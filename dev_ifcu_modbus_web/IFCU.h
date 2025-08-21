@@ -8,6 +8,7 @@
 class IFCU {
 private:
   unsigned long prevMillis = millis();
+  unsigned long prevMillis2 = millis();
 
   byte slaveId;
 
@@ -48,7 +49,10 @@ public:
 
   void listen() {
     this->read();
-    this->monitor(webClient.readCmd());
+    if (millis() - this->prevMillis2 > 1000) {
+      this->monitor(webClient.readCmd());
+      this->prevMillis2 = millis();
+    }
   }
 
   // ===== read data from control box =====
@@ -86,8 +90,6 @@ public:
     // int cmd = msg.toInt();
 
     int cmd = -1;
-
-    que.debug();
 
     if (que.length <= 0) {
       return;

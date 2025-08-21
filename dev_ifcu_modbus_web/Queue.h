@@ -5,9 +5,9 @@ class Queue {
 
 private:
   byte que[5];
-  byte idx = -1;
+  int idx = -1;
 public:
-  byte length = 0;
+  int length = 0;
 
   Queue(){};
 
@@ -16,12 +16,14 @@ public:
       return;
     }
 
-    que[idx++] = data;
+    que[++idx] = data;
     length++;
+
+    debug();
   }
 
   byte pop() {
-    if (idx <= 0) {
+    if (idx <= -1) {
       return;
     }
 
@@ -30,20 +32,23 @@ public:
     for (byte i = 1; i < 5; i++) {
       que[i - 1] = que[i];
     }
+    que[4] = 0;
 
     idx--;
     length--;
-
+    debug();
     return res;
   }
 
   void debug() {
+    Serial.println();
+
     for (byte i = 0; i < 5; i++) {
       Serial.print(que[i]);
       Serial.print(", ");
     }
-    Serial.println(idx);
-    Serial.println(length);
+    Serial.println("idx: " + idx);
+    Serial.println("len: " + length);
   }
 
   ~Queue(){};

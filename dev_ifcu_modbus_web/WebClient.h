@@ -71,16 +71,6 @@ public:
       if (c == '\r') {
         int idx = -1;
 
-        idx = serialRes.indexOf("CMD:0");
-        if (idx > -1) {
-          que.push(0);
-        }
-
-        idx = serialRes.indexOf("CMD:1");
-        if (idx > -1) {
-          que.push(1);
-        }
-
         idx = serialRes.indexOf("CMD:11");
         if (idx > -1) {
           que.push(11);
@@ -89,6 +79,16 @@ public:
         idx = serialRes.indexOf("CMD:12");
         if (idx > -1) {
           que.push(12);
+        }
+
+        idx = serialRes.indexOf("CMD:0 ");
+        if (idx > -1) {
+          que.push(0);
+        }
+
+        idx = serialRes.indexOf("CMD:1 ");
+        if (idx > -1) {
+          que.push(1);
         }
 
         this->clearResBuffer();

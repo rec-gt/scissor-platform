@@ -11,7 +11,7 @@ private:
   uint8_t buffer[8];
 
 public:
-  byte values[7];
+  byte values[5];
 
   SerialRecv(){};
 
@@ -22,7 +22,9 @@ public:
       if (this->isReceiving) {
         this->buffer[byteIdx++] = receivedByte;
 
-        if (this->byteIdx == FRAME_SIZE - 1) {
+        Serial.println(receivedByte);
+
+        if (this->byteIdx == FRAME_SIZE) {
           this->isReceiving = false;
           this->byteIdx = 0;
 
@@ -31,6 +33,16 @@ public:
             checksum += this->buffer[i];
           }
 
+          Serial.println(this->buffer[0]);
+          Serial.println(this->buffer[1]);
+          Serial.println(this->buffer[2]);
+          Serial.println(this->buffer[3]);
+          Serial.println(this->buffer[4]);
+          Serial.println(this->buffer[5]);
+          Serial.println(this->buffer[6]);
+          Serial.println(this->buffer[7]);
+
+
           if (checksum == buffer[FRAME_SIZE - 1]) {
             this->values[0] = buffer[0];
             this->values[1] = buffer[1] | (buffer[2] << 8);
@@ -38,6 +50,17 @@ public:
             this->values[3] = buffer[5];
             this->values[4] = buffer[6];
           }
+
+          Serial.print(this->values[0]);
+          Serial.print(", ");
+          Serial.print(this->values[1]);
+          Serial.print(", ");
+          Serial.print(this->values[2]);
+          Serial.print(", ");
+          Serial.print(this->values[3]);
+          Serial.print(", ");
+          Serial.print(this->values[4]);
+          Serial.println();
         }
       } else if (receivedByte == START_MARKER) {
         this->isReceiving = true;

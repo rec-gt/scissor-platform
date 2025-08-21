@@ -3,8 +3,8 @@
 
 class SerialRecv {
 private:
-  const uint8_t START_MARKER = 0xFF;  // not included in buffer
-  const uint8_t FRAME_SIZE = 9;       // START_MARKER + 7 + checksum
+  const uint8_t START_MARKER = 0xFF;
+  const uint8_t FRAME_SIZE = 9;  // START_MARKER + 7 + checksum
   bool isReceiving = false;
   uint8_t byteIdx = 0;
   uint8_t buffer[8];
@@ -35,17 +35,6 @@ public:
             checksum += this->buffer[i];
           }
 
-          Serial.println(this->buffer[0]);
-          Serial.println(this->buffer[1]);
-          Serial.println(this->buffer[2]);
-          Serial.println(this->buffer[3]);
-          Serial.println(this->buffer[4]);
-          Serial.println(this->buffer[5]);
-          Serial.println(this->buffer[6]);
-          Serial.println(this->buffer[7]);
-          Serial.println(this->buffer[8]);
-          Serial.println(checksum);
-
           if (checksum == buffer[FRAME_SIZE - 1]) {
             this->values[0] = buffer[1];
             this->values[1] = buffer[2] | (buffer[3] << 8);
@@ -53,17 +42,6 @@ public:
             this->values[3] = buffer[6];
             this->values[4] = buffer[7];
           }
-
-          Serial.print(this->values[0]);
-          Serial.print(", ");
-          Serial.print(this->values[1]);
-          Serial.print(", ");
-          Serial.print(this->values[2]);
-          Serial.print(", ");
-          Serial.print(this->values[3]);
-          Serial.print(", ");
-          Serial.print(this->values[4]);
-          Serial.println();
         }
       }
     }

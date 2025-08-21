@@ -8,7 +8,7 @@ private:
   const uint8_t BYTES_SIZE = 7;
   bool isReceiving = false;
   uint8_t byteIdx = 0;
-  uint8_t buffer[FRAME_SIZE];
+  uint8_t buffer[8];
 
 public:
   byte values[7];

@@ -20,6 +20,8 @@ private:
   static constexpr byte INPUT_REGISTER_VALUES_COUNT = 7;
   long inputRegisterValues[INPUT_REGISTER_VALUES_COUNT] = {};
 
+  int defaultSetTemp = 2500;
+
   enum INPUT_REGISTER {
     FW_VER,
     SYSTEM_MODE,
@@ -49,7 +51,7 @@ public:
 
   void listen() {
     this->read();
-    if (millis() - this->prevMillis2 > 1000) {
+    if (millis() - this->prevMillis2 > 500) {
       this->monitor(webClient.readCmd());
       this->prevMillis2 = millis();
     }
@@ -58,7 +60,6 @@ public:
   // ===== read data from control box =====
   void read() {
     if (millis() - this->prevMillis > 1000) {
-
       if (!mbClient.requestFrom(this->slaveId, INPUT_REGISTERS, INPUT_REGISTERS_START_ADDRESS, INPUT_REGISTER_VALUES_COUNT)) {
         Serial.println(mbClient.lastError());
       } else {
@@ -126,11 +127,14 @@ public:
         this->handleWrite4x(40003, 2);
         break;
       case IFCU_ACTION_INCREASE_TEMP:
-
-        this->handleWrite4x(40004, this->inputRegisterValues[INPUT_REGISTER_SET_TEMP] + 50);
+        this->defaultSetTemp += 50;
+        this->handleWrite4x(40004, this->defaultSetTemp);
+        // this->handleWrite4x(40004, this->inputRegisterValues[INPUT_REGISTER_SET_TEMP] + 50);
         break;
       case IFCU_ACTION_DECREASE_TEMP:
-        this->handleWrite4x(40004, this->inputRegisterValues[INPUT_REGISTER_SET_TEMP] - 50);
+        this->defaultSetTemp -= 50;
+        this->handleWrite4x(40004, this->defaultSetTemp);
+        // this->handleWrite4x(40004, this->inputRegisterValues[INPUT_REGISTER_SET_TEMP] - 50);
         break;
     }
   }

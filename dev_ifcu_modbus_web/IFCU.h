@@ -66,11 +66,11 @@ public:
       webClient.sendBuffer();
 
       // === debug ===
-      for (uint16_t i = 0; i < INPUT_REGISTER_VALUES_COUNT; i++) {
-        Serial.print(this->inputRegisterValues[i]);
-        Serial.print(", ");
-      }
-      Serial.println();
+      // for (uint16_t i = 0; i < INPUT_REGISTER_VALUES_COUNT; i++) {
+      //   Serial.print(this->inputRegisterValues[i]);
+      //   Serial.print(", ");
+      // }
+      // Serial.println();
 
       this->prevMillis = millis();
     }

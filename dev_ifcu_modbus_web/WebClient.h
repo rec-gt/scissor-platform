@@ -99,7 +99,18 @@ public:
       Serial.print(webClientSendBytes[i]);
       Serial.print(", ");
     }
+    Serial.println();
+
+    const uint8_t START_MARKER = 0xFF;
+
+    uint8_t checksum = 0;
+    for (uint8_t i = 0; i < 7; i++) {
+      checksum += webClientSendBytes[i];
+    }
+
+    WebClientSerial.write(START_MARKER);
     WebClientSerial.write(webClientSendBytes, sizeof(webClientSendBytes));
+    WebClientSerial.write(checksum);
   }
 
   ~WebClient() {}

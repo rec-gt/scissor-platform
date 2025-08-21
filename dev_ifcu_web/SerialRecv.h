@@ -10,7 +10,7 @@ private:
   uint8_t buffer[8];
 
 public:
-  byte values[5];
+  uint16_t values[5];
 
   SerialRecv(){};
 

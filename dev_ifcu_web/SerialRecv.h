@@ -4,7 +4,8 @@
 class SerialRecv {
 private:
   const uint8_t START_MARKER = 0xFF;
-  const uint8_t FRAME_SIZE = 8;  // START_MARKER + 7
+  const uint8_t FRAME_SIZE = 8;  // START_MARKER + 6 + checksum
+  const uint8_t PAYLOAD_SIZE = 6;
   static bool isReceiving = false;
   static uint8_t byteIdx = 0;
   static uint8_t buffer[FRAME_SIZE];
@@ -22,10 +23,9 @@ public:
         this->buffer[byteIdx++] = receivedByte;
 
         if (this->byteIdx == FRAME_SIZE) {
-          isReceiving = false;
-          byteIdx = 0;
+          this->isReceiving = false;
+          this->byteIdx = 0;
 
-          // Validate checksum
           uint8_t checksum = 0;
           for (uint8_t i = 0; i < 7; i++) {
             checksum += buffer[i];

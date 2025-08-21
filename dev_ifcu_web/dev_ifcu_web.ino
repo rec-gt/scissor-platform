@@ -72,6 +72,7 @@ void loop() {
         font-family: sans-serif;
         box-sizing: border-box;
         color: #444;
+        user-select: none;
       }
 
       html,
@@ -203,18 +204,22 @@ void loop() {
 
       async function setOnOff(v) {
         onOff = v;
+        pushData();
       }
 
       async function setSPT(v) {
         spt += v;
+        pushData();
       }
 
       async function setMode(elem) {
         mode = elem.value;
+        pushData();
       }
 
       async function setFanSpeed(elem) {
         fanSpeed = elem.value;
+        pushData();
       }
 
       async function fetchData() {
@@ -247,12 +252,12 @@ void loop() {
         }
       }
 
-      setInterval(() => {
-        if (finishInitFetch) {
-          pushData();
-        }
-        rerenderData();
-      }, 1000);
+      //   setInterval(() => {
+      //     if (finishInitFetch) {
+      //       pushData();
+      //     }
+      //     rerenderData();
+      //   }, 1000);
 
       (() => {
         fetchData();

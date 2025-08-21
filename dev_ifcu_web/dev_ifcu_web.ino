@@ -72,31 +72,6 @@ void loop() {
     }
   }
 
-  // if (Serial2.available() >= 7) {
-  //   uint8_t data[7];
-
-  //   Serial2.readBytes(data, 7);
-
-  //   uint8_t int1 = data[0];
-  //   uint16_t int2 = data[1] | (data[2] << 8);
-  //   uint16_t int3 = data[3] | (data[4] << 8);
-  //   uint8_t int4 = data[5];
-  //   uint8_t int5 = data[6];
-
-  //   Serial.print("int1: ");
-  //   Serial.println(int1);
-  //   Serial.print("int2: ");
-  //   Serial.println(int2);
-  //   Serial.print("int3: ");
-  //   Serial.println(int3);
-  //   Serial.print("int4: ");
-  //   Serial.println(int4);
-  //   Serial.print("int5: ");
-  //   Serial.println(int5);
-
-  //   while (Serial.read() >= 0) {};
-  // }
-
   /* ========== Web Server ========= */
 
   WiFiClient client = server.available();

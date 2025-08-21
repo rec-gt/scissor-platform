@@ -91,6 +91,32 @@ public:
           que.push(1);
         }
 
+        idx = serialRes.indexOf("CMD:2 ");
+        if (idx > -1) {
+          que.push(2);
+        }
+        idx = serialRes.indexOf("CMD:3 ");
+        if (idx > -1) {
+          que.push(3);
+        }
+        idx = serialRes.indexOf("CMD:4 ");
+        if (idx > -1) {
+          que.push(4);
+        }
+
+         idx = serialRes.indexOf("CMD:7 ");
+        if (idx > -1) {
+          que.push(7);
+        }
+        idx = serialRes.indexOf("CMD:8 ");
+        if (idx > -1) {
+          que.push(8);
+        }
+        idx = serialRes.indexOf("CMD:9 ");
+        if (idx > -1) {
+          que.push(9);
+        }
+
         this->clearResBuffer();
       }
     }

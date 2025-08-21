@@ -168,7 +168,11 @@ void loop() {
       }
     </style>
     <script>
+      let onOff = 0;
+      let roomTemp = 2400;
       let spt = 2500;
+      let mode = 0;
+      let fanSpeed = 0;
 
       async function sendCMD(c) {
         try {
@@ -178,40 +182,37 @@ void loop() {
         }
       }
 
-      function rerenderSPT() {
+      function rerenderData() {
+        document.getElementById("on-off").innerHTML = [
+          `<div class="on-off" onclick="sendCMD(1)">ON</div>
+              <div class="on-off-active" onclick="sendCMD(0)">OFF</div>`,
+          `<div class="on-off-active" onclick="sendCMD(1)">ON</div>
+              <div class="on-off" onclick="sendCMD(0)">OFF</div>`,
+        ][onOff];
+        document.getElementById("room-temp").textContent = roomTemp;
         document.getElementById("set-point").textContent = spt;
+        document.getElementById("mode").value = mode;
+        document.getElementById("fan-speed").value = fanSpeed;
       }
 
       async function setSPT(value) {
         spt += value;
         try {
           const response = await fetch(`/spt?v=${spt}`);
-          rerenderSPT();
+          rerenderData();
         } catch (error) {
           console.error("Error in cmd:", error);
         }
       }
 
       async function setMode() {
-        try {
-          const response = await fetch(
-            `/mode?v=${document.getElementById("mode").value}`
-          );
-          rerenderSPT();
-        } catch (error) {
-          console.error("Error in cmd:", error);
-        }
+        let c = [2, 3, 4][parseInt(document.getElementById("mode").value)];
+        await sendCMD(c);
       }
 
       async function setFanSpeed() {
-        try {
-          const response = await fetch(
-            `/fan-speed?v=${document.getElementById("fan-speed").value}`
-          );
-          rerenderSPT();
-        } catch (error) {
-          console.error("Error in cmd:", error);
-        }
+        let c = [7, 8, 9][parseInt(document.getElementById("fan-speed").value)];
+        await sendCMD(c);
       }
 
       async function fetchData() {
@@ -219,19 +220,14 @@ void loop() {
           const response = await fetch("/data");
           let data = JSON.parse(await response.text());
           //   data = [1, 22, 22, 0, 1];
-          document.getElementById("on-off").innerHTML = [
-            `<div class="on-off" onclick="sendCMD(1)">ON</div>
-              <div class="on-off-active" onclick="sendCMD(0)">OFF</div>`,
-            `<div class="on-off-active" onclick="sendCMD(1)">ON</div>
-              <div class="on-off" onclick="sendCMD(0)">OFF</div>`,
-          ][data[0]];
-          document.getElementById("room-temp").textContent = data[1];
 
+          onOff = data[0];
+          roomTemp = data[1];
           spt = data[2];
-          rerenderSPT();
+          mode = data[3];
+          fanSpeed = data[4];
 
-          document.getElementById("mode").value = data[3];
-          document.getElementById("fan-speed").value = data[4];
+          rerenderData();
         } catch (error) {
           console.error("Error fetching data:", error);
         }
@@ -337,6 +333,18 @@ void loop() {
       if (request.indexOf("/cmd?c=") >= 0) {
         int startIndex = request.indexOf("/cmd?c=") + 7;
         String cmd = request.substring(startIndex, startIndex + 2);
+        String sendBuffer = "CMD:";
+        sendBuffer += cmd;
+        Serial2.println(sendBuffer);
+        Serial.println(sendBuffer);
+        client.print("OK");
+      }
+    }
+
+    else if (request.indexOf("GET /spt") >= 0) {
+      if (request.indexOf("/spt?v=") >= 0) {
+        int startIndex = request.indexOf("/spt?v=") + 7;
+        String cmd = request.substring(startIndex, startIndex + 4);
         String sendBuffer = "CMD:";
         sendBuffer += cmd;
         Serial2.println(sendBuffer);

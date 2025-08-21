@@ -73,6 +73,7 @@ void loop() {
         box-sizing: border-box;
         color: #444;
       }
+
       html,
       body {
         width: 100%;
@@ -80,14 +81,17 @@ void loop() {
         padding: 0;
         background: #a5dfff;
       }
+
       .flex {
         display: flex;
         justify-content: space-between;
         align-items: center;
       }
+
       .w-full {
         width: 100%;
       }
+
       .center {
         width: 100%;
         display: flex;
@@ -113,31 +117,43 @@ void loop() {
         background-color: #fff;
         padding: 1rem;
       }
+
       .bar {
         background-color: #f9f9f9;
         border-radius: 10px;
         padding: 0.5rem 1rem;
       }
+
+      #on-off {
+        display: flex;
+        gap: 5px;
+      }
+
       .on-off,
-      .on-off-on,
-      .on-off-off {
-        background-color: #a5dfff;
+      .on-off-active {
+        background-color: #ccc;
         color: #fff;
         border-radius: 5px;
         padding: 2.5px 5px;
         font-size: 12pt;
+        cursor: pointer;
       }
-      .on-off-off {
-        background-color: #ccc;
+
+      .on-off-active {
+        background-color: #a5dfff;
       }
+
       .room-temp {
         width: 50%;
         height: 50px;
         font-size: 24pt;
       }
+
       .switch {
         width: 50px;
+        cursor: pointer;
       }
+
       #mode,
       #fan-speed {
         text-align: center;
@@ -148,16 +164,51 @@ void loop() {
         background-color: #f9f9f9;
         color: #333;
         font-size: 16px;
+        cursor: pointer;
       }
     </style>
     <script>
+      let spt = 2500;
+
       async function sendCMD(c) {
         try {
           const response = await fetch(`/cmd?c=${c}`);
-          const data = await response.text();
-          if (data) {
-            // alert("Ok");
-          }
+        } catch (error) {
+          console.error("Error in cmd:", error);
+        }
+      }
+
+      function rerenderSPT() {
+        document.getElementById("set-point").textContent = spt;
+      }
+
+      async function setSPT(value) {
+        spt += value;
+        try {
+          const response = await fetch(`/spt?v=${spt}`);
+          rerenderSPT();
+        } catch (error) {
+          console.error("Error in cmd:", error);
+        }
+      }
+
+      async function setMode() {
+        try {
+          const response = await fetch(
+            `/mode?v=${document.getElementById("mode").value}`
+          );
+          rerenderSPT();
+        } catch (error) {
+          console.error("Error in cmd:", error);
+        }
+      }
+
+      async function setFanSpeed() {
+        try {
+          const response = await fetch(
+            `/fan-speed?v=${document.getElementById("fan-speed").value}`
+          );
+          rerenderSPT();
         } catch (error) {
           console.error("Error in cmd:", error);
         }
@@ -167,13 +218,18 @@ void loop() {
         try {
           const response = await fetch("/data");
           let data = JSON.parse(await response.text());
-        //   data = [1, 22, 22, 0, 1];
+          //   data = [1, 22, 22, 0, 1];
           document.getElementById("on-off").innerHTML = [
-            `<div class="on-off-off" onclick="sendCMD(0)">OFF</div>`,
-            `<div class="on-off-on" onclick="sendCMD(1)">ON</div>`
+            `<div class="on-off" onclick="sendCMD(1)">ON</div>
+              <div class="on-off-active" onclick="sendCMD(0)">OFF</div>`,
+            `<div class="on-off-active" onclick="sendCMD(1)">ON</div>
+              <div class="on-off" onclick="sendCMD(0)">OFF</div>`,
           ][data[0]];
           document.getElementById("room-temp").textContent = data[1];
-          document.getElementById("set-point").textContent = data[2];
+
+          spt = data[2];
+          rerenderSPT();
+
           document.getElementById("mode").value = data[3];
           document.getElementById("fan-speed").value = data[4];
         } catch (error) {
@@ -186,6 +242,7 @@ void loop() {
       }, 1000);
     </script>
   </head>
+
   <body>
     <div style="padding: 1rem">
       <div class="panel">
@@ -193,7 +250,8 @@ void loop() {
           <div>FCU-1F-01</div>
           <div class="flex" style="gap: 1rem">
             <div id="on-off">
-              <div class="on-off" onclick="sendCMD(1)">ON</div>
+              <div class="on-off-active" onclick="sendCMD(1)">ON</div>
+              <div class="on-off" onclick="sendCMD(0)">OFF</div>
             </div>
           </div>
         </div>
@@ -211,10 +269,10 @@ void loop() {
               </div>
             </div>
             <div class="center" style="justify-content: space-between">
-              <div class="switch" onclick="sendCMD(12)">◀</div>
+              <div class="switch" onclick="setSPT(-50)">◀</div>
               <div id="set-point">25.5</div>
               <div>°C</div>
-              <div class="switch" onclick="sendCMD(11)">▶</div>
+              <div class="switch" onclick="setSPT(50)">▶</div>
             </div>
           </div>
         </div>
@@ -227,7 +285,7 @@ void loop() {
           <div class="flex">
             <div class="center">
               <div class="center" style="height: 50px">
-                <select id="mode" onchange="sendCMD(4)">
+                <select id="mode" onchange="setMode()">
                   <option value="0">Auto</option>
                   <option value="1">Manual</option>
                   <option value="2">Fan</option>
@@ -237,7 +295,7 @@ void loop() {
 
             <div class="center">
               <div class="center" style="height: 50px">
-                <select id="fan-speed" onchange="sendCMD(5)">
+                <select id="fan-speed" onchange="setFanSpeed()">
                   <option value="0">Low</option>
                   <option value="1">Medium</option>
                   <option value="2">High</option>

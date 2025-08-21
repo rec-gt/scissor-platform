@@ -69,53 +69,20 @@ public:
       }
 
       if (c == '\r') {
-        int idx = -1;
 
-        idx = serialRes.indexOf("CMD:11");
-        if (idx > -1) {
-          que.push(11);
-        }
+        mbClient.holdingRegisterWrite(31, 40000, serialRes.substring(0, 1).toInt());
+        delay(10);
+        mbClient.holdingRegisterWrite(31, 40004, serialRes.substring(1, 5).toInt());
+        delay(10);
+        mbClient.holdingRegisterWrite(31, 40002, serialRes.substring(5, 6).toInt());
+        delay(10);
+        mbClient.holdingRegisterWrite(31, 40003, serialRes.substring(6, 7).toInt());
+        delay(10);
 
-        idx = serialRes.indexOf("CMD:12");
-        if (idx > -1) {
-          que.push(12);
-        }
-
-        idx = serialRes.indexOf("CMD:0 ");
-        if (idx > -1) {
-          que.push(0);
-        }
-
-        idx = serialRes.indexOf("CMD:1 ");
-        if (idx > -1) {
-          que.push(1);
-        }
-
-        idx = serialRes.indexOf("CMD:2 ");
-        if (idx > -1) {
-          que.push(2);
-        }
-        idx = serialRes.indexOf("CMD:3 ");
-        if (idx > -1) {
-          que.push(3);
-        }
-        idx = serialRes.indexOf("CMD:4 ");
-        if (idx > -1) {
-          que.push(4);
-        }
-
-         idx = serialRes.indexOf("CMD:7 ");
-        if (idx > -1) {
-          que.push(7);
-        }
-        idx = serialRes.indexOf("CMD:8 ");
-        if (idx > -1) {
-          que.push(8);
-        }
-        idx = serialRes.indexOf("CMD:9 ");
-        if (idx > -1) {
-          que.push(9);
-        }
+        Serial.print(serialRes.substring(0, 1).toInt());
+        Serial.print(serialRes.substring(1, 5).toInt());
+        Serial.print(serialRes.substring(5, 6).toInt());
+        Serial.print(serialRes.substring(6, 7).toInt());
 
         this->clearResBuffer();
       }

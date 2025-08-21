@@ -168,6 +168,8 @@ void loop() {
       }
     </style>
     <script>
+      let finishInitFetch = false;
+
       let onOff = 0;
       let roomTemp = 2400;
       let spt = 2500;
@@ -184,58 +186,81 @@ void loop() {
 
       function rerenderData() {
         document.getElementById("on-off").innerHTML = [
-          `<div class="on-off" onclick="sendCMD(1)">ON</div>
-              <div class="on-off-active" onclick="sendCMD(0)">OFF</div>`,
-          `<div class="on-off-active" onclick="sendCMD(1)">ON</div>
-              <div class="on-off" onclick="sendCMD(0)">OFF</div>`,
+          `<div class="on-off" onclick="setOnOff(1)">ON</div>
+              <div class="on-off-active" onclick="setOnOff(0)">OFF</div>`,
+          `<div class="on-off-active" onclick="setOnOff(1)">ON</div>
+              <div class="on-off" onclick="setOnOff(0)">OFF</div>`,
         ][onOff];
-        document.getElementById("room-temp").textContent = roomTemp;
-        document.getElementById("set-point").textContent = spt;
+        document.getElementById("room-temp").textContent = (
+          roomTemp / 100
+        ).toFixed(2);
+        document.getElementById("set-point").textContent = (spt / 100).toFixed(
+          2
+        );
         document.getElementById("mode").value = mode;
         document.getElementById("fan-speed").value = fanSpeed;
       }
 
-      async function setSPT(value) {
-        spt += value;
-        try {
-          const response = await fetch(`/spt?v=${spt}`);
-          rerenderData();
-        } catch (error) {
-          console.error("Error in cmd:", error);
-        }
+      async function setOnOff(v) {
+        onOff = v;
       }
 
-      async function setMode() {
-        let c = [2, 3, 4][parseInt(document.getElementById("mode").value)];
-        await sendCMD(c);
+      async function setSPT(v) {
+        spt += v;
       }
 
-      async function setFanSpeed() {
-        let c = [7, 8, 9][parseInt(document.getElementById("fan-speed").value)];
-        await sendCMD(c);
+      async function setMode(elem) {
+        mode = elem.value;
+      }
+
+      async function setFanSpeed(elem) {
+        fanSpeed = elem.value;
       }
 
       async function fetchData() {
         try {
           const response = await fetch("/data");
           let data = JSON.parse(await response.text());
-          //   data = [1, 22, 22, 0, 1];
 
-          onOff = data[0];
           roomTemp = data[1];
-          spt = data[2];
-          mode = data[3];
-          fanSpeed = data[4];
+          if (!finishInitFetch) {
+            onOff = data[0];
+            spt = data[2];
+            mode = data[3];
+            fanSpeed = data[4];
+          }
 
           rerenderData();
+
+          finishInitFetch = true;
+        } catch (error) {
+          console.error("Error fetching data:", error);
+        }
+      }
+
+      async function pushData() {
+        try {
+          const str = `
+          ${parseInt(onOff)}
+          ${spt}
+          ${[2, 3, 4][parseInt(mode)]}
+          ${[7, 8, 9][parseInt(fanSpeed)]}`;
+          const response = await fetch(`/push?v=${str}`);
         } catch (error) {
           console.error("Error fetching data:", error);
         }
       }
 
       setInterval(() => {
-        fetchData();
+        if (finishInitFetch) {
+          pushData();
+        }
+        rerenderData();
       }, 1000);
+
+      (() => {
+        fetchData();
+      })();
     </script>
   </head>
 
@@ -281,7 +306,7 @@ void loop() {
           <div class="flex">
             <div class="center">
               <div class="center" style="height: 50px">
-                <select id="mode" onchange="setMode()">
+                <select id="mode" onchange="setMode(this)">
                   <option value="0">Auto</option>
                   <option value="1">Manual</option>
                   <option value="2">Fan</option>
@@ -291,7 +316,7 @@ void loop() {
 
             <div class="center">
               <div class="center" style="height: 50px">
-                <select id="fan-speed" onchange="setFanSpeed()">
+                <select id="fan-speed" onchange="setFanSpeed(this)">
                   <option value="0">Low</option>
                   <option value="1">Medium</option>
                   <option value="2">High</option>
@@ -304,6 +329,7 @@ void loop() {
     </div>
   </body>
 </html>
+
 
 )rawliteral");
     }
@@ -318,9 +344,9 @@ void loop() {
       response += "[";
       response += String(serialRecv.values[0]);
       response += ",";
-      response += String(serialRecv.values[1] / 100.0, 1);
+      response += String(serialRecv.values[1]);
       response += ",";
-      response += String(serialRecv.values[2] / 100.0, 1);
+      response += String(serialRecv.values[2]);
       response += ",";
       response += String(serialRecv.values[3]);
       response += ",";
@@ -329,14 +355,11 @@ void loop() {
       client.print(response);
     }
 
-    else if (request.indexOf("GET /cmd") >= 0) {
-      if (request.indexOf("/cmd?c=") >= 0) {
-        int startIndex = request.indexOf("/cmd?c=") + 7;
-        String cmd = request.substring(startIndex, startIndex + 2);
-        String sendBuffer = "CMD:";
-        sendBuffer += cmd;
-        Serial2.println(sendBuffer);
-        Serial.println(sendBuffer);
+    else if (request.indexOf("GET /push") >= 0) {
+      if (request.indexOf("/push?v=") >= 0) {
+        int startIndex = request.indexOf("/push?v=") + 8;
+        String msg = request.substring(startIndex, startIndex + 8);
+        Serial2.println(msg);
         client.print("OK");
       }
     }

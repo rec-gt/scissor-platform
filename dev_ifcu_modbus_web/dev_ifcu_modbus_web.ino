@@ -9,7 +9,7 @@ WebClient webClient;
 
 IFCU ifcu(31);
 
-Queue queue;
+Queue que;
 
 void setup() {
   Serial.begin(9600);

@@ -30,6 +30,5 @@ enum IFCU_ENUMS {
 /*=== For Web Client ===*/
 byte webClientSendBytes[7];  // 1 + 2 + 2 + 1 + 1
 String webRecv = "";
-byte webRecv[5] = {};
 
 #endif

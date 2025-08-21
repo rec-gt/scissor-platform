@@ -79,15 +79,21 @@ public:
 
   // ===== monitor upcoming command =====
   void monitor(String msg) {
-    if (queue.idx >= 0) {
-      queue.pop();
-    }
 
-    if (msg.length() <= 0) {
+    // if (msg.length() <= 0) {
+    //   return;
+    // }
+    // int cmd = msg.toInt();
+
+    int cmd = -1;
+
+    que.debug();
+
+    if (que.length <= 0) {
       return;
     }
 
-    int cmd = msg.toInt();
+    cmd = que.pop();
 
     Serial.print(" CMD: ");
     Serial.print(cmd);

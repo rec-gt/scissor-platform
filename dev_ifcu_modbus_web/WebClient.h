@@ -73,22 +73,22 @@ public:
 
         idx = serialRes.indexOf("CMD:0");
         if (idx > -1) {
-          queue.push(0);
+          que.push(0);
         }
 
         idx = serialRes.indexOf("CMD:1");
         if (idx > -1) {
-          queue.push(1);
+          que.push(1);
         }
 
         idx = serialRes.indexOf("CMD:11");
         if (idx > -1) {
-          queue.push(11);
+          que.push(11);
         }
 
         idx = serialRes.indexOf("CMD:12");
         if (idx > -1) {
-          queue.push(12);
+          que.push(12);
         }
 
         this->clearResBuffer();

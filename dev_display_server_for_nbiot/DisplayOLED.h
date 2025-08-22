@@ -53,6 +53,7 @@ public:
     this->heartbeatToggle = !this->heartbeatToggle;
 
     u8g2.firstPage();
+    
     do {
       int y = 7;
       u8g2.drawStr(0, y, "RGT NBIoT Controller");
@@ -119,11 +120,12 @@ public:
       u8g2.drawLine(0, 54, 128, 54);
 
       y = 63;
-      u8g2.drawStr(0, y, "NBIoT CSQ");
-      u8g2.setCursor(50, y);
+      u8g2.drawStr(0, y, "NBIoT");
+      u8g2.drawStr(32, y, "CSQ");
+      u8g2.setCursor(52, y);
       u8g2.print(iotCsq);
-      u8g2.drawStr(65, y, "CONN");
-      u8g2.setCursor(90, y);
+      u8g2.drawStr(67, y, "CONN");
+      u8g2.setCursor(92, y);
       u8g2.print(iotConn);
       u8g2.drawStr(102, y, this->heartbeatToggle ? "Hrtbt" : "     ");
     } while (u8g2.nextPage());

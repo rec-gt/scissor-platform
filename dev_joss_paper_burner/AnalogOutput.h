@@ -6,9 +6,10 @@
 class AnalogOutput {
 private:
   byte pin;
-  unsigned int value;
 
 public:
+  uint16_t value;
+
   AnalogOutput() {}
 
   AnalogOutput(byte pin)
@@ -16,11 +17,12 @@ public:
     pinMode(pin, OUTPUT);
   }
 
-  void set(unsigned int value) {
-    analogWrite(this->pin, value);
+  void set(uint16_t value) {
+    this->value = value;
+    analogWrite(this->pin, this->value);
   }
 
-  unsigned int getValue() {
+  uint16_t getValue() {
     return this->value;
   }
 };

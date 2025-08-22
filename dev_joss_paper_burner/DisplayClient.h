@@ -8,32 +8,35 @@
 
 class DisplayClient {
 private:
+  uint8_t buffer[22];
 
 public:
   DisplayClient(){};
 
-  void prepareBuffer(uint8_t nbiotConn, uint8_t csq, uint8_t dis, uint8_t dos, AnalogInput *ais, AnalogOutput *aos) {
-    uint8_t buffer[41];
+  void prepareBuffer(uint8_t nbiotConn, uint8_t nbiotCsq, uint8_t dis, uint8_t dos, AnalogInput *ais, AnalogOutput *aos) {
+    uint8_t idx = 0;
 
-    buffer[0] = nbiotConn;
-    buffer[1] = csq;
-    buffer[2] = dis;
-    buffer[3] = dos;
+    this->buffer[idx++] = 0x5B;  // '['
+    this->buffer[idx++] = nbiotConn;
+    this->buffer[idx++] = nbiotCsq;
+    this->buffer[idx++] = dis;
+    this->buffer[idx++] = dos;
 
-    int index = 4;
     for (int i = 0; i < 12; i++) {
-      buffer[index++] = (ais[i] >> 8) & 0xFF;
-      buffer[index++] = ais[i] & 0xFF;
+      this->buffer[idx++] = (ais[i].value >> 8) & 0xFF;
+      this->buffer[idx++] = ais[i].value & 0xFF;
     }
 
     for (int i = 0; i < 4; i++) {
-      buffer[index++] = (aos[i] >> 8) & 0xFF;
-      buffer[index++] = aos[i] & 0xFF;
+      this->buffer[idx++] = (aos[i].value >> 8) & 0xFF;
+      this->buffer[idx++] = aos[i].value & 0xFF;
     }
+
+    this->buffer[idx++] = 0x5D;  // ']'
   }
 
   void sendBuffer() {
-    DisplaySerial.write(buffer, sizeof(buffer));
+    DisplaySerial.write(this->buffer, sizeof(this->buffer));
   }
 
   ~DisplayClient() {}

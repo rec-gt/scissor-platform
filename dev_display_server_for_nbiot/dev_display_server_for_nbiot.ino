@@ -1,6 +1,6 @@
 #include "DisplayOLED.h"
 
-#define PERIPHERAL_SERIAL Serial
+#define PeripheralSerial Serial
 
 DisplayOLED displayOLED;
 
@@ -13,21 +13,21 @@ String line3 = "";
 
 void setup() {
   Serial.begin(9600);
-  PERIPHERAL_SERIAL.begin(9600);
+  PeripheralSerial.begin(9600);
   displayOLED.init();
 }
 
 void sendHeartbeat() {
   if (millis() - prevMillis > 1000) {
-    PERIPHERAL_SERIAL.println("HB");
-    PERIPHERAL_SERIAL.flush();
+    PeripheralSerial.println("HB");
+    PeripheralSerial.flush();
     prevMillis = millis();
   }
 }
 
 void listen() {
-  while (PERIPHERAL_SERIAL.available() > 0) {
-    char _byte = PERIPHERAL_SERIAL.read();
+  while (PeripheralSerial.available() > 0) {
+    char _byte = PeripheralSerial.read();
 
     if (_byte != '\r' && _byte != '\n') {
       buffer += _byte;
@@ -73,6 +73,6 @@ void loop() {
   listen();
   sendHeartbeat();
   displayOLED.hbToggle = !displayOLED.hbToggle;
-  displayOLED.draw(1, 18 + random(5), random(256), random(256), random(20000), random(20000), random(20000), random(20000), random(20000), random(20000), random(20000), random(20000), random(20000), random(20000), random(20000), random(20000), random(20000), random(20000), random(20000), random(20000));
+  displayOLED.draw(0, 18 + random(5), random(256), random(256), random(20000), random(20000), random(20000), random(20000), random(20000), random(20000), random(20000), random(20000), random(20000), random(20000), random(20000), random(20000), random(20000), random(20000), random(20000), random(20000));
   delay(500);
 }

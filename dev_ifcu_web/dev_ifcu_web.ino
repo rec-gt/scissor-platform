@@ -172,8 +172,8 @@ void loop() {
       let finishInitFetch = false;
 
       let onOff = 0;
-      let roomTemp = 2400;
-      let spt = 2500;
+      let roomTemp = 0;
+      let spt = 0;
       let mode = 0;
       let fanSpeed = 0;
 
@@ -252,16 +252,9 @@ void loop() {
         }
       }
 
-      //   setInterval(() => {
-      //     if (finishInitFetch) {
-      //       pushData();
-      //     }
-      //     rerenderData();
-      //   }, 1000);
-
-      (() => {
+      setInterval(() => {
         fetchData();
-      })();
+      }, 1000);
     </script>
   </head>
 

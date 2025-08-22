@@ -32,17 +32,14 @@ public:
     /*=== Listen Input Ports ===*/
     this->listen();
 
-    /*=== For publish, pre-build payloads ===*/
-    this->buildPayloads();
-
-    /*=== For publish, prepare pub msg ===*/
-    this->preparePubMsg();
-
-    /*=== For subscribe (DO & AO only) ===*/
-    this->commandHook();
-
     /*=== Display (for NBIoT, DO, AO, DI, AI)===*/
     this->handleDisplayContent();
+
+    /*=== NBIoT Publish ===*/
+    this->buildPayloads();
+    this->preparePubMsg();
+    /*=== NBIoT Subscribe ===*/
+    this->commandHook();
   }
 
   void listen() {
@@ -88,16 +85,6 @@ public:
       }
     }
     this->AOPayload += "]";
-
-    /*=== Debug ===*/
-    Serial.print(this->DIPayload);
-    Serial.print(" | ");
-    Serial.print(this->DOPayload);
-    Serial.print(" | ");
-    Serial.print(this->AIPayload);
-    Serial.print(" | ");
-    Serial.print(this->AOPayload);
-    Serial.println();
   }
 
   void preparePubMsg() {

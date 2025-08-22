@@ -69,7 +69,6 @@ public:
     for (size_t i = 0; i < 4; i++) {
       this->aos[i] = (buffer[idx++] << 8) | buffer[idx++];
     }
-    this->debug();
   }
 
   void debug() {

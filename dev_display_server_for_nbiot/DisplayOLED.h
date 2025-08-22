@@ -59,10 +59,10 @@ public:
       int y = 7;
       u8g2.drawStr(0, y, "RGT NBIoT Controller");
       u8g2.drawStr(108, y, "V2.0");
-      u8g2.drawLine(0, 9, 128, 9);
+      u8g2.drawLine(0, 8, 128, 8);
 
       /*=== DI ===*/
-      y = 18;
+      y = 17;
 
       u8g2.drawStr(0, y, "Di");
       for (size_t i = 0; i < 8; i++) {
@@ -74,10 +74,10 @@ public:
       for (size_t i = 0; i < 8; i++) {
         u8g2.drawStr(87 + 5 * i, y, bitRead(doValue, i) ? "1" : "0");
       }
-      u8g2.drawLine(0, 20, 128, 20);
+      u8g2.drawLine(0, 18, 128, 18);
 
       /*=== AI ===*/
-      y = 29;
+      y = 27;
       u8g2.drawStr(0, y, "Ai");
       u8g2.setCursor(12, y);
       u8g2.print(ai1);
@@ -87,7 +87,7 @@ public:
       u8g2.print(ai3);
       u8g2.setCursor(102, y);
       u8g2.print(ai4);
-      y = 37;
+      y = 35;
       u8g2.setCursor(12, y);
       u8g2.print(ai5);
       u8g2.setCursor(42, y);
@@ -96,7 +96,7 @@ public:
       u8g2.print(ai7);
       u8g2.setCursor(102, y);
       u8g2.print(ai8);
-      y = 45;
+      y = 43;
       u8g2.setCursor(12, y);
       u8g2.print(ai9);
       u8g2.setCursor(42, y);
@@ -105,28 +105,29 @@ public:
       u8g2.print(ai11);
       u8g2.setCursor(102, y);
       u8g2.print(ai12);
-      u8g2.drawLine(0, 47, 128, 47);
+      u8g2.drawLine(0, 44, 128, 44);
 
       /*=== AO ===*/
-      y = 56;
+      y = 53;
       u8g2.drawStr(0, y, "Ao");
       u8g2.setCursor(12, y);
       u8g2.print(ao1);
       u8g2.setCursor(42, y);
       u8g2.print(ao2);
-      u8g2.drawStr(76, y, "IoT CSQ");
-      u8g2.setCursor(116, y);
-      u8g2.print(iotCsq);
-      y = 64;
-      u8g2.setCursor(12, y);
+      u8g2.setCursor(72, y);
       u8g2.print(ao3);
-      u8g2.setCursor(42, y);
+      u8g2.setCursor(102, y);
       u8g2.print(ao4);
-      u8g2.drawStr(76, y, this->hbToggle ? "Hrb" : "   ");
-      u8g2.drawStr(96, y, "CONN");
-      u8g2.setCursor(121, y);
-      u8g2.print(iotConn);
+      u8g2.drawLine(0, 54, 128, 54);
 
+      y = 63;
+      u8g2.drawStr(0, y, "IoT CSQ");
+      u8g2.setCursor(30, y);
+      u8g2.print(iotCsq);
+      u8g2.drawStr(60, y, "CONN");
+      u8g2.setCursor(80, y);
+      u8g2.print(iotConn);
+      u8g2.drawStr(106, y, this->hbToggle ? "Hrb" : "   ");
     } while (u8g2.nextPage());
   }
 

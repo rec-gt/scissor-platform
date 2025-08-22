@@ -1,39 +1,19 @@
 #include <OneWire.h>
 #include <DallasTemperature.h>
 
-#define DQ_Pin 3
+#define DQ_Pin 2
 
-OneWire oneWire1(2);
-OneWire oneWire2(3);
-DallasTemperature sensors1(&oneWire1);
-DallasTemperature sensors2(&oneWire2);
+OneWire oneWire(DQ_Pin);
+DallasTemperature sensors(&oneWire);
 
 void setup(void) {
   Serial.begin(9600);
-  sensors1.begin();
-  sensors2.begin();
-  pinMode(A0, INPUT);
+  sensors.begin();
 }
 
 void loop(void) {
-  Serial.println("====");
-
-  // Serial.print("Temp1 --> ");
-  // sensors1.requestTemperatures();
-  // Serial.print(sensors1.getTempCByIndex(0));
-  // Serial.println();
-
-  // Serial.print("Temp2 --> ");
-  // sensors2.requestTemperatures();
-  // Serial.print(sensors2.getTempCByIndex(0));
-
-  // Serial.println();
-  // Serial.println("====");
-
-  Serial.print("Temp3 --> ");
-  Serial.print(analogRead(A0));
-  Serial.print(", ");
-  Serial.print(map(analogRead(A0), 204.6, 1023, 0, 20000)/100.);
-
-  delay(1000);
+  Serial.print("Temperatures --> ");
+  sensors.requestTemperatures();
+  Serial.println(sensors.getTempCByIndex(0));
+  delay(2000);
 }

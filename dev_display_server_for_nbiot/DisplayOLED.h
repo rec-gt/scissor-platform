@@ -121,13 +121,13 @@ public:
       u8g2.drawLine(0, 54, 128, 54);
 
       y = 63;
-      u8g2.drawStr(0, y, "IoT CSQ");
-      u8g2.setCursor(30, y);
+      u8g2.drawStr(0, y, "NBIoT CSQ");
+      u8g2.setCursor(50, y);
       u8g2.print(iotCsq);
-      u8g2.drawStr(60, y, "CONN");
-      u8g2.setCursor(80, y);
+      u8g2.drawStr(65, y, "CONN");
+      u8g2.setCursor(90, y);
       u8g2.print(iotConn);
-      u8g2.drawStr(106, y, this->hbToggle ? "Hrb" : "   ");
+      u8g2.drawStr(102, y, this->hbToggle ? "Hrtbt" : "     ");
     } while (u8g2.nextPage());
   }
 

@@ -6,14 +6,9 @@ SerialRecv serialRecv;
 
 unsigned long prevMillis = 0;
 
-String buffer = "";
-String line1 = "";
-String line2 = "";
-String line3 = "";
-
 void setup() {
-  Serial.begin(9600);
-  PeripheralSerial.begin(9600);
+  Serial.begin(115200);
+  PeripheralSerial.begin(115200);
   displayOLED.init();
 }
 
@@ -22,50 +17,6 @@ void sendHeartbeat() {
     PeripheralSerial.println("HB");
     PeripheralSerial.flush();
     prevMillis = millis();
-  }
-}
-
-void listen() {
-  while (PeripheralSerial.available() > 0) {
-    char _byte = PeripheralSerial.read();
-
-    if (_byte != '\r' && _byte != '\n') {
-      buffer += _byte;
-    }
-
-    if (_byte == '\r') {
-      int delimiterIdx1 = buffer.indexOf(";");
-
-      if (delimiterIdx1 != -1) {
-        line1 = buffer.substring(0, delimiterIdx1);
-
-        int delimiterIdx2 = buffer.indexOf(";", delimiterIdx1 + 1);
-
-        if (delimiterIdx2 != -1) {
-          line2 = buffer.substring(delimiterIdx1 + 1, delimiterIdx2);
-          line3 = buffer.substring(delimiterIdx2 + 1);
-
-          int delimiterIdx3 = buffer.indexOf(";", delimiterIdx2 + 1);
-          if (delimiterIdx3 != -1) {
-            line3 = buffer.substring(delimiterIdx2 + 1, delimiterIdx3);
-          }
-
-        } else {
-          line2 = buffer.substring(delimiterIdx1 + 1, delimiterIdx2);
-        }
-
-      } else {
-        line1 = buffer;
-      }
-
-      displayOLED.print(line1.c_str(), line2.c_str(), line3.c_str());
-      buffer = "";
-      line1 = "";
-      line2 = "";
-      line3 = "";
-    }
-
-    delay(1);
   }
 }
 

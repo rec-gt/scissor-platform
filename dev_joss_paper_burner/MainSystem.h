@@ -40,6 +40,7 @@ public:
     this->commandHook();
 
     /*=== Display (for NBIoT, DO, AO, DI, AI)===*/
+    this->handleDisplayContent();
   }
 
   void listen() {
@@ -141,6 +142,14 @@ public:
     }
 
     Serial.println(msg);
+  }
+
+  void handleDisplayContent() {
+    displayClient.prepareBuffer(0, 18 + random(5), random(256), random(256), analogInputs, analogOutputs);
+    displayClient.debug();
+    displayClient.sendBuffer();
+    displayClient.debug();
+    delay(1000);
   }
 
   ~MainSystem() {}

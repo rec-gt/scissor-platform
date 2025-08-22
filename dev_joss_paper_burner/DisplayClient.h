@@ -8,7 +8,15 @@
 
 class DisplayClient {
 private:
-  uint8_t buffer[22];
+  uint8_t buffer[39];
+
+  uint8_t getChecksum(uint8_t *buffer, uint8_t idx_from, uint8_t idx_to) {
+    uint8_t checksum = 0;
+    for (uint8_t i = idx_from; i <= idx_to; i++) {
+      checksum += buffer[i];
+    }
+    return checksum;
+  }
 
 public:
   DisplayClient(){};
@@ -32,11 +40,22 @@ public:
       this->buffer[idx++] = aos[i].value & 0xFF;
     }
 
+    this->buffer[idx++] = getChecksum(this->buffer, 1, 36);
+
     this->buffer[idx++] = 0x5D;  // ']'
   }
 
   void sendBuffer() {
     DisplaySerial.write(this->buffer, sizeof(this->buffer));
+    DisplaySerial.flush();
+  }
+
+  void debug() {
+    for (size_t i = 0; i < 39; i++) {
+      Serial.print(this->buffer[i]);
+      Serial.print(", ");
+    }
+    Serial.println();
   }
 
   ~DisplayClient() {}

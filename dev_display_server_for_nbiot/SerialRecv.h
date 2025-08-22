@@ -1,12 +1,12 @@
 #ifndef SerialRecv_H
 #define SerialRecv_H
-#define PeripheralSerial Serial
+#define PeripheralSerial Serial2
 
 class SerialRecv {
 private:
   const uint8_t START_MARKER = 0x5B;  // '['
   const uint8_t END_MARKER = 0x5D;    // ']'
-  uint8_t buffer[22];                 // START_MARKER + 7 + checksum + END_MARKER
+  uint8_t buffer[39];                 // START_MARKER + 7 + checksum + END_MARKER
   uint8_t idx = 0;
   bool isReceiving = false;
 
@@ -44,15 +44,15 @@ public:
           this->isReceiving = false;
           this->idx = 0;
 
-          uint8_t payloadChecksum = this->buffer[21];
-          uint8_t calculatedChecksum = this->getChecksum(this->buffer, 1, 20);
-
+          uint8_t payloadChecksum = this->buffer[37];
+          uint8_t calculatedChecksum = this->getChecksum(this->buffer, 1, 36);
           if (payloadChecksum == calculatedChecksum) {
             this->extractValues();
           }
         }
       }
     }
+    Serial.println();
   }
 
   void extractValues() {

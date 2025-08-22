@@ -6,13 +6,6 @@
 U8G2_SSD1309_128X64_NONAME0_1_HW_I2C u8g2(U8G2_R0, U8X8_PIN_NONE);
 
 class DisplayOLED {
-private:
-  void padString(String &str, int length) {
-    while (str.length() < length) {
-      str = " " + str;
-    }
-  }
-
 public:
   bool heartbeatToggle = true;
 
@@ -53,7 +46,7 @@ public:
     this->heartbeatToggle = !this->heartbeatToggle;
 
     u8g2.firstPage();
-    
+
     do {
       int y = 7;
       u8g2.drawStr(0, y, "RGT NBIoT Controller");

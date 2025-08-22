@@ -4,6 +4,7 @@
 DisplayOLED displayOLED;
 SerialRecv serialRecv;
 
+uint8_t hbCnt = 0;
 unsigned long prevMillis = 0;
 
 void setup() {
@@ -12,17 +13,8 @@ void setup() {
   displayOLED.init();
 }
 
-void sendHeartbeat() {
-  if (millis() - prevMillis > 1000) {
-    PeripheralSerial.println("HB");
-    PeripheralSerial.flush();
-    prevMillis = millis();
-  }
-}
-
 void loop() {
   serialRecv.listen();
-  sendHeartbeat();
   displayOLED.draw(
     serialRecv.nbiotConn,
     serialRecv.nbiotCsq,
@@ -44,5 +36,15 @@ void loop() {
     serialRecv.aos[1],
     serialRecv.aos[2],
     serialRecv.aos[3]);
+
+  if (hbCnt < 10) {
+    hbCnt++;
+  } else {
+    uint8_t sendBuffer[1] = { 1 };
+    PeripheralSerial.write(sendBuffer, 1);
+    PeripheralSerial.flush();
+    hbCnt = 0;
+  }
+
   delay(500);
 }

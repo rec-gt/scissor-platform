@@ -63,11 +63,11 @@ public:
     this->dos = buffer[idx++];
 
     for (size_t i = 0; i < 12; i++) {
-      this->ais[i] = (buffer[idx++] << 8) & buffer[idx++];
+      this->ais[i] = (buffer[idx++] << 8) | buffer[idx++];
     }
 
     for (size_t i = 0; i < 4; i++) {
-      this->aos[i] = (buffer[idx++] << 8) & buffer[idx++];
+      this->aos[i] = (buffer[idx++] << 8) | buffer[idx++];
     }
     this->debug();
   }

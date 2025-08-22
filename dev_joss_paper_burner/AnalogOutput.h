@@ -23,6 +23,7 @@ public:
   }
 
   uint16_t getValue() {
+    this->value = 10000 + random(10000);
     return this->value;
   }
 };

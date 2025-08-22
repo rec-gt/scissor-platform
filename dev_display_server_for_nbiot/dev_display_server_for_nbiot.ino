@@ -1,8 +1,8 @@
 #include "DisplayOLED.h"
-
-#define PeripheralSerial Serial
+#include "SerialRecv.h"
 
 DisplayOLED displayOLED;
+SerialRecv serialRecv;
 
 unsigned long prevMillis = 0;
 
@@ -70,7 +70,7 @@ void listen() {
 }
 
 void loop() {
-  listen();
+  serialRecv.listen();
   sendHeartbeat();
   displayOLED.hbToggle = !displayOLED.hbToggle;
   displayOLED.draw(0, 18 + random(5), random(256), random(256), random(20000), random(20000), random(20000), random(20000), random(20000), random(20000), random(20000), random(20000), random(20000), random(20000), random(20000), random(20000), random(20000), random(20000), random(20000), random(20000));

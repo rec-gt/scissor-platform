@@ -1,5 +1,6 @@
 #ifndef SerialRecv_H
 #define SerialRecv_H
+#define PeripheralSerial Serial
 
 class SerialRecv {
 private:
@@ -9,9 +10,9 @@ private:
   uint8_t idx = 0;
   bool isReceiving = false;
 
-  uint8_t getChecksum(uint8_t buffer*, uint8_t idx_from, uint8_t idx_to) {
+  uint8_t getChecksum(uint8_t *buffer, uint8_t idx_from, uint8_t idx_to) {
     uint8_t checksum = 0;
-    for (uint8_t i = 1; i < FRAME_SIZE - 1; i++) {
+    for (uint8_t i = idx_from; i <= idx_to; i++) {
       checksum += buffer[i];
     }
     return checksum;
@@ -50,24 +51,6 @@ public:
             this->extractValues();
           }
         }
-
-        // if (this->idx == FRAME_SIZE) {
-        //   this->isReceiving = false;
-        //   this->idx = 0;
-
-        //   uint8_t checksum = 0;
-        //   for (uint8_t i = 1; i < FRAME_SIZE - 1; i++) {
-        //     checksum += this->buffer[i];
-        //   }
-
-        //   if (checksum == buffer[FRAME_SIZE - 1]) {
-        //     this->values[0] = buffer[1];
-        //     this->values[1] = buffer[2] | (buffer[3] << 8);
-        //     this->values[2] = buffer[4] | (buffer[5] << 8);
-        //     this->values[3] = buffer[6];
-        //     this->values[4] = buffer[7];
-        //   }
-        // }
       }
     }
   }
@@ -87,6 +70,8 @@ public:
     for (size_t i = 0; i < 4; i++) {
       this->aos[i] = (buffer[idx++] << 8) & buffer[idx++];
     }
+
+    this->debug();
   }
 
   void debug() {
@@ -94,7 +79,7 @@ public:
     Serial.println(this->nbiotCsq);
     Serial.println(this->dis);
     Serial.println(this->dos);
-    
+
     for (size_t i = 0; i < 12; i++) {
       Serial.print(this->ais[i]);
       Serial.print(", ");
@@ -112,5 +97,4 @@ public:
 };
 
 extern SerialRecv serialRecv;
-
 #endif

@@ -21,6 +21,8 @@ private:
   String AIPayload = "";
   String AOPayload = "";
 
+  unsigned long prevMillisDisplay;
+
 public:
   MainSystem(DigitalInput *digitalInputs, DigitalOutput *digitalOutputs, AnalogInput *analogInputs, AnalogOutput *analogOutputs)
     : digitalInputs(digitalInputs), digitalOutputs(digitalOutputs), analogInputs(analogInputs), analogOutputs(analogOutputs) {
@@ -145,11 +147,11 @@ public:
   }
 
   void handleDisplayContent() {
-    displayClient.prepareBuffer(0, 18 + random(5), random(256), random(256), analogInputs, analogOutputs);
-    displayClient.debug();
-    displayClient.sendBuffer();
-    displayClient.debug();
-    delay(1000);
+    if (millis() - this->prevMillisDisplay > 1000) {
+      displayClient.prepareBuffer(0, 18 + random(5), random(256), random(256), analogInputs, analogOutputs);
+      displayClient.sendBuffer();
+      this->prevMillisDisplay = millis();
+    }
   }
 
   ~MainSystem() {}

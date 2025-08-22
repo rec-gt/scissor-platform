@@ -7,8 +7,8 @@ SerialRecv serialRecv;
 unsigned long prevMillis = 0;
 
 void setup() {
-  Serial.begin(115200);
-  PeripheralSerial.begin(115200);
+  Serial.begin(9600);
+  PeripheralSerial.begin(9600);
   displayOLED.init();
 }
 

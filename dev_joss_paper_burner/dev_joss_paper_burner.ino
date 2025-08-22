@@ -107,7 +107,7 @@ void setup() {
   // nbiot.init(true);
 
   /*=== Display ===*/
-  DisplaySerial.begin(115200);
+  DisplaySerial.begin(9600);
 
   // analogReference(EXTERNAL);
 }

@@ -1,6 +1,6 @@
 #ifndef SerialRecv_H
 #define SerialRecv_H
-#define PeripheralSerial Serial
+#define PeripheralSerial Serial2
 
 class SerialRecv {
 private:

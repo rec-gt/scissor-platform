@@ -7,18 +7,14 @@ U8G2_SSD1309_128X64_NONAME0_1_HW_I2C u8g2(U8G2_R0, U8X8_PIN_NONE);
 
 class DisplayOLED {
 private:
-  String padString(String str, int length) {
-    int originalLength = str.length();
-
+  void padString(String &str, int length) {
     while (str.length() < length) {
-      str += " ";
+      str = " " + str;
     }
-
-    return str;
   }
 
 public:
-  bool hbToggle = true;
+  bool heartbeatToggle = true;
 
   DisplayOLED() {}
 
@@ -54,6 +50,8 @@ public:
     uint16_t ao2,
     uint16_t ao3,
     uint16_t ao4) {
+    this->heartbeatToggle = !this->heartbeatToggle;
+
     u8g2.firstPage();
     do {
       int y = 7;
@@ -127,19 +125,8 @@ public:
       u8g2.drawStr(65, y, "CONN");
       u8g2.setCursor(90, y);
       u8g2.print(iotConn);
-      u8g2.drawStr(102, y, this->hbToggle ? "Hrtbt" : "     ");
+      u8g2.drawStr(102, y, this->heartbeatToggle ? "Hrtbt" : "     ");
     } while (u8g2.nextPage());
-  }
-
-  void print(char* line1, char* line2, char* line3) {
-    u8g2.clearBuffer();
-    u8g2.setCursor(0, 18);
-    u8g2.print(line1);
-    u8g2.setCursor(0, 40);
-    u8g2.print(line2);
-    u8g2.setCursor(0, 62);
-    u8g2.print(line3);
-    u8g2.sendBuffer();
   }
 
   ~DisplayOLED(){};

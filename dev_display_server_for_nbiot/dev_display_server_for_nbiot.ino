@@ -23,7 +23,6 @@ void sendHeartbeat() {
 void loop() {
   serialRecv.listen();
   sendHeartbeat();
-  displayOLED.hbToggle = !displayOLED.hbToggle;
   displayOLED.draw(
     serialRecv.nbiotConn,
     serialRecv.nbiotCsq,

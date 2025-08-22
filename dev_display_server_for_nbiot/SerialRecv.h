@@ -52,7 +52,6 @@ public:
         }
       }
     }
-    Serial.println();
   }
 
   void extractValues() {
@@ -97,4 +96,5 @@ public:
 };
 
 extern SerialRecv serialRecv;
+
 #endif

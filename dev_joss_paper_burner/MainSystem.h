@@ -137,6 +137,7 @@ public:
     if (millis() - this->prevMillisDisplay > 2000) {
       displayClient.prepareBuffer(0, 18 + random(5), random(256), random(256), analogInputs, analogOutputs);
       displayClient.sendBuffer();
+      displayClient.debug();
       this->prevMillisDisplay = millis();
     }
   }

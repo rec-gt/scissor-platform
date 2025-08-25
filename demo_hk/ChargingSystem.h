@@ -5,6 +5,7 @@
 #include "Thermometer.h"
 #include "Ammeter.h"
 #include "PressButton.h"
+#include "NBIoT.h"
 
 #ifndef ChargingSystem_h
 #define ChargingSystem_h
@@ -109,33 +110,31 @@ public:
   }
 
   void preparePublishMsg() {
-    nbiot.pubMsgContent = "{\"csq\":";
-    pubMsgContent.concat(nbiot.CSQ);
-    pubMsgContent.concat(",");
-    pubMsgContent.concat("\"cgatt\":");
-    pubMsgContent.concat(nbiot.CGATT);
-    pubMsgContent.concat(",");
-    pubMsgContent.concat("\"cereg\":\"");
-    pubMsgContent.concat(nbiot.CEREG);
-    pubMsgContent.concat("\"");
-    pubMsgContent.concat(",");
-    pubMsgContent.concat("\"din\":");
-    pubMsgContent.concat(String(sensorManager.sensorStatusX8));
-    pubMsgContent.concat(",");
-    pubMsgContent.concat("\"dout\":");
-    pubMsgContent.concat(String(sensorManager.sensorStatusX4));
-    pubMsgContent.concat("}");
+    nbiot.pubMsgPayload = "{\"csq\":";
+    nbiot.pubMsgPayload.concat(nbiot.CSQ);
+    nbiot.pubMsgPayload.concat(",");
+    nbiot.pubMsgPayload.concat("\"cgatt\":");
+    nbiot.pubMsgPayload.concat(nbiot.CGATT);
+    nbiot.pubMsgPayload.concat(",");
+    nbiot.pubMsgPayload.concat("\"cereg\":\"");
+    nbiot.pubMsgPayload.concat(nbiot.CEREG);
+    nbiot.pubMsgPayload.concat("\"");
+    nbiot.pubMsgPayload.concat(",");
+    nbiot.pubMsgPayload.concat("\"din\":");
+    nbiot.pubMsgPayload.concat("255");
+    nbiot.pubMsgPayload.concat(",");
+    nbiot.pubMsgPayload.concat("\"dout\":");
+    nbiot.pubMsgPayload.concat("255");
+    nbiot.pubMsgPayload.concat("}");
 
-    int contentLen = pubMsgContent.length();
+    nbiot.pubMsgPrepare = "AT+QMTPUB=0,0,0,0,rgt/";
+    nbiot.pubMsgPrepare.concat(nbiot.IMEI);
+    nbiot.pubMsgPrepare.concat("/in,");
+    nbiot.pubMsgPrepare.concat(String(nbiot.pubMsgPayload.length()));
 
-    publishMsgPrepare = "AT+QMTPUB=0,0,0,0,rgt/";
-    publishMsgPrepare.concat(nbiot.IMEI);
-    publishMsgPrepare.concat("/in,");
-    publishMsgPrepare.concat(String(contentLen));
-
-    publishMsgForce = publishMsgPrepare;
-    publishMsgForce.concat(",");
-    publishMsgForce.concat(pubMsgContent);
+    nbiot.pubMsgCommand = nbiot.pubMsgPrepare;
+    nbiot.pubMsgCommand.concat(",");
+    nbiot.pubMsgCommand.concat(nbiot.pubMsgPayload);
   }
 
   void listen() {

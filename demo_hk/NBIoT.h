@@ -114,6 +114,10 @@ public:
   String pubMsgPrepare = "";
   String pubMsgCommand = "";
 
+  // for subscribe
+  String subMsgContent = "";
+  String subMsgPayload = "";
+
   NBIoT() {
     NBIoTSerial.begin(9600);
     pinMode(this->resetPin, OUTPUT);
@@ -553,10 +557,10 @@ public:
       int endPos = serialRes.indexOf("]", startPos);
 
       if (startPos > -1 && endPos > -1) {
-        subRecvContent = serialRes.substring(startPos + 1, endPos);
-        Serial.print(subRecvContent);
+        this->subMsgContent = serialRes.substring(startPos + 1, endPos);
+        Serial.print(this->subMsgContent);
       } else {
-        subRecvContent = "";
+        this->subMsgContent = "";
       }
     }
   }
@@ -576,8 +580,8 @@ public:
   }
 
   String readRecvMsg() {
-    String res = subRecvContent;
-    subRecvContent = "";
+    String res = this->subMsgContent;
+    this->subMsgContent = "";
     return res;
   }
 

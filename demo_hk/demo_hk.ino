@@ -15,6 +15,5 @@ void setup() {
 void loop() {
   chargingSystem.listen();
   wdt_reset();
-  delay(10);
   delay(1000);
 }

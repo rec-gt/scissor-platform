@@ -113,7 +113,6 @@ public:
   }
 
   void handlePublishMsg() {
-
   }
 
   void listen() {
@@ -123,7 +122,6 @@ public:
 
     this->collectData();
     this->preparePublishMsg();
-
     this->handleModeChange();
   }
 
@@ -131,12 +129,12 @@ public:
   void setMode(SYSTEM_MODE mode) {
     this->M = mode;
     if (this->modeIs(MODE_RUNNING)) {
-      chargingRelay.cut();
-      alarmRelay.connect();
-    } else if (this->modeIs(MODE_STOPPED)) {
-      nbiot.forcePublish();
       chargingRelay.connect();
       alarmRelay.cut();
+    } else if (this->modeIs(MODE_STOPPED)) {
+      nbiot.forcePublish();
+      chargingRelay.cut();
+      alarmRelay.connect();
     }
   }
 

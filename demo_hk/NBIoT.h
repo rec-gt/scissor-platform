@@ -284,7 +284,6 @@ public:
       if (this->pubState == PIPELINE_FINISH_CEREG) {
         if (nbiotTimer.autoExpired(13000)) {
           Serial.print("\r\nEXECUTE REGULAR PUBLISH\r\n");
-          Serial.print(this->pubMsgPayload);
           this->printlnFlush(this->pubMsgPrepare);
           this->pubState = PIPELINE_WAITING_PREPARE_PUBMSG;
         }

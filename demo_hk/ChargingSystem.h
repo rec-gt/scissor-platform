@@ -55,31 +55,6 @@ public:
     return crc == 37;
   }
 
-  void waitMsg() {
-    if (LoRaSerial.available() >= RECV_BUFFER_SIZE) {
-      LoRaSerial.readBytes(recvBuffer, RECV_BUFFER_SIZE);
-
-      this->CRC = recvBuffer[24] | (recvBuffer[25] << 8) | (recvBuffer[26] << 16) | (recvBuffer[27] << 24);
-
-      if (!validateCRC(this->CRC)) {
-        this->pruneSerialBuffer();
-        this->portCanSend = false;
-      } else {
-        this->SPT = recvBuffer[0] | (recvBuffer[1] << 8) | (recvBuffer[2] << 16) | (recvBuffer[3] << 24);
-        this->SPA = recvBuffer[4] | (recvBuffer[5] << 8) | (recvBuffer[6] << 16) | (recvBuffer[7] << 24);
-        this->M = recvBuffer[8] | (recvBuffer[9] << 8) | (recvBuffer[10] << 16) | (recvBuffer[11] << 24);
-        this->SIM_AT = recvBuffer[12] | (recvBuffer[13] << 8) | (recvBuffer[14] << 16) | (recvBuffer[15] << 24);
-        this->SIM_ST = recvBuffer[16] | (recvBuffer[17] << 8) | (recvBuffer[18] << 16) | (recvBuffer[19] << 24);
-        this->SIM_A = recvBuffer[20] | (recvBuffer[21] << 8) | (recvBuffer[22] << 16) | (recvBuffer[23] << 24);
-
-        Serial.println(String(this->SPT) + ", " + String(this->SPA) + ", " + String(this->M) + ", " + String(this->SIM_AT) + ", " + String(this->SIM_ST) + ", " + String(this->SIM_A));
-        this->portCanSend = true;
-        this->pruneSerialBuffer();
-        this->sendStatus();
-      }
-    }
-  }
-
   void pruneSerialBuffer() {
     while (LoRaSerial.read() > 0) {};
   }
@@ -130,11 +105,15 @@ public:
     nbiot.pubMsgPrepare = "AT+QMTPUB=0,0,0,0,rgt/";
     nbiot.pubMsgPrepare.concat(nbiot.IMEI);
     nbiot.pubMsgPrepare.concat("/in,");
-    nbiot.pubMsgPrepare.concat(String(nbiot.pubMsgPayload.length()));
+    nbiot.pubMsgPrepare.concat(nbiot.pubMsgPayload.length());
 
     nbiot.pubMsgCommand = nbiot.pubMsgPrepare;
     nbiot.pubMsgCommand.concat(",");
     nbiot.pubMsgCommand.concat(nbiot.pubMsgPayload);
+  }
+
+  void handlePublishMsg() {
+
   }
 
   void listen() {
@@ -143,27 +122,11 @@ public:
     ammeter.listen();
 
     this->collectData();
-    this->handleModeChange();
     this->preparePublishMsg();
+
+    this->handleModeChange();
   }
 
-  void sendStatus() {
-    if (!this->portCanSend) { return; }
-
-    int data[8] = { this->AT, this->ST, this->A, this->SPT, this->SPA, this->C, this->M, 37 };
-    LoRaSerial.write((byte*)data, sizeof(data));
-
-    String stats = "AT:" + String(this->AT) + ","
-                   + "ST:" + String(this->ST) + ","
-                   + "A:" + String(this->A) + ","
-                   + "SPT:" + String(this->SPT) + ","
-                   + "SPA:" + String(this->SPA) + ","
-                   + "C:" + String(this->C) + ","
-                   + "M:" + String(this->M);
-    Serial.println(stats);
-
-    // LoRaSerial.println(stats);
-  }
 
   void setMode(SYSTEM_MODE mode) {
     this->M = mode;
@@ -171,6 +134,7 @@ public:
       chargingRelay.cut();
       alarmRelay.connect();
     } else if (this->modeIs(MODE_STOPPED)) {
+      nbiot.forcePublish();
       chargingRelay.connect();
       alarmRelay.cut();
     }
@@ -178,17 +142,6 @@ public:
 
   bool modeIs(SYSTEM_MODE mode) {
     return this->M == mode;
-  }
-
-  void power(bool on) {
-    if (on) {
-      relay.connect();
-      this->C = 1;
-    } else {
-      relay.cut();
-      this->C = 0;  // set charge to 0
-      this->A = 0;  // pseudo 0 current, prevent throttle
-    }
   }
 
   ~ChargingSystem(void){};

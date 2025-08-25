@@ -10,7 +10,7 @@ Utils utils;
 
 void setup() {
   Serial.begin(9600);
-  LoRaSerial.begin(9600);
+  NBIoTSerial.begin(9600);
   wdt_enable(WDTO_8S);
 }
 

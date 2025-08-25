@@ -9,7 +9,6 @@
 
 #ifndef ChargingSystem_h
 #define ChargingSystem_h
-#define LoRaSerial Serial1
 
 #define SIM_RECOVERED 0
 #define SIM_STOPPED_BY_AMBIENT_TEMP 1
@@ -50,14 +49,6 @@ private:
 
 public:
   ChargingSystem(void){};
-
-  bool validateCRC(int crc) {
-    return crc == 37;
-  }
-
-  void pruneSerialBuffer() {
-    while (LoRaSerial.read() > 0) {};
-  }
 
   void collectData() {
     this->AT = thermometer1.get();

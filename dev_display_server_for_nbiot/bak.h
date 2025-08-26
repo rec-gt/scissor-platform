@@ -10,7 +10,7 @@ uint16_t hbCnt = 0;
 void (*resetFunc)(void) = 0;
 
 void autoReset() {
-  if (hbCnt < 7200) {  // 7200 = 1hr, 3600 = 30mins, 1800 = 15mins, 900 = 7.5mins
+  if (hbCnt < 7200) {
     hbCnt++;
     return;
   }

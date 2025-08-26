@@ -568,10 +568,9 @@ public:
     }
   }
 
-  String readRecvMsg() {
-    String res = this->subMsgContent;
+  void readRecvMsg(String& assign) {
+    assign = this->subMsgContent;
     this->subMsgContent = "";
-    return res;
   }
 
   ~NBIoT() {}

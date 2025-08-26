@@ -36,11 +36,10 @@ public:
     this->handleDisplayContent();
 
     /*=== NBIoT Publish ===*/
-    this->buildPayloads();
-    this->preparePubMsg();
+    this->handlePublishContent();
 
     /*=== NBIoT Subscribe ===*/
-    this->commandHook();
+    this->handleSubscribeContent();
   }
 
   void listen() {
@@ -54,7 +53,17 @@ public:
     }
   }
 
-  void buildPayloads() {
+  void handleDisplayContent() {
+    if (millis() - this->prevMillisDisplay > 2000) {
+      displayClient.prepareBuffer(0, 18 + random(5), random(256), random(256), analogInputs, analogOutputs);
+      displayClient.sendBuffer();
+      this->prevMillisDisplay = millis();
+    }
+  }
+
+  void handlePublishContent() {
+    /*=== 1. build the payload ===*/
+
     /*=== DI ===*/
     this->DIPayload = 0;
     for (size_t i = 0; i < DI_NUMS; i++) {
@@ -86,9 +95,8 @@ public:
       }
     }
     this->AOPayload += "]";
-  }
 
-  void preparePubMsg() {
+    /*=== 2. prepare the msg to be published ===*/
     nbiot.pubMsgPayload = "{\"csq\":";
     nbiot.pubMsgPayload.concat(nbiot.CSQ);
     nbiot.pubMsgPayload.concat(",");
@@ -122,22 +130,16 @@ public:
     nbiot.pubMsgCommand.concat(nbiot.pubMsgPayload);
   }
 
-  void commandHook() {
-    String msg = nbiot.readRecvMsg();
+  void handleSubscribeContent() {
+    String msg = "";
+    
+    nbiot.readRecvMsg(msg);
 
     if (msg.length() <= 0) {
       return;
     }
 
     Serial.println(msg);
-  }
-
-  void handleDisplayContent() {
-    if (millis() - this->prevMillisDisplay > 2000) {
-      displayClient.prepareBuffer(0, 18 + random(5), random(256), random(256), analogInputs, analogOutputs);
-      displayClient.sendBuffer();
-      this->prevMillisDisplay = millis();
-    }
   }
 
   ~MainSystem() {}

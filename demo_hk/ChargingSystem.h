@@ -35,7 +35,7 @@ private:
   int ST = 2500;  // station temp
   int A = 100;    // current
 
-  int SPT = 3200;        // set-point temperature
+  int SPT = 3000;        // set-point temperature
   int SPA = 250;         // set-point current
   int M = MODE_STOPPED;  // system mode
 

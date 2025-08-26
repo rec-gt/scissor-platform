@@ -55,7 +55,7 @@ public:
 
   void handleDisplayContent() {
     if (millis() - this->prevMillisDisplay > 2000) {
-      displayClient.prepareBuffer(0, 18 + random(5), random(256), random(256), analogInputs, analogOutputs);
+      displayClient.prepareBuffer(nbiot.isConn, nbiot.CSQ.toInt(), digitalInputs, digitalOutputs, analogInputs, analogOutputs);
       displayClient.sendBuffer();
       this->prevMillisDisplay = millis();
     }
@@ -132,7 +132,7 @@ public:
 
   void handleSubscribeContent() {
     String msg = "";
-    
+
     nbiot.readRecvMsg(msg);
 
     if (msg.length() <= 0) {

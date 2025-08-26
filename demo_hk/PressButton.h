@@ -5,7 +5,7 @@ private:
   byte pin;
   byte state;
   unsigned long lastMillis;
-  
+
 public:
   PressButton(byte pin)
     : pin(pin) {
@@ -15,9 +15,8 @@ public:
 
   void listen() {
     byte reading = digitalRead(pin);
-
     if (reading == LOW) {
-      if ((millis() - this->lastMillis) > 50) {
+      if ((millis() - this->lastMillis) > 20) {
         this->state = reading;
       }
     } else {

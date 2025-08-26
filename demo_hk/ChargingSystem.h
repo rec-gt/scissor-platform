@@ -35,18 +35,9 @@ private:
   int ST = 2500;  // station temp
   int A = 100;    // current
 
-  int SPT = 3000;        // set-point temperature
+  int SPT = 6000;        // set-point temperature
   int SPA = 250;         // set-point current
   int M = MODE_STOPPED;  // system mode
-
-  int C = 1;  // relay cut=0, connect=1
-  int SIM_AT = 2500;
-  int SIM_ST = 2500;
-  int SIM_A = 1000;
-
-  int CRC = 0;
-
-  bool portCanSend = false;
 
 public:
   ChargingSystem(void) {

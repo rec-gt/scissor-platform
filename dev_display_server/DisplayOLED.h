@@ -120,7 +120,7 @@ public:
       u8g2.drawStr(67, y, "CONN");
       u8g2.setCursor(92, y);
       u8g2.print(iotConn);
-      u8g2.drawStr(102, y, this->heartbeatToggle ? "HRTBT" : "     ");
+      u8g2.drawStr(102, y, this->heartbeatToggle ? "Hrtbt" : "     ");
     } while (u8g2.nextPage());
   }
 

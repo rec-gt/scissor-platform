@@ -103,8 +103,8 @@ void setup() {
 
   /*=== NBIoT ===*/
   NBIoTSerial.begin(9600);
-  // nbiot.debug();
-  // nbiot.init(true);
+  nbiot.debug();
+  nbiot.init(true);
 
   /*=== Display ===*/
   DisplaySerial.begin(9600);
@@ -114,7 +114,7 @@ void setup() {
 
 void loop() {
   /*=== Register NBIoT ===*/
-  // nbiot.loop();
+  nbiot.loop();
 
   /*=== Register MainSystem ===*/
   mainSystem.loop();

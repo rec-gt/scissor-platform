@@ -38,6 +38,7 @@ public:
     /*=== NBIoT Publish ===*/
     this->buildPayloads();
     this->preparePubMsg();
+
     /*=== NBIoT Subscribe ===*/
     this->commandHook();
   }
@@ -88,39 +89,37 @@ public:
   }
 
   void preparePubMsg() {
-    pubMsgContent = "{\"csq\":";
-    pubMsgContent.concat(nbiot.CSQ);
-    pubMsgContent.concat(",");
-    pubMsgContent.concat("\"cgatt\":");
-    pubMsgContent.concat(nbiot.CGATT);
-    pubMsgContent.concat(",");
-    pubMsgContent.concat("\"cereg\":\"");
-    pubMsgContent.concat(nbiot.CEREG);
-    pubMsgContent.concat("\"");
-    pubMsgContent.concat(",");
-    pubMsgContent.concat("\"din\":");
-    pubMsgContent.concat(String(this->DIPayload));
-    pubMsgContent.concat(",");
-    pubMsgContent.concat("\"dout\":");
-    pubMsgContent.concat(String(this->DOPayload));
-    pubMsgContent.concat(",");
-    pubMsgContent.concat("\"ain\":");
-    pubMsgContent.concat(this->AIPayload);
-    pubMsgContent.concat(",");
-    pubMsgContent.concat("\"current\":");
-    pubMsgContent.concat(this->AOPayload);
-    pubMsgContent.concat("}");
+    nbiot.pubMsgPayload = "{\"csq\":";
+    nbiot.pubMsgPayload.concat(nbiot.CSQ);
+    nbiot.pubMsgPayload.concat(",");
+    nbiot.pubMsgPayload.concat("\"cgatt\":");
+    nbiot.pubMsgPayload.concat(nbiot.CGATT);
+    nbiot.pubMsgPayload.concat(",");
+    nbiot.pubMsgPayload.concat("\"cereg\":\"");
+    nbiot.pubMsgPayload.concat(nbiot.CEREG);
+    nbiot.pubMsgPayload.concat("\"");
+    nbiot.pubMsgPayload.concat(",");
+    nbiot.pubMsgPayload.concat("\"din\":");
+    nbiot.pubMsgPayload.concat(String(this->DIPayload));
+    nbiot.pubMsgPayload.concat(",");
+    nbiot.pubMsgPayload.concat("\"dout\":");
+    nbiot.pubMsgPayload.concat(String(this->DOPayload));
+    nbiot.pubMsgPayload.concat(",");
+    nbiot.pubMsgPayload.concat("\"ain\":");
+    nbiot.pubMsgPayload.concat(this->AIPayload);
+    nbiot.pubMsgPayload.concat(",");
+    nbiot.pubMsgPayload.concat("\"current\":");
+    nbiot.pubMsgPayload.concat(this->AOPayload);
+    nbiot.pubMsgPayload.concat("}");
 
-    int contentLen = pubMsgContent.length();
+    nbiot.pubMsgPrepare = "AT+QMTPUB=0,0,0,0,rgt/";
+    nbiot.pubMsgPrepare.concat(nbiot.IMEI);
+    nbiot.pubMsgPrepare.concat("/in,");
+    nbiot.pubMsgPrepare.concat(String(nbiot.pubMsgPayload.length()));
 
-    pubMsgPrepare = "AT+QMTPUB=0,0,0,0,rgt/";
-    pubMsgPrepare.concat(nbiot.IMEI);
-    pubMsgPrepare.concat("/in,");
-    pubMsgPrepare.concat(String(contentLen));
-
-    pubMsgForce = pubMsgPrepare;
-    pubMsgForce.concat(",");
-    pubMsgForce.concat(pubMsgContent);
+    nbiot.pubMsgCommand = nbiot.pubMsgPrepare;
+    nbiot.pubMsgCommand.concat(",");
+    nbiot.pubMsgCommand.concat(nbiot.pubMsgPayload);
   }
 
   void commandHook() {
@@ -137,7 +136,6 @@ public:
     if (millis() - this->prevMillisDisplay > 2000) {
       displayClient.prepareBuffer(0, 18 + random(5), random(256), random(256), analogInputs, analogOutputs);
       displayClient.sendBuffer();
-      displayClient.debug();
       this->prevMillisDisplay = millis();
     }
   }

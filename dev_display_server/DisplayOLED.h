@@ -114,8 +114,8 @@ public:
 
       y = 63;
       u8g2.drawStr(0, y, "NBIoT");
-      u8g2.drawStr(32, y, "CSQ-");
-      u8g2.setCursor(47, y);
+      u8g2.drawStr(32, y, "Csq-");
+      u8g2.setCursor(52, y);
       u8g2.print(iotCsq);
       u8g2.drawStr(67, y, "Conn-");
       u8g2.setCursor(92, y);

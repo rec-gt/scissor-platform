@@ -66,9 +66,6 @@ private:
 
   bool finishInit = false;
 
-  NBIOT_STATE connState = STATE_WAITING_RESET;
-  byte pipelineState = PIPELINE_DEFAULT;
-
   byte resetPin = 11;
 
   bool debugMode = false;
@@ -92,13 +89,15 @@ private:
   }
 
 public:
+  NBIOT_STATE connState = STATE_WAITING_RESET;
+  byte pipelineState = PIPELINE_DEFAULT;
+
   // for monitoring
   String IP = "";
   String CSQ = "";
   String IMEI = "";
   String CGATT = "";
   String CEREG = "";
-  bool isConn = false;
 
   // for publish
   String pubMsgPayload = "";
@@ -159,7 +158,6 @@ public:
 
   void ask() {
     if (this->connState == STATE_WAITING_RESET) {
-      this->isConn = false;
       digitalWrite(this->resetPin, LOW);
       if (nbiotTimer.autoExpired(1000)) {
         digitalWrite(this->resetPin, HIGH);
@@ -244,7 +242,6 @@ public:
 
     if (this->connState == STATE_FINISH_SUB) {
       this->finishInit = true;
-      this->isConn = true;
       this->connState = STATE_FINISH_NBIOT_INIT;
       Serial.print("\r\nFINISH INIT NBIOT\r\n");
     }

@@ -5,14 +5,17 @@
 DisplayOLED displayOLED;
 SerialRecv serialRecv;
 
-unsigned long prevMillis = millis();
+uint16_t hbCnt = 0;
 
 void (*resetFunc)(void) = 0;
 
 void autoReset() {
-  if (millis() - prevMillis > 36000000UL) {
-    resetFunc();
+  if (hbCnt < 10) {
+    hbCnt++;
+    return;
   }
+
+  resetFunc();
 }
 
 void setup() {

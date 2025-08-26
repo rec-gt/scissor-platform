@@ -5,16 +5,19 @@
 DisplayOLED displayOLED;
 SerialRecv serialRecv;
 
-uint8_t hbCnt = 0;
-unsigned long prevMillis = 0;
+unsigned long prevMillis = millis();
 
-// void (*resetFunc)(void) = 0;
+void (*resetFunc)(void) = 0;
+
+void autoReset() {
+  if (millis() - prevMillis > 36000000UL) {
+    resetFunc();
+  }
+}
 
 void setup() {
   Serial.begin(9600);
   PeripheralSerial.begin(9600);
-  pinMode(2, OUTPUT);
-  digitalWrite(2, HIGH);
   displayOLED.init();
 }
 
@@ -42,20 +45,7 @@ void loop() {
     serialRecv.aos[2],
     serialRecv.aos[3]);
 
-
-  if (hbCnt < 20) {
-    hbCnt++;
-  } else if (hbCnt == 20) {
-    uint8_t sendBuffer[1] = { 1 };
-    PeripheralSerial.write(sendBuffer, 1);
-    PeripheralSerial.flush();
-    hbCnt++;
-  } else {
-    digitalWrite(2, LOW);
-    digitalWrite(2, HIGH);
-    displayOLED.init();
-    hbCnt = 0;
-  }
+  autoReset();
 
   delay(500);
 }

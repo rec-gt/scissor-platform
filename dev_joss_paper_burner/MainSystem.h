@@ -23,6 +23,8 @@ private:
 
   unsigned long prevMillisDisplay;
 
+  String subsMsg = "";
+
 public:
   MainSystem(DigitalInput *digitalInputs, DigitalOutput *digitalOutputs, AnalogInput *analogInputs, AnalogOutput *analogOutputs)
     : digitalInputs(digitalInputs), digitalOutputs(digitalOutputs), analogInputs(analogInputs), analogOutputs(analogOutputs) {
@@ -131,15 +133,14 @@ public:
   }
 
   void handleSubscribeContent() {
-    String msg = "";
 
-    nbiot.readRecvMsg(msg);
+    nbiot.readRecvMsg(subsMsg);
 
-    if (msg.length() <= 0) {
+    if (subsMsg.length() <= 0) {
       return;
     }
 
-    Serial.println(msg);
+    Serial.println(subsMsg);
   }
 
   ~MainSystem() {}

@@ -54,16 +54,6 @@ private:
     PIPELINE_FINISH_PUBLISH,
   };
 
-  enum CONN_PIPELINE {
-    CONN_PIPELINE_DEFAULT,
-    CONN_PIPELINE_WAITING_CSQ,
-    CONN_PIPELINE_FINISH_CSQ,
-    CONN_PIPELINE_WAITING_CGATT,
-    CONN_PIPELINE_FINISH_CGATT,
-    CONN_PIPELINE_WAITING_CEREG,
-    CONN_PIPELINE_FINISH_CEREG,
-  };
-
   bool finishInit = false;
 
   byte resetPin = 11;
@@ -90,7 +80,7 @@ private:
 
 public:
   NBIOT_STATE connState = STATE_WAITING_RESET;
-  byte pipelineState = PIPELINE_DEFAULT;
+  PUBSUB_PIPELINE pipelineState = PIPELINE_DEFAULT;
 
   // for monitoring
   String IP = "";
@@ -158,6 +148,12 @@ public:
 
   void ask() {
     if (this->connState == STATE_WAITING_RESET) {
+      this->IP = "";
+      this->CSQ = "";
+      this->IMEI = "";
+      this->CGATT = "";
+      this->CEREG = "";
+
       digitalWrite(this->resetPin, LOW);
       if (nbiotTimer.autoExpired(1000)) {
         digitalWrite(this->resetPin, HIGH);

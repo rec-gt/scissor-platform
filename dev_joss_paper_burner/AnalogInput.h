@@ -60,8 +60,8 @@ public:
   }
 
   uint16_t getValue(bool w = true) {  // turn ewma on or off
-    this->value = 10000 + random(10000);
-    return this->value;
+    // this->value = 10000 + random(10000);
+    // return this->value;
     
     switch (this->mappingMode) {
       case AI_MAPPING_MODE_4_20MA:

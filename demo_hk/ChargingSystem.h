@@ -64,6 +64,8 @@ public:
     this->AT = thermometer1.get();
     this->ST = thermometer2.get();
     this->A = ammeter.get();
+
+    this->debug();
   }
 
   void preparePublishMsg() {

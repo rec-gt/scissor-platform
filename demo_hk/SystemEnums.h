@@ -7,8 +7,8 @@ enum SYSTEM_MODE {
 };
 
 enum OPERATION_MODE {
-  OP_RUNNING,
   OP_STOPPED,
+  OP_RUNNING,
 };
 
 #endif

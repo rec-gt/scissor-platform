@@ -16,7 +16,7 @@ public:
     for (size_t i = 0; i < 64; i++) {
       avg += analogRead(this->pin);
     };
-    this->temperature = map((avg / 64.), 204.6, 1023, 0, 20000);
+    this->temperature = map((avg / 64.), 204.6, 1023, 40, 20000);
   }
 
   int get() {

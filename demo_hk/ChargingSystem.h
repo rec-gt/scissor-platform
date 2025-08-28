@@ -29,13 +29,12 @@ class ChargingSystem {
 private:
   byte RECV_BUFFER_SIZE = 28;
   byte SEND_BUFFER_SIZE = 4 * 7;
-  byte recvBuffer[28];
 
   int AT = 2500;  // ambient temp
   int ST = 2500;  // station temp
   int A = 100;    // current
 
-  int SPT = 6000;        // set-point temperature
+  int SPT = 3000;        // set-point temperature
   int SPA = 250;         // set-point current
   int M = MODE_STOPPED;  // system mode
 

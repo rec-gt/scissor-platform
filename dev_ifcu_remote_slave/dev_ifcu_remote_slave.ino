@@ -26,7 +26,7 @@ void loop() {
     HTTPClient http;
     http.begin(url);
     int httpResponseCode = http.GET();
-    
+
     if (httpResponseCode > 0) {
       Serial.printf("HTTP Response code: %d\n", httpResponseCode);
       String response = http.getString();

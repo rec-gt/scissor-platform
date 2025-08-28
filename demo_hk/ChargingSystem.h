@@ -39,8 +39,10 @@ private:
   int SPT = 3000;       // set-point temperature
   int SPA = 250;        // set-point current
   int SM = SYS_AUTO;    // system mode
-  int OM = OP_STOPPED;  // operation status
+  int OM = OP_RUNNING;  // operation status
 
+  bool forcePublishLock = false;
+  
 public:
   ChargingSystem(void){};
 
@@ -100,6 +102,8 @@ public:
       case SYS_AUTO:
         switch (this->OM) {
           case OP_RUNNING:
+            this->forcePublishLock = true;
+
             chargingRelay.connect();
             alarmRelay.cut();
 
@@ -110,8 +114,12 @@ public:
           case OP_STOPPED:
             chargingRelay.cut();
             alarmRelay.connect();
-            nbiot.forcePublish();
-            
+
+            if (this->forcePublishLock) {
+              nbiot.forcePublish();
+              this->forcePublishLock = false;
+            }
+
             if (pressButton.isPressed()) {
               if (this->AT < this->SPT && this->ST < this->SPT && this->A < this->SPA) {
                 this->OM = OP_RUNNING;

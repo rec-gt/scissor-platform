@@ -100,12 +100,18 @@ public:
       case SYS_AUTO:
         switch (this->OM) {
           case OP_RUNNING:
+            chargingRelay.connect();
+            alarmRelay.cut();
+
             if (this->AT >= this->SPT || this->ST >= this->SPT || this->A >= this->SPA) {
               this->OM = OP_STOPPED;
             }
             break;
           case OP_STOPPED:
+            chargingRelay.cut();
+            alarmRelay.connect();
             nbiot.forcePublish();
+            
             if (pressButton.isPressed()) {
               if (this->AT < this->SPT && this->ST < this->SPT && this->A < this->SPA) {
                 this->OM = OP_RUNNING;

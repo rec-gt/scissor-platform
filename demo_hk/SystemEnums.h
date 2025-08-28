@@ -2,9 +2,14 @@
 #define SystemEnums_h
 
 enum SYSTEM_MODE {
-  MODE_DEFAULT,
-  MODE_RUNNING,
-  MODE_STOPPED,
+  SYS_DEFAULT,
+  SYS_AUTO,
+  SYS_BYPASS,
+};
+
+enum OPERATION_MODE {
+  OP_RUNNING,
+  OP_STOPPED,
 };
 
 #endif

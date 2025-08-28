@@ -22,6 +22,8 @@ Thermometer thermometer2(A2);
 Ammeter ammeter(A4);
 PressButton pressButton(30);
 Relay alarmRelay(31);
+Switch modeSwitch(12);
+
 
 AsyncTimer timer(1000);
 
@@ -34,9 +36,11 @@ private:
   int ST = 2500;  // station temp
   int A = 100;    // current
 
-  int SPT = 3000;        // set-point temperature
-  int SPA = 250;         // set-point current
-  int M = MODE_STOPPED;  // system mode
+  int SPT = 3000;         // set-point temperature
+  int SPA = 250;          // set-point current
+  int M = MODE_STOPPED;   // system mode
+  int SM = MODE_STOPPED;  // system mode
+  int OM = OP_STOPPED;    // operation status
 
 public:
   ChargingSystem(void) {
@@ -60,15 +64,21 @@ public:
   }
 
   void handleModeChange() {
+    if (modeSwitch.isOn()) {
+      this->setSysMode(SYS_BYPASS);
+    } else {
+      this->setSysMode(SYS_AUTO);
+    }
+
     if (this->modeIs(MODE_DEFAULT)) {
       this->setMode(MODE_RUNNING);
-    } else if (this->modeIs(MODE_RUNNING)) {
-      Serial.println("MODE_RUNNING");
+    }
+
+    if (this->modeIs(MODE_RUNNING)) {
       if (this->AT >= this->SPT || this->ST >= this->SPT || this->A >= this->SPA) {
         this->setMode(MODE_STOPPED);
       }
     } else if (this->modeIs(MODE_STOPPED)) {
-      Serial.println("MODE_STOPPED");
       if (pressButton.isPressed()) {
         if (this->AT < this->SPT && this->ST < this->SPT && this->A < this->SPA) {
           this->setMode(MODE_RUNNING);
@@ -119,22 +129,51 @@ public:
     }
   }
 
+  void setSysMode(SYSTEM_MODE sysMode) {
+    this->SM = sysMode;
+    switch (sysMode) {
+
+      case SYS_AUTO:
+        chargingRelay.connect();
+        alarmRelay.cut();
+        break;
+
+      case SYS_BYPASS:
+        switch (this->OM) {
+          case OP_RUNNING:
+            break;
+          case OP_RUNNING:
+            break;
+        }
+        break;
+
+      default:
+        chargingRelay.cut();
+        alarmRelay.cut();
+        break;
+    }
+  }
+
   bool modeIs(SYSTEM_MODE mode) {
+    // Serial.println("MODE_RUNNING");
+    // Serial.println("MODE_STOPPED");
     return this->M == mode;
   }
 
   void listen() {
     pressButton.listen();
+    modeSwitch.listen();
 
-    if (timer.autoExpired(1000)) {
-      thermometer1.listen();
-      thermometer2.listen();
-      ammeter.listen();
+    thermometer1.listen();
+    thermometer2.listen();
+    ammeter.listen();
 
-      this->collectData();
-      this->preparePublishMsg();
-      this->handleModeChange();
-    }
+    this->collectData();
+    this->preparePublishMsg();
+    this->handleModeChange();
+
+    // if (timer.autoExpired(1000)) {
+    // }
   }
 
   ~ChargingSystem(void){};

@@ -12,14 +12,14 @@ void setup() {
   Serial.begin(9600);
   NBIoTSerial.begin(9600);
 
-  nbiot.init(true);
-  nbiot.debug();
+  // nbiot.init(true);
+  // nbiot.debug();
 
   wdt_enable(WDTO_8S);
 }
 
 void loop() {
-  nbiot.loop();
+  // nbiot.loop();
   chargingSystem.listen();
   wdt_reset();
   delay(10);

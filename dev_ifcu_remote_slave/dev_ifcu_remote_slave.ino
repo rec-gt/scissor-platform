@@ -6,7 +6,8 @@
 const char* ssid = "REC Guest";
 const char* password = "guest@@2022";
 
-const char* serverName = "10.236.208.127:3010";
+const char* serverName = "http://10.236.208.127:3010";
+String url = String(serverName) + "/f-l/1";
 
 void setup() {
   Serial.begin(9600);
@@ -23,10 +24,9 @@ void setup() {
 void loop() {
   if (WiFi.status() == WL_CONNECTED) {
     HTTPClient http;
-    http.begin(serverName);
-    http.addHeader("Content-Type", "application/x-www-form-urlencoded");
-    int httpResponseCode = http.POST("/f-l-1");
-
+    http.begin(url);
+    int httpResponseCode = http.GET();
+    
     if (httpResponseCode > 0) {
       Serial.printf("HTTP Response code: %d\n", httpResponseCode);
       String response = http.getString();

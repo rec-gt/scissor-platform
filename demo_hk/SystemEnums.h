@@ -2,7 +2,6 @@
 #define SystemEnums_h
 
 enum SYSTEM_MODE {
-  SYS_DEFAULT,
   SYS_AUTO,
   SYS_BYPASS,
 };

@@ -36,16 +36,13 @@ private:
   int ST = 2500;  // station temp
   int A = 100;    // current
 
-  int SPT = 3000;         // set-point temperature
-  int SPA = 250;          // set-point current
-  int M = MODE_STOPPED;   // system mode
-  int SM = MODE_STOPPED;  // system mode
-  int OM = OP_STOPPED;    // operation status
+  int SPT = 3000;       // set-point temperature
+  int SPA = 250;        // set-point current
+  int SM = SYS_AUTO;    // system mode
+  int OM = OP_STOPPED;  // operation status
 
 public:
-  ChargingSystem(void) {
-    this->setMode(MODE_DEFAULT);
-  };
+  ChargingSystem(void){};
 
   void collectData() {
     this->AT = thermometer1.get();
@@ -59,32 +56,10 @@ public:
     Serial.print(", ");
     Serial.print(this->A);
     Serial.print(", ");
-    Serial.print(this->M);
+    Serial.print(this->OM);
+    Serial.print(", ");
+    Serial.print(this->SM);
     Serial.println("]");
-  }
-
-  void handleModeChange() {
-    if (modeSwitch.isOn()) {
-      this->setSysMode(SYS_BYPASS);
-    } else {
-      this->setSysMode(SYS_AUTO);
-    }
-
-    if (this->modeIs(MODE_DEFAULT)) {
-      this->setMode(MODE_RUNNING);
-    }
-
-    if (this->modeIs(MODE_RUNNING)) {
-      if (this->AT >= this->SPT || this->ST >= this->SPT || this->A >= this->SPA) {
-        this->setMode(MODE_STOPPED);
-      }
-    } else if (this->modeIs(MODE_STOPPED)) {
-      if (pressButton.isPressed()) {
-        if (this->AT < this->SPT && this->ST < this->SPT && this->A < this->SPA) {
-          this->setMode(MODE_RUNNING);
-        }
-      }
-    }
   }
 
   void preparePublishMsg() {
@@ -101,7 +76,7 @@ public:
     nbiot.pubMsgPayload.concat("]");
     nbiot.pubMsgPayload.concat(",");
     nbiot.pubMsgPayload.concat("\"din\":");
-    nbiot.pubMsgPayload.concat(String(this->M));
+    nbiot.pubMsgPayload.concat(String(this->OM));
     nbiot.pubMsgPayload.concat("}");
 
     nbiot.pubMsgPrepare = "AT+QMTPUB=0,0,0,0,rgt/";
@@ -114,50 +89,41 @@ public:
     nbiot.pubMsgCommand.concat(nbiot.pubMsgPayload);
   }
 
-  void setMode(SYSTEM_MODE mode) {
-    this->M = mode;
-    if (this->modeIs(MODE_RUNNING)) {
-      chargingRelay.connect();
-      alarmRelay.cut();
-    } else if (this->modeIs(MODE_STOPPED)) {
-      nbiot.forcePublish();
-      chargingRelay.cut();
-      alarmRelay.connect();
-    } else if (this->modeIs(MODE_DEFAULT)) {
-      chargingRelay.cut();
-      alarmRelay.cut();
+  void handleModeLogic() {
+    if (modeSwitch.isOn()) {
+      this->SM = SYS_BYPASS;
+    } else {
+      this->SM = SYS_AUTO;
     }
-  }
 
-  void setSysMode(SYSTEM_MODE sysMode) {
-    this->SM = sysMode;
-    switch (sysMode) {
-
+    switch (this->SM) {
       case SYS_AUTO:
-        chargingRelay.connect();
-        alarmRelay.cut();
+        switch (this->OM) {
+          case OP_RUNNING:
+            if (this->AT >= this->SPT || this->ST >= this->SPT || this->A >= this->SPA) {
+              this->OM = OP_STOPPED;
+            }
+            break;
+          case OP_STOPPED:
+            nbiot.forcePublish();
+            if (pressButton.isPressed()) {
+              if (this->AT < this->SPT && this->ST < this->SPT && this->A < this->SPA) {
+                this->OM = OP_RUNNING;
+              }
+            }
+            break;
+        }
         break;
 
       case SYS_BYPASS:
-        switch (this->OM) {
-          case OP_RUNNING:
-            break;
-          case OP_RUNNING:
-            break;
-        }
+        chargingRelay.connect();
+        alarmRelay.cut();
         break;
 
       default:
         chargingRelay.cut();
         alarmRelay.cut();
-        break;
     }
-  }
-
-  bool modeIs(SYSTEM_MODE mode) {
-    // Serial.println("MODE_RUNNING");
-    // Serial.println("MODE_STOPPED");
-    return this->M == mode;
   }
 
   void listen() {
@@ -170,10 +136,7 @@ public:
 
     this->collectData();
     this->preparePublishMsg();
-    this->handleModeChange();
-
-    // if (timer.autoExpired(1000)) {
-    // }
+    this->handleModeLogic();
   }
 
   ~ChargingSystem(void){};

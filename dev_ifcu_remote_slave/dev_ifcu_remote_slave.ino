@@ -1,13 +1,17 @@
 
 #include <WiFi.h>
-#include <WiFiClient.h>
 #include <HTTPClient.h>
+#include <WebServer.h>
 
 const char* ssid = "REC Guest";
 const char* password = "guest@@2022";
 
 const char* serverName = "http://10.236.208.127:3010";
 String url = String(serverName) + "/f-l/1";
+
+void handleGetData() {
+  server.send(200, "application/json", "2500,2500,2,2,1700,3000");
+}
 
 void setup() {
   Serial.begin(9600);
@@ -19,6 +23,11 @@ void setup() {
     delay(500);
     Serial.print(".");
   }
+
+  Serial.println("IP Address: " + WiFi.localIP().toString());
+  server.on("/getData", handleGetData);
+  server.begin();
+  Serial.println("HTTP server started!");
 }
 
 void loop() {
@@ -35,8 +44,12 @@ void loop() {
       Serial.printf("Error code: %d\n", httpResponseCode);
     }
     http.end();
+
   } else {
     Serial.println("WiFi Disconnected");
   }
-  delay(5000);
+
+  server.handleClient();
+
+  delay(3000);
 }

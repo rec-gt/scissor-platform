@@ -42,15 +42,11 @@ private:
   int OM = OP_RUNNING;  // operation status
 
   bool forcePublishLock = false;
-  
+
 public:
   ChargingSystem(void){};
 
-  void collectData() {
-    this->AT = thermometer1.get();
-    this->ST = thermometer2.get();
-    this->A = ammeter.get();
-
+  void debug() {
     Serial.print("[");
     Serial.print(this->AT);
     Serial.print(", ");
@@ -62,6 +58,12 @@ public:
     Serial.print(", ");
     Serial.print(this->SM);
     Serial.println("]");
+  }
+
+  void collectData() {
+    this->AT = thermometer1.get();
+    this->ST = thermometer2.get();
+    this->A = ammeter.get();
   }
 
   void preparePublishMsg() {

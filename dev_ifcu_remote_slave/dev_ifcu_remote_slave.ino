@@ -9,6 +9,8 @@ const char* password = "guest@@2022";
 const char* serverName = "http://10.236.208.127:3010";
 String url = String(serverName) + "/f-l/1";
 
+WebServer server(80);
+
 void handleGetData() {
   server.send(200, "application/json", "2500,2500,2,2,1700,3000");
 }

@@ -4,13 +4,13 @@ class Thermometer {
 private:
   byte pin;
   int temperature = 2500;  //25
-  int queue[10] = {};
+  int queue[5] = {};
 
   void queueAppend(int value) {
-    for (size_t i = 1; i < 10; i++) {
+    for (size_t i = 1; i < 5; i++) {
       this->queue[i - 1] = this->queue[i];
     }
-    this->queue[9] = value;
+    this->queue[4] = value;
   }
 
   int getAvg() {
@@ -18,7 +18,7 @@ private:
     for (size_t i = 0; i < 10; i++) {
       sum += this->queue[i];
     }
-    return sum / 10;
+    return sum / 5;
   }
 
 public:

@@ -35,6 +35,9 @@ void setup() {
   server.on("/get", handleGetData);
   server.begin();
   Serial.println("HTTP server started!");
+
+  Serial2.begin(9600, SERIAL_8N1, 16, 17);
+  node.begin(1, Serial2);
 }
 
 void loop() {

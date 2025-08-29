@@ -2,11 +2,12 @@
 #include <WiFi.h>
 #include <HTTPClient.h>
 #include <WebServer.h>
+#include "Globals.h"
 
 const char* ssid = "REC Guest";
 const char* password = "guest@@2022";
 
-const char* serverName = "http://10.236.208.127:3010";
+const char* serverName = "http://10.236.208.133:3010";
 String url = String(serverName) + "/f-l/1";
 
 // TODO: ASK FOR STATIC IP
@@ -31,7 +32,7 @@ void setup() {
   }
 
   Serial.println("IP Address: " + WiFi.localIP().toString());
-  server.on("/getData", handleGetData);
+  server.on("/get", handleGetData);
   server.begin();
   Serial.println("HTTP server started!");
 }

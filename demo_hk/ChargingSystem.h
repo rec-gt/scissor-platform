@@ -43,6 +43,8 @@ private:
 
   bool forcePublishLock = false;
 
+  unsigned long prevMillis = millis();
+
 public:
   ChargingSystem(void){};
 
@@ -148,13 +150,15 @@ public:
     pressButton.listen();
     modeSwitch.listen();
 
-    thermometer1.listen();
-    thermometer2.listen();
-    ammeter.listen();
+    if (millis() - this->prevMillis > 500) {
+      thermometer1.listen();
+      thermometer2.listen();
+      ammeter.listen();
 
-    this->collectData();
-    this->preparePublishMsg();
-    this->handleModeLogic();
+      this->collectData();
+      this->preparePublishMsg();
+      this->handleModeLogic();
+    }
   }
 
   ~ChargingSystem(void){};

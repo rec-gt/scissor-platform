@@ -1,8 +1,9 @@
-
 #include <WiFi.h>
 #include <HTTPClient.h>
 #include <WebServer.h>
+#include <ModbusMaster.h>
 #include "Globals.h"
+#include "ModbusRTUClient.h"
 
 const char* ssid = "REC Guest";
 const char* password = "guest@@2022";
@@ -13,6 +14,8 @@ String url = String(serverName) + "/f-l/1";
 // TODO: ASK FOR STATIC IP
 
 WebServer server(80);
+
+ModbusRTUClient modbusRTUClient;
 
 unsigned long prevMillis = millis();
 
@@ -36,6 +39,7 @@ void setup() {
   server.begin();
   Serial.println("HTTP server started!");
 
+  /*=== For Modbus RTU===*/
   Serial2.begin(9600, SERIAL_8N1, 16, 17);
   node.begin(1, Serial2);
 }
@@ -64,6 +68,7 @@ void loop() {
     prevMillis = millis();
   }
 
+  modbusRTUClient.readData();
 
   server.handleClient();
 

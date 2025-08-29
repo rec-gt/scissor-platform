@@ -27,8 +27,39 @@ private:
     }
   }
 
+  void strToArr(String input, int *target, int size) {
+    input = "2500,2500,2,2,1700,3000";
+
+    int index = 0;
+    String temp = "";
+
+    for (int i = 0; i < input.length(); i++) {
+      char c = input[i];
+
+      if (c == ",") {
+        target[index++] = temp.toInt();
+        temp = "";
+      } else {
+        temp += c;
+      }
+    }
+
+    target[index] = temp.toInt();
+
+    // Print the array to the Serial Monitor
+    for (int i = 0; i < 6; i++) {
+      Serial.println(target[i]);
+    }
+  }
+
 public:
   String serialRecvPayload = "2500,2500,2,2,1700,3000";
+  int requestValues[4] = {
+    0,
+    0,
+    0,
+    0,
+  };
 
   SerialBroker(){};
 
@@ -48,6 +79,14 @@ public:
       }
     }
   }
+
+  void setRequestValues(int *values) {
+    for (size_t i = 0; i < 4; i++) {
+      values[i] = 0;
+    }
+  }
+
+  void setResponseValues(int *values) {}
 
   ~SerialBroker(){};
 };

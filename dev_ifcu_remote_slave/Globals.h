@@ -4,7 +4,4 @@
 /*=== Config ===*/
 byte IFCU_ID = 1;
 
-/*=== For Modbus RTU ===*/
-ModbusMaster node;
-
 #endif

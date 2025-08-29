@@ -1,9 +1,8 @@
 #include <WiFi.h>
 #include <HTTPClient.h>
 #include <WebServer.h>
-#include <ModbusMaster.h>
 #include "Globals.h"
-#include "ModbusRTUClient.h"
+#include "SerialRecv.h"
 
 const char* ssid = "REC Guest";
 const char* password = "guest@@2022";
@@ -11,16 +10,15 @@ const char* password = "guest@@2022";
 const char* serverName = "http://10.236.208.133:3010";
 String url = String(serverName) + "/f-l/1";
 
-// TODO: ASK FOR STATIC IP
-
 WebServer server(80);
-
-ModbusRTUClient modbusRTUClient;
 
 unsigned long prevMillis = millis();
 
+
+SerialRecv serialRecv;
+
+
 void handleGetData() {
-  server.send(200, "application/json", "2500,2500,2,2,1700,3000");
 }
 
 void setup() {
@@ -34,14 +32,13 @@ void setup() {
     Serial.print(".");
   }
 
-  Serial.println("IP Address: " + WiFi.localIP().toString());
-  server.on("/get", handleGetData);
+  server.on("/get", []() {
+    server.send(200, "application/json", serialRecv.payload);
+  });
   server.begin();
-  Serial.println("HTTP server started!");
 
-  /*=== For Modbus RTU===*/
-  Serial2.begin(9600, SERIAL_8N1, 16, 17);
-  node.begin(1, Serial2);
+  Serial.println("IP Address: " + WiFi.localIP().toString());
+  Serial.println("HTTP server started!");
 }
 
 void loop() {
@@ -68,9 +65,9 @@ void loop() {
     prevMillis = millis();
   }
 
-  modbusRTUClient.readData();
+  serialRecv.listen();
 
   server.handleClient();
 
-  delay(3000);
+  delay(1000);
 }

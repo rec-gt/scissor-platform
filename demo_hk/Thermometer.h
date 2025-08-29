@@ -15,7 +15,7 @@ private:
 
   int getAvg() {
     uint16_t sum = 0;
-    for (size_t i = 0; i < 10; i++) {
+    for (size_t i = 0; i < 5; i++) {
       sum += this->queue[i];
     }
     return sum / 5;

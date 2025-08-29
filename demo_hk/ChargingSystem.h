@@ -148,7 +148,7 @@ public:
     pressButton.listen();
     modeSwitch.listen();
 
-    if (millis() - this->prevMillis > 1000) {
+    if (millis() - this->prevMillis > 100) {
       thermometer1.listen();
       thermometer2.listen();
       ammeter.listen();

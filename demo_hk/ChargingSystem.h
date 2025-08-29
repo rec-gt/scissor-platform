@@ -66,8 +66,6 @@ public:
     this->AT = thermometer1.get();
     this->ST = thermometer2.get();
     this->A = ammeter.get();
-
-    this->debug();
   }
 
   void preparePublishMsg() {
@@ -150,7 +148,7 @@ public:
     pressButton.listen();
     modeSwitch.listen();
 
-    if (millis() - this->prevMillis > 500) {
+    if (millis() - this->prevMillis > 1000) {
       thermometer1.listen();
       thermometer2.listen();
       ammeter.listen();
@@ -158,6 +156,9 @@ public:
       this->collectData();
       this->preparePublishMsg();
       this->handleModeLogic();
+      this->debug();
+
+      this->prevMillis = millis();
     }
   }
 

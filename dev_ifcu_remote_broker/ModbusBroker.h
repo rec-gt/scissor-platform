@@ -17,28 +17,39 @@ private:
   Status currStatus;
 
   void handleReadData() {
-    if (!mbClient.requestFrom(SLAVE_ID, INPUT_REGISTERS, 30000UL, 11)) {
+    if (!mbClient.requestFrom(SLAVE_ID, INPUT_REGISTERS, 30000UL, 10)) {
       Serial.println(mbClient.lastError());
     } else {
-      responseValues[0] = mbClient.read();
-      responseValues[1] = mbClient.read();
-      responseValues[2] = mbClient.read();
-      responseValues[3] = mbClient.read();
-      responseValues[4] = mbClient.read();
-      responseValues[5] = mbClient.read();
-      responseValues[6] = mbClient.read();
-      responseValues[7] = mbClient.read();
-      responseValues[8] = mbClient.read();
-      responseValues[9] = mbClient.read();   // maximum adj. set temp
-      responseValues[10] = mbClient.read();  // minimum adj. set temp
-
-
-
-      for (uint16_t i = 0; i < 11; i++) {
-        Serial.print(responseValues[i]);
-        Serial.print(", ");
-      }
+      Serial.print(mbClient.read());
       Serial.println();
+      Serial.print(mbClient.read());
+      Serial.println();
+      Serial.print(mbClient.read());
+      Serial.println();
+      Serial.print(mbClient.read());
+      Serial.println();
+      Serial.print(mbClient.read());
+      Serial.println();
+      Serial.print(mbClient.read());
+      Serial.println();
+      Serial.print(mbClient.read());
+      Serial.println();
+      Serial.print(mbClient.read());
+      Serial.println();
+      Serial.print(mbClient.read());
+      Serial.println();
+      Serial.print(mbClient.read());  // maximum adj. set temp
+      Serial.println();
+      Serial.print(mbClient.read());  // minimum adj. set temp
+      Serial.println();
+
+
+
+      // for (uint16_t i = 0; i < 11; i++) {
+      //   Serial.print(responseValues[i]);
+      //   Serial.print(", ");
+      // }
+      // Serial.println();
     }
   }
 

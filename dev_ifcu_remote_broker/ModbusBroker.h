@@ -17,17 +17,28 @@ private:
   Status currStatus;
 
   void handleReadData() {
-    if (!mbClient.requestFrom(SLAVE_ID, INPUT_REGISTERS, 30000UL, RESPONSE_VALUES_LEN)) {
+    if (!mbClient.requestFrom(SLAVE_ID, INPUT_REGISTERS, 30000UL, 11)) {
       Serial.println(mbClient.lastError());
     } else {
-      for (uint16_t i = 0; i < RESPONSE_VALUES_LEN; i++) {
-        responseValues[i] = mbClient.read();
-      }
+      responseValues[0] = mbClient.read();
+      responseValues[1] = mbClient.read();
+      responseValues[2] = mbClient.read();
+      responseValues[3] = mbClient.read();
+      responseValues[4] = mbClient.read();
+      responseValues[5] = mbClient.read();
+      responseValues[6] = mbClient.read();
+      responseValues[7] = mbClient.read();
+      responseValues[8] = mbClient.read();
+      responseValues[9] = mbClient.read();   // maximum adj. set temp
+      responseValues[10] = mbClient.read();  // minimum adj. set temp
 
-      for (uint16_t i = 0; i < RESPONSE_VALUES_LEN; i++) {
+
+
+      for (uint16_t i = 0; i < 11; i++) {
         Serial.print(responseValues[i]);
         Serial.print(", ");
       }
+      Serial.println();
     }
   }
 

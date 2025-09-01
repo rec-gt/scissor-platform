@@ -14,6 +14,13 @@ void loop() {
   serialBroker.listenByte();
   serialBroker.handleRecvBuffer();
 
+  Serial.print("\r\n===================\r\n");
+  for (int i = 0; i < 4; i++) {
+    Serial.print(requestValues[i]);
+    Serial.print(", ");
+  }
+  delay(500);
+
   serialBroker.setRequestValues(requestValues);
   serialBroker.setResponseValues(responseValues);
 

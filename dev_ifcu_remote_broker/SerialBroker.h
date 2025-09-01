@@ -59,13 +59,6 @@ private:
     requestValues[1] = (this->serialRecvBuffer[3] << 8) | this->serialRecvBuffer[2];
     requestValues[2] = this->serialRecvBuffer[4];
     requestValues[3] = this->serialRecvBuffer[5];
-    delay(1000);
-    Serial.print("\r\n===================\r\n");
-
-    for (int i = 0; i < 4; i++) {
-      Serial.print(requestValues[i]);
-      Serial.print(", ");
-    }
   }
 
 

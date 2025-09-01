@@ -9,7 +9,7 @@
 RS485Class rs485(Serial3, 2, 3, 4);
 ModbusRTUClientClass mbClient(rs485);
 
-AutoTimer timer();
+AutoTimer timer;
 
 class ModbusBroker {
 
@@ -27,7 +27,7 @@ private:
       Serial.println(mbClient.lastError());
     } else {
       for (uint16_t i = 0; i < 7; i++) {
-        this->responseValues[i] = mbClient.read();
+        responseValues[i] = mbClient.read();
       }
     }
   }

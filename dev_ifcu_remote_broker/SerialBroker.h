@@ -1,10 +1,12 @@
+#include "Globals.h"
+
 #ifndef SerialBroker_H
 #define SerialBroker_H
 
 class SerialBroker {
 private:
-  String serialRecv = "";
-  String serialSend = "";
+  String serialRecv = "PAYLOAD:1,2500,2,2";
+  String serialSend = "PAYLOAD:1,2500,2500,2,2,1700,3000";
 
   void clearSerialBuffer() {
     while (Serial1.read() > 0) { delay(1); };
@@ -20,16 +22,21 @@ private:
     delay(delayTime);
   }
 
-  void capturePayload() {
+  void captureRecvPayload() {
     int idx = this->serialRecv.indexOf("PAYLOAD:");
     if (idx > -1) {
       this->serialRecvPayload = this->serialRecv.substring(8, 100);
+
+      this->strToArr(this->serialRecvPayload, requestValues, REQUEST_VALUES_LEN);
+
+      for (int i = 0; i < 4; i++) {
+        Serial.print(requestValues[i]);
+        Serial.print(", ");
+      }
     }
   }
 
   void strToArr(String input, int *target, int size) {
-    input = "2500,2500,2,2,1700,3000";
-
     int index = 0;
     String temp = "";
 
@@ -53,13 +60,10 @@ private:
   }
 
 public:
-  String serialRecvPayload = "2500,2500,2,2,1700,3000";
-  int requestValues[4] = {
-    0,
-    0,
-    0,
-    0,
-  };
+  String serialRecvPayload = "";
+  String serialSendPayload = "";
+
+
 
   SerialBroker(){};
 
@@ -74,7 +78,7 @@ public:
       }
 
       if (c == '\r') {
-        this->capturePayload();
+        this->captureRecvPayload();
         this->clearSerialRecv();
       }
     }
@@ -86,7 +90,11 @@ public:
     }
   }
 
-  void setResponseValues(int *values) {}
+  void setResponseValues(int *values) {
+    for (size_t i = 0; i < 7; i++) {
+      values[i] = 0;
+    }
+  }
 
   ~SerialBroker(){};
 };

@@ -17,7 +17,7 @@ private:
   Status currStatus;
 
   void handleReadData() {
-    if (!mbClient.requestFrom(SLAVE_ID, INPUT_REGISTERS, 30000UL, 11)) {
+    if (!mbClient.requestFrom(SLAVE_ID, INPUT_REGISTERS, 30000, 11)) {
       Serial.println(mbClient.lastError());
     } else {
       mbClient.read();                                            // ignore
@@ -60,17 +60,17 @@ public:
 
   void loop() {
     if (this->currStatus == MB_WRITE) {
-      // if (timer.autoExpire(500)) {
-      //   this->handleWriteData();
-      //   this->currStatus = MB_READ;
-      // }
-
+      if (timer.autoExpire(2000)) {
+        this->handleWriteData();
+        this->currStatus = MB_READ;
+      }
       this->currStatus = MB_READ;
     } else if (this->currStatus == MB_READ) {
-      if (timer.autoExpire(500)) {
-        this->handleReadData();
         this->currStatus = MB_WRITE;
-      }
+      // if (timer.autoExpire(2000)) {
+      //   this->handleReadData();
+      //   this->currStatus = MB_WRITE;
+      // }
     }
   }
 

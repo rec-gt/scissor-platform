@@ -9,7 +9,7 @@ private:
 public:
   AutoTimer(){};
 
-  bool autoExpired(unsigned long autoTimeout) {
+  bool autoExpire(unsigned long autoTimeout) {
     bool isTimeout = millis() - this->prevMillis > autoTimeout;
 
     if (this->_lock == false) {

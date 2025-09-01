@@ -1,7 +1,9 @@
 #include "SerialBroker.h"
+#include "ModbusBroker.h"
 #include "Globals.h"
 
 SerialBroker serialBroker;
+ModbusBroker modbusBroker;
 
 void setup() {
   Serial.begin(9600);
@@ -13,8 +15,7 @@ void setup() {
 void loop() {
   serialBroker.listenByte();
   serialBroker.handleRecvBuffer();
-  modbusBroker.handleWriteData();
-  printRequestValues();
+  modbusBroker.loop();
 
   delay(500);
 }

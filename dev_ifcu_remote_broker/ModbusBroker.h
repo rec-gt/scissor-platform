@@ -9,8 +9,6 @@ AutoTimer timer;
 
 class ModbusBroker {
 private:
-  byte slave_id = 31;
-
   enum Status {
     MB_WRITE,
     MB_READ,
@@ -19,11 +17,16 @@ private:
   Status currStatus;
 
   void handleReadData() {
-    if (!mbClient.requestFrom(this->slave_id, INPUT_REGISTERS, 30000UL, 7)) {
+    if (!mbClient.requestFrom(SLAVE_ID, INPUT_REGISTERS, 30000UL, RESPONSE_VALUES_LEN)) {
       Serial.println(mbClient.lastError());
     } else {
-      for (uint16_t i = 0; i < 7; i++) {
+      for (uint16_t i = 0; i < RESPONSE_VALUES_LEN; i++) {
         responseValues[i] = mbClient.read();
+      }
+
+      for (uint16_t i = 0; i < RESPONSE_VALUES_LEN; i++) {
+        Serial.print(responseValues[i]);
+        Serial.print(", ");
       }
     }
   }
@@ -55,10 +58,8 @@ public:
 
       this->currStatus = MB_READ;
     } else if (this->currStatus == MB_READ) {
-      if (timer.autoExpire(500)) {
-        this->handleReadData();
-        this->currStatus = MB_WRITE;
-      }
+      this->handleReadData();
+      this->currStatus = MB_WRITE;
     }
   }
 

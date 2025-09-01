@@ -6,6 +6,7 @@
 class SerialBroker {
 private:
   bool isReceiving = false;
+  bool payloadReady = false;
   uint16_t idx = 0;
 
   uint8_t serialRecvBuffer[8] = { 0x5B, 1, (2500 & 0xFF), ((2500 >> 8) & 0xFF), 2, 2, 210, 0x5D };
@@ -58,9 +59,20 @@ private:
   void captureRecvPayload() {
 
     requestValues[0] = this->serialRecvBuffer[1];
-    requestValues[1] = (this->serialRecvBuffer[2] << 8) | this->serialRecvBuffer[3];
+    requestValues[1] = (this->serialRecvBuffer[3] << 8) | this->serialRecvBuffer[2];
     requestValues[2] = this->serialRecvBuffer[4];
     requestValues[3] = this->serialRecvBuffer[5];
+    Serial.print(requestValues[0]);
+    Serial.print(requestValues[1]);
+    Serial.print(requestValues[2]);
+    Serial.print(requestValues[3]);
+    delay(1000);
+    Serial.print("\r\n===================\r\n");
+
+    for (int i = 0; i < 4; i++) {
+      Serial.print(requestValues[i]);
+      Serial.print(", ");
+    }
 
     // int idx = this->serialRecv.indexOf("PAYLOAD:");
     // if (idx > -1) {
@@ -113,6 +125,8 @@ public:
 
   void listenByte() {
     while (Serial1.available() > 0) {
+      this->payloadReady = false;
+
       uint8_t rb = Serial1.read();
 
       if (rb == 0x5B) {
@@ -125,14 +139,19 @@ public:
 
         if (rb == 0x5D) {
           this->isReceiving = false;
+          this->payloadReady = true;
           this->idx = 0;
-
-          uint8_t payloadChecksum = this->serialRecvBuffer[6];
-          uint8_t calculatedChecksum = this->getChecksum(this->serialRecvBuffer, 1, 5);
-          if (payloadChecksum == calculatedChecksum) {
-            this->captureRecvPayload();
-          }
         }
+      }
+    }
+  }
+
+  void handleRecvBuffer() {
+    if (this->payloadReady) {
+      uint8_t payloadChecksum = this->serialRecvBuffer[6];
+      uint8_t calculatedChecksum = this->getChecksum(this->serialRecvBuffer, 1, 5);
+      if (payloadChecksum == calculatedChecksum) {
+        this->captureRecvPayload();
       }
     }
   }

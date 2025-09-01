@@ -13,11 +13,8 @@ void setup() {
 void loop() {
   serialBroker.listenByte();
   serialBroker.handleRecvBuffer();
+  modbusBroker.handleWriteData();
+  printRequestValues();
 
-  Serial.print("\r\n===================\r\n");
-  for (int i = 0; i < 4; i++) {
-    Serial.print(requestValues[i]);
-    Serial.print(", ");
-  }
   delay(500);
 }

@@ -29,6 +29,8 @@ private:
 
       this->strToArr(this->serialRecvPayload, requestValues, REQUEST_VALUES_LEN);
 
+      Serial.println("===================");
+
       for (int i = 0; i < 4; i++) {
         Serial.print(requestValues[i]);
         Serial.print(", ");
@@ -52,11 +54,6 @@ private:
     }
 
     target[index] = temp.toInt();
-
-    // Print the array to the Serial Monitor
-    for (int i = 0; i < 6; i++) {
-      Serial.println(target[i]);
-    }
   }
 
 public:
@@ -68,6 +65,9 @@ public:
   SerialBroker(){};
 
   void listen() {
+    this->captureRecvPayload();
+    delay(1000);
+
     while (Serial1.available() > 0) {
       char c = Serial1.read();
 

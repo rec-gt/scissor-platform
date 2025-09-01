@@ -32,10 +32,10 @@ private:
       responseValues[5] = mbClient.read();                        // maximum adj. set temp
       responseValues[6] = mbClient.read();                        // minimum adj. set temp
 
-      // for (uint16_t i = 0; i < 11; i++) {
-      //   Serial.print(responseValues[i]);
-      //   Serial.print(", ");
-      // }
+      for (uint16_t i = 0; i < 7; i++) {
+        Serial.print(responseValues[i]);
+        Serial.print(", ");
+      }
       Serial.println();
     }
   }

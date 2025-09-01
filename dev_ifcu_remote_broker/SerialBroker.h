@@ -31,8 +31,6 @@ private:
   uint8_t getChecksum(uint8_t *buffer, uint8_t idx_from, uint8_t idx_to) {
     uint8_t checksum = 0;
     for (uint8_t i = idx_from; i <= idx_to; i++) {
-      Serial.print(buffer[i]);
-      Serial.print("->");
       checksum += buffer[i];
     }
     return checksum;
@@ -57,15 +55,10 @@ private:
   }
 
   void captureRecvPayload() {
-
     requestValues[0] = this->serialRecvBuffer[1];
     requestValues[1] = (this->serialRecvBuffer[3] << 8) | this->serialRecvBuffer[2];
     requestValues[2] = this->serialRecvBuffer[4];
     requestValues[3] = this->serialRecvBuffer[5];
-    Serial.print(requestValues[0]);
-    Serial.print(requestValues[1]);
-    Serial.print(requestValues[2]);
-    Serial.print(requestValues[3]);
     delay(1000);
     Serial.print("\r\n===================\r\n");
 
@@ -73,22 +66,6 @@ private:
       Serial.print(requestValues[i]);
       Serial.print(", ");
     }
-
-    // int idx = this->serialRecv.indexOf("PAYLOAD:");
-    // if (idx > -1) {
-    //   this->serialRecvPayload = this->serialRecv.substring(8, 100);
-
-    //   this->strToArr(this->serialRecvPayload, requestValues, REQUEST_VALUES_LEN);
-
-    //   Serial.print("\r\n===================\r\n");
-    //   Serial.println(this->serialRecv);
-    //   Serial.println(this->serialRecvPayload);
-
-    //   for (int i = 0; i < 4; i++) {
-    //     Serial.print(requestValues[i]);
-    //     Serial.print(", ");
-    //   }
-    // }
   }
 
 
@@ -98,15 +75,9 @@ public:
 
 
 
-  SerialBroker() {
-    Serial.print("\r\n===================\r\n");
-    Serial.print(this->getChecksum(this->serialRecvBuffer, 1, 5));
-  };
+  SerialBroker(){};
 
   void listen() {
-    this->captureRecvPayload();
-    delay(1000);
-
     while (Serial1.available() > 0) {
       char c = Serial1.read();
 
@@ -147,7 +118,7 @@ public:
   }
 
   void handleRecvBuffer() {
-    if (this->payloadReady) {
+    if (this->payloadReady || true) {
       uint8_t payloadChecksum = this->serialRecvBuffer[6];
       uint8_t calculatedChecksum = this->getChecksum(this->serialRecvBuffer, 1, 5);
       if (payloadChecksum == calculatedChecksum) {

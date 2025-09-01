@@ -12,6 +12,8 @@ void setup() {
 
 void loop() {
   serialBroker.listenByte();
+  serialBroker.handleRecvBuffer();
+
   serialBroker.setRequestValues(requestValues);
   serialBroker.setResponseValues(responseValues);
 

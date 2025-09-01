@@ -67,8 +67,10 @@ public:
 
       this->currStatus = MB_READ;
     } else if (this->currStatus == MB_READ) {
-      this->handleReadData();
-      this->currStatus = MB_WRITE;
+      if (timer.autoExpire(500)) {
+        this->handleReadData();
+        this->currStatus = MB_WRITE;
+      }
     }
   }
 

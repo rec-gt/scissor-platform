@@ -7,19 +7,12 @@ class SerialBroker {
 private:
   bool isReceiving = false;
   bool payloadReady = false;
-  uint16_t idx = 0;
+  uint16_t bufferIdx = 0;
 
-  uint8_t serialRecvBuffer[8] = { 0x5B, 1, (2500 & 0xFF), ((2500 >> 8) & 0xFF), 2, 2, 210, 0x5D };
-
-  String serialRecv = "PAYLOAD:1,2500,2,2";
-  String serialSend = "PAYLOAD:1,2500,2500,2,2,1700,3000";
+  uint8_t serialRecvBuffer[8] = { 0x5B, 1, (2501 & 0xFF), ((2501 >> 8) & 0xFF), 2, 2, 210, 0x5D };
 
   void clearSerialBuffer() {
     while (Serial1.read() > 0) { delay(1); };
-  }
-
-  void clearSerialRecv() {
-    this->serialRecv = "";
   }
 
   void printlnFlush(String cmd, unsigned int delayTime = 2) {
@@ -36,24 +29,6 @@ private:
     return checksum;
   }
 
-  void strToArr(String input, int *target, int size) {
-    int index = 0;
-    String temp = "";
-
-    for (int i = 0; i < input.length(); i++) {
-      char c = input[i];
-
-      if (c == ",") {
-        target[index++] = temp.toInt();
-        temp = "";
-      } else {
-        temp += c;
-      }
-    }
-
-    target[index] = temp.toInt();
-  }
-
   void captureRecvPayload() {
     requestValues[0] = this->serialRecvBuffer[1];
     requestValues[1] = (this->serialRecvBuffer[3] << 8) | this->serialRecvBuffer[2];
@@ -65,21 +40,9 @@ private:
 public:
   SerialBroker(){};
 
-  void listen() {
-    while (Serial1.available() > 0) {
-      char c = Serial1.read();
-
-      Serial.print(c);
-
-      if (c != '\r' && c != '\n') {
-        this->serialRecv += c;
-      }
-
-      if (c == '\r') {
-        this->captureRecvPayload();
-        this->clearSerialRecv();
-      }
-    }
+  void loop() {
+    this->listenByte();
+    this->handleRecvBuffer();
   }
 
   void listenByte() {

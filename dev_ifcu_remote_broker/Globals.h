@@ -1,3 +1,5 @@
+#include <ArduinoRS485.h>
+#include <ArduinoModbus.h>
 
 #ifndef Globals_H
 #define Globals_H
@@ -6,6 +8,9 @@
 #define RESPONSE_VALUES_LEN 7
 
 #define SLAVE_ID 31
+
+RS485Class rs485(Serial3, 2, 3, 4);
+ModbusRTUClientClass mbClient(rs485);
 
 uint16_t requestValues[REQUEST_VALUES_LEN] = {
   0,  // on/off

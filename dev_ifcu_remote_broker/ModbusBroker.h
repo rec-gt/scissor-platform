@@ -1,20 +1,16 @@
-#include <ArduinoRS485.h>
-#include <ArduinoModbus.h>
+
 #include "AutoTimer.h"
 #include "Globals.h"
 
 #ifndef ModbusBroker_H
 #define ModbusBroker_H
 
-RS485Class rs485(Serial3, 2, 3, 4);
-ModbusRTUClientClass mbClient(rs485);
-
 AutoTimer timer;
 
 class ModbusBroker {
-
-
 private:
+  byte slave_id = 31;
+
   enum Status {
     MB_WRITE,
     MB_READ,
@@ -23,7 +19,7 @@ private:
   Status currStatus;
 
   void handleReadData() {
-    if (!mbClient.requestFrom(SLAVE_ID, INPUT_REGISTERS, 30000, 7)) {
+    if (!mbClient.requestFrom(this->slave_id, INPUT_REGISTERS, 30000UL, 7)) {
       Serial.println(mbClient.lastError());
     } else {
       for (uint16_t i = 0; i < 7; i++) {
@@ -52,14 +48,16 @@ public:
 
   void loop() {
     if (this->currStatus == MB_WRITE) {
-      if (timer.autoExpire(500)) {
-        this->handleWriteData();
-        this->currStatus == MB_READ;
-      }
+      // if (timer.autoExpire(500)) {
+      //   this->handleWriteData();
+      //   this->currStatus = MB_READ;
+      // }
+
+      this->currStatus = MB_READ;
     } else if (this->currStatus == MB_READ) {
       if (timer.autoExpire(500)) {
         this->handleReadData();
-        this->currStatus == MB_WRITE;
+        this->currStatus = MB_WRITE;
       }
     }
   }

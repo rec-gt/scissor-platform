@@ -13,9 +13,9 @@ void setup() {
 }
 
 void loop() {
-  serialBroker.listenByte();
-  serialBroker.handleRecvBuffer();
+  // serialBroker.listenByte();
+  // serialBroker.handleRecvBuffer();
   modbusBroker.loop();
 
-  delay(500);
+  // delay(500);
 }

@@ -63,11 +63,6 @@ private:
 
 
 public:
-  String serialRecvPayload = "";
-  String serialSendPayload = "";
-
-
-
   SerialBroker(){};
 
   void listen() {
@@ -117,18 +112,6 @@ public:
       if (payloadChecksum == calculatedChecksum) {
         this->captureRecvPayload();
       }
-    }
-  }
-
-  void setRequestValues(int *values) {
-    for (size_t i = 0; i < 4; i++) {
-      values[i] = 0;
-    }
-  }
-
-  void setResponseValues(int *values) {
-    for (size_t i = 0; i < 7; i++) {
-      values[i] = 0;
     }
   }
 

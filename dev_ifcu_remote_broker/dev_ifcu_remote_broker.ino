@@ -20,9 +20,4 @@ void loop() {
     Serial.print(", ");
   }
   delay(500);
-
-  serialBroker.setRequestValues(requestValues);
-  serialBroker.setResponseValues(responseValues);
-
-  delay(10);
 }

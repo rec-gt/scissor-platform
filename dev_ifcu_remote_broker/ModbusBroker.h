@@ -17,39 +17,26 @@ private:
   Status currStatus;
 
   void handleReadData() {
-    if (!mbClient.requestFrom(SLAVE_ID, INPUT_REGISTERS, 30000UL, 10)) {
+    if (!mbClient.requestFrom(SLAVE_ID, INPUT_REGISTERS, 30000UL, 11)) {
       Serial.println(mbClient.lastError());
     } else {
-      Serial.print(mbClient.read());
-      Serial.println();
-      Serial.print(mbClient.read());
-      Serial.println();
-      Serial.print(mbClient.read());
-      Serial.println();
-      Serial.print(mbClient.read());
-      Serial.println();
-      Serial.print(mbClient.read());
-      Serial.println();
-      Serial.print(mbClient.read());
-      Serial.println();
-      Serial.print(mbClient.read());
-      Serial.println();
-      Serial.print(mbClient.read());
-      Serial.println();
-      Serial.print(mbClient.read());
-      Serial.println();
-      Serial.print(mbClient.read());  // maximum adj. set temp
-      Serial.println();
-      Serial.print(mbClient.read());  // minimum adj. set temp
-      Serial.println();
-
-
+      mbClient.read();                                            // ignore
+      responseValues[0] = ((mbClient.read() & 0b01000000) != 0);  // on/off
+      mbClient.read();                                            // ignore
+      responseValues[1] = mbClient.read();                        // Mode
+      responseValues[2] = mbClient.read();                        // Fan Speed
+      responseValues[3] = mbClient.read();                        // Room Temp
+      responseValues[4] = mbClient.read();                        // Set-point Temp
+      mbClient.read();                                            // ignore
+      mbClient.read();                                            // ignore
+      responseValues[5] = mbClient.read();                        // maximum adj. set temp
+      responseValues[6] = mbClient.read();                        // minimum adj. set temp
 
       // for (uint16_t i = 0; i < 11; i++) {
       //   Serial.print(responseValues[i]);
       //   Serial.print(", ");
       // }
-      // Serial.println();
+      Serial.println();
     }
   }
 

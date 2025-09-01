@@ -9,7 +9,7 @@ private:
   bool payloadReady = false;
   uint16_t bufferIdx = 0;
 
-  uint8_t serialRecvBuffer[8] = { 0x5B, 0, (2501 & 0xFF), ((2501 >> 8) & 0xFF), 2, 2, 210, 0x5D };
+  uint8_t serialRecvBuffer[8] = { 0x5B, 1, (2501 & 0xFF), ((2501 >> 8) & 0xFF), 2, 2, 210, 0x5D };
 
   void clearSerialBuffer() {
     while (Serial1.read() > 0) { delay(1); };

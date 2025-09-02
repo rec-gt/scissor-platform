@@ -102,7 +102,7 @@ public:
 
   void handleSendBuffer() {
     requestValues[0] = 1;
-    requestValues[1] = 2500;
+    requestValues[1] = 2100;
     requestValues[2] = 1;
     requestValues[3] = 2;
 

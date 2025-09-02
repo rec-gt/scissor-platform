@@ -7,7 +7,7 @@ AutoTimer serverTimer;
 
 WebServer server(80);
 
-localAndRemoteData = "";
+String localAndRemoteData = "";
 
 class BackendServer {
 private:

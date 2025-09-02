@@ -105,6 +105,7 @@ public:
   void sendDataToSlaves() {
     for (int i = 0; i < MAX_SLAVES; i++) {
       if (slaveClients[i] && slaveClients[i].connected()) {
+        slaveDatabase[i].set(1, "IFCU-1", 1, 1, 1, 2500, 2700, 1500, 2700);
         slaveClients[i].println(slaveDatabase[i].dataStr);
       } else {
         if (slaveClients[i]) {

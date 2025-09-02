@@ -7,16 +7,17 @@ AutoTimer serverTimer;
 
 WebServer server(80);
 
+localAndRemoteData = "";
+
 class BackendServer {
 private:
-  String localAndRemoteData = "";
 
 public:
   BackendServer(){};
 
   void init() {
     server.on("/get", []() {
-      server.send(200, "text/plain", "123123123123");
+      server.send(200, "text/plain", localAndRemoteData);
     });
 
     server.on("/set", []() {
@@ -32,20 +33,20 @@ public:
 
   void loop() {
     if (serverTimer.autoExpire(1000)) {
-      this->localAndRemoteData = "";
-      this->localAndRemoteData += String(responseValues[0]);
-      this->localAndRemoteData += ",";
-      this->localAndRemoteData += String(responseValues[1]);
-      this->localAndRemoteData += ",";
-      this->localAndRemoteData += String(responseValues[2]);
-      this->localAndRemoteData += ",";
-      this->localAndRemoteData += String(responseValues[3]);
-      this->localAndRemoteData += ",";
-      this->localAndRemoteData += String(responseValues[4]);
-      this->localAndRemoteData += ",";
-      this->localAndRemoteData += String(responseValues[5]);
-      this->localAndRemoteData += ",";
-      this->localAndRemoteData += String(responseValues[6]);
+      localAndRemoteData = "";
+      localAndRemoteData += String(responseValues[0]);
+      localAndRemoteData += ",";
+      localAndRemoteData += String(responseValues[1]);
+      localAndRemoteData += ",";
+      localAndRemoteData += String(responseValues[2]);
+      localAndRemoteData += ",";
+      localAndRemoteData += String(responseValues[3]);
+      localAndRemoteData += ",";
+      localAndRemoteData += String(responseValues[4]);
+      localAndRemoteData += ",";
+      localAndRemoteData += String(responseValues[5]);
+      localAndRemoteData += ",";
+      localAndRemoteData += String(responseValues[6]);
     }
 
     server.handleClient();

@@ -88,16 +88,18 @@ public:
     this->serialSendBuffer[2] = responseValues[1];
     this->serialSendBuffer[3] = responseValues[2];
     this->serialSendBuffer[4] = responseValues[3] & 0xFF;
-    this->serialSendBuffer[5] = (requestValues[3] >> 8) & 0xFF;
+    this->serialSendBuffer[5] = (responseValues[3] >> 8) & 0xFF;
     this->serialSendBuffer[6] = responseValues[4] & 0xFF;
-    this->serialSendBuffer[7] = (requestValues[4] >> 8) & 0xFF;
+    this->serialSendBuffer[7] = (responseValues[4] >> 8) & 0xFF;
     this->serialSendBuffer[8] = responseValues[5] & 0xFF;
-    this->serialSendBuffer[9] = (requestValues[5] >> 8) & 0xFF;
+    this->serialSendBuffer[9] = (responseValues[5] >> 8) & 0xFF;
     this->serialSendBuffer[10] = responseValues[6] & 0xFF;
-    this->serialSendBuffer[11] = (requestValues[6] >> 8) & 0xFF;
+    this->serialSendBuffer[11] = (responseValues[6] >> 8) & 0xFF;
     this->serialSendBuffer[12] = this->getChecksum(this->serialSendBuffer, 1, 11);
     this->serialSendBuffer[13] = 0x5D;
     Serial.println("send");
+    Serial.println( (this->serialSendBuffer[5] << 8) | this->serialSendBuffer[4]);
+    printResponseValues();
     Serial1.write(this->serialSendBuffer, sizeof(this->serialSendBuffer));
   }
 

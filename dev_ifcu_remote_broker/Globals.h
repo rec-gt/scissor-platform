@@ -47,4 +47,21 @@ void printResponseValues() {
   Serial.println();
 }
 
+// uint8_t serialRecvBuffer[14] = { 0x5B,
+//                                  1,
+//                                  1,
+//                                  1,
+//                                  (2500 & 0xFF),
+//                                  ((2500 >> 8) & 0xFF),
+//                                  (2500 & 0xFF),
+//                                  ((2500 >> 8) & 0xFF),
+//                                  (2500 & 0xFF),
+//                                  ((2500 >> 8) & 0xFF),
+//                                  (2500 & 0xFF),
+//                                  ((2500 >> 8) & 0xFF),
+//                                  0,
+//                                  0x5D };
+
+// uint8_t serialSendBuffer[8] = { 0x5B, 1, (2500 & 0xFF), ((2500 >> 8) & 0xFF), 2, 2, 0, 0x5D };
+
 #endif

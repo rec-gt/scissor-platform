@@ -12,22 +12,7 @@ private:
   bool payloadReady = false;
   uint8_t bufferIdx = 0;
 
-  uint8_t serialRecvBuffer[14] = { 0x5B,
-                                   1,
-                                   1,
-                                   1,
-                                   (2500 & 0xFF),
-                                   ((2500 >> 8) & 0xFF),
-                                   (2500 & 0xFF),
-                                   ((2500 >> 8) & 0xFF),
-                                   (2500 & 0xFF),
-                                   ((2500 >> 8) & 0xFF),
-                                   (2500 & 0xFF),
-                                   ((2500 >> 8) & 0xFF),
-                                   0,
-                                   0x5D };
-
-  // uint8_t serialSendBuffer[8] = { 0x5B, 1, (2500 & 0xFF), ((2500 >> 8) & 0xFF), 2, 2, 210, 0x5D };
+  uint8_t serialRecvBuffer[14] = {};
   uint8_t serialSendBuffer[8] = {};
 
   void clearSerialBuffer() {
@@ -54,9 +39,9 @@ public:
 
   void loop() {
     this->listenByte();
-    this->handleRecvBuffer();
 
     if (timer.autoExpire(1000)) {
+      this->handleRecvBuffer();
       this->handleSendBuffer();
     }
   }
@@ -96,9 +81,11 @@ public:
         responseValues[4] = (this->serialRecvBuffer[7] << 8) | this->serialRecvBuffer[6];
         responseValues[5] = (this->serialRecvBuffer[9] << 8) | this->serialRecvBuffer[8];
         responseValues[6] = (this->serialRecvBuffer[11] << 8) | this->serialRecvBuffer[10];
+
+        Serial.print(this->serialRecvBuffer[4]);
+        Serial.print("Serial REceived");
+        printResponseValues();
       }
-      Serial.print("Serial REceived");
-      printResponseValues();
     }
   }
 

@@ -97,9 +97,6 @@ public:
     this->serialSendBuffer[11] = (responseValues[6] >> 8) & 0xFF;
     this->serialSendBuffer[12] = this->getChecksum(this->serialSendBuffer, 1, 11);
     this->serialSendBuffer[13] = 0x5D;
-    Serial.println("send");
-    Serial.println( (this->serialSendBuffer[5] << 8) | this->serialSendBuffer[4]);
-    printResponseValues();
     Serial1.write(this->serialSendBuffer, sizeof(this->serialSendBuffer));
   }
 

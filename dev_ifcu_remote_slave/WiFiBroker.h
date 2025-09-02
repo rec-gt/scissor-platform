@@ -12,6 +12,8 @@ const int masterPort = 80;
 
 WiFiClient client;
 
+AutoTimer wifiTimer;
+
 class WiFiBroker {
 private:
 public:
@@ -30,7 +32,9 @@ public:
 
   void loop() {
     this->handleReconnect();
-    this->sendDataToMaster();
+    if (wifiTimer.autoExpire(1000)) {
+      this->sendDataToMaster();
+    }
   }
 
   void handleReconnect() {

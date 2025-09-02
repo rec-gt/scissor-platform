@@ -3,10 +3,10 @@
 #ifndef DatabaseBroker_h
 #define DatabaseBroker_h
 
-SlaveData *slaveData;
 
 class DatabaseBroker {
 private:
+  SlaveData *slaveData;
   String responseJSONStr = "";
 
 public:
@@ -18,9 +18,9 @@ public:
 
     this->responseJSONStr += "[";
     for (size_t i = 0; i < sizeof(this->slaveData); i++) {
-      this->slaveData.getResponseStr();
+      this->slaveData[i].getResponseStr();
       this->responseJSONStr += "[";
-      this->responseJSONStr += this->slaveData.responseStr;
+      this->responseJSONStr += this->slaveData[i].responseStr;
       this->responseJSONStr += "],";
     }
     this->responseJSONStr += "]";

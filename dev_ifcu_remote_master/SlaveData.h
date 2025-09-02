@@ -11,50 +11,50 @@ private:
   uint16_t higherTempLimit = 2700;
 
 public:
-
   String dataStr = "";
 
-  SlaveData() {
-    void set(
-      uint8_t id,
-      String name,
-      bool onOff,
-      uint8_t mode,
-      uint8_t speed,
-      uint16_t roomTemp,
-      uint16_t setTemp,
-      uint16_t lowerTempLimit,
-      uint16_t higherTempLimit) {
+  SlaveData() {}
 
-      this->id = id;
-      this->name = name;
-      this->onOff = onOff;
-      this->mode = mode;
-      this->speed = speed;
-      this->roomTemp = roomTemp;
-      this->setTemp = setTemp;
-      this->lowerTempLimit = lowerTempLimit;
-      this->higherTempLimit = higherTempLimit;
+  void set(
+    uint8_t id,
+    String name,
+    bool onOff,
+    uint8_t mode,
+    uint8_t speed,
+    uint16_t roomTemp,
+    uint16_t setTemp,
+    uint16_t lowerTempLimit,
+    uint16_t higherTempLimit) {
 
-      dataStr = "";
-      dataStr += String(id);
-      dataStr += String(",");
-      dataStr += String(name);
-      dataStr += String(",");
-      dataStr += String(onOff);
-      dataStr += String(",");
-      dataStr += String(mode);
-      dataStr += String(",");
-      dataStr += String(speed);
-      dataStr += String(",");
-      dataStr += String(roomTemp);
-      dataStr += String(",");
-      dataStr += String(setTemp);
-      dataStr += String(",");
-      dataStr += String(lowerTempLimit);
-      dataStr += String(",");
-      dataStr += String(higherTempLimit);
-    };
-  }
+    this->id = id;
+    this->name = name;
+    this->onOff = onOff;
+    this->mode = mode;
+    this->speed = speed;
+    this->roomTemp = roomTemp;
+    this->setTemp = setTemp;
+    this->lowerTempLimit = lowerTempLimit;
+    this->higherTempLimit = higherTempLimit;
+
+    dataStr = "";
+    dataStr += String(id);
+    dataStr += String(",");
+    dataStr += String(name);
+    dataStr += String(",");
+    dataStr += String(onOff);
+    dataStr += String(",");
+    dataStr += String(mode);
+    dataStr += String(",");
+    dataStr += String(speed);
+    dataStr += String(",");
+    dataStr += String(roomTemp);
+    dataStr += String(",");
+    dataStr += String(setTemp);
+    dataStr += String(",");
+    dataStr += String(lowerTempLimit);
+    dataStr += String(",");
+    dataStr += String(higherTempLimit);
+  };
+
   ~SlaveData() {}
 };

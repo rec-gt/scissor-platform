@@ -54,9 +54,10 @@ public:
 
   void loop() {
     this->listenByte();
+    this->handleRecvBuffer();
+
     if (timer.autoExpire(1000)) {
       this->handleSendBuffer();
-      this->handleRecvBuffer();
     }
   }
 

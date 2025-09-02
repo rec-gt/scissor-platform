@@ -1,7 +1,10 @@
 #include "Globals.h"
+#include "AutoTimer.h"
 
 #ifndef SerialBroker_H
 #define SerialBroker_H
+
+AutoTimer serialTimer;
 
 class SerialBroker {
 private:
@@ -10,6 +13,7 @@ private:
   uint8_t bufferIdx = 0;
 
   uint8_t serialRecvBuffer[8] = {};
+  uint8_t serialSendBuffer[14] = {};
 
   void clearSerialBuffer() {
     while (Serial1.read() > 0) { delay(1); };
@@ -29,13 +33,6 @@ private:
     return checksum;
   }
 
-  void captureRecvPayload() {
-    requestValues[0] = this->serialRecvBuffer[1];
-    requestValues[1] = (this->serialRecvBuffer[3] << 8) | this->serialRecvBuffer[2];
-    requestValues[2] = this->serialRecvBuffer[4];
-    requestValues[3] = this->serialRecvBuffer[5];
-  }
-
 
 public:
   SerialBroker(){};
@@ -43,6 +40,10 @@ public:
   void loop() {
     this->listenByte();
     this->handleRecvBuffer();
+  
+    if (serialTimer.autoExpire(1000)) {
+      this->handleSendBuffer();
+    }
   }
 
   void listenByte() {
@@ -73,9 +74,29 @@ public:
       uint8_t payloadChecksum = this->serialRecvBuffer[6];
       uint8_t calculatedChecksum = this->getChecksum(this->serialRecvBuffer, 1, 5);
       if (payloadChecksum == calculatedChecksum) {
-        this->captureRecvPayload();
+        requestValues[0] = this->serialRecvBuffer[1];
+        requestValues[1] = (this->serialRecvBuffer[3] << 8) | this->serialRecvBuffer[2];
+        requestValues[2] = this->serialRecvBuffer[4];
+        requestValues[3] = this->serialRecvBuffer[5];
       }
     }
+  }
+
+  void handleSendBuffer() {
+    this->serialSendBuffer[0] = 0x5B;
+    this->serialSendBuffer[1] = responseValues[0];
+    this->serialSendBuffer[2] = responseValues[1];
+    this->serialSendBuffer[3] = responseValues[2];
+    this->serialSendBuffer[4] = responseValues[3] & 0xFF;
+    this->serialSendBuffer[5] = (requestValues[3] >> 8) & 0xFF;
+    this->serialSendBuffer[6] = responseValues[4] & 0xFF;
+    this->serialSendBuffer[7] = (requestValues[4] >> 8) & 0xFF;
+    this->serialSendBuffer[8] = responseValues[5] & 0xFF;
+    this->serialSendBuffer[9] = (requestValues[5] >> 8) & 0xFF;
+    this->serialSendBuffer[10] = responseValues[6] & 0xFF;
+    this->serialSendBuffer[11] = (requestValues[6] >> 8) & 0xFF;
+    this->serialSendBuffer[12] = this->getChecksum(this->serialSendBuffer, 1, 11);
+    this->serialSendBuffer[13] = 0x5D;
   }
 
   ~SerialBroker(){};

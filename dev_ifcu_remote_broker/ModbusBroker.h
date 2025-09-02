@@ -31,12 +31,6 @@ private:
       mbClient.read();                                            // ignore
       responseValues[5] = mbClient.read();                        // maximum adj. set temp
       responseValues[6] = mbClient.read();                        // minimum adj. set temp
-
-      for (uint16_t i = 0; i < 7; i++) {
-        Serial.print(responseValues[i]);
-        Serial.print(", ");
-      }
-      Serial.println();
     }
   }
 
@@ -64,9 +58,7 @@ public:
         this->handleWriteData();
         this->currStatus = MB_READ;
       }
-      this->currStatus = MB_READ;
     } else if (this->currStatus == MB_READ) {
-      this->currStatus = MB_WRITE;
       if (timer.autoExpire(1000)) {
         this->handleReadData();
         this->currStatus = MB_WRITE;

@@ -35,6 +35,16 @@ void printRequestValues() {
     Serial.print(requestValues[i]);
     Serial.print(", ");
   }
+  Serial.println();
+}
+
+void printResponseValues() {
+  Serial.print("\r\n===================\r\n");
+  for (uint16_t i = 0; i < 7; i++) {
+    Serial.print(responseValues[i]);
+    Serial.print(", ");
+  }
+  Serial.println();
 }
 
 #endif

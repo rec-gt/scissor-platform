@@ -92,7 +92,7 @@ public:
           Serial.print(", Port: ");
           Serial.print(slaveClients[i].remotePort());
           Serial.print(" - Data: ");
-          Serial.print(data);
+          Serial.println(data);
         }
       } else {
         // Clean up disconnected slot
@@ -101,6 +101,8 @@ public:
         }
       }
     }
+    databaseBroker.getResponseJSONStr();
+    Serial.println(databaseBroker.responseJSONStr);
   }
 
   void sendDataToSlaves() {

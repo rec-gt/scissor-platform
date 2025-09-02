@@ -6,7 +6,6 @@
 
 class SlaveData {
 private:
-  String name = "iFCU-16";
 
   uint16_t requestValues[REQUEST_VALUES_LEN] = {
     0,  // on/off
@@ -26,20 +25,11 @@ private:
   };
 
 public:
-  String dataStr = "";
+  String name = "iFCU-16";
+
   String responseStr = "";
 
   SlaveData() {}
-
-  void getResponseStr() {
-    this->responseStr = "";
-    for (size_t i = 0; i < RESPONSE_VALUES_LEN; i++) {
-      this->responseStr += responseValues[i];
-      if (i < RESPONSE_VALUES_LEN - 1) {
-        this->responseStr += ",";
-      }
-    }
-  }
 
   ~SlaveData() {}
 };

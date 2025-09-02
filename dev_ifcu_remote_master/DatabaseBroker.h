@@ -19,7 +19,6 @@ public:
 
     this->responseJSONStr += "[";
     for (size_t i = 0; i < sizeof(this->slaveData); i++) {
-      this->slaveData[i].getResponseStr();
       this->responseJSONStr += "[";
       this->responseJSONStr += this->slaveData[i].responseStr;
       this->responseJSONStr += "],";
@@ -28,7 +27,10 @@ public:
   }
 
   void setSlaveResponse(int i, String data) {
-    this->slaveData[i].responseStr = data;
+    this->slaveData[i].responseStr = "";
+    this->slaveData[i].responseStr += this->slaveData[i].name;
+    this->slaveData[i].responseStr += ",";
+    this->slaveData[i].responseStr += data;
   }
 
   ~DatabaseBroker() {}

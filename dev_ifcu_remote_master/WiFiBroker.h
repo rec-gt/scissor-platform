@@ -89,7 +89,6 @@ public:
     for (int i = 0; i < MAX_SLAVES; i++) {
       if (slaveClients[i] && slaveClients[i].connected()) {
         if (slaveClients[i].available()) {
-          // Read data from slave
           String data = slaveClients[i].readStringUntil('\n');
           data.trim();
           slaveRemoteDatabase[i].set(data);
@@ -99,7 +98,6 @@ public:
           Serial.print(", Port: ");
           Serial.print(slaveClients[i].remotePort());
           Serial.print(" - Data: ");
-          Serial.println(data);
         }
       } else {
         // Clean up disconnected slot

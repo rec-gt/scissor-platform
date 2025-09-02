@@ -9,22 +9,28 @@ WebServer server(80);
 
 class BackendServer {
 private:
-  String localAndRemoteData = "";
+  String localRemoteData = "";
 
 public:
   BackendServer(){};
 
   void init() {
     server.on("/get", [this]() {
-      server.send(200, "text/plain", this->localAndRemoteData);
+      server.send(200, "text/plain", this->localRemoteData);
     });
 
     server.on("/set", []() {
-      if (server.hasArg("value")) {
-        // String valStr = server.arg("value");
-        // currentValue = valStr.toInt();
-        // server.send(200, "text/plain", "Value set to: " + String(currentValue));
-        // Serial.println("GET /set - Set to: " + String(currentValue));
+      if (server.hasArg("onoff")) {
+        String valStr = server.arg("onoff");
+        requestValues[0] = valStr.toInt();
+      }
+      if (server.hasArg("mode")) {
+        String valStr = server.arg("mode");
+        requestValues[2] = valStr.toInt();
+      }
+      if (server.hasArg("speed")) {
+        String valStr = server.arg("speed");
+        requestValues[3] = valStr.toInt();
       }
     });
     server.begin();
@@ -32,29 +38,29 @@ public:
 
   void loop() {
     if (serverTimer.autoExpire(1000)) {
-      localAndRemoteData = "";
-      localAndRemoteData += String(requestValues[0]);
-      localAndRemoteData += ",";
-      localAndRemoteData += String(requestValues[1]);
-      localAndRemoteData += ",";
-      localAndRemoteData += String(requestValues[2]);
-      localAndRemoteData += ",";
-      localAndRemoteData += String(requestValues[3]);
-      localAndRemoteData += "-";
-      localAndRemoteData += String(responseValues[0]);
-      localAndRemoteData += ",";
-      localAndRemoteData += String(responseValues[1]);
-      localAndRemoteData += ",";
-      localAndRemoteData += String(responseValues[2]);
-      localAndRemoteData += ",";
-      localAndRemoteData += String(responseValues[3]);
-      localAndRemoteData += ",";
-      localAndRemoteData += String(responseValues[4]);
-      localAndRemoteData += ",";
-      localAndRemoteData += String(responseValues[5]);
-      localAndRemoteData += ",";
-      localAndRemoteData += String(responseValues[6]);
-      Serial.println(localAndRemoteData);
+      this->localRemoteData = "";
+      this->localRemoteData += String(requestValues[0]);
+      this->localRemoteData += ",";
+      this->localRemoteData += String(requestValues[1]);
+      this->localRemoteData += ",";
+      this->localRemoteData += String(requestValues[2]);
+      this->localRemoteData += ",";
+      this->localRemoteData += String(requestValues[3]);
+      this->localRemoteData += ",";
+      this->localRemoteData += String(responseValues[0]);
+      this->localRemoteData += ",";
+      this->localRemoteData += String(responseValues[1]);
+      this->localRemoteData += ",";
+      this->localRemoteData += String(responseValues[2]);
+      this->localRemoteData += ",";
+      this->localRemoteData += String(responseValues[3]);
+      this->localRemoteData += ",";
+      this->localRemoteData += String(responseValues[4]);
+      this->localRemoteData += ",";
+      this->localRemoteData += String(responseValues[5]);
+      this->localRemoteData += ",";
+      this->localRemoteData += String(responseValues[6]);
+      Serial.println(localRemoteData);
     }
 
     server.handleClient();

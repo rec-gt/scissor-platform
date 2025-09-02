@@ -81,9 +81,6 @@ public:
         responseValues[4] = (this->serialRecvBuffer[7] << 8) | this->serialRecvBuffer[6];
         responseValues[5] = (this->serialRecvBuffer[9] << 8) | this->serialRecvBuffer[8];
         responseValues[6] = (this->serialRecvBuffer[11] << 8) | this->serialRecvBuffer[10];
-
-        Serial.print(this->serialRecvBuffer[4]);
-        Serial.print("Serial REceived");
         printResponseValues();
       }
     }
@@ -105,7 +102,6 @@ public:
     this->serialSendBuffer[7] = 0x5D;
 
     Serial2.write(this->serialSendBuffer, sizeof(this->serialSendBuffer));
-    Serial.println("Serial Sended");
   }
 
   ~SerialBroker(){};

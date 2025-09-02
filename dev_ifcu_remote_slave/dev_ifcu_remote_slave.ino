@@ -1,26 +1,17 @@
-// #include <WiFi.h>
-// #include <HTTPClient.h>
-// #include <WebServer.h>
 #include "Globals.h"
 #include "SerialBroker.h"
-
-const char* ssid = "REC Guest";
-const char* password = "guest@@2022";
-
-const char* serverName = "http://10.236.208.133:3010";
-String url = String(serverName) + "/f-l/1";
-
-// WebServer server(80);
-
-unsigned long prevMillis = millis();
+#include "WiFiBroker.h"
 
 SerialBroker serialBroker;
+WiFiBroker wifiBroker;
 
 void setup() {
   Serial.begin(9600);
   Serial1.begin(9600, SERIAL_8N1, 18, 19);  // receive status from modbus-broker
   Serial2.begin(9600, SERIAL_8N1, 16, 17);  // send request to modbus-broker
 
+  wifiBroker.init();
+  
   // WiFi.mode(WIFI_STA);
   // WiFi.begin(ssid, password);
 

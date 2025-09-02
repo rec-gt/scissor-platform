@@ -87,10 +87,10 @@ public:
   }
 
   void handleSendBuffer() {
-    requestValues[0] = 1;
-    requestValues[1] = 2100;
-    requestValues[2] = 1;
-    requestValues[3] = 2;
+    // requestValues[0] = 1;
+    // requestValues[1] = 2100;
+    // requestValues[2] = 1;
+    // requestValues[3] = 2;
 
     this->serialSendBuffer[0] = 0x5B;
     this->serialSendBuffer[1] = requestValues[0];

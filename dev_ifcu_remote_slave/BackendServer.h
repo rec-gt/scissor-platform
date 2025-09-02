@@ -1,4 +1,5 @@
 #include <WebServer.h>
+#include "Globals.h"
 
 #ifndef BackendServer_h
 #define BackendServer_h
@@ -29,6 +30,7 @@ public:
         String valStr = server.arg("mode");
         requestValues[2] = valStr.toInt();
         Serial.println(valStr);
+        Serial.println(requestValues[2]);
       }
       if (server.hasArg("speed")) {
         String valStr = server.arg("speed");

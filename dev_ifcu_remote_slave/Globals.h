@@ -24,4 +24,22 @@ uint16_t responseValues[RESPONSE_VALUES_LEN] = {
   0,  // upper temp limit
 };
 
+void printRequestValues() {
+  Serial.print("\r\n===================\r\n");
+  for (int i = 0; i < 4; i++) {
+    Serial.print(requestValues[i]);
+    Serial.print(", ");
+  }
+  Serial.println();
+}
+
+void printResponseValues() {
+  Serial.print("\r\n===================\r\n");
+  for (uint16_t i = 0; i < 7; i++) {
+    Serial.print(responseValues[i]);
+    Serial.print(", ");
+  }
+  Serial.println();
+}
+
 #endif

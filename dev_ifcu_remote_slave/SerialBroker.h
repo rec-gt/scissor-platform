@@ -62,10 +62,10 @@ public:
   }
 
   void listenByte() {
-    while (Serial2.available() > 0) {
+    while (Serial1.available() > 0) {
       this->payloadReady = false;
 
-      uint8_t rb = Serial2.read();
+      uint8_t rb = Serial1.read();
 
       if (rb == 0x5B) {
         this->isReceiving = true;
@@ -98,6 +98,7 @@ public:
         responseValues[6] = (this->serialRecvBuffer[11] << 8) | this->serialRecvBuffer[10];
       }
       Serial.print("Serial REceived");
+      printResponseValues();
     }
   }
 

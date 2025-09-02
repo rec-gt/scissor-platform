@@ -40,7 +40,7 @@ public:
   void loop() {
     this->listenByte();
     this->handleRecvBuffer();
-  
+
     if (serialTimer.autoExpire(1000)) {
       this->handleSendBuffer();
     }
@@ -97,6 +97,8 @@ public:
     this->serialSendBuffer[11] = (requestValues[6] >> 8) & 0xFF;
     this->serialSendBuffer[12] = this->getChecksum(this->serialSendBuffer, 1, 11);
     this->serialSendBuffer[13] = 0x5D;
+    Serial.println("send");
+    Serial1.write(this->serialSendBuffer, sizeof(this->serialSendBuffer));
   }
 
   ~SerialBroker(){};

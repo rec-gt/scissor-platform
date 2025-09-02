@@ -18,7 +18,7 @@ SerialBroker serialBroker;
 
 void setup() {
   Serial.begin(9600);
-  Serial1.begin(9600);                      // receive status from modbus-broker
+  Serial1.begin(9600, SERIAL_8N1, 18, 19);  // receive status from modbus-broker
   Serial2.begin(9600, SERIAL_8N1, 16, 17);  // send request to modbus-broker
 
   // WiFi.mode(WIFI_STA);

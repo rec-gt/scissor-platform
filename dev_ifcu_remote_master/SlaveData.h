@@ -1,5 +1,5 @@
 class SlaveData {
-public:
+private:
   uint8_t id;
   String name = "iFCU-16";
   bool onOff = false;
@@ -9,6 +9,9 @@ public:
   uint16_t setTemp = 2500;
   uint16_t lowerTempLimit = 1500;
   uint16_t higherTempLimit = 2700;
+
+public:
+
   String dataStr = "";
 
   SlaveData() {
@@ -22,6 +25,7 @@ public:
       uint16_t setTemp,
       uint16_t lowerTempLimit,
       uint16_t higherTempLimit) {
+
       this->id = id;
       this->name = name;
       this->onOff = onOff;
@@ -31,9 +35,8 @@ public:
       this->setTemp = setTemp;
       this->lowerTempLimit = lowerTempLimit;
       this->higherTempLimit = higherTempLimit;
-    };
 
-    void get() {
+      dataStr = "";
       dataStr += String(id);
       dataStr += String(",");
       dataStr += String(name);

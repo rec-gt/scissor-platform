@@ -7,9 +7,9 @@ class SerialBroker {
 private:
   bool isReceiving = false;
   bool payloadReady = false;
-  uint16_t bufferIdx = 0;
+  uint8_t bufferIdx = 0;
 
-  uint8_t serialRecvBuffer[8] = { 0x5B, 1, (2500 & 0xFF), ((2500 >> 8) & 0xFF), 2, 2, 210, 0x5D };
+  uint8_t serialRecvBuffer[8] = {};
 
   void clearSerialBuffer() {
     while (Serial1.read() > 0) { delay(1); };

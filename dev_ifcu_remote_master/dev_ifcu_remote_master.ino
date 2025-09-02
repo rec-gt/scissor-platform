@@ -1,7 +1,7 @@
 #include <WiFi.h>
 
-const char* apSSID = "iFCU-16f-test-ckyt";    // Master's AP SSID
-const char* apPassword = "iFCU-16f-test-ckyt";    // Master's AP password (min 8 chars)
+const char* apSSID = "ifcu-remote-16f-test";    // Master's AP SSID
+const char* apPassword = "ifcu-remote-16f-test";    // Master's AP password (min 8 chars)
 #define MAX_SLAVES 5                    // Max number of slave connections
 #define SERVER_PORT 80                  // TCP port to listen on
 

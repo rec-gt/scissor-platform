@@ -5,8 +5,8 @@
 #ifndef WiFiBroker_H
 #define WiFiBroker_H
 
-const char* ssid = "iFCU-16f-test-ckyt";
-const char* password = "iFCU-16f-test-ckyt";
+const char* ssid = "ifcu-remote-16f-test";
+const char* password = "ifcu-remote-16f-test";
 const char* masterIP = "192.168.1.100";
 const int masterPort = 80;
 
@@ -34,6 +34,7 @@ public:
     this->handleReconnect();
     if (wifiTimer.autoExpire(1000)) {
       this->sendDataToMaster();
+      this->recvDataFromMaster();
     }
   }
 
@@ -53,7 +54,9 @@ public:
   void sendDataToMaster() {
     String data = "Hello from slave: " + String(millis());
     client.println(data);
+  }
 
+  void recvDataFromMaster() {
     if (client.available()) {
       String response = client.readStringUntil('\n');
       response.trim();

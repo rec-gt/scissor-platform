@@ -19,7 +19,16 @@ IPAddress subnet(255, 255, 255, 0);
 
 WiFiServer server(SERVER_PORT);
 WiFiClient slaveClients[MAX_SLAVES];
-SlaveData slaveDatabase[MAX_SLAVES] = {
+
+SlaveData slaveRemoteDatabase[MAX_SLAVES] = {
+  SlaveData(),
+  SlaveData(),
+  SlaveData(),
+  SlaveData(),
+  SlaveData(),
+};
+
+SlaveData slaveLocalDatabase[MAX_SLAVES] = {
   SlaveData(),
   SlaveData(),
   SlaveData(),
@@ -83,15 +92,14 @@ public:
           // Read data from slave
           String data = slaveClients[i].readStringUntil('\n');
           data.trim();
+          slaveRemoteDatabase[i].set(data);
+
           Serial.print("Received from slave IP: ");
           Serial.print(slaveClients[i].remoteIP());
           Serial.print(", Port: ");
           Serial.print(slaveClients[i].remotePort());
           Serial.print(" - Data: ");
           Serial.println(data);
-
-          // Optional: Send a response back to this specific slave
-          // slaveClients[i].println("Ack from master: " + data);
         }
       } else {
         // Clean up disconnected slot
@@ -105,8 +113,8 @@ public:
   void sendDataToSlaves() {
     for (int i = 0; i < MAX_SLAVES; i++) {
       if (slaveClients[i] && slaveClients[i].connected()) {
-        slaveDatabase[i].set(1, "IFCU-1", 1, 1, 1, 2500, 2700, 1500, 2700);
-        slaveClients[i].println(slaveDatabase[i].dataStr);
+        slaveControlDatabase[i].set(1, "IFCU-1", 1, 1, 1, 2500, 2700, 1500, 2700);
+        slaveClients[i].println(slaveControlDatabase[i].dataStr);
       } else {
         if (slaveClients[i]) {
           slaveClients[i].stop();

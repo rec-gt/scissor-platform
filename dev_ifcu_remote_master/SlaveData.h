@@ -15,6 +15,10 @@ public:
 
   SlaveData() {}
 
+  void parse(String dataStr) {
+    
+  }
+
   void set(
     uint8_t id,
     String name,

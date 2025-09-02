@@ -16,6 +16,7 @@ AutoTimer wifiTimer;
 
 class WiFiBroker {
 private:
+  String dataToMaster = "";
 public:
   WiFiBroker(){};
 
@@ -52,8 +53,21 @@ public:
   }
 
   void sendDataToMaster() {
-    String data = "Hello from slave: " + String(millis());
-    client.println(data);
+    this->dataToMaster = "";
+    this->dataToMaster += String(responseValues[0]);
+    this->dataToMaster += ",";
+    this->dataToMaster += String(responseValues[1]);
+    this->dataToMaster += ",";
+    this->dataToMaster += String(responseValues[2]);
+    this->dataToMaster += ",";
+    this->dataToMaster += String(responseValues[3]);
+    this->dataToMaster += ",";
+    this->dataToMaster += String(responseValues[4]);
+    this->dataToMaster += ",";
+    this->dataToMaster += String(responseValues[5]);
+    this->dataToMaster += ",";
+    this->dataToMaster += String(responseValues[6]);
+    client.println(this->dataToMaster);
   }
 
   void recvDataFromMaster() {

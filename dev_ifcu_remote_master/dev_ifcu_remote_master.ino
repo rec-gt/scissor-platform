@@ -14,7 +14,7 @@ WiFiServer server(SERVER_PORT);         // TCP server
 WiFiClient slaveClients[MAX_SLAVES];    // Array to hold connected slaves
 
 void setup() {
-  Serial.begin(115200);
+  Serial.begin(9600);
 
   // Configure static IP for AP
   WiFi.mode(WIFI_AP);                   // Set to Access Point mode

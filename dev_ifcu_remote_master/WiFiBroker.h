@@ -1,5 +1,6 @@
 #include <WiFi.h>
 #include "AutoTimer.h"
+#include "SlaveData.h"
 
 #ifndef WiFiBroker_H
 #define WiFiBroker_H
@@ -18,6 +19,13 @@ IPAddress subnet(255, 255, 255, 0);
 
 WiFiServer server(SERVER_PORT);
 WiFiClient slaveClients[MAX_SLAVES];
+SlaveData slaveDatabase[MAX_SLAVES] = {
+  SlaveData(),
+  SlaveData(),
+  SlaveData(),
+  SlaveData(),
+  SlaveData(),
+};
 
 class WiFiBroker {
 private:

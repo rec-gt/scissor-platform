@@ -37,8 +37,6 @@ private:
   void handleWrite4x(unsigned int addr, unsigned int value) {
     if (!mbClient.holdingRegisterWrite(SLAVE_ID, addr, value)) {
       Serial.println(mbClient.lastError());
-    } else {
-      Serial.println("Response OK");
     }
   }
 

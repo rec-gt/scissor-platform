@@ -10,6 +10,10 @@ const char* password = "ifcu-remote-16f-test";
 const char* masterIP = "192.168.1.100";
 const int masterPort = 80;
 
+IPAddress staticIP(192, 168, 1, 101);
+IPAddress gateway(192, 168, 1, 1);
+IPAddress subnet(255, 255, 255, 0);
+
 WiFiClient client;
 
 AutoTimer wifiTimer;
@@ -21,11 +25,13 @@ public:
   WiFiBroker(){};
 
   void init() {
+    WiFi.mode(WIFI_STA);
     WiFi.begin(ssid, password);
     while (WiFi.status() != WL_CONNECTED) {
       delay(1000);
       Serial.println("Connecting to WiFi...");
     }
+    WiFi.config(staticIP, gateway, subnet);
     Serial.println("Connected to WiFi");
     Serial.print("Slave IP: ");
     Serial.println(WiFi.localIP());

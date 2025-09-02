@@ -52,11 +52,11 @@ public:
   }
 
   void loop() {
-    this->handleNewSlaveJoin();
-    this->recvDataFromSlaves();
-    if (wifiTimer.autoExpire(1000)) {
-      this->sendDataToSlaves();
-    }
+    // this->handleNewSlaveJoin();
+    // this->recvDataFromSlaves();
+    // if (wifiTimer.autoExpire(1000)) {
+    //   this->sendDataToSlaves();
+    // }
   }
 
   void handleNewSlaveJoin() {

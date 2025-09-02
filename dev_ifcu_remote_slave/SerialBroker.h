@@ -34,13 +34,6 @@ private:
     return checksum;
   }
 
-  void captureRecvPayload() {
-    requestValues[0] = this->serialRecvBuffer[1];
-    requestValues[1] = (this->serialRecvBuffer[3] << 8) | this->serialRecvBuffer[2];
-    requestValues[2] = this->serialRecvBuffer[4];
-    requestValues[3] = this->serialRecvBuffer[5];
-  }
-
 
 public:
   SerialBroker(){};
@@ -76,12 +69,13 @@ public:
   }
 
   void handleRecvBuffer() {
-    if (this->payloadReady || true) {
-      uint8_t payloadChecksum = this->serialRecvBuffer[6];
-      uint8_t calculatedChecksum = this->getChecksum(this->serialRecvBuffer, 1, 5);
-      if (payloadChecksum == calculatedChecksum) {
-        this->captureRecvPayload();
-      }
+    uint8_t payloadChecksum = this->serialRecvBuffer[6];
+    uint8_t calculatedChecksum = this->getChecksum(this->serialRecvBuffer, 1, 5);
+    if (payloadChecksum == calculatedChecksum) {
+      // responseValues[0] = this->serialRecvBuffer[1];
+      // responseValues[1] = (this->serialRecvBuffer[3] << 8) | this->serialRecvBuffer[2];
+      // responseValues[2] = this->serialRecvBuffer[4];
+      // responseValues[3] = this->serialRecvBuffer[5];
     }
   }
 
@@ -90,8 +84,15 @@ public:
     requestValues[1] = 2500;
     requestValues[2] = 1;
     requestValues[3] = 1;
-    this->serialSendBuffer = { 0x5B, requestValues[0], (requestValues[1] & 0xFF), ((requestValues[2] >> 8) & 0xFF), requestValues[2], requestValues[3], 0, 0x5D };
-    this->serialSendBuffer[6] = getChecksum(this->serialSendBuffer, 1, 5);
+
+    this->serialSendBuffer[0] = 0x5B;
+    this->serialSendBuffer[1] = requestValues[0];
+    this->serialSendBuffer[2] = requestValues[1] & 0xFF;
+    this->serialSendBuffer[3] = (requestValues[2] >> 8) & 0xFF;
+    this->serialSendBuffer[4] = requestValues[2];
+    this->serialSendBuffer[5] = requestValues[3];
+    this->serialSendBuffer[6] = this->getChecksum(this->serialSendBuffer, 1, 5);
+    this->serialSendBuffer[7] = 0x5D;
 
     Serial2.write(this->serialSendBuffer, sizeof(this->serialSendBuffer));
   }

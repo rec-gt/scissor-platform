@@ -4,6 +4,9 @@
 #define DEVICE_ID 1
 #define SLAVE_ID 31
 
+#define REQUEST_VALUES_LEN 4
+#define RESPONSE_VALUES_LEN 7
+
 uint16_t requestValues[REQUEST_VALUES_LEN] = {
   0,  // on/off
   0,  // set point temp

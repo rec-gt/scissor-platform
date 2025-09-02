@@ -15,12 +15,10 @@ private:
 public:
   BackendServer(){};
 
-  void handleGet() {
-    server.send(200, "text/plain", this->localAndRemoteData);
-  }
-
   void init() {
-    server.on("/get", this->handleGet);
+    server.on("/get", [this]() {
+      server.send(200, "text/plain", this->localAndRemoteData);
+    });
 
     server.on("/set", []() {
       if (server.hasArg("value")) {
@@ -35,20 +33,21 @@ public:
 
   void loop() {
     if (serverTimer.autoExpire(1000)) {
-      this->localAndRemoteData = "";
-      this->localAndRemoteData += String(responseValues[0]);
-      this->localAndRemoteData += ",";
-      this->localAndRemoteData += String(responseValues[1]);
-      this->localAndRemoteData += ",";
-      this->localAndRemoteData += String(responseValues[2]);
-      this->localAndRemoteData += ",";
-      this->localAndRemoteData += String(responseValues[3]);
-      this->localAndRemoteData += ",";
-      this->localAndRemoteData += String(responseValues[4]);
-      this->localAndRemoteData += ",";
-      this->localAndRemoteData += String(responseValues[5]);
-      this->localAndRemoteData += ",";
-      this->localAndRemoteData += String(responseValues[6]);
+      localAndRemoteData = "";
+      localAndRemoteData += String(responseValues[0]);
+      localAndRemoteData += ",";
+      localAndRemoteData += String(responseValues[1]);
+      localAndRemoteData += ",";
+      localAndRemoteData += String(responseValues[2]);
+      localAndRemoteData += ",";
+      localAndRemoteData += String(responseValues[3]);
+      localAndRemoteData += ",";
+      localAndRemoteData += String(responseValues[4]);
+      localAndRemoteData += ",";
+      localAndRemoteData += String(responseValues[5]);
+      localAndRemoteData += ",";
+      localAndRemoteData += String(responseValues[6]);
+      Serial.println(localAndRemoteData);
     }
 
     server.handleClient();

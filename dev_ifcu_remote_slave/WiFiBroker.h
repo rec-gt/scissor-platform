@@ -38,11 +38,11 @@ public:
   }
 
   void loop() {
-    this->handleReconnect();
-    if (wifiTimer.autoExpire(1000)) {
-      this->sendDataToMaster();
-      this->recvDataFromMaster();
-    }
+    // this->handleReconnect();
+    // if (wifiTimer.autoExpire(1000)) {
+    //   this->sendDataToMaster();
+    //   this->recvDataFromMaster();
+    // }
   }
 
   void handleReconnect() {
@@ -52,7 +52,6 @@ public:
         Serial.println("Connected to master");
       } else {
         Serial.println("Connection failed. Retrying in 5s...");
-        delay(5000);
         return;
       }
     }

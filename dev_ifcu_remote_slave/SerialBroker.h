@@ -87,7 +87,7 @@ public:
   void handleRecvBuffer() {
     if (this->payloadReady) {
       uint8_t payloadChecksum = this->serialRecvBuffer[12];
-      uint8_t calculatedChecksum = this->getChecksum(this->serialRecvBuffer, 1, 13);
+      uint8_t calculatedChecksum = this->getChecksum(this->serialRecvBuffer, 1, 11);
       if (payloadChecksum == calculatedChecksum) {
         responseValues[0] = this->serialRecvBuffer[1];
         responseValues[1] = this->serialRecvBuffer[2];

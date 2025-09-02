@@ -7,9 +7,10 @@
 class DatabaseBroker {
 private:
   SlaveData *slaveData;
-  String responseJSONStr = "";
 
 public:
+  String responseJSONStr = "";
+
   DatabaseBroker(SlaveData *slaveData)
     : slaveData(slaveData){};
 
@@ -24,6 +25,10 @@ public:
       this->responseJSONStr += "],";
     }
     this->responseJSONStr += "]";
+  }
+
+  void setSlaveResponse(int i, String data) {
+    this->slaveData[i].responseStr = data;
   }
 
   ~DatabaseBroker() {}

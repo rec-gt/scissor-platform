@@ -86,12 +86,13 @@ public:
         if (slaveClients[i].available()) {
           String data = slaveClients[i].readStringUntil('\n');
           data.trim();
-
+          databaseBroker.setSlaveResponse(i, data);
           Serial.print("Received from slave IP: ");
           Serial.print(slaveClients[i].remoteIP());
           Serial.print(", Port: ");
           Serial.print(slaveClients[i].remotePort());
           Serial.print(" - Data: ");
+          Serial.print(data);
         }
       } else {
         // Clean up disconnected slot

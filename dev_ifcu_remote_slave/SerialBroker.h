@@ -104,7 +104,7 @@ public:
     requestValues[0] = 1;
     requestValues[1] = 2500;
     requestValues[2] = 1;
-    requestValues[3] = 1;
+    requestValues[3] = 2;
 
     this->serialSendBuffer[0] = 0x5B;
     this->serialSendBuffer[1] = requestValues[0];

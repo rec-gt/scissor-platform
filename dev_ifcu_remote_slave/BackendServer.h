@@ -23,14 +23,17 @@ public:
       if (server.hasArg("onoff")) {
         String valStr = server.arg("onoff");
         requestValues[0] = valStr.toInt();
+        Serial.println(valStr);
       }
       if (server.hasArg("mode")) {
         String valStr = server.arg("mode");
         requestValues[2] = valStr.toInt();
+        Serial.println(valStr);
       }
       if (server.hasArg("speed")) {
         String valStr = server.arg("speed");
         requestValues[3] = valStr.toInt();
+        Serial.println(valStr);
       }
     });
     server.begin();

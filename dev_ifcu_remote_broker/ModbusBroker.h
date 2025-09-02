@@ -49,7 +49,7 @@ private:
   }
 
   void handleWriteData() {
-    this->handleWrite4x(40001, requestValues[0]);  // on/off
+    this->handleWrite4x(40000, requestValues[0]);  // on/off
     this->handleWrite4x(40004, requestValues[1]);  // set point temp
     this->handleWrite4x(40002, requestValues[2]);  // mode
     this->handleWrite4x(40003, requestValues[3]);  // fan speed
@@ -60,17 +60,17 @@ public:
 
   void loop() {
     if (this->currStatus == MB_WRITE) {
-      if (timer.autoExpire(2000)) {
+      if (timer.autoExpire(1000)) {
         this->handleWriteData();
         this->currStatus = MB_READ;
       }
       this->currStatus = MB_READ;
     } else if (this->currStatus == MB_READ) {
+      this->currStatus = MB_WRITE;
+      if (timer.autoExpire(1000)) {
+        this->handleReadData();
         this->currStatus = MB_WRITE;
-      // if (timer.autoExpire(2000)) {
-      //   this->handleReadData();
-      //   this->currStatus = MB_WRITE;
-      // }
+      }
     }
   }
 

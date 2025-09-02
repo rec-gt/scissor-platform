@@ -18,7 +18,8 @@ void setup() {
 }
 
 void loop() {
-  
+
   serialBroker.loop();
   modbusBroker.loop();
+  delay(10);
 }

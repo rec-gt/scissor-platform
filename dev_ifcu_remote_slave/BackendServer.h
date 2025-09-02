@@ -40,8 +40,7 @@ public:
       localAndRemoteData += String(requestValues[2]);
       localAndRemoteData += ",";
       localAndRemoteData += String(requestValues[3]);
-
-      localAndRemoteData = "";
+      localAndRemoteData += "-";
       localAndRemoteData += String(responseValues[0]);
       localAndRemoteData += ",";
       localAndRemoteData += String(responseValues[1]);

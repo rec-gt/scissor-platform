@@ -105,7 +105,7 @@ public:
   void sendDataToSlaves() {
     for (int i = 0; i < MAX_SLAVES; i++) {
       if (slaveClients[i] && slaveClients[i].connected()) {
-        slaveClients[i].println("SLAVE DATA FROM MASTER");
+        slaveClients[i].println(slaveDatabase[i].dataStr);
       } else {
         if (slaveClients[i]) {
           slaveClients[i].stop();

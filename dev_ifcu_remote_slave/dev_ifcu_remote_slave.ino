@@ -18,8 +18,8 @@ SerialBroker serialBroker;
 
 void setup() {
   Serial.begin(9600);
-  Serial1.begin(9600);  // recv
-  Serial2.begin(9600);  // send
+  Serial1.begin(9600);                      // recv
+  Serial2.begin(9600, SERIAL_8N1, 16, 17);  // send
 
   // WiFi.mode(WIFI_STA);
   // WiFi.begin(ssid, password);

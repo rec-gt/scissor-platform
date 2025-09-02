@@ -27,7 +27,7 @@ private:
                                    0,
                                    0x5D };
 
-  // uint8_t serialRecvBuffer[8] = { 0x5B, 1, (2500 & 0xFF), ((2500 >> 8) & 0xFF), 2, 2, 210, 0x5D };
+  // uint8_t serialSendBuffer[8] = { 0x5B, 1, (2500 & 0xFF), ((2500 >> 8) & 0xFF), 2, 2, 210, 0x5D };
   uint8_t serialSendBuffer[8] = {};
 
   void clearSerialBuffer() {
@@ -96,6 +96,7 @@ public:
         responseValues[5] = (this->serialRecvBuffer[9] << 8) | this->serialRecvBuffer[8];
         responseValues[6] = (this->serialRecvBuffer[11] << 8) | this->serialRecvBuffer[10];
       }
+      Serial.print("Serial REceived");
     }
   }
 
@@ -108,13 +109,14 @@ public:
     this->serialSendBuffer[0] = 0x5B;
     this->serialSendBuffer[1] = requestValues[0];
     this->serialSendBuffer[2] = requestValues[1] & 0xFF;
-    this->serialSendBuffer[3] = (requestValues[2] >> 8) & 0xFF;
+    this->serialSendBuffer[3] = (requestValues[1] >> 8) & 0xFF;
     this->serialSendBuffer[4] = requestValues[2];
     this->serialSendBuffer[5] = requestValues[3];
     this->serialSendBuffer[6] = this->getChecksum(this->serialSendBuffer, 1, 5);
     this->serialSendBuffer[7] = 0x5D;
 
     Serial2.write(this->serialSendBuffer, sizeof(this->serialSendBuffer));
+    Serial.println("Serial Sended");
   }
 
   ~SerialBroker(){};

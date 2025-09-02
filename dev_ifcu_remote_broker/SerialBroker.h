@@ -34,6 +34,8 @@ private:
     requestValues[1] = (this->serialRecvBuffer[3] << 8) | this->serialRecvBuffer[2];
     requestValues[2] = this->serialRecvBuffer[4];
     requestValues[3] = this->serialRecvBuffer[5];
+
+    printRequestValues();
   }
 
 
@@ -46,10 +48,10 @@ public:
   }
 
   void listenByte() {
-    while (Serial1.available() > 0) {
+    while (Serial2.available() > 0) {
       this->payloadReady = false;
 
-      uint8_t rb = Serial1.read();
+      uint8_t rb = Serial2.read();
 
       if (rb == 0x5B) {
         this->isReceiving = true;
@@ -69,7 +71,7 @@ public:
   }
 
   void handleRecvBuffer() {
-    if (this->payloadReady || true) {
+    if (this->payloadReady) {
       uint8_t payloadChecksum = this->serialRecvBuffer[6];
       uint8_t calculatedChecksum = this->getChecksum(this->serialRecvBuffer, 1, 5);
       if (payloadChecksum == calculatedChecksum) {

@@ -8,8 +8,8 @@ ModbusBroker modbusBroker;
 
 void setup() {
   Serial.begin(9600);
-  Serial1.begin(9600);
-  Serial2.begin(9600);
+  Serial1.begin(9600);  // send response to slave
+  Serial2.begin(9600);  // receive request from slave
 
   if (!mbClient.begin(9600)) {
     Serial.println("Failed to start Modbus RTU Client!");
@@ -18,7 +18,6 @@ void setup() {
 }
 
 void loop() {
-
   serialBroker.loop();
   modbusBroker.loop();
   delay(10);

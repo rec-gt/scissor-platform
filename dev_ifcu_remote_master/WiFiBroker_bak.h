@@ -14,7 +14,7 @@ AutoTimer wifiTimer;
 const char* apSSID = "ifcu-remote-16f-test";
 const char* apPassword = "ifcu-remote-16f-test";
 
-IPAddress staticIP(192, 168, 1, 100);
+IPAddress staticIP(192, 168, 1, 2);
 IPAddress gateway(192, 168, 1, 1);
 IPAddress subnet(255, 255, 255, 0);
 
@@ -52,11 +52,11 @@ public:
   }
 
   void loop() {
-    // this->handleNewSlaveJoin();
-    // this->recvDataFromSlaves();
-    // if (wifiTimer.autoExpire(1000)) {
-    //   this->sendDataToSlaves();
-    // }
+    this->handleNewSlaveJoin();
+    this->recvDataFromSlaves();
+    if (wifiTimer.autoExpire(1000)) {
+      // this->sendDataToSlaves();
+    }
   }
 
   void handleNewSlaveJoin() {

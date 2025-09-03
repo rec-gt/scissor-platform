@@ -43,7 +43,7 @@ public:
 
   void loop() {
     if (serverTimer.autoExpire(1000)) {
-      this->localRemoteData = "";
+      this->localRemoteData = "[";
       this->localRemoteData += String(requestValues[0]);
       this->localRemoteData += ",";
       this->localRemoteData += String(requestValues[1]);
@@ -64,6 +64,7 @@ public:
       this->localRemoteData += ",";
       this->localRemoteData += String(responseValues[5]);
       this->localRemoteData += ",";
+      this->localRemoteData += String(responseValues[6]);
       this->localRemoteData += String(responseValues[6]);
       Serial.println(localRemoteData);
     }

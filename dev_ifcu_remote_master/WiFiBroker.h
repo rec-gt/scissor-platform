@@ -1,15 +1,10 @@
 #include <WiFi.h>
-#include "AutoTimer.h"
-#include "SlaveData.h"
-#include "DatabaseBroker.h"
 
 #ifndef WiFiBroker_H
 #define WiFiBroker_H
 
 #define MAX_SLAVES 5
 #define SERVER_PORT 80
-
-AutoTimer wifiTimer;
 
 const char* apSSID = "ifcu-remote-16f-test";
 const char* apPassword = "ifcu-remote-16f-test";
@@ -20,16 +15,6 @@ IPAddress subnet(255, 255, 255, 0);
 
 WiFiServer server(SERVER_PORT);
 WiFiClient slaveClients[MAX_SLAVES];
-
-SlaveData slaveDatabase[MAX_SLAVES] = {
-  SlaveData(),
-  SlaveData(),
-  SlaveData(),
-  SlaveData(),
-  SlaveData(),
-};
-
-DatabaseBroker databaseBroker(slaveDatabase);
 
 class WiFiBroker {
 private:
@@ -52,69 +37,18 @@ public:
   }
 
   void loop() {
-    // this->handleNewSlaveJoin();
-    // this->recvDataFromSlaves();
-    // if (wifiTimer.autoExpire(1000)) {
-    //   this->sendDataToSlaves();
-    // }
+    this->handleNewConnection();
   }
 
-  void handleNewSlaveJoin() {
-    WiFiClient newClient = server.available();
+  void handleNewConnection() {
+    WiFiClient client = server.available();
+    if (client) {
+      Serial.println("New client connected");
 
-    if (newClient) {
-      Serial.println("New slave trying to connect...");
+      Serial.print("Client IP address: ");
+      Serial.println(client.remoteIP());
 
-      for (int i = 0; i < MAX_SLAVES; i++) {
-        if (!slaveClients[i] || !slaveClients[i].connected()) {
-          slaveClients[i] = newClient;
-          Serial.print("Slave connected at slot ");
-          Serial.print(i);
-          Serial.print(" - IP: ");
-          Serial.print(slaveClients[i].remoteIP());
-          Serial.print(", Port: ");
-          Serial.println(slaveClients[i].remotePort());
-          break;
-        }
-      }
-    }
-  }
-
-  void recvDataFromSlaves() {
-    for (int i = 0; i < MAX_SLAVES; i++) {
-      if (slaveClients[i] && slaveClients[i].connected()) {
-        if (slaveClients[i].available()) {
-          String data = slaveClients[i].readStringUntil('\n');
-          data.trim();
-          databaseBroker.setSlaveResponse(i, data);
-          Serial.print("Received from slave IP: ");
-          Serial.print(slaveClients[i].remoteIP());
-          Serial.print(", Port: ");
-          Serial.print(slaveClients[i].remotePort());
-          Serial.print(" - Data: ");
-          Serial.println(data);
-        }
-      } else {
-        // Clean up disconnected slot
-        if (slaveClients[i]) {
-          slaveClients[i].stop();
-        }
-      }
-    }
-    databaseBroker.getResponseJSONStr();
-    Serial.println(databaseBroker.responseJSONStr);
-  }
-
-  void sendDataToSlaves() {
-    for (int i = 0; i < MAX_SLAVES; i++) {
-      if (slaveClients[i] && slaveClients[i].connected()) {
-        // slaveControlDatabase[i].set(1, "IFCU-1", 1, 1, 1, 2500, 2700, 1500, 2700);
-        // slaveClients[i].println(slaveControlDatabase[i].dataStr);
-      } else {
-        if (slaveClients[i]) {
-          slaveClients[i].stop();
-        }
-      }
+      client.stop();
     }
   }
 

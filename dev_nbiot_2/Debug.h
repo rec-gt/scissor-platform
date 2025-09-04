@@ -14,48 +14,53 @@ void debugDI() {
   }
 }
 
-void debugDO() {
-  for (size_t i = 0; i < DI_NUMS; i++) {
-    digitalOutputs[i].connect();
-  }
 
-  delay(2000);
+{
+  unsigned long prevMillis = millis();
+  bool toggle = false;
 
-  for (size_t i = 0; i < DI_NUMS; i++) {
-    digitalOutputs[i].cut();
+  void debugDO() {
+    if (millis() - prevMillis > 5000) {
+      if (toggle) {
+        for (size_t i = 0; i < DI_NUMS; i++) {
+          digitalOutputs[i].connect();
+        }
+      } else {
+        for (size_t i = 0; i < DI_NUMS; i++) {
+          digitalOutputs[i].cut();
+        }
+      }
+      prevMillis = millis();
+      toggle = !toggle;
+    }
   }
 }
+
+unsigned long prevMillis = millis();
+byte state = 0;
 
 void debugAO() {
-  for (size_t i = 0; i < AI_NUMS; i++) {
-    analogOutputs[i].set(0);
-  }
-  delay(1000);
+  if (millis() - prevMillis > 5000) {
+    if (state == 0) {
+      for (size_t i = 0; i < AI_NUMS; i++) {
+        analogOutputs[i].set(0);
+      }
+      state = 1;
+    } else if (state == 1) {
+      for (size_t i = 0; i < AI_NUMS; i++) {
+        analogOutputs[i].set(125);
+      }
+      state = 2;
+    } else if (state == 2) {
+      for (size_t i = 0; i < AI_NUMS; i++) {
+        analogOutputs[i].set(250);
+      }
+      state = 0;
+    }
 
-  for (size_t i = 0; i < AI_NUMS; i++) {
-    analogOutputs[i].set(50);
+    prevMillis = millis();
   }
-  delay(1000);
-
-  for (size_t i = 0; i < AI_NUMS; i++) {
-    analogOutputs[i].set(100);
-  }
-  delay(1000);
-
-  for (size_t i = 0; i < AI_NUMS; i++) {
-    analogOutputs[i].set(150);
-  }
-  delay(1000);
-
-  for (size_t i = 0; i < AI_NUMS; i++) {
-    analogOutputs[i].set(200);
-  }
-  delay(1000);
-
-  for (size_t i = 0; i < AI_NUMS; i++) {
-    analogOutputs[i].set(250);
-  }
-  delay(1000);
 }
+
 
 #endif

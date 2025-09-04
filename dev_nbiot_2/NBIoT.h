@@ -56,7 +56,7 @@ private:
 
   bool finishInit = false;
 
-  byte resetPin = 11;
+  byte resetPin = 24;  // to be assign
 
   bool debugMode = false;
 

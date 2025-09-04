@@ -77,6 +77,8 @@ AnalogOutput analogOutputs[AO_NUMS]{
   AnalogOutput(AO_PIN_4),
 };
 
+// AI_MAPPING_MODE_0_10V
+// AI_MAPPING_MODE_4_20MA
 AnalogInput analogInputs[AI_NUMS] = {
   AnalogInput(AI_PIN_1, AI_MAPPING_MODE_0_10V),
   AnalogInput(AI_PIN_2, AI_MAPPING_MODE_0_10V),
@@ -101,23 +103,52 @@ DisplayClient displayClient;
 void setup() {
   Serial.begin(9600);
 
+  analogReference(EXTERNAL);
+
   /*=== NBIoT ===*/
   NBIoTSerial.begin(9600);
-  nbiot.debug();
-  nbiot.init(true);
+  // nbiot.debug();
+  // nbiot.init(true);
 
   /*=== Display ===*/
   DisplaySerial.begin(9600);
-
-  // analogReference(EXTERNAL);
 }
 
 void loop() {
   /*=== Register NBIoT ===*/
-  nbiot.loop();
+  // nbiot.loop();
 
   /*=== Register MainSystem ===*/
   mainSystem.loop();
-
+  debugAO();
+  
   delay(10);
+}
+
+
+
+unsigned long prevMillis = millis();
+byte state = 0;
+
+void debugAO() {
+  if (millis() - prevMillis > 5000) {
+    if (state == 0) {
+      for (size_t i = 0; i < AO_NUMS; i++) {
+        analogOutputs[i].set(0);
+      }
+      state = 1;
+    } else if (state == 1) {
+      for (size_t i = 0; i < AO_NUMS; i++) {
+        analogOutputs[i].set(125);
+      }
+      state = 2;
+    } else if (state == 2) {
+      for (size_t i = 0; i < AO_NUMS; i++) {
+        analogOutputs[i].set(250);
+      }
+      state = 0;
+    }
+
+    prevMillis = millis();
+  }
 }

@@ -78,8 +78,7 @@ AnalogOutput analogOutputs[AO_NUMS]{
   AnalogOutput(AO_PIN_4),
 };
 
-// AI_MAPPING_MODE_0_10V
-// AI_MAPPING_MODE_0_20MA
+// AI_MAPPING_MODE_0_10V, AI_MAPPING_MODE_0_20MA
 AnalogInput analogInputs[AI_NUMS] = {
   AnalogInput(AI_PIN_1, AI_MAPPING_MODE_0_20MA),
   AnalogInput(AI_PIN_2, AI_MAPPING_MODE_0_20MA),

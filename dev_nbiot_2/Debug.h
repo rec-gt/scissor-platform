@@ -42,17 +42,17 @@ byte state = 0;
 void debugAO() {
   if (millis() - prevMillis > 5000) {
     if (state == 0) {
-      for (size_t i = 0; i < AI_NUMS; i++) {
+      for (size_t i = 0; i < AO_NUMS; i++) {
         analogOutputs[i].set(0);
       }
       state = 1;
     } else if (state == 1) {
-      for (size_t i = 0; i < AI_NUMS; i++) {
+      for (size_t i = 0; i < AO_NUMS; i++) {
         analogOutputs[i].set(125);
       }
       state = 2;
     } else if (state == 2) {
-      for (size_t i = 0; i < AI_NUMS; i++) {
+      for (size_t i = 0; i < AO_NUMS; i++) {
         analogOutputs[i].set(250);
       }
       state = 0;

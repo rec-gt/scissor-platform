@@ -60,14 +60,11 @@ public:
   }
 
   uint16_t getValue(bool w = true) {  // turn ewma on or off
-    // this->value = 10000 + random(10000);
-    // return this->value;
-
     switch (this->mappingMode) {
       case AI_MAPPING_MODE_4_20MA:
-        this->value = map(w ? this->weightedReading : this->reading, 803, 3942, 4, 20000);
+        this->value = map(w ? this->weightedReading : this->reading, 0, 3900, 0, 20000);
 
-        Serial.print("Weighted Reading: ");
+        Serial.print(" Weighted Reading: ");
         Serial.println(this->weightedReading);
         Serial.print("Vale: ");
         Serial.println(this->value);

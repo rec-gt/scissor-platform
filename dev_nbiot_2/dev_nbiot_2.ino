@@ -81,18 +81,18 @@ AnalogOutput analogOutputs[AO_NUMS]{
 // AI_MAPPING_MODE_0_10V
 // AI_MAPPING_MODE_4_20MA
 AnalogInput analogInputs[AI_NUMS] = {
-  AnalogInput(AI_PIN_1, AI_MAPPING_MODE_0_10V),
-  AnalogInput(AI_PIN_2, AI_MAPPING_MODE_0_10V),
-  AnalogInput(AI_PIN_3, AI_MAPPING_MODE_0_10V),
-  AnalogInput(AI_PIN_4, AI_MAPPING_MODE_0_10V),
-  AnalogInput(AI_PIN_5, AI_MAPPING_MODE_0_10V),
-  AnalogInput(AI_PIN_6, AI_MAPPING_MODE_0_10V),
-  AnalogInput(AI_PIN_7, AI_MAPPING_MODE_0_10V),
-  AnalogInput(AI_PIN_8, AI_MAPPING_MODE_0_10V),
-  AnalogInput(AI_PIN_9, AI_MAPPING_MODE_0_10V),
-  AnalogInput(AI_PIN_10, AI_MAPPING_MODE_0_10V),
-  AnalogInput(AI_PIN_11, AI_MAPPING_MODE_0_10V),
-  AnalogInput(AI_PIN_12, AI_MAPPING_MODE_0_10V),
+  AnalogInput(AI_PIN_1, AI_MAPPING_MODE_4_20MA),
+  AnalogInput(AI_PIN_2, AI_MAPPING_MODE_4_20MA),
+  AnalogInput(AI_PIN_3, AI_MAPPING_MODE_4_20MA),
+  AnalogInput(AI_PIN_4, AI_MAPPING_MODE_4_20MA),
+  AnalogInput(AI_PIN_5, AI_MAPPING_MODE_4_20MA),
+  AnalogInput(AI_PIN_6, AI_MAPPING_MODE_4_20MA),
+  AnalogInput(AI_PIN_7, AI_MAPPING_MODE_4_20MA),
+  AnalogInput(AI_PIN_8, AI_MAPPING_MODE_4_20MA),
+  AnalogInput(AI_PIN_9, AI_MAPPING_MODE_4_20MA),
+  AnalogInput(AI_PIN_10, AI_MAPPING_MODE_4_20MA),
+  AnalogInput(AI_PIN_11, AI_MAPPING_MODE_4_20MA),
+  AnalogInput(AI_PIN_12, AI_MAPPING_MODE_4_20MA),
 };
 
 MainSystem mainSystem(digitalInputs, digitalOutputs, analogInputs, analogOutputs);
@@ -110,8 +110,8 @@ void setup() {
 
   /*=== NBIoT ===*/
   nbiot.setup();
-  nbiot.init(true);
-  nbiot.debug();
+  // nbiot.init(true);
+  // nbiot.debug();
 
   /*=== Display ===*/
   displayClient.setup();
@@ -122,39 +122,10 @@ void setup() {
 
 void loop() {
   /*=== Register NBIoT ===*/
-  nbiot.loop();
+  // nbiot.loop();
 
   /*=== Register MainSystem ===*/
   mainSystem.loop();
-  debugAO();
 
   delay(10);
-}
-
-
-
-unsigned long prevMillis = millis();
-byte state = 0;
-
-void debugAO() {
-  if (millis() - prevMillis > 5000) {
-    if (state == 0) {
-      for (size_t i = 0; i < AO_NUMS; i++) {
-        analogOutputs[i].set(0);
-      }
-      state = 1;
-    } else if (state == 1) {
-      for (size_t i = 0; i < AO_NUMS; i++) {
-        analogOutputs[i].set(125);
-      }
-      state = 2;
-    } else if (state == 2) {
-      for (size_t i = 0; i < AO_NUMS; i++) {
-        analogOutputs[i].set(250);
-      }
-      state = 0;
-    }
-
-    prevMillis = millis();
-  }
 }

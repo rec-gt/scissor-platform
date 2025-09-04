@@ -21,6 +21,10 @@ private:
 public:
   DisplayClient(){};
 
+  void setup() {
+    DisplaySerial.begin(9600);
+  };
+
   void prepareBuffer(uint8_t nbiotConn, uint8_t nbiotCsq, uint8_t dis, uint8_t dos, AnalogInput *ais, AnalogOutput *aos) {
     uint8_t idx = 0;
 

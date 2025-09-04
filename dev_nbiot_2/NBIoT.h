@@ -114,6 +114,10 @@ public:
     this->debugMode = true;
   }
 
+  void setup() {
+    NBIoTSerial.begin(9600);
+  }
+
   void init(bool asyncInitMode = false) {
     Serial.print("\r\n=== NBIOT START ===\r\n");
     nbiotWatchdog.enable();

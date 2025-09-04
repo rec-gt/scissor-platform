@@ -79,20 +79,20 @@ AnalogOutput analogOutputs[AO_NUMS]{
 };
 
 // AI_MAPPING_MODE_0_10V
-// AI_MAPPING_MODE_4_20MA
+// AI_MAPPING_MODE_0_20MA
 AnalogInput analogInputs[AI_NUMS] = {
-  AnalogInput(AI_PIN_1, AI_MAPPING_MODE_4_20MA),
-  AnalogInput(AI_PIN_2, AI_MAPPING_MODE_4_20MA),
-  AnalogInput(AI_PIN_3, AI_MAPPING_MODE_4_20MA),
-  AnalogInput(AI_PIN_4, AI_MAPPING_MODE_4_20MA),
-  AnalogInput(AI_PIN_5, AI_MAPPING_MODE_4_20MA),
-  AnalogInput(AI_PIN_6, AI_MAPPING_MODE_4_20MA),
-  AnalogInput(AI_PIN_7, AI_MAPPING_MODE_4_20MA),
-  AnalogInput(AI_PIN_8, AI_MAPPING_MODE_4_20MA),
-  AnalogInput(AI_PIN_9, AI_MAPPING_MODE_4_20MA),
-  AnalogInput(AI_PIN_10, AI_MAPPING_MODE_4_20MA),
-  AnalogInput(AI_PIN_11, AI_MAPPING_MODE_4_20MA),
-  AnalogInput(AI_PIN_12, AI_MAPPING_MODE_4_20MA),
+  AnalogInput(AI_PIN_1, AI_MAPPING_MODE_0_20MA),
+  AnalogInput(AI_PIN_2, AI_MAPPING_MODE_0_20MA),
+  AnalogInput(AI_PIN_3, AI_MAPPING_MODE_0_20MA),
+  AnalogInput(AI_PIN_4, AI_MAPPING_MODE_0_20MA),
+  AnalogInput(AI_PIN_5, AI_MAPPING_MODE_0_20MA),
+  AnalogInput(AI_PIN_6, AI_MAPPING_MODE_0_20MA),
+  AnalogInput(AI_PIN_7, AI_MAPPING_MODE_0_20MA),
+  AnalogInput(AI_PIN_8, AI_MAPPING_MODE_0_20MA),
+  AnalogInput(AI_PIN_9, AI_MAPPING_MODE_0_20MA),
+  AnalogInput(AI_PIN_10, AI_MAPPING_MODE_0_20MA),
+  AnalogInput(AI_PIN_11, AI_MAPPING_MODE_0_20MA),
+  AnalogInput(AI_PIN_12, AI_MAPPING_MODE_0_20MA),
 };
 
 MainSystem mainSystem(digitalInputs, digitalOutputs, analogInputs, analogOutputs);

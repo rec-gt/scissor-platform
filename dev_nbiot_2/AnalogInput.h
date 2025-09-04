@@ -5,7 +5,7 @@
 
 #define AI_SHIFT_BITS 4
 #define AI_OVERSAMPLING_FACTOR 256  // 2 ^ (2 * 4)
-#define AI_MAPPING_MODE_4_20MA 0
+#define AI_MAPPING_MODE_0_20MA 0
 #define AI_MAPPING_MODE_0_10V 1
 #define AI_EWMA_SAMPLE_SIZE 4
 #define AI_EWMA_ALPHA 0.2
@@ -14,18 +14,18 @@ class AnalogInput {
 private:
   byte pin;
   byte mappingMode;
+
+public:
   uint16_t reading;
   uint16_t weightedReading;
   uint16_t ewma[AI_EWMA_SAMPLE_SIZE];
   uint16_t readings[AI_EWMA_SAMPLE_SIZE];
   uint16_t weightedValue;
-
-public:
   uint16_t value;
 
   AnalogInput() {}
 
-  AnalogInput(byte pin, byte mappingMode = AI_MAPPING_MODE_4_20MA)
+  AnalogInput(byte pin, byte mappingMode = AI_MAPPING_MODE_0_20MA)
     : pin(pin), mappingMode(mappingMode) {
     pinMode(pin, INPUT);
   }
@@ -61,7 +61,7 @@ public:
 
   uint16_t getValue(bool w = true) {  // turn ewma on or off
     switch (this->mappingMode) {
-      case AI_MAPPING_MODE_4_20MA:
+      case AI_MAPPING_MODE_0_20MA:
         this->value = map(w ? this->weightedReading : this->reading, 0, 3900, 0, 20000);
 
         Serial.print(" Weighted Reading: ");

@@ -63,12 +63,6 @@ public:
     switch (this->mappingMode) {
       case AI_MAPPING_MODE_0_20MA:
         this->value = map(w ? this->weightedReading : this->reading, 0, 3919, 0, 20000);
-
-        Serial.print(" Weighted Reading: ");
-        Serial.println(this->weightedReading);
-        Serial.print("Vale: ");
-        Serial.println(this->value);
-
         break;
       case AI_MAPPING_MODE_0_10V:
         this->value = map(w ? this->weightedReading : this->reading, 0, 7885, 0, 10000);
@@ -77,18 +71,6 @@ public:
         this->value = 0;
     }
     return this->value;
-  }
-
-  void debug() {
-    for (size_t i = 0; i < AI_EWMA_SAMPLE_SIZE; i++) {
-      Serial.print(this->readings[i]);
-      Serial.print(", ");
-    }
-    Serial.print(" || ");
-    for (size_t i = 0; i < AI_EWMA_SAMPLE_SIZE; i++) {
-      Serial.print(this->ewma[i]);
-      Serial.print(", ");
-    }
   }
 };
 

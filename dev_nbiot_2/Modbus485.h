@@ -20,6 +20,14 @@ public:
     }
   };
 
+  void handleWrite4x(unsigned int addr, unsigned int value) {
+    if (!modbusClient.holdingRegisterWrite(31, addr, value)) {
+      Serial.println(modbusClient.lastError());
+    } else {
+      Serial.println("Response OK");
+    }
+  }
+
   ~Modbus485(){};
 };
 

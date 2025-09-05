@@ -119,6 +119,10 @@ void setup() {
   modbus485.setup();
 }
 
+
+unsigned long prevMillis = millis();
+
+
 void loop() {
   /*=== Register NBIoT ===*/
   // nbiot.loop();
@@ -127,4 +131,9 @@ void loop() {
   mainSystem.loop();
 
   delay(10);
+
+  if (millis() - prevMillis > 1000) {
+    modbus485.handleWrite4x(40001, 1);
+    prevMillis = millis();
+  }
 }

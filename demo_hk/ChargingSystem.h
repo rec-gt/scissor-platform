@@ -36,8 +36,8 @@ private:
   int ST = 2500;  // station temp
   int A = 100;    // current
 
-  int SPT = 3000;       // set-point temperature
-  int SPA = 250;        // set-point current
+  int SPT = 6000;       // set-point temperature
+  int SPA = 400;        // set-point current
   int SM = SYS_AUTO;    // system mode
   int OM = OP_RUNNING;  // operation status
 
@@ -148,7 +148,7 @@ public:
     pressButton.listen();
     modeSwitch.listen();
 
-    if (millis() - this->prevMillis > 100) {
+    if (millis() - this->prevMillis > 500) {
       thermometer1.listen();
       thermometer2.listen();
       ammeter.listen();

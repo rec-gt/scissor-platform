@@ -62,10 +62,10 @@ public:
   uint16_t getValue(bool w = true) {  // turn ewma on or off
     switch (this->mappingMode) {
       case AI_MAPPING_MODE_0_20MA:
-        this->value = map(w ? this->weightedReading : this->reading, 0, 3919, 0, 20000);
+        this->value = map(w ? this->weightedReading : this->reading, 0, 3919, 0, 20000);  // fine-tuned
         break;
       case AI_MAPPING_MODE_0_10V:
-        this->value = map(w ? this->weightedReading : this->reading, 0, 7885, 0, 10000);
+        this->value = map(w ? this->weightedReading : this->reading, 0, 7885, 0, 10000);  // fine-tuned
         break;
       default:
         this->value = 0;

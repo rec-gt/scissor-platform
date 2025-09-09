@@ -34,6 +34,12 @@
 #define AO_PIN_3 6
 #define AO_PIN_4 7
 
+#define DRY_CONTACT_1 27
+#define DRY_CONTACT_2 28
+#define DRY_CONTACT_3 29
+#define DRY_CONTACT_4 30
+#define DRY_CONTACT_5 31
+
 #define DI_NUMS 8
 #define DO_NUMS 8
 #define AI_NUMS 12

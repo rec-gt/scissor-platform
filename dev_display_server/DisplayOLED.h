@@ -42,7 +42,8 @@ public:
     uint16_t ao1,
     uint16_t ao2,
     uint16_t ao3,
-    uint16_t ao4) {
+    uint16_t ao4,
+    byte aiMappingMode) {
     this->heartbeatToggle = !this->heartbeatToggle;
 
     u8g2.firstPage();
@@ -89,6 +90,7 @@ public:
       u8g2.setCursor(102, y);
       u8g2.print(ai8);
       y = 43;
+      u8g2.drawStr(0, y, aiMappingMode ? "A" : "V");
       u8g2.setCursor(12, y);
       u8g2.print(ai9);
       u8g2.setCursor(42, y);

@@ -6,7 +6,7 @@ class SerialRecv {
 private:
   const uint8_t START_MARKER = 0x5B;  // '['
   const uint8_t END_MARKER = 0x5D;    // ']'
-  uint8_t buffer[39];                 // START_MARKER + 7 + checksum + END_MARKER
+  uint8_t buffer[40];                 // START_MARKER + 8 + checksum + END_MARKER
   uint8_t idx = 0;
   bool isReceiving = false;
 
@@ -25,6 +25,7 @@ public:
   uint8_t dos;
   uint16_t ais[12];
   uint16_t aos[4];
+  uint8_t aiMappingMode;
 
   SerialRecv(){};
 
@@ -44,8 +45,8 @@ public:
           this->isReceiving = false;
           this->idx = 0;
 
-          uint8_t payloadChecksum = this->buffer[37];
-          uint8_t calculatedChecksum = this->getChecksum(this->buffer, 1, 36);
+          uint8_t payloadChecksum = this->buffer[38];
+          uint8_t calculatedChecksum = this->getChecksum(this->buffer, 1, 37);
           if (payloadChecksum == calculatedChecksum) {
             this->extractValues();
           }
@@ -69,6 +70,8 @@ public:
     for (size_t i = 0; i < 4; i++) {
       this->aos[i] = (buffer[idx++] << 8) | buffer[idx++];
     }
+
+    this->aiMappingMode = buffer[idx++];
   }
 
   void debug() {
@@ -87,6 +90,9 @@ public:
       Serial.print(this->aos[i]);
       Serial.print(", ");
     }
+    
+    Serial.println(this->aiMappingMode);
+
     Serial.println();
   }
 

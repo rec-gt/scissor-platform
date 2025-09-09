@@ -25,6 +25,7 @@ void setup() {
 
 void loop() {
   serialRecv.listen();
+  serialRecv.debug();
   displayOLED.draw(
     serialRecv.nbiotConn,
     serialRecv.nbiotCsq,
@@ -47,7 +48,6 @@ void loop() {
     serialRecv.aos[2],
     serialRecv.aos[3],
     serialRecv.aiMappingMode);
-
   autoReset();
 
   delay(500);

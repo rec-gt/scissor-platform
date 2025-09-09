@@ -44,6 +44,8 @@ public:
       this->buffer[idx++] = aos[i].value & 0xFF;
     }
 
+    Serial.println(aiMappingMode);
+    
     this->buffer[idx++] = aiMappingMode;
 
     this->buffer[idx++] = getChecksum(this->buffer, 1, 36);

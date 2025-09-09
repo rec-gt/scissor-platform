@@ -1,5 +1,8 @@
+#include "AsyncTimer.h"
 #ifndef Debug_H
 #define Debug_H
+
+AsyncTimer timer;
 
 class Debug {
 private:
@@ -12,14 +15,12 @@ public:
   bool doToggle = true;
 
   void DO(DigitalOutput* dos) {
-    if (millis() - this->prevMillis > 300) {
-      Serial.println(this->doCnt);
+    if (timer.autoExpired(300)) {
       this->doToggle ? dos[this->doCnt].connect() : dos[this->doCnt].cut();
       if (this->doCnt++ == DO_NUMS - 1) {
         this->doCnt = 0;
         this->doToggle = !this->doToggle;
       }
-      this->prevMillis = millis();
     }
   }
 

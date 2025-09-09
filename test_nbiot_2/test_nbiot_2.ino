@@ -135,6 +135,7 @@ void loop() {
   // mainSystem.loop();
   
   debug.DO(digitalOutputs);
+  // debug.AO(analogOutputs);
 
   delay(10);
 }

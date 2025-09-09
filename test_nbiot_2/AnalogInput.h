@@ -20,7 +20,6 @@ public:
   uint16_t weightedReading;
   uint16_t ewma[AI_EWMA_SAMPLE_SIZE];
   uint16_t readings[AI_EWMA_SAMPLE_SIZE];
-  uint16_t weightedValue;
   uint16_t value;
 
   AnalogInput() {}
@@ -45,19 +44,14 @@ public:
       this->readings[i - 1] = this->readings[i];
     }
     this->readings[AI_EWMA_SAMPLE_SIZE - 1] = this->reading;
+
+    /*=== get weighted reading ===*/
+    for (size_t i = 1; i < AI_EWMA_SAMPLE_SIZE; i++) {
+      this->ewma[i] = (AI_EWMA_ALPHA * this->readings[i]) + (1 - AI_EWMA_ALPHA) * this->ewma[i - 1];
+    }
+    this->weightedReading = this->ewma[AI_EWMA_SAMPLE_SIZE - 1];
   }
 
-  uint16_t getReading(bool w = true) {
-    if (w) {
-      for (size_t i = 1; i < AI_EWMA_SAMPLE_SIZE; i++) {
-        this->ewma[i] = (AI_EWMA_ALPHA * this->readings[i]) + (1 - AI_EWMA_ALPHA) * this->ewma[i - 1];
-      }
-      this->weightedReading = this->ewma[AI_EWMA_SAMPLE_SIZE - 1];
-      return this->weightedReading;
-    } else {
-      return this->reading;
-    }
-  }
 
   uint16_t getValue(bool w = true) {  // turn ewma on or off
     switch (this->mappingMode) {

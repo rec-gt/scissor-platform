@@ -52,7 +52,6 @@ public:
 
     for (size_t i = 0; i < AI_NUMS; i++) {
       analogInputs[i].listen();
-      analogInputs[i].getReading();
     }
   }
 

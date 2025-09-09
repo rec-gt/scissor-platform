@@ -63,18 +63,16 @@ public:
         }
         break;
       case AI_MAPPING_MODE_0_10V:
-        if (this->reading < 128) {
-          this->value = map(w ? this->weightedReading : this->reading, 0, 127, 0, 99);
-        } else if (this->reading < 128) {
-          this->value = map(w ? this->weightedReading : this->reading, 0, 127, 0, 99);
-        } else if (this->reading < 784) {
-          this->value = map(w ? this->weightedReading : this->reading, 0, 783, 0, 499);
-        } else if (this->reading < 1600) {
-          this->value = map(w ? this->weightedReading : this->reading, 0, 1599, 0, 1000);
-        } else if (this->reading < 8144) {
-          this->value = map(w ? this->weightedReading : this->reading, 0, 8143, 0, 4999);
+        if (this->reading <= 784) {
+          this->value = map(w ? this->weightedReading : this->reading, 0, 784, 0, 500);
+        } else if (this->reading <= 1600) {
+          this->value = map(w ? this->weightedReading : this->reading, 785, 1600, 501, 1000);
+        } else if (this->reading <= 4048) {
+          this->value = map(w ? this->weightedReading : this->reading, 1601, 4048, 1001, 2500);
+        } else if (this->reading <= 8144) {
+          this->value = map(w ? this->weightedReading : this->reading, 4049, 8144, 2501, 5000);
         } else {
-          this->value = map(w ? this->weightedReading : this->reading, 8144, 16304, 5000, 10000);
+          this->value = map(w ? this->weightedReading : this->reading, 8145, 16304, 5001, 10000);
         }
         break;
       default:

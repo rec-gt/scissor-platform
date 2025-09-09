@@ -3,7 +3,7 @@
 
 #define AI_SHIFT_BITS 4
 #define AI_OVERSAMPLING_FACTOR 256  // 2 ^ (2 * 4)
-#define AI_MAPPING_MODE_0_20MA 0
+#define AI_MAPPING_MODE_4_20MA 0
 #define AI_MAPPING_MODE_0_10V 1
 #define AI_EWMA_SAMPLE_SIZE 4
 #define AI_EWMA_ALPHA 0.2
@@ -22,7 +22,7 @@ public:
 
   AnalogInput() {}
 
-  AnalogInput(byte pin, byte mappingMode = AI_MAPPING_MODE_0_20MA)
+  AnalogInput(byte pin, byte mappingMode = AI_MAPPING_MODE_4_20MA)
     : pin(pin), mappingMode(mappingMode) {
     pinMode(pin, INPUT);
   }
@@ -51,10 +51,16 @@ public:
   }
 
 
-  uint16_t getValue(bool w = true) {  // turn ewma on or off
+  uint16_t getValue(bool w = false) {  // turn ewma on or off
     switch (this->mappingMode) {
-      case AI_MAPPING_MODE_0_20MA:
-        this->value = map(w ? this->weightedReading : this->reading, 0, 3919, 0, 20000);  // fine-tuned
+      case AI_MAPPING_MODE_4_20MA:
+        if (this->reading < 48) {
+          this->value = 0
+        } else if (this->reading < 1584) {
+          this->value = map(w ? this->weightedReading : this->reading, 48, 1583, 200, 3999);  // fine-tuned
+        } else {
+          this->value = map(w ? this->weightedReading : this->reading, 1584, 8048, 4000, 20000);  // fine-tuned
+        }
         break;
       case AI_MAPPING_MODE_0_10V:
         this->value = map(w ? this->weightedReading : this->reading, 0, 7885, 0, 10000);  // fine-tuned
@@ -63,6 +69,10 @@ public:
         this->value = 0;
     }
     return this->value;
+  }
+
+  void readPlain() {
+    Serial.println(analogRead(this->pin));
   }
 };
 

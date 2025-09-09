@@ -88,7 +88,7 @@ AnalogOutput analogOutputs[AO_NUMS]{
   AnalogOutput(AO_PIN_4),
 };
 
-byte aiMappingMode = dryContact1.isConnected() ? AI_MAPPING_MODE_0_20MA : AI_MAPPING_MODE_0_10V;
+byte aiMappingMode = dryContact1.isConnected() ? AI_MAPPING_MODE_4_20MA : AI_MAPPING_MODE_0_10V;
 
 AnalogInput analogInputs[AI_NUMS] = {
   AnalogInput(AI_PIN_1, aiMappingMode),
@@ -147,6 +147,8 @@ void loop() {
   /*=== Register Outputs Testing ===*/
   test.DO(digitalOutputs);
   test.AO(analogOutputs);
+
+  Serial.println(analogInputs[11].reading);
 
   delay(1);
 }

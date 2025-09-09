@@ -1,21 +1,22 @@
 #include "AsyncTimer.h"
-#ifndef Debug_H
-#define Debug_H
+#ifndef Test_H
+#define Test_H
 
-AsyncTimer timer;
+AsyncTimer timerDO;
+AsyncTimer timerAO;
 
-class Debug {
+class Test {
 private:
   unsigned long prevMillis = millis();
 
 public:
-  Debug(){};
+  Test(){};
 
   int doCnt = 0;
   bool doToggle = true;
 
   void DO(DigitalOutput* dos) {
-    if (timer.autoExpired(300)) {
+    if (timerDO.autoExpired(2000)) {
       this->doToggle ? dos[this->doCnt].connect() : dos[this->doCnt].cut();
       if (this->doCnt++ == DO_NUMS - 1) {
         this->doCnt = 0;
@@ -26,7 +27,7 @@ public:
 
   byte aoStrength = 0;  // max 255
   void AO(AnalogOutput* aos) {
-    if (timer.autoExpired(1000)) {
+    if (timerAO.autoExpired(2000)) {
       for (size_t i = 0; i < AO_NUMS; i++) {
         aos[i].set(this->aoStrength);
       }
@@ -34,7 +35,7 @@ public:
     }
   }
 
-  ~Debug(){};
+  ~Test(){};
 };
 
 // void debugDI() {

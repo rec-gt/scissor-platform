@@ -48,7 +48,7 @@
 #include "NBIoT.h"
 #include "DisplayClient.h"
 #include "Modbus485.h"
-#include "Debug.h"
+#include "Test.h"
 
 DigitalInput digitalInputs[DI_NUMS] = {
   DigitalInput(DI_PIN_1),
@@ -103,7 +103,7 @@ DisplayClient displayClient;
 
 Modbus485 modbus485;
 
-Debug debug;
+Test test;
 
 void setup() {
   Serial.begin(9600);
@@ -129,13 +129,14 @@ void loop() {
   // nbiot.loop();
 
   /*=== Register Modbus ===*/
-  // modbus485.loop();
+  modbus485.loop();
 
   /*=== Register MainSystem ===*/
-  // mainSystem.loop();
-  
-  // debug.DO(digitalOutputs);
-  debug.AO(analogOutputs);
+  mainSystem.loop();
+
+  /*=== Register Outputs Testing ===*/
+  test.DO(digitalOutputs);
+  test.AO(analogOutputs);
 
   delay(10);
 }

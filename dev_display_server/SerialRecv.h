@@ -74,31 +74,29 @@ public:
     }
 
     this->aiMappingMode = buffer[idx++];
-    Serial.print("aiMode: ");
-    Serial.println(this->aiMappingMode);
   }
 
-  void debug() {
-    Serial.println(this->nbiotConn);
-    Serial.println(this->nbiotCsq);
-    Serial.println(this->dis);
-    Serial.println(this->dos);
+  // void debug() {
+  //   Serial.println(this->nbiotConn);
+  //   Serial.println(this->nbiotCsq);
+  //   Serial.println(this->dis);
+  //   Serial.println(this->dos);
 
-    for (size_t i = 0; i < 12; i++) {
-      Serial.print(this->ais[i]);
-      Serial.print(", ");
-    }
-    Serial.println();
+  //   for (size_t i = 0; i < 12; i++) {
+  //     Serial.print(this->ais[i]);
+  //     Serial.print(", ");
+  //   }
+  //   Serial.println();
 
-    for (size_t i = 0; i < 4; i++) {
-      Serial.print(this->aos[i]);
-      Serial.print(", ");
-    }
+  //   for (size_t i = 0; i < 4; i++) {
+  //     Serial.print(this->aos[i]);
+  //     Serial.print(", ");
+  //   }
 
-    Serial.println(this->aiMappingMode);
+  //   Serial.println(this->aiMappingMode);
 
-    Serial.println();
-  }
+  //   Serial.println();
+  // }
 
   ~SerialRecv(){};
 };

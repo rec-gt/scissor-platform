@@ -50,7 +50,7 @@ public:
 
     do {
       int y = 7;
-      u8g2.drawStr(0, y, "RGT NBIoT Module");
+      u8g2.drawStr(0, y, "RGT NBIoT");
       u8g2.drawStr(108, y, "V2.0");
       u8g2.drawLine(0, 8, 128, 8);
 

@@ -148,7 +148,7 @@ void loop() {
   test.DO(digitalOutputs);
   test.AO(analogOutputs);
 
-  Serial.println(analogInputs[11].reading);
+  Serial.println(analogInputs[0].reading);
 
   delay(1);
 }

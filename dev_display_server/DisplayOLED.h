@@ -50,7 +50,7 @@ public:
 
     do {
       int y = 7;
-      u8g2.drawStr(0, y, "RGT NBIoT Controller");
+      u8g2.drawStr(0, y, "RGT NBIoT Module");
       u8g2.drawStr(108, y, "V2.0");
       u8g2.drawLine(0, 8, 128, 8);
 
@@ -90,7 +90,7 @@ public:
       u8g2.setCursor(102, y);
       u8g2.print(ai8);
       y = 43;
-      u8g2.drawStr(0, y, aiMappingMode ? "A" : "V");
+      u8g2.drawStr(0, y, aiMappingMode == 0 ? "A" : "V");
       u8g2.setCursor(12, y);
       u8g2.print(ai9);
       u8g2.setCursor(42, y);

@@ -131,9 +131,6 @@ void setup() {
 
   /*=== Modbus 485===*/
   modbus485.setup();
-
-  Serial.print("AI_MAPPING_MODE: ");
-  Serial.print(aiMappingMode);
 }
 
 

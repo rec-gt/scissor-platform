@@ -89,23 +89,24 @@ AnalogOutput analogOutputs[AO_NUMS]{
   AnalogOutput(AO_PIN_4),
 };
 
-byte AI_MAPPING_MODE = dryContact1.isConnected() ? AI_MAPPING_MODE_0_20MA : AI_MAPPING_MODE_0_10V;
+byte aiMappingMode = dryContact1.isConnected() ? AI_MAPPING_MODE_0_20MA : AI_MAPPING_MODE_0_10V;
+
 AnalogInput analogInputs[AI_NUMS] = {
-  AnalogInput(AI_PIN_1, AI_MAPPING_MODE),
-  AnalogInput(AI_PIN_2, AI_MAPPING_MODE),
-  AnalogInput(AI_PIN_3, AI_MAPPING_MODE),
-  AnalogInput(AI_PIN_4, AI_MAPPING_MODE),
-  AnalogInput(AI_PIN_5, AI_MAPPING_MODE),
-  AnalogInput(AI_PIN_6, AI_MAPPING_MODE),
-  AnalogInput(AI_PIN_7, AI_MAPPING_MODE),
-  AnalogInput(AI_PIN_8, AI_MAPPING_MODE),
-  AnalogInput(AI_PIN_9, AI_MAPPING_MODE),
-  AnalogInput(AI_PIN_10, AI_MAPPING_MODE),
-  AnalogInput(AI_PIN_11, AI_MAPPING_MODE),
-  AnalogInput(AI_PIN_12, AI_MAPPING_MODE),
+  AnalogInput(AI_PIN_1, aiMappingMode),
+  AnalogInput(AI_PIN_2, aiMappingMode),
+  AnalogInput(AI_PIN_3, aiMappingMode),
+  AnalogInput(AI_PIN_4, aiMappingMode),
+  AnalogInput(AI_PIN_5, aiMappingMode),
+  AnalogInput(AI_PIN_6, aiMappingMode),
+  AnalogInput(AI_PIN_7, aiMappingMode),
+  AnalogInput(AI_PIN_8, aiMappingMode),
+  AnalogInput(AI_PIN_9, aiMappingMode),
+  AnalogInput(AI_PIN_10, aiMappingMode),
+  AnalogInput(AI_PIN_11, aiMappingMode),
+  AnalogInput(AI_PIN_12, aiMappingMode),
 };
 
-MainSystem mainSystem(digitalInputs, digitalOutputs, analogInputs, analogOutputs);
+MainSystem mainSystem(digitalInputs, digitalOutputs, analogInputs, analogOutputs, aiMappingMode);
 
 NBIoT nbiot;
 
@@ -132,7 +133,7 @@ void setup() {
   modbus485.setup();
 
   Serial.print("AI_MAPPING_MODE: ");
-  Serial.print(AI_MAPPING_MODE);
+  Serial.print(aiMappingMode);
 }
 
 

@@ -15,6 +15,7 @@ private:
   DigitalOutput *digitalOutputs;
   AnalogInput *analogInputs;
   AnalogOutput *analogOutputs;
+  uint8_t aiMappingMode;
 
   byte DIPayload = 0;
   byte DOPayload = 0;
@@ -26,8 +27,8 @@ private:
   String subsMsg = "";
 
 public:
-  MainSystem(DigitalInput *digitalInputs, DigitalOutput *digitalOutputs, AnalogInput *analogInputs, AnalogOutput *analogOutputs)
-    : digitalInputs(digitalInputs), digitalOutputs(digitalOutputs), analogInputs(analogInputs), analogOutputs(analogOutputs) {
+  MainSystem(DigitalInput *digitalInputs, DigitalOutput *digitalOutputs, AnalogInput *analogInputs, AnalogOutput *analogOutputs, uint8_t aiMappingMode)
+    : digitalInputs(digitalInputs), digitalOutputs(digitalOutputs), analogInputs(analogInputs), analogOutputs(analogOutputs), aiMappingMode(aiMappingMode) {
   }
 
   void loop() {
@@ -57,7 +58,7 @@ public:
 
   void handleDisplayContent() {
     if (millis() - this->prevMillisDisplay > 2000) {
-      displayClient.prepareBuffer(nbiot.connState, nbiot.CSQ.toInt(), this->DIPayload, this->DOPayload, analogInputs, analogOutputs);
+      displayClient.prepareBuffer(nbiot.connState, nbiot.CSQ.toInt(), this->DIPayload, this->DOPayload, analogInputs, analogOutputs, aiMappingMode);
       displayClient.sendBuffer();
       this->prevMillisDisplay = millis();
     }

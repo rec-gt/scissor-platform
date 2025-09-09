@@ -132,8 +132,6 @@ void setup() {
   modbus485.setup();
 }
 
-
-
 void loop() {
   /*=== Register NBIoT ===*/
   // nbiot.loop();

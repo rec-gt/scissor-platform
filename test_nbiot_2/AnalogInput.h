@@ -55,7 +55,7 @@ public:
     switch (this->mappingMode) {
       case AI_MAPPING_MODE_4_20MA:
         if (this->reading < 48) {
-          this->value = 0
+          this->value = 0;
         } else if (this->reading < 1584) {
           this->value = map(w ? this->weightedReading : this->reading, 48, 1583, 200, 3999);  // fine-tuned
         } else {

@@ -1,0 +1,225 @@
+#ifndef AsyncSerial_h
+#define AsyncSerial_h
+
+#define NBIoT_Module Serial1
+
+class AsyncSerial {
+private:
+  String res = "";
+
+  bool isOpen = false;
+  bool isConn = false;
+  bool isSubs = false;
+  bool tryOpen = false;
+  bool tryConn = false;
+  bool trySubs = false;
+  int tryResetCnt = 0;
+  int tryOpenCnt = 0;
+  int tryConnCnt = 0;
+  int trySubsCnt = 0;
+  unsigned long tryOpenMillis = 0;
+  unsigned long tryConnMillis = 0;
+  unsigned long trySubsMillis = 0;
+  unsigned long waitDataMillis = 0;
+
+  void print() {
+    Serial.println("isOpen: " + String(isOpen) + " isConn: " + String(isConn) + " isSubs: " + String(isSubs) + " tryOpen: " + String(tryOpen) + " tryConn: " + String(tryConn) + " trySubs: " + String(trySubs));
+  }
+
+  void pruneSerialBuffer() {
+    while (NBIoT_Module.read() > 0) {};
+  }
+
+  void pruneResBuffer() {
+    this->res = "";
+  }
+
+  void hookCSQ() {
+    int idx = this->res.indexOf("+CSQ:");
+    if (idx != -1) {
+      int winStart = idx + 6;
+      int winEnd = winStart + 2;
+      Serial.println(this->res.substring(winStart, winEnd));
+    }
+  }
+
+  void hookCEREG() {
+    int idx = this->res.indexOf("+CEREG:");
+  }
+
+  void hookTryOpen() {
+    if (millis() - this->tryOpenMillis <= 5000) {
+      int idx = this->res.indexOf("+QMTOPEN: 0,0");
+      if (idx != -1) {
+        this->isOpen = true;
+        this->tryOpen = false;
+      }
+    } else {
+      if (this->tryOpenCnt == 1) {
+        NBIoT_Module.println("AT+QMTCLOSE=0");
+        NBIoT_Module.println("AT+QMTOPEN=0,8.210.84.24,1880");
+      }
+      if (++this->tryOpenCnt > 3) {
+        this->isOpen = false;
+        this->tryOpen = false;
+        this->tryOpenCnt = 0;
+      }
+      if (++this->tryResetCnt > 6) {
+        NBIoT_Module.println("AT+QRST=1");
+        delay(5000);
+        NBIoT_Module.println("AT+CFUN=1");
+        delay(100);
+        NBIoT_Module.println("AT+QSCLK=0");
+        delay(100);
+        this->tryResetCnt = 0;
+      }
+      this->tryOpenMillis = millis();
+    }
+  }
+
+  void hookTryConn() {
+    if (millis() - this->tryConnMillis <= 5000) {
+      int idx = this->res.indexOf("+QMTCONN: 0,0,0");
+      if (idx != -1) {
+        this->isConn = true;
+        this->tryConn = false;
+      }
+    } else {
+      if (this->tryConnCnt == 1) {
+        NBIoT_Module.println("AT+QMTDISC=0");
+        NBIoT_Module.println("AT+QMTCONN=0,dev" + String(random(101)) + ",tswh,1Wo=[6vA0m");
+      }
+      if (++this->tryConnCnt > 3) {
+        this->isConn = false;
+        this->tryConn = false;
+        this->tryConnCnt = 0;
+      }
+      this->tryConnMillis = millis();
+    }
+  }
+
+  void hookTrySubs() {
+    if (millis() - this->trySubsMillis <= 5000) {
+      int idx = this->res.indexOf("+QMTSUB: 0,1,0,2");
+      if (idx != -1) {
+        this->isSubs = true;
+        this->trySubs = false;
+      }
+    } else {
+      if (++this->trySubsCnt > 3) {
+        this->isSubs = false;
+        this->trySubs = false;
+        this->trySubsCnt = 0;
+      }
+      this->trySubsMillis = millis();
+    }
+  }
+
+  void parseMsg() {
+    // readonly, never modify msg
+    this->hookCSQ();
+    this->hookCEREG();
+  }
+
+public:
+  AsyncSerial() {}
+
+  void init() {
+    Serial.print("INIT ");
+    NBIoT_Module.println("AT+QRST=1");
+    delay(5000);
+    NBIoT_Module.println("AT+CFUN=1");
+    delay(100);
+    NBIoT_Module.println("AT+QSCLK=0");
+    delay(100);
+    this->pruneSerialBuffer();
+    Serial.println("OK");
+  }
+
+  void listen() {
+    this->open();
+    this->conn();
+    this->subs();
+    this->waitData();
+
+    if (this->tryOpen) {
+      this->hookTryOpen();
+      this->waitDataMillis = millis();
+    }
+
+    if (this->tryConn) {
+      this->hookTryConn();
+      this->waitDataMillis = millis();
+    }
+
+    if (this->trySubs) {
+      this->hookTrySubs();
+      this->waitDataMillis = millis();
+    }
+  }
+
+  void open() {
+    if (!this->isOpen && !this->tryOpen) {
+      Serial.println("Opening MQTT...");
+      NBIoT_Module.println("AT+QMTOPEN=0,8.210.84.24,1880");
+      this->tryOpen = true;
+    }
+  }
+
+  void conn() {
+    if (this->isOpen && (!this->isConn && !this->tryConn)) {
+      Serial.println("Connecting MQTT...");
+      NBIoT_Module.println("AT+QMTCONN=0,dev" + String(random(101)) + ",tswh,1Wo=[6vA0m");
+      this->tryConn = true;
+    }
+  }
+
+  void subs() {
+    if (this->isOpen && this->isConn && (!this->isSubs && !this->trySubs)) {
+      Serial.println("Subscribing Topic...");
+      NBIoT_Module.println("AT+QMTSUB=0,1,rgt/861096060571706/in,2");
+      this->trySubs = true;
+    }
+  }
+
+  void waitData() {
+    // if received, feed this->waitDataMillis
+    if (millis() - this->waitDataMillis > 15000) {
+      this->isOpen = false;
+      this->isConn = false;
+      this->isSubs = false;
+      this->tryOpen = false;
+      this->tryConn = false;
+      this->trySubs = false;
+      this->tryOpenCnt = 0;
+      this->tryConnCnt = 0;
+      this->trySubsCnt = 0;
+      this->waitDataMillis = millis();
+      Serial.println("No data received, timeout, reconnect");
+    }
+  }
+
+  void waitMsg() {
+    if (NBIoT_Module.available() > 0) {
+      char _byte = NBIoT_Module.read();
+
+      Serial.print(_byte);
+
+      if (_byte != '\r' && _byte != '\n') {
+        this->res += _byte;
+      }
+
+      if (_byte == '\r') {
+        this->parseMsg();
+        this->pruneResBuffer();
+      }
+    }
+  }
+
+  ~AsyncSerial() {}
+};
+
+
+extern AsyncSerial asyncSerial;
+
+#endif

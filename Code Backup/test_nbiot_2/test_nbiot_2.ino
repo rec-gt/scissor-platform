@@ -147,7 +147,8 @@ void loop() {
   /*=== Register Outputs Testing ===*/
   test.DO(digitalOutputs);
   test.AO(analogOutputs);
-  // Serial.println(analogInput…s[0].reading);
+
+  Serial.println(analogInputs[0].reading);
 
   delay(1);
 }

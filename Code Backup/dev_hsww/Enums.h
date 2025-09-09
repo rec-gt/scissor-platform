@@ -1,0 +1,16 @@
+#ifndef Enums_h
+#define Enums_h
+
+enum SystemStatus {
+  SYS_INIT,
+  SYS_YELLOW_OUTDOOR,
+  SYS_RED_OUTDOOR,
+  SYS_BLACK_OUTDOOR,
+  SYS_CANCEL_OUTDOOR,
+  SYS_YELLOW_INDOOR,
+  SYS_RED_INDOOR,
+  SYS_BLACK_INDOOR,
+  SYS_CANCEL_INDOOR,
+};
+
+#endif

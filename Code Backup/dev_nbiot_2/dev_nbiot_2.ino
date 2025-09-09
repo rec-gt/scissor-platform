@@ -34,30 +34,20 @@
 #define AO_PIN_3 6
 #define AO_PIN_4 7
 
-#define DRY_CONTACT_PIN_1 27
-#define DRY_CONTACT_PIN_2 28
-#define DRY_CONTACT_PIN_3 29
-#define DRY_CONTACT_PIN_4 30
-#define DRY_CONTACT_PIN_5 31
-
 #define DI_NUMS 8
 #define DO_NUMS 8
 #define AI_NUMS 12
 #define AO_NUMS 4
-#define DRY_CONTACT_NUMS 5
 
+#include "Globals.h"
 #include "DigitalInput.h"
 #include "DigitalOutput.h"
 #include "AnalogInput.h"
 #include "AnalogOutput.h"
-#include "DryContact.h"
 #include "MainSystem.h"
 #include "NBIoT.h"
 #include "DisplayClient.h"
 #include "Modbus485.h"
-#include "Test.h"
-
-DryContact dryContact1(DRY_CONTACT_PIN_1);
 
 DigitalInput digitalInputs[DI_NUMS] = {
   DigitalInput(DI_PIN_1),
@@ -88,24 +78,23 @@ AnalogOutput analogOutputs[AO_NUMS]{
   AnalogOutput(AO_PIN_4),
 };
 
-byte aiMappingMode = dryContact1.isConnected() ? AI_MAPPING_MODE_4_20MA : AI_MAPPING_MODE_0_10V;
-
+// AI_MAPPING_MODE_0_10V, AI_MAPPING_MODE_0_20MA
 AnalogInput analogInputs[AI_NUMS] = {
-  AnalogInput(AI_PIN_1, aiMappingMode),
-  AnalogInput(AI_PIN_2, aiMappingMode),
-  AnalogInput(AI_PIN_3, aiMappingMode),
-  AnalogInput(AI_PIN_4, aiMappingMode),
-  AnalogInput(AI_PIN_5, aiMappingMode),
-  AnalogInput(AI_PIN_6, aiMappingMode),
-  AnalogInput(AI_PIN_7, aiMappingMode),
-  AnalogInput(AI_PIN_8, aiMappingMode),
-  AnalogInput(AI_PIN_9, aiMappingMode),
-  AnalogInput(AI_PIN_10, aiMappingMode),
-  AnalogInput(AI_PIN_11, aiMappingMode),
-  AnalogInput(AI_PIN_12, aiMappingMode),
+  AnalogInput(AI_PIN_1, AI_MAPPING_MODE_0_20MA),
+  AnalogInput(AI_PIN_2, AI_MAPPING_MODE_0_20MA),
+  AnalogInput(AI_PIN_3, AI_MAPPING_MODE_0_20MA),
+  AnalogInput(AI_PIN_4, AI_MAPPING_MODE_0_20MA),
+  AnalogInput(AI_PIN_5, AI_MAPPING_MODE_0_20MA),
+  AnalogInput(AI_PIN_6, AI_MAPPING_MODE_0_20MA),
+  AnalogInput(AI_PIN_7, AI_MAPPING_MODE_0_20MA),
+  AnalogInput(AI_PIN_8, AI_MAPPING_MODE_0_20MA),
+  AnalogInput(AI_PIN_9, AI_MAPPING_MODE_0_20MA),
+  AnalogInput(AI_PIN_10, AI_MAPPING_MODE_0_20MA),
+  AnalogInput(AI_PIN_11, AI_MAPPING_MODE_0_20MA),
+  AnalogInput(AI_PIN_12, AI_MAPPING_MODE_0_20MA),
 };
 
-MainSystem mainSystem(digitalInputs, digitalOutputs, analogInputs, analogOutputs, aiMappingMode);
+MainSystem mainSystem(digitalInputs, digitalOutputs, analogInputs, analogOutputs);
 
 NBIoT nbiot;
 
@@ -113,15 +102,13 @@ DisplayClient displayClient;
 
 Modbus485 modbus485;
 
-Test test;
-
 void setup() {
   Serial.begin(9600);
 
   analogReference(EXTERNAL);
 
   /*=== NBIoT ===*/
-  // nbiot.setup();
+  nbiot.setup();
   // nbiot.init(true);
   // nbiot.debug();
 
@@ -138,16 +125,11 @@ void loop() {
   /*=== Register NBIoT ===*/
   // nbiot.loop();
 
-  /*=== Register Modbus ===*/
-  modbus485.loop();
-
   /*=== Register MainSystem ===*/
   mainSystem.loop();
 
-  /*=== Register Outputs Testing ===*/
-  test.DO(digitalOutputs);
-  test.AO(analogOutputs);
-  // Serial.println(analogInput…s[0].reading);
+  /*=== Modbus ===*/
+  modbus485.loop();
 
-  delay(1);
+  delay(10);
 }

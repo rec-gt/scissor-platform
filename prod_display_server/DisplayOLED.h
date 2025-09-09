@@ -42,7 +42,8 @@ public:
     uint16_t ao1,
     uint16_t ao2,
     uint16_t ao3,
-    uint16_t ao4) {
+    uint16_t ao4,
+    byte aiMappingMode) {
     this->heartbeatToggle = !this->heartbeatToggle;
 
     u8g2.firstPage();
@@ -89,6 +90,7 @@ public:
       u8g2.setCursor(102, y);
       u8g2.print(ai8);
       y = 43;
+      u8g2.drawStr(0, y, aiMappingMode ? "A" : "V");
       u8g2.setCursor(12, y);
       u8g2.print(ai9);
       u8g2.setCursor(42, y);
@@ -114,13 +116,13 @@ public:
 
       y = 63;
       u8g2.drawStr(0, y, "NBIoT");
-      u8g2.drawStr(32, y, "CSQ");
+      u8g2.drawStr(32, y, "Csq:");
       u8g2.setCursor(52, y);
       u8g2.print(iotCsq);
-      u8g2.drawStr(67, y, "CONN");
+      u8g2.drawStr(67, y, "Conn:");
       u8g2.setCursor(92, y);
       u8g2.print(iotConn);
-      u8g2.drawStr(102, y, this->heartbeatToggle ? "HRTBT" : "     ");
+      u8g2.drawStr(107, y, this->heartbeatToggle ? "Hrbt" : "    ");
     } while (u8g2.nextPage());
   }
 

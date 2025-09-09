@@ -45,7 +45,8 @@ void loop() {
     serialRecv.aos[0],
     serialRecv.aos[1],
     serialRecv.aos[2],
-    serialRecv.aos[3]);
+    serialRecv.aos[3],
+    serialRecv.aiMappingMode);
 
   autoReset();
 

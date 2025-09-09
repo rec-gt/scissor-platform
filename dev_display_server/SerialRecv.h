@@ -49,6 +49,8 @@ public:
           uint8_t calculatedChecksum = this->getChecksum(this->buffer, 1, 37);
           if (payloadChecksum == calculatedChecksum) {
             this->extractValues();
+          } else {
+            Serial.println("wtf");
           }
         }
       }
@@ -72,6 +74,8 @@ public:
     }
 
     this->aiMappingMode = buffer[idx++];
+    Serial.print("aiMode: ");
+    Serial.println(this->aiMappingMode);
   }
 
   void debug() {
@@ -90,7 +94,7 @@ public:
       Serial.print(this->aos[i]);
       Serial.print(", ");
     }
-    
+
     Serial.println(this->aiMappingMode);
 
     Serial.println();

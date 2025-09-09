@@ -44,11 +44,12 @@ public:
       this->buffer[idx++] = aos[i].value & 0xFF;
     }
 
+    Serial.print("aiMappingMode: ");
     Serial.println(aiMappingMode);
-    
+
     this->buffer[idx++] = aiMappingMode;
 
-    this->buffer[idx++] = getChecksum(this->buffer, 1, 36);
+    this->buffer[idx++] = getChecksum(this->buffer, 1, 37);
 
     this->buffer[idx++] = 0x5D;  // ']'
   }

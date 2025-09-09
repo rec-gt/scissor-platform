@@ -8,24 +8,42 @@
 
 class Modbus485 {
 private:
-  unsigned long prevMillis = millis();
+  String serialRecv = "";
 
 public:
   Modbus485(){};
 
   void setup() {
     pinMode(RE_DE_PIN, OUTPUT);
-    digitalWrite(RE_DE_PIN, LOW);  // HIGH = send, LOW = receive
-    Serial3.begin(9600);
+    digitalWrite(RE_DE_PIN, HIGH);  // HIGH = send, LOW = receive
+    Serial3.begin(9600, SERIAL_8N1);
   };
 
   void loop() {
-    // if (millis() - prevMillis > 1000) {
-    //   Serial3.print("q");
-    //   prevMillis = millis();
-    // }
+    this->listen();
+  }
+
+  void listen() {
+    digitalWrite(RE_DE_PIN, LOW);
+    delay(1);
     while (Serial3.available()) {
-      Serial.println((char)Serial3.read());
+      char c = Serial3.read();
+      if (c != '\r' && c != '\n') {
+        this->serialRecv += c;
+      }
+      if (c == '\r') {
+        this->answer();
+      }
+    }
+  }
+
+  void answer() {
+    int idx = this->serialRecv.indexOf("AT");
+    if (idx > -1) {
+      digitalWrite(RE_DE_PIN, HIGH);
+      delay(1);
+      Serial3.println("[Hello from RGT Hello from RGT Hello from RGT]");
+      Serial3.flush();
     }
   }
 

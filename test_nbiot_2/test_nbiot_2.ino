@@ -90,8 +90,6 @@ AnalogOutput analogOutputs[AO_NUMS]{
 };
 
 byte AI_MAPPING_MODE = dryContact1.isConnected() ? AI_MAPPING_MODE_0_20MA : AI_MAPPING_MODE_0_10V;
-Serial.print("AI_MAPPING_MODE: ");
-Serial.print(AI_MAPPING_MODE);
 AnalogInput analogInputs[AI_NUMS] = {
   AnalogInput(AI_PIN_1, AI_MAPPING_MODE),
   AnalogInput(AI_PIN_2, AI_MAPPING_MODE),
@@ -132,6 +130,9 @@ void setup() {
 
   /*=== Modbus 485===*/
   modbus485.setup();
+
+  Serial.print("AI_MAPPING_MODE: ");
+  Serial.print(AI_MAPPING_MODE);
 }
 
 

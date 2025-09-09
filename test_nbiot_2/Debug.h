@@ -24,6 +24,16 @@ public:
     }
   }
 
+  byte aoStrength = 0;  // max 255
+  void AO(AnalogOutput* aos) {
+    if (timer.autoExpired(1000)) {
+      for (size_t i = 0; i < AO_NUMS; i++) {
+        aos[i].set(this->aoStrength);
+      }
+      this->aoStrength += 85;
+    }
+  }
+
   ~Debug(){};
 };
 

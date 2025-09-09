@@ -134,8 +134,8 @@ void loop() {
   /*=== Register MainSystem ===*/
   // mainSystem.loop();
   
-  debug.DO(digitalOutputs);
-  // debug.AO(analogOutputs);
+  // debug.DO(digitalOutputs);
+  debug.AO(analogOutputs);
 
   delay(10);
 }

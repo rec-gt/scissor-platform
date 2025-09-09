@@ -44,9 +44,6 @@ public:
       this->buffer[idx++] = aos[i].value & 0xFF;
     }
 
-    Serial.print("aiMappingMode: ");
-    Serial.println(aiMappingMode);
-
     this->buffer[idx++] = aiMappingMode;
 
     this->buffer[idx++] = getChecksum(this->buffer, 1, 37);
@@ -60,7 +57,7 @@ public:
   }
 
   void debug() {
-    for (size_t i = 0; i < 39; i++) {
+    for (size_t i = 0; i < 40; i++) {
       Serial.print(this->buffer[i]);
       Serial.print(", ");
     }

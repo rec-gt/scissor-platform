@@ -1,5 +1,3 @@
-#include "Globals.h"
-
 #ifndef AnalogInput_H
 #define AnalogInput_H
 

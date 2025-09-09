@@ -2,7 +2,6 @@
 #include "DigitalOutput.h"
 #include "AnalogInput.h"
 #include "AnalogOutput.h"
-#include "Globals.h"
 #include "NBIoT.h"
 #include "DisplayClient.h"
 

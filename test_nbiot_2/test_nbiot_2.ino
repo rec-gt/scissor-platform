@@ -46,7 +46,6 @@
 #define AO_NUMS 4
 #define DRY_CONTACT_NUMS 5
 
-#include "Globals.h"
 #include "DigitalInput.h"
 #include "DigitalOutput.h"
 #include "AnalogInput.h"

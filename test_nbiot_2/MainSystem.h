@@ -96,7 +96,8 @@ public:
     /*=== AO ===*/
     this->AOPayload = "[";
     for (size_t i = 0; i < AO_NUMS; i++) {
-      this->AOPayload += String(analogOutputs[i].getValue());
+      // this->AOPayload += analogOutputs[i].getValue();
+      this->AOPayload += 255;
       if (i < AO_NUMS - 1) {
         this->AOPayload += ",";
       }

@@ -125,12 +125,6 @@ void setup() {
   nbiot.init(true);
   nbiot.debug();
 
-  nbiot.pubMsgPayload.reserve(256);
-  nbiot.pubMsgPrepare.reserve(256);
-  nbiot.pubMsgCommand.reserve(256);
-  nbiot.subMsgContent.reserve(256);
-  nbiot.subMsgPayload.reserve(256);
-
   /*=== Display ===*/
   displayClient.setup();
 

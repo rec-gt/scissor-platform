@@ -94,6 +94,9 @@ public:
   String pubMsgPrepare = "";
   String pubMsgCommand = "";
 
+  // important, for pubMsgCommand consistency due to the async concat property of "pubMsgPrepare" & "pubMsgPayload"
+  bool pubMsgPayloadLock = false;
+
   // for subscribe
   String subMsgContent = "";
   String subMsgPayload = "";
@@ -116,6 +119,11 @@ public:
 
   void setup() {
     NBIoTSerial.begin(9600);
+    this->pubMsgPayload.reserve(256);
+    this->pubMsgPrepare.reserve(256);
+    this->pubMsgCommand.reserve(256);
+    this->subMsgContent.reserve(256);
+    this->subMsgPayload.reserve(256);
   }
 
   void init(bool asyncInitMode = false) {
@@ -275,6 +283,7 @@ public:
         if (nbiotTimer.autoExpired(13000)) {
           Serial.print("\r\nEXECUTE REGULAR PUBLISH\r\n");
           this->printlnFlush(this->pubMsgPrepare);
+          this->pubMsgPayloadLock = true;  // disable the preparation of payload
           this->pipelineState = PIPELINE_WAITING_PREPARE_PUBMSG;
         }
       }
@@ -282,6 +291,7 @@ public:
       if (this->pipelineState == PIPELINE_FINISH_PREPARE_PUBMSG) {
         if (nbiotTimer.autoExpired(2000)) {
           this->printlnFlush(this->pubMsgPayload);
+          this->pubMsgPayloadLock = false;  // release the lock
           this->pipelineState = PIPELINE_WAITING_PUBLISH;
         }
       }

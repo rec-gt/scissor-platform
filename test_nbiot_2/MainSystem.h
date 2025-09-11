@@ -85,8 +85,8 @@ public:
     /*=== AI ===*/
     this->AIPayload = "[";
     for (size_t i = 0; i < AI_NUMS; i++) {
-      // this->AIPayload += analogInputs[i].getValue();
-      this->AIPayload += 99999;
+      this->AIPayload += analogInputs[i].getValue();
+      // this->AIPayload += 99999;
       if (i < AI_NUMS - 1) {
         this->AIPayload += ",";
       }
@@ -96,8 +96,8 @@ public:
     /*=== AO ===*/
     this->AOPayload = "[";
     for (size_t i = 0; i < AO_NUMS; i++) {
-      // this->AOPayload += analogOutputs[i].getValue();
-      this->AOPayload += 255;
+      this->AOPayload += analogOutputs[i].getValue();
+      // this->AOPayload += 255;
       if (i < AO_NUMS - 1) {
         this->AOPayload += ",";
       }
@@ -105,28 +105,30 @@ public:
     this->AOPayload += "]";
 
     /*=== 2. prepare the msg to be published ===*/
-    nbiot.pubMsgPayload = "{\"csq\":";
-    nbiot.pubMsgPayload.concat(nbiot.CSQ);
-    nbiot.pubMsgPayload.concat(",");
-    nbiot.pubMsgPayload.concat("\"cgatt\":");
-    nbiot.pubMsgPayload.concat(nbiot.CGATT);
-    nbiot.pubMsgPayload.concat(",");
-    nbiot.pubMsgPayload.concat("\"cereg\":\"");
-    nbiot.pubMsgPayload.concat(nbiot.CEREG);
-    nbiot.pubMsgPayload.concat("\"");
-    nbiot.pubMsgPayload.concat(",");
-    nbiot.pubMsgPayload.concat("\"din\":");
-    nbiot.pubMsgPayload.concat(String(this->DIPayload));
-    nbiot.pubMsgPayload.concat(",");
-    nbiot.pubMsgPayload.concat("\"dout\":");
-    nbiot.pubMsgPayload.concat(String(this->DOPayload));
-    nbiot.pubMsgPayload.concat(",");
-    nbiot.pubMsgPayload.concat("\"ain\":");
-    nbiot.pubMsgPayload.concat(this->AIPayload);
-    nbiot.pubMsgPayload.concat(",");
-    nbiot.pubMsgPayload.concat("\"aout\":");
-    nbiot.pubMsgPayload.concat(this->AOPayload);
-    nbiot.pubMsgPayload.concat("}");
+    if (!nbiot.pubMsgPayloadLock) {
+      nbiot.pubMsgPayload = "{\"csq\":";
+      nbiot.pubMsgPayload.concat(nbiot.CSQ);
+      nbiot.pubMsgPayload.concat(",");
+      nbiot.pubMsgPayload.concat("\"cgatt\":");
+      nbiot.pubMsgPayload.concat(nbiot.CGATT);
+      nbiot.pubMsgPayload.concat(",");
+      nbiot.pubMsgPayload.concat("\"cereg\":\"");
+      nbiot.pubMsgPayload.concat(nbiot.CEREG);
+      nbiot.pubMsgPayload.concat("\"");
+      nbiot.pubMsgPayload.concat(",");
+      nbiot.pubMsgPayload.concat("\"din\":");
+      nbiot.pubMsgPayload.concat(String(this->DIPayload));
+      nbiot.pubMsgPayload.concat(",");
+      nbiot.pubMsgPayload.concat("\"dout\":");
+      nbiot.pubMsgPayload.concat(String(this->DOPayload));
+      nbiot.pubMsgPayload.concat(",");
+      nbiot.pubMsgPayload.concat("\"ain\":");
+      nbiot.pubMsgPayload.concat(this->AIPayload);
+      nbiot.pubMsgPayload.concat(",");
+      nbiot.pubMsgPayload.concat("\"aout\":");
+      nbiot.pubMsgPayload.concat(this->AOPayload);
+      nbiot.pubMsgPayload.concat("}");
+    }
 
     nbiot.pubMsgPrepare = "AT+QMTPUB=0,0,0,0,rgt/";
     nbiot.pubMsgPrepare.concat(nbiot.IMEI);

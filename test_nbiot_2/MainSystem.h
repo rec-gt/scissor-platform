@@ -123,9 +123,9 @@ public:
     nbiot.pubMsgPayload.concat(",");
     nbiot.pubMsgPayload.concat("\"ain\":");
     nbiot.pubMsgPayload.concat(this->AIPayload);
-    // nbiot.pubMsgPayload.concat(",");
-    // nbiot.pubMsgPayload.concat("\"aout\":");
-    // nbiot.pubMsgPayload.concat(this->AOPayload);
+    nbiot.pubMsgPayload.concat(",");
+    nbiot.pubMsgPayload.concat("\"aout\":");
+    nbiot.pubMsgPayload.concat(this->AOPayload);
     nbiot.pubMsgPayload.concat("}");
 
     nbiot.pubMsgPrepare = "AT+QMTPUB=0,0,0,0,rgt/";

@@ -52,7 +52,7 @@ long smoothADC(long newReading) {
 
 void loop() {
   // Read from analog pin A0
-  long raw14Bit = readADC14Bit(A6);
+  long raw14Bit = readADC14Bit(A2);
   long smoothedValue = smoothADC(raw14Bit);
 
   // Print results

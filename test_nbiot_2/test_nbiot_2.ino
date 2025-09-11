@@ -125,11 +125,20 @@ void setup() {
   nbiot.init(true);
   nbiot.debug();
 
+  nbiot.pubMsgPayload.reserve(256);
+  nbiot.pubMsgPrepare.reserve(256);
+  nbiot.pubMsgCommand.reserve(256);
+  nbiot.subMsgContent.reserve(256);
+  nbiot.subMsgPayload.reserve(256);
+
   /*=== Display ===*/
   displayClient.setup();
 
-  /*=== Modbus 485===*/
+  /*=== Modbus 485 ===*/
   modbus485.setup();
+
+  /*=== Main System ===*/
+  mainSystem.setup();
 }
 
 void loop() {
@@ -145,7 +154,7 @@ void loop() {
   /*=== Register Outputs Testing ===*/
   test.DO(digitalOutputs);
   test.AO(analogOutputs);
-  // Serial.println(analogInput…s[0].reading);
+  // Serial.println(analogInputs[0].reading);
 
   delay(1);
 }

@@ -30,6 +30,11 @@ public:
     : digitalInputs(digitalInputs), digitalOutputs(digitalOutputs), analogInputs(analogInputs), analogOutputs(analogOutputs), aiMappingMode(aiMappingMode) {
   }
 
+  void setup() {
+    AIPayload.reserve(128);
+    AOPayload.reserve(128);
+  }
+
   void loop() {
     /*=== Listen Input Ports ===*/
     this->listen();
@@ -80,7 +85,7 @@ public:
     /*=== AI ===*/
     this->AIPayload = "[";
     for (size_t i = 0; i < AI_NUMS; i++) {
-      this->AIPayload += analogInputs[i].getValue();
+      this->AIPayload += String(analogInputs[i].getValue());
       if (i < AI_NUMS - 1) {
         this->AIPayload += ",";
       }
@@ -90,7 +95,7 @@ public:
     /*=== AO ===*/
     this->AOPayload = "[";
     for (size_t i = 0; i < AO_NUMS; i++) {
-      this->AOPayload += analogOutputs[i].getValue();
+      this->AOPayload += String(analogOutputs[i].getValue());
       if (i < AO_NUMS - 1) {
         this->AOPayload += ",";
       }
@@ -113,12 +118,12 @@ public:
     nbiot.pubMsgPayload.concat(",");
     nbiot.pubMsgPayload.concat("\"dout\":");
     nbiot.pubMsgPayload.concat(String(this->DOPayload));
-    nbiot.pubMsgPayload.concat(",");
-    nbiot.pubMsgPayload.concat("\"ain\":");
-    nbiot.pubMsgPayload.concat(this->AIPayload);
-    nbiot.pubMsgPayload.concat(",");
-    nbiot.pubMsgPayload.concat("\"current\":");
-    nbiot.pubMsgPayload.concat(this->AOPayload);
+    // nbiot.pubMsgPayload.concat(",");
+    // nbiot.pubMsgPayload.concat("\"ain\":");
+    // nbiot.pubMsgPayload.concat(this->AIPayload);
+    // nbiot.pubMsgPayload.concat(",");
+    // nbiot.pubMsgPayload.concat("\"aout\":");
+    // nbiot.pubMsgPayload.concat(this->AOPayload);
     nbiot.pubMsgPayload.concat("}");
 
     nbiot.pubMsgPrepare = "AT+QMTPUB=0,0,0,0,rgt/";

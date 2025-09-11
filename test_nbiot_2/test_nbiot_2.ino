@@ -121,9 +121,9 @@ void setup() {
   analogReference(EXTERNAL);
 
   /*=== NBIoT ===*/
-  // nbiot.setup();
-  // nbiot.init(true);
-  // nbiot.debug();
+  nbiot.setup();
+  nbiot.init(true);
+  nbiot.debug();
 
   /*=== Display ===*/
   displayClient.setup();
@@ -134,7 +134,7 @@ void setup() {
 
 void loop() {
   /*=== Register NBIoT ===*/
-  // nbiot.loop();
+  nbiot.loop();
 
   /*=== Register Modbus ===*/
   modbus485.loop();

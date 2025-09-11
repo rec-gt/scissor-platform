@@ -85,7 +85,8 @@ public:
     /*=== AI ===*/
     this->AIPayload = "[";
     for (size_t i = 0; i < AI_NUMS; i++) {
-      this->AIPayload += String(analogInputs[i].getValue());
+      // this->AIPayload += analogInputs[i].getValue();
+      this->AIPayload += 99999;
       if (i < AI_NUMS - 1) {
         this->AIPayload += ",";
       }
@@ -118,9 +119,9 @@ public:
     nbiot.pubMsgPayload.concat(",");
     nbiot.pubMsgPayload.concat("\"dout\":");
     nbiot.pubMsgPayload.concat(String(this->DOPayload));
-    // nbiot.pubMsgPayload.concat(",");
-    // nbiot.pubMsgPayload.concat("\"ain\":");
-    // nbiot.pubMsgPayload.concat(this->AIPayload);
+    nbiot.pubMsgPayload.concat(",");
+    nbiot.pubMsgPayload.concat("\"ain\":");
+    nbiot.pubMsgPayload.concat(this->AIPayload);
     // nbiot.pubMsgPayload.concat(",");
     // nbiot.pubMsgPayload.concat("\"aout\":");
     // nbiot.pubMsgPayload.concat(this->AOPayload);

@@ -64,13 +64,19 @@ void loop() {
 
   if (smoothedValue <= 1593) {
     Serial.println(map(smoothedValue, 0, 1593, 0, 2000));
-  } else if (smoothedValue <= 3211) {
-    Serial.println(map(smoothedValue, 1594, 3211, 2001, 4000));
-  } else if (smoothedValue <= 4827) {
-    Serial.println(map(smoothedValue, 3211, 4827, 4001, 6000));
-  } else if (smoothedValue <= 6451) {
-    Serial.println(map(smoothedValue, 4828, 6451, 6001, 8000));
-  } else {
-    Serial.println(map(smoothedValue, 6452, 8068, 8001, 10000));
+  }else  {
+    Serial.println(map(smoothedValue, 1594, 8067, 2001, 10000));
   }
+
+  // if (smoothedValue <= 1593) {
+  //   Serial.println(map(smoothedValue, 0, 1593, 0, 2000));
+  // } else if (smoothedValue <= 3211) {
+  //   Serial.println(map(smoothedValue, 1594, 3211, 2001, 4000));
+  // } else if (smoothedValue <= 4827) {
+  //   Serial.println(map(smoothedValue, 3211, 4827, 4001, 6000));
+  // } else if (smoothedValue <= 6451) {
+  //   Serial.println(map(smoothedValue, 4828, 6451, 6001, 8000));
+  // } else {
+  //   Serial.println(map(smoothedValue, 6452, 8068, 8001, 10000));
+  // }
 }

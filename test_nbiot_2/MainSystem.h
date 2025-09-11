@@ -85,8 +85,7 @@ public:
     /*=== AI ===*/
     this->AIPayload = "[";
     for (size_t i = 0; i < AI_NUMS; i++) {
-      // this->AIPayload += analogInputs[i].getValue();
-      this->AIPayload += random(0,20000);
+      this->AIPayload += analogInputs[i].getValue();
       if (i < AI_NUMS - 1) {
         this->AIPayload += ",";
       }
@@ -96,8 +95,7 @@ public:
     /*=== AO ===*/
     this->AOPayload = "[";
     for (size_t i = 0; i < AO_NUMS; i++) {
-      // this->AOPayload += analogOutputs[i].getValue();
-      this->AOPayload += random(0,200);
+      this->AOPayload += analogOutputs[i].getValue();
       if (i < AO_NUMS - 1) {
         this->AOPayload += ",";
       }

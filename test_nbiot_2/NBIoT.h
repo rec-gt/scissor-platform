@@ -99,7 +99,6 @@ public:
 
   // for subscribe
   String subMsgContent = "";
-  String subMsgPayload = "";
 
   NBIoT() {
     NBIoTSerial.begin(9600);
@@ -123,7 +122,6 @@ public:
     this->pubMsgPrepare.reserve(256);
     this->pubMsgCommand.reserve(256);
     this->subMsgContent.reserve(256);
-    this->subMsgPayload.reserve(256);
   }
 
   void init(bool asyncInitMode = false) {

@@ -150,5 +150,5 @@ void loop() {
   test.AO(analogOutputs);
   // Serial.println(analogInputs[0].reading);
 
-  delay(1);
+  delay(10);
 }

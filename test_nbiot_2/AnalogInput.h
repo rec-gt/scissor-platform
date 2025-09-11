@@ -35,7 +35,8 @@ public:
     }
 
     /*=== Update Reading ===*/
-    this->reading = (sum / AI_OVERSAMPLING_FACTOR) << AI_SHIFT_BITS;
+    // this->reading = (sum / AI_OVERSAMPLING_FACTOR) << AI_SHIFT_BITS;
+    this->reading = sum >> AI_SHIFT_BITS;
 
     /*=== Update Reading History ===*/
     for (size_t i = 1; i < AI_EWMA_SAMPLE_SIZE; i++) {
@@ -63,6 +64,12 @@ public:
         }
         break;
       case AI_MAPPING_MODE_0_10V:
+        Serial.print(this->reading);
+        Serial.print(", ");
+        // Serial.println(analogRead(this->pin));
+        this->value = map(w ? this->weightedReading : this->reading, 0, 16384, 0, 4096);
+        Serial.println(this->value);
+
         if (this->reading <= 784) {
           this->value = map(w ? this->weightedReading : this->reading, 0, 784, 0, 500);
         } else if (this->reading <= 1600) {

@@ -52,7 +52,7 @@ long smoothADC(long newReading) {
 
 void loop() {
   // Read from analog pin A0
-  long raw14Bit = readADC14Bit(A11);
+  long raw14Bit = readADC14Bit(A6);
   long smoothedValue = smoothADC(raw14Bit);
 
   // Print results
@@ -61,5 +61,9 @@ void loop() {
   Serial.print(" | Smoothed: ");
   Serial.print(smoothedValue);
   Serial.print(" | Mapped: ");
-  Serial.println(map(smoothedValue, 0, 16291, 0, 20000));
+  if (smoothedValue <= 3242) {
+    Serial.println(map(smoothedValue, 0, 3242, 0, 1999));
+  } else {
+    Serial.println(map(smoothedValue, 3243, 16310, 2000, 10000));
+  }
 }

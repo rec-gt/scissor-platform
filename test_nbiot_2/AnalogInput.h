@@ -75,7 +75,7 @@ public:
         } else if (this->smoothedReading <= this->bp5) {
           this->value = map(this->smoothedReading, this->bp4 + 1, this->bp5, 16001, 20000);
         }
-        this->value = map(this->smoothedReading, 0, 20000, 0, 4095);
+        this->value = map(this->value, 0, 20000, 0, 4095);
         break;
       case AI_MAPPING_MODE_0_10V:
         if (this->smoothedReading <= this->bp1) {
@@ -89,7 +89,7 @@ public:
         } else if (this->smoothedReading <= this->bp5) {
           this->value = map(this->smoothedReading, this->bp4 + 1, this->bp5, 5001, 10000);
         }
-        this->value = map(this->smoothedReading, 0, 10000, 0, 4095);
+        this->value = map(this->value, 0, 10000, 0, 4095);
         break;
       default:
         this->value = 0;

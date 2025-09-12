@@ -54,29 +54,20 @@ public:
   uint16_t getValue(bool w = false) {  // turn smoothings on or off
     switch (this->mappingMode) {
       case AI_MAPPING_MODE_4_20MA:
+        Serial.print("14-bit Raw: ");
+        Serial.println(this->smoothedReading);
+
         if (this->smoothedReading <= 1593) {
-          this->value = map(this->smoothedReading, 0, 1593, 0, 2000);
+          this->value = map(this->smoothedReading, 0, 1593, 0, 195);
         } else {
-          this->value = map(this->smoothedReading, 1594, 8067, 2001, 4096);
+          this->value = map(this->smoothedReading, 1594, 8067, 196, 4096);
         }
         break;
       case AI_MAPPING_MODE_0_10V:
-        Serial.print(this->reading);
-        Serial.print(", ");
-        // Serial.println(analogRead(this->pin));
-        this->value = map(w ? this->smoothedReading : this->reading, 0, 16384, 0, 4096);
-        Serial.println(this->value);
-
-        if (this->reading <= 784) {
-          this->value = map(w ? this->smoothedReading : this->reading, 0, 784, 0, 500);
-        } else if (this->reading <= 1600) {
-          this->value = map(w ? this->smoothedReading : this->reading, 785, 1600, 501, 1000);
-        } else if (this->reading <= 4048) {
-          this->value = map(w ? this->smoothedReading : this->reading, 1601, 4048, 1001, 2500);
-        } else if (this->reading <= 8144) {
-          this->value = map(w ? this->smoothedReading : this->reading, 4049, 8144, 2501, 5000);
+        if (this->smoothedReading <= 3242) {
+          Serial.println(map(this->smoothedReading, 0, 3242, 0, 1999));
         } else {
-          this->value = map(w ? this->smoothedReading : this->reading, 8145, 16304, 5001, 10000);
+          Serial.println(map(this->smoothedReading, 3243, 16310, 2000, 10000));
         }
         break;
       default:

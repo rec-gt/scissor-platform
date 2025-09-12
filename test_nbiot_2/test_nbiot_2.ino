@@ -119,6 +119,7 @@ void setup() {
   Serial.begin(9600);
 
   analogReference(EXTERNAL);
+  DIDR0 |= (1 << ADC8D);
 
   /*=== NBIoT ===*/
   // nbiot.setup();
@@ -146,8 +147,8 @@ void loop() {
   mainSystem.loop();
 
   /*=== Register Outputs Testing ===*/
-  test.DO(digitalOutputs);
-  test.AO(analogOutputs);
+  // test.DO(digitalOutputs);
+  // test.AO(analogOutputs);
   // Serial.println(analogInputs[0].reading);
 
   delay(10);

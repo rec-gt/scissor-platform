@@ -80,11 +80,20 @@ public:
         Serial.println(this->value);
         break;
       case AI_MAPPING_MODE_0_10V:
-        if (this->smoothedReading <= 3242) {
-          Serial.println(map(this->smoothedReading, 0, 3242, 0, 1999));
-        } else {
-          Serial.println(map(this->smoothedReading, 3243, 16310, 2000, 10000));
+        if (this->smoothedReading <= this->bp1) {
+          this->value = map(this->smoothedReading, 0, this->bp1, 0, 500);
+        } else if (this->smoothedReading <= bp2) {
+          this->value = map(this->smoothedReading, this->bp1 + 1, this->bp2, 501, 1000);
+        } else if (this->smoothedReading <= bp3) {
+          this->value = map(this->smoothedReading, this->bp2 + 1, this->bp3, 1001, 2500);
+        } else if (this->smoothedReading <= bp4) {
+          this->value = map(this->smoothedReading, this->bp3 + 1, this->bp4, 2501, 5000);
+        } else if (this->smoothedReading <= bp5) {
+          this->value = map(this->smoothedReading, this->bp4 + 1, this->bp5, 5001, 10000);
         }
+
+        Serial.print("14-bit Raw: ");
+        Serial.println(this->value);
         break;
       default:
         this->value = 0;
@@ -103,5 +112,12 @@ public:
   AnalogInputA(byte pin, byte mappingMode, int bp1, int bp2, int bp3, int bp4, int bp5)
     : AnalogInput(pin, mappingMode, bp1, bp2, bp3, bp4, bp5) {}
 };
+
+class AnalogInputV : public AnalogInput {
+public:
+  AnalogInputV(byte pin, byte mappingMode, int bp1, int bp2, int bp3, int bp4, int bp5)
+    : AnalogInput(pin, mappingMode, bp1, bp2, bp3, bp4, bp5) {}
+};
+
 
 #endif

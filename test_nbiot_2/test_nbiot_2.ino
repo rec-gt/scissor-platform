@@ -105,7 +105,7 @@ AnalogInput analogInputs[AI_NUMS] = {
   AnalogInputA(AI_PIN_12, aiMappingMode, 1595, 3211, 4825, 6447, 8063),
 };
 
-MainSystem mainSystem(digitalInputs, digitalOutputs, aiMappingMode?analogInputs:analogInputs, analogOutputs, aiMappingMode);
+MainSystem mainSystem(digitalInputs, digitalOutputs, aiMappingMode ? analogInputs : analogInputs, analogOutputs, aiMappingMode);
 
 NBIoT nbiot;
 

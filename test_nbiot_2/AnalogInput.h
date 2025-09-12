@@ -66,13 +66,13 @@ public:
       case AI_MAPPING_MODE_4_20MA:
         if (this->smoothedReading <= this->bp1) {
           this->value = map(this->smoothedReading, 0, this->bp1, 0, 4000);
-        } else if (this->smoothedReading <= bp2) {
+        } else if (this->smoothedReading <= this->bp2) {
           this->value = map(this->smoothedReading, this->bp1 + 1, this->bp2, 4001, 8000);
-        } else if (this->smoothedReading <= bp3) {
+        } else if (this->smoothedReading <= this->bp3) {
           this->value = map(this->smoothedReading, this->bp2 + 1, this->bp3, 8001, 12000);
-        } else if (this->smoothedReading <= bp4) {
+        } else if (this->smoothedReading <= this->bp4) {
           this->value = map(this->smoothedReading, this->bp3 + 1, this->bp4, 12001, 16000);
-        } else if (this->smoothedReading <= bp5) {
+        } else if (this->smoothedReading <= this->bp5) {
           this->value = map(this->smoothedReading, this->bp4 + 1, this->bp5, 16001, 20000);
         }
 
@@ -82,13 +82,13 @@ public:
       case AI_MAPPING_MODE_0_10V:
         if (this->smoothedReading <= this->bp1) {
           this->value = map(this->smoothedReading, 0, this->bp1, 0, 500);
-        } else if (this->smoothedReading <= bp2) {
+        } else if (this->smoothedReading <= this->bp2) {
           this->value = map(this->smoothedReading, this->bp1 + 1, this->bp2, 501, 1000);
-        } else if (this->smoothedReading <= bp3) {
+        } else if (this->smoothedReading <= this->bp3) {
           this->value = map(this->smoothedReading, this->bp2 + 1, this->bp3, 1001, 2500);
-        } else if (this->smoothedReading <= bp4) {
+        } else if (this->smoothedReading <= this->bp4) {
           this->value = map(this->smoothedReading, this->bp3 + 1, this->bp4, 2501, 5000);
-        } else if (this->smoothedReading <= bp5) {
+        } else if (this->smoothedReading <= this->bp5) {
           this->value = map(this->smoothedReading, this->bp4 + 1, this->bp5, 5001, 10000);
         }
 

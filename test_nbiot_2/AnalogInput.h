@@ -1,11 +1,11 @@
 #ifndef AnalogInput_H
 #define AnalogInput_H
 
-#define AI_SHIFT_BITS 5
-#define AI_OVERSAMPLING_FACTOR 1024  // 2 ^ (2 * 4)
+#define AI_SHIFT_BITS 4
+#define AI_OVERSAMPLING_FACTOR 256  // 2 ^ (2 * 4)
 #define AI_MAPPING_MODE_4_20MA 0
 #define AI_MAPPING_MODE_0_10V 1
-#define AI_SMOOTHING_SAMPLE_SIZE 16
+#define AI_SMOOTHING_SAMPLE_SIZE 24
 
 class AnalogInput {
 private:
@@ -14,10 +14,9 @@ private:
 
 public:
   uint16_t reading;
-  uint16_t maxReading;
   uint16_t smoothedReading;
   uint16_t readings[AI_SMOOTHING_SAMPLE_SIZE];
-  unsigned long value;
+  uint16_t value;
 
   AnalogInput() {}
 
@@ -35,7 +34,6 @@ public:
     }
 
     /*=== Update Reading ===*/
-    // this->reading = (sum / AI_OVERSAMPLING_FACTOR) << AI_SHIFT_BITS;
     this->reading = sum >> AI_SHIFT_BITS;
 
     /*=== Update Reading History ===*/
@@ -56,11 +54,10 @@ public:
   uint16_t getValue(bool w = false) {  // turn smoothings on or off
     switch (this->mappingMode) {
       case AI_MAPPING_MODE_4_20MA:
-        // Serial.println(this->smoothedReading);
-        if (this->smoothedReading <= 3182) {
-          this->value = map(this->smoothedReading, 0, 3182, 0, 2000);
+        if (this->smoothedReading <= 1593) {
+          this->value = map(this->smoothedReading, 0, 1593, 0, 2000);
         } else {
-          this->value = map(this->smoothedReading, 3183, 16111, 2001, 4096);
+          this->value = map(this->smoothedReading, 1594, 8067, 2001, 4096);
         }
         break;
       case AI_MAPPING_MODE_0_10V:

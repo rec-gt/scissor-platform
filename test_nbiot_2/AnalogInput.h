@@ -5,7 +5,7 @@
 #define AI_OVERSAMPLING_FACTOR 256  // 2 ^ (2 * 4)
 #define AI_MAPPING_MODE_4_20MA 0
 #define AI_MAPPING_MODE_0_10V 1
-#define AI_SMOOTHING_SAMPLE_SIZE 32
+#define AI_SMOOTHING_SAMPLE_SIZE 16
 
 class AnalogInput {
 private:

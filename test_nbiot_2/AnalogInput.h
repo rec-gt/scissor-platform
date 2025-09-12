@@ -97,4 +97,11 @@ public:
   }
 };
 
+
+class AnalogInputA : public AnalogInput {
+public:
+  AnalogInputA(byte pin, byte mappingMode, int bp1, int bp2, int bp3, int bp4, int bp5)
+    : AnalogInput(pin, mappingMode, bp1, bp2, bp3, bp4, bp5) {}
+};
+
 #endif

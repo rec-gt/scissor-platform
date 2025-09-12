@@ -91,21 +91,21 @@ AnalogOutput analogOutputs[AO_NUMS]{
 byte aiMappingMode = dryContact1.isConnected() ? AI_MAPPING_MODE_4_20MA : AI_MAPPING_MODE_0_10V;
 
 AnalogInput analogInputs[AI_NUMS] = {
-  AnalogInput(AI_PIN_1, aiMappingMode, 1590, 3205, 4819, 6441, 8055),
-  AnalogInput(AI_PIN_2, aiMappingMode, 1591, 3204, 4816, 6434, 8047),
-  AnalogInput(AI_PIN_3, aiMappingMode, 1591, 3207, 4822, 6444, 8060),
-  AnalogInput(AI_PIN_4, aiMappingMode, 0, 0, 0, 0, 0),
-  AnalogInput(AI_PIN_5, aiMappingMode, 1590, 3204, 4816, 6436, 8049),
-  AnalogInput(AI_PIN_6, aiMappingMode, 1589, 3200, 4811, 6429, 8041),
-  AnalogInput(AI_PIN_7, aiMappingMode, 1594, 3211, 4827, 6451, 8068),
-  AnalogInput(AI_PIN_8, aiMappingMode, 1594, 3210, 4825, 6447, 8062),
-  AnalogInput(AI_PIN_9, aiMappingMode, 1587, 3198, 4808, 6426, 8037),
-  AnalogInput(AI_PIN_10, aiMappingMode, 1589, 3200, 4811, 6428, 8039),
-  AnalogInput(AI_PIN_11, aiMappingMode, 1587, 3199, 4810, 6428, 8039),
-  AnalogInput(AI_PIN_12, aiMappingMode, 1595, 3211, 4825, 6447, 8063),
+  AnalogInputA(AI_PIN_1, aiMappingMode, 1590, 3205, 4819, 6441, 8055),
+  AnalogInputA(AI_PIN_2, aiMappingMode, 1591, 3204, 4816, 6434, 8047),
+  AnalogInputA(AI_PIN_3, aiMappingMode, 1591, 3207, 4822, 6444, 8060),
+  AnalogInputA(AI_PIN_4, aiMappingMode, 0, 0, 0, 0, 0),
+  AnalogInputA(AI_PIN_5, aiMappingMode, 1590, 3204, 4816, 6436, 8049),
+  AnalogInputA(AI_PIN_6, aiMappingMode, 1589, 3200, 4811, 6429, 8041),
+  AnalogInputA(AI_PIN_7, aiMappingMode, 1594, 3211, 4827, 6451, 8068),
+  AnalogInputA(AI_PIN_8, aiMappingMode, 1594, 3210, 4825, 6447, 8062),
+  AnalogInputA(AI_PIN_9, aiMappingMode, 1587, 3198, 4808, 6426, 8037),
+  AnalogInputA(AI_PIN_10, aiMappingMode, 1589, 3200, 4811, 6428, 8039),
+  AnalogInputA(AI_PIN_11, aiMappingMode, 1587, 3199, 4810, 6428, 8039),
+  AnalogInputA(AI_PIN_12, aiMappingMode, 1595, 3211, 4825, 6447, 8063),
 };
 
-MainSystem mainSystem(digitalInputs, digitalOutputs, analogInputs, analogOutputs, aiMappingMode);
+MainSystem mainSystem(digitalInputs, digitalOutputs, aiMappingMode?analogInputs:analogInputs, analogOutputs, aiMappingMode);
 
 NBIoT nbiot;
 

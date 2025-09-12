@@ -64,8 +64,6 @@ public:
   uint16_t getValue(bool w = false) {  // turn smoothings on or off
     switch (this->mappingMode) {
       case AI_MAPPING_MODE_4_20MA:
-
-
         if (this->smoothedReading <= this->bp1) {
           this->value = map(this->smoothedReading, 0, this->bp1, 0, 4000);
         } else if (this->smoothedReading <= bp2) {

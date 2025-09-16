@@ -33,8 +33,8 @@ public:
   }
 
   void setup() {
-    AIPayload.reserve(128);
-    AOPayload.reserve(128);
+    // AIPayload.reserve(64);
+    // AOPayload.reserve(64);
   }
 
   void loop() {

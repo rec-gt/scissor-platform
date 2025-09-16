@@ -118,9 +118,20 @@ public:
 
   void setup() {
     NBIoTSerial.begin(9600);
-    this->pubMsgPayload.reserve(64);
-    this->pubMsgPrepare.reserve(64);
-    this->pubMsgCommand.reserve(64);
+
+    this->serialRecv.reserve(16);
+    this->connCommand.reserve(16);
+    this->subsCommand.reserve(16);
+
+    this->IP.reserve(16);
+    this->CSQ.reserve(16);
+    this->IMEI.reserve(16);
+    this->CGATT.reserve(16);
+    this->CEREG.reserve(16);
+
+    this->pubMsgPayload.reserve(128);
+    this->pubMsgPrepare.reserve(128);
+    this->pubMsgCommand.reserve(128);
     this->subMsgContent.reserve(64);
   }
 

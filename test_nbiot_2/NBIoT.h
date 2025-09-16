@@ -129,7 +129,7 @@ public:
     // this->CGATT.reserve(8);
     // this->CEREG.reserve(8);
 
-    // this->pubMsgPayload.reserve(64);
+    this->pubMsgPayload.reserve(128);
     // this->pubMsgPrepare.reserve(64);
     // this->pubMsgCommand.reserve(128);
     // this->subMsgContent.reserve(32);

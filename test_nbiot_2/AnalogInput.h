@@ -60,7 +60,6 @@ public:
     this->smoothedReading = smoothSum / AI_SMOOTHING_SAMPLE_SIZE;
   }
 
-
   uint16_t getValue(bool w = false) {  // turn smoothings on or off
     switch (this->mappingMode) {
       case AI_MAPPING_MODE_4_20MA:
@@ -94,8 +93,6 @@ public:
       default:
         this->value = 0;
     }
-    Serial.print("14-bit Raw: ");
-    Serial.println(this->value);
     return this->value;
   }
 

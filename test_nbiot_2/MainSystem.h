@@ -135,7 +135,7 @@ public:
     nbiot.pubMsgPrepare.concat("/in,");
     nbiot.pubMsgPrepare.concat(String(nbiot.pubMsgPayload.length()));
 
-    Serial.println("Content Length:" + String(nbiot.pubMsgPayload.length()));
+    // Serial.println("Content Length:" + String(nbiot.pubMsgPayload.length()));
 
     nbiot.pubMsgCommand = nbiot.pubMsgPrepare;
     nbiot.pubMsgCommand.concat(",");

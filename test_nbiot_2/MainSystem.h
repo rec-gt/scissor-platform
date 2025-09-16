@@ -148,6 +148,32 @@ public:
       return;
     }
 
+    /*=== DO Single Control ===*/
+    if (subsMsg.indexOf("D0:0") > 0) {
+    } else if (subsMsg.indexOf("D0:1") > 0) {
+    } else if (subsMsg.indexOf("D1:0") > 0) {
+    } else if (subsMsg.indexOf("D1:1") > 0) {
+    } else if (subsMsg.indexOf("D2:0") > 0) {
+    } else if (subsMsg.indexOf("D2:1") > 0) {
+    } else if (subsMsg.indexOf("D3:0") > 0) {
+    } else if (subsMsg.indexOf("D3:1") > 0) {
+    } else if (subsMsg.indexOf("D4:0") > 0) {
+    } else if (subsMsg.indexOf("D4:1") > 0) {
+    } else if (subsMsg.indexOf("D5:0") > 0) {
+    } else if (subsMsg.indexOf("D5:1") > 0) {
+    } else if (subsMsg.indexOf("D6:0") > 0) {
+    } else if (subsMsg.indexOf("D6:1") > 0) {
+    } else if (subsMsg.indexOf("D7:0") > 0) {
+    } else if (subsMsg.indexOf("D7:1") > 0) {
+    }
+
+    /*=== DO Bulk Control ===*/
+    int idx = subsMsg.indexOf("D:");
+    if (idx > 0) {
+      nbiot.subMsgPayload = subsMsg.subString(idx, 3);
+      Serial.print(nbiot.subMsgPayload);
+    }
+
     Serial.println(subsMsg);
   }
 

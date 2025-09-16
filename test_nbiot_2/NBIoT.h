@@ -121,7 +121,7 @@ public:
 
     this->serialRecv.reserve(32);
     this->connCommand.reserve(64);
-    this->subsCommand.reserve(32);
+    this->subsCommand.reserve(64);
 
     this->IP.reserve(16);
     this->CSQ.reserve(16);
@@ -129,8 +129,8 @@ public:
     this->CGATT.reserve(16);
     this->CEREG.reserve(16);
 
-    this->pubMsgPayload.reserve(128);
-    this->pubMsgPrepare.reserve(128);
+    this->pubMsgPayload.reserve(64);
+    this->pubMsgPrepare.reserve(64);
     this->pubMsgCommand.reserve(128);
     this->subMsgContent.reserve(32);
   }

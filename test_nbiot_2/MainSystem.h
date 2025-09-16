@@ -144,7 +144,7 @@ public:
   void handleSubscribeContent() {
 
     nbiot.readRecvMsg(subsMsg);
-                               
+
     if (subsMsg.length() <= 0) {
       return;
     }
@@ -155,7 +155,20 @@ public:
     idx = subsMsg.indexOf("D");
 
     if (idx > -1) {
-      "0:0";
+      char c1 = subsMsg[1];
+      char c2 = subsMsg[2];
+      char c3 = subsMsg[3];
+      char c4 = subsMsg[4];
+
+      char d1 = c1.charAt(0);
+      if ("1" <= d1 && d1 <= "8") {
+        if (c3 == "0") {
+          digitalOutputs[atoi(d1)].connect();
+        } else {
+          digitalOutputs[atoi(d1)].cut();
+        }
+      } else if (c1 == ":") {
+      }
     }
 
     if (subsMsg.indexOf("D0:0") > 0) {

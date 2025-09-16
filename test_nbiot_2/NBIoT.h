@@ -120,14 +120,14 @@ public:
     NBIoTSerial.begin(9600);
 
     this->serialRecv.reserve(32);
-    this->connCommand.reserve(32);
+    this->connCommand.reserve(64);
     this->subsCommand.reserve(32);
 
-    this->IP.reserve(32);
-    this->CSQ.reserve(32);
-    this->IMEI.reserve(32);
-    this->CGATT.reserve(32);
-    this->CEREG.reserve(32);
+    this->IP.reserve(16);
+    this->CSQ.reserve(16);
+    this->IMEI.reserve(16);
+    this->CGATT.reserve(16);
+    this->CEREG.reserve(16);
 
     this->pubMsgPayload.reserve(128);
     this->pubMsgPrepare.reserve(128);

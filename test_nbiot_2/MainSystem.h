@@ -24,6 +24,7 @@ private:
   unsigned long prevMillisDisplay;
 
   String subsMsg = "";
+  String strCraft = "";
 
 public:
   MainSystem(DigitalInput *digitalInputs, DigitalOutput *digitalOutputs, AnalogInput *analogInputs, AnalogOutput *analogOutputs, uint8_t aiMappingMode)
@@ -148,7 +149,15 @@ public:
       return;
     }
 
+    int idx = -1;
+
     /*=== DO Single Control ===*/
+    idx = subsMsg.indexOf("D");
+
+    if (idx > -1) {
+      "0:0";
+    }
+
     if (subsMsg.indexOf("D0:0") > 0) {
     } else if (subsMsg.indexOf("D0:1") > 0) {
     } else if (subsMsg.indexOf("D1:0") > 0) {

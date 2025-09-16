@@ -100,6 +100,11 @@ public:
   // for subscribe
   String subMsgContent = "";
   String subMsgPayload = "";
+  String subMsgWorking = "";
+
+  // for subscribe command
+  int doIndex = -1;
+  int doIndex = -1;
 
   NBIoT() {
     NBIoTSerial.begin(9600);
@@ -124,6 +129,7 @@ public:
     this->pubMsgCommand.reserve(256);
     this->subMsgContent.reserve(256);
     this->subMsgPayload.reserve(256);
+    this->subMsgCommand.reserve(256);
   }
 
   void init(bool asyncInitMode = false) {
@@ -550,17 +556,44 @@ public:
     }
 
     // === handle SUB received msg and parse it's content ===
+    // idx = this->serialRecv.indexOf("+QMTRECV:");
+    // if (idx > -1) {
+    //   int startPos = this->serialRecv.indexOf("[");
+    //   int endPos = this->serialRecv.indexOf("]", startPos);
+
+    //   if (startPos > -1 && endPos > -1) {
+    //     this->subMsgContent = this->serialRecv.substring(startPos + 1, endPos);
+    //     Serial.print(this->subMsgContent);
+    //   } else {
+    //     this->subMsgContent = "";
+    //   }
+    // }
+
     idx = this->serialRecv.indexOf("+QMTRECV:");
     if (idx > -1) {
-      int startPos = this->serialRecv.indexOf("[");
-      int endPos = this->serialRecv.indexOf("]", startPos);
+      this->subMsgContent = this->serialRecv.substring(idx, 10);
 
-      if (startPos > -1 && endPos > -1) {
-        this->subMsgContent = this->serialRecv.substring(startPos + 1, endPos);
-        Serial.print(this->subMsgContent);
-      } else {
-        this->subMsgContent = "";
+      int idx2 = -1;
+      /*=== handle DO Single & Bulk Control ===*/
+      idx2 = this->subMsgContent.indexOf("D");
+      if (idx > -1) {
+        char c1 = this->subMsgContent[idx2 + 1];
+        char c2 = this->subMsgContent[idx2 + 2];
+        char c3 = this->subMsgContent[idx2 + 3];
+        char c4 = this->subMsgContent[idx2 + 4];
+
+        char d1 = c1.charAt(0);
+
+        if ("1" <= d1 && d1 <= "8") {
+          int doIdx = atoi(d1);
+          int doOnOff = atoi(d3);
+          this->handleDOSingle(doIdx, doOnOff);
+        } else if (c1 == ":") {
+          this->handleDOSingle(doIdx, doOnOff);
+        }
       }
+
+      this->serialRecv = "";
     }
   }
 

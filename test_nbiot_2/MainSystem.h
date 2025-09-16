@@ -144,7 +144,7 @@ public:
   void handleSubscribeContent() {
 
     nbiot.readRecvMsg(subsMsg);
-
+                               
     if (subsMsg.length() <= 0) {
       return;
     }

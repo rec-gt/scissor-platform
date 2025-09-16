@@ -119,19 +119,19 @@ public:
   void setup() {
     NBIoTSerial.begin(9600);
 
-    this->serialRecv.reserve(16);
-    this->connCommand.reserve(16);
-    this->subsCommand.reserve(16);
+    this->serialRecv.reserve(64);
+    this->connCommand.reserve(64);
+    this->subsCommand.reserve(64);
 
-    this->IP.reserve(16);
-    this->CSQ.reserve(16);
-    this->IMEI.reserve(16);
-    this->CGATT.reserve(16);
-    this->CEREG.reserve(16);
+    this->IP.reserve(32);
+    this->CSQ.reserve(32);
+    this->IMEI.reserve(32);
+    this->CGATT.reserve(32);
+    this->CEREG.reserve(32);
 
-    this->pubMsgPayload.reserve(128);
-    this->pubMsgPrepare.reserve(128);
-    this->pubMsgCommand.reserve(128);
+    this->pubMsgPayload.reserve(64);
+    this->pubMsgPrepare.reserve(64);
+    this->pubMsgCommand.reserve(64);
     this->subMsgContent.reserve(64);
   }
 
@@ -481,7 +481,6 @@ public:
     idx = this->serialRecv.indexOf("+CGSN:");
     if (idx > -1) {
       this->IMEI = this->serialRecv.substring(7, 7 + 15);
-
       if (!utils.isNumeric(this->IMEI)) {
         nbiotSoftReset = true;
       }

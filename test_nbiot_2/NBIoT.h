@@ -172,7 +172,7 @@ public:
       this->serialRecv = "";
       this->connCommand = "";
       this->subsCommand = "";
-      
+
       this->IP = "";
       this->CSQ = "";
       this->IMEI = "";
@@ -566,17 +566,24 @@ public:
     }
 
     // === handle SUB received msg and parse it's content ===
+    // idx = this->serialRecv.indexOf("+QMTRECV:");
+    // if (idx > -1) {
+    //   int startPos = this->serialRecv.indexOf("[");
+    //   int endPos = this->serialRecv.indexOf("]", startPos);
+
+    //   if (startPos > -1 && endPos > -1) {
+    //     this->subMsgContent = this->serialRecv.substring(startPos + 1, endPos);
+    //     Serial.print(this->subMsgContent);
+    //   } else {
+    //     this->subMsgContent = "";
+    //   }
+    // }
+
     idx = this->serialRecv.indexOf("+QMTRECV:");
     if (idx > -1) {
-      int startPos = this->serialRecv.indexOf("[");
-      int endPos = this->serialRecv.indexOf("]", startPos);
-
-      if (startPos > -1 && endPos > -1) {
-        this->subMsgContent = this->serialRecv.substring(startPos + 1, endPos);
-        Serial.print(this->subMsgContent);
-      } else {
-        this->subMsgContent = "";
-      }
+      this->subMsgContent = this->serialRecv.substring(9, 20);
+      this->subMsgContent = this->serialRecv.substring(41, 46);
+      Serial.println(this->subMsgContent);
     }
   }
 

@@ -4,6 +4,7 @@
 #include "AnalogOutput.h"
 #include "NBIoT.h"
 #include "DisplayClient.h"
+#include "Utils.h"
 
 #ifndef MainSystem_H
 #define MainSystem_H
@@ -142,16 +143,16 @@ public:
   }
 
   void handleSubscribeContent() {
-
     nbiot.readRecvMsg(subsMsg);
 
     if (subsMsg.length() <= 0) {
       return;
     }
 
+    /*=== DO/AO Control ===*/
     int idx = -1;
 
-    /*=== DO Single Control ===*/
+    /*=== DO Control ===*/
     idx = subsMsg.indexOf("D");
 
     if (idx > -1) {
@@ -162,41 +163,32 @@ public:
 
       char d1 = c1.charAt(0);
       if ("1" <= d1 && d1 <= "8") {
+        /*=== DO Single Control ===*/
         if (c3 == "0") {
           digitalOutputs[atoi(d1)].connect();
         } else {
           digitalOutputs[atoi(d1)].cut();
         }
       } else if (c1 == ":") {
+        /*=== DO Bulk Control ===*/
+        byte b1 = utils.hexCharToByte(c3);
+        byte b2 = utils.hexCharToByte(c4);
+        byte finalByte = (b1 << 4) | b2;
+
+        for (int i = 7; i >= 0; i--) {
+          if (bitRead(finalByte, i) == 1) {
+            digitalOutputs[7 - i].connect();
+          } else {
+            digitalOutputs[7 - i].cut();
+          }
+        }
       }
     }
 
-    if (subsMsg.indexOf("D0:0") > 0) {
-    } else if (subsMsg.indexOf("D0:1") > 0) {
-    } else if (subsMsg.indexOf("D1:0") > 0) {
-    } else if (subsMsg.indexOf("D1:1") > 0) {
-    } else if (subsMsg.indexOf("D2:0") > 0) {
-    } else if (subsMsg.indexOf("D2:1") > 0) {
-    } else if (subsMsg.indexOf("D3:0") > 0) {
-    } else if (subsMsg.indexOf("D3:1") > 0) {
-    } else if (subsMsg.indexOf("D4:0") > 0) {
-    } else if (subsMsg.indexOf("D4:1") > 0) {
-    } else if (subsMsg.indexOf("D5:0") > 0) {
-    } else if (subsMsg.indexOf("D5:1") > 0) {
-    } else if (subsMsg.indexOf("D6:0") > 0) {
-    } else if (subsMsg.indexOf("D6:1") > 0) {
-    } else if (subsMsg.indexOf("D7:0") > 0) {
-    } else if (subsMsg.indexOf("D7:1") > 0) {
+    /*=== AO Control ===*/
+    idx = subsMsg.indexOf("A");
+    if (idx > -1) {
     }
-
-    /*=== DO Bulk Control ===*/
-    int idx = subsMsg.indexOf("D:");
-    if (idx > 0) {
-      nbiot.subMsgPayload = subsMsg.subString(idx, 3);
-      Serial.print(nbiot.subMsgPayload);
-    }
-
-    Serial.println(subsMsg);
   }
 
   ~MainSystem() {}

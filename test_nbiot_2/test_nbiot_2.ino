@@ -56,6 +56,7 @@
 #include "DisplayClient.h"
 #include "Modbus485.h"
 #include "Test.h"
+#include "Utils.h"
 
 DryContact dryContact1(DRY_CONTACT_PIN_1);
 
@@ -129,6 +130,8 @@ DisplayClient displayClient;
 Modbus485 modbus485;
 
 Test test;
+
+Utils utils;
 
 void setup() {
   Serial.begin(9600);

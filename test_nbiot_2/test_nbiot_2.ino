@@ -140,9 +140,9 @@ void setup() {
   DIDR0 |= (1 << ADC8D);
 
   /*=== NBIoT ===*/
-  // nbiot.setup();
-  // nbiot.init(true);
-  // nbiot.debug();
+  nbiot.setup();
+  nbiot.init(true);
+  nbiot.debug();
 
   /*=== Display ===*/
   displayClient.setup();
@@ -156,7 +156,7 @@ void setup() {
 
 void loop() {
   /*=== Register NBIoT ===*/
-  // nbiot.loop();
+  nbiot.loop();
 
   /*=== Register Modbus ===*/
   modbus485.loop();
@@ -167,7 +167,6 @@ void loop() {
   /*=== Register Outputs Testing ===*/
   // test.DO(digitalOutputs);
   // test.AO(analogOutputs);
-  // Serial.println(analogInputs[0].reading);
 
-  delay(100);
+  delay(10);
 }

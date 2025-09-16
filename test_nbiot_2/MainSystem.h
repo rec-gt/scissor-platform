@@ -161,13 +161,12 @@ public:
       char c3 = subsMsg[3];
       char c4 = subsMsg[4];
 
-      char cInt = c1.charAt(0);
-      if ("1" <= cInt && cInt <= "8") {
+      if ("1" <= c1 && c1 <= "8") {
         /*=== DO Single Control ===*/
         if (c3 == "0") {
-          digitalOutputs[atoi(cInt) - 1].connect();
+          digitalOutputs[atoi(c1) - 1].connect();
         } else {
-          digitalOutputs[atoi(cInt) - 1].cut();
+          digitalOutputs[atoi(c1) - 1].cut();
         }
       } else if (c1 == ":") {
         /*=== DO Bulk Control ===*/

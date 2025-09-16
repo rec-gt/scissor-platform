@@ -161,13 +161,13 @@ public:
       char c3 = subsMsg[3];
       char c4 = subsMsg[4];
 
-      char d1 = c1.charAt(0);
-      if ("1" <= d1 && d1 <= "8") {
+      char cInt = c1.charAt(0);
+      if ("1" <= cInt && cInt <= "8") {
         /*=== DO Single Control ===*/
         if (c3 == "0") {
-          digitalOutputs[atoi(d1)].connect();
+          digitalOutputs[atoi(cInt) - 1].connect();
         } else {
-          digitalOutputs[atoi(d1)].cut();
+          digitalOutputs[atoi(cInt) - 1].cut();
         }
       } else if (c1 == ":") {
         /*=== DO Bulk Control ===*/
@@ -188,6 +188,16 @@ public:
     /*=== AO Control ===*/
     idx = subsMsg.indexOf("A");
     if (idx > -1) {
+      char c1 = subsMsg[1];
+      char c2 = subsMsg[2];
+      char c3 = subsMsg[3];
+      char c4 = subsMsg[4];
+
+      byte b1 = utils.hexCharToByte(c3);
+      byte b2 = utils.hexCharToByte(c4);
+      byte finalByte = (b1 << 4) | b2;
+
+      analogOutputs[atoi(c1) - 1].set(finalByte);
     }
   }
 

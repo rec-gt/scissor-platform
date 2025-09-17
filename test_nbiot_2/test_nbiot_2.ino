@@ -135,13 +135,16 @@ Utils utils;
 
 void setup() {
   Serial.begin(9600);
-
   analogReference(EXTERNAL);
   DIDR0 |= (1 << ADC8D);
 
-  nbiotSerialRecv.reserve(128);
-  nbIotConnCmd.reserve(128);
-  nbiotSubsCmd.reserve(128);
+  /*=== String Management ===*/
+  AIPayload.reserve(64);
+  AOPayload.reserve(64);
+
+  nbiotSerialRecv.reserve(64);
+  nbIotConnCmd.reserve(32);
+  nbiotSubsCmd.reserve(32);
 
   nbiotIP.reserve(8);
   nbiotCSQ.reserve(8);
@@ -149,10 +152,17 @@ void setup() {
   nbiotCGATT.reserve(8);
   nbiotCEREG.reserve(8);
 
-  nbiotPubMsgPayload.reserve(128);
-  nbiotPubMsgPrepare.reserve(128);
+  nbiotPubAck.reserve(16);
+  nbiotSubAck.reserve(16);
+
+  nbiotPubMsgPayload.reserve(64);
+  nbiotPubMsgPrepare.reserve(64);
   nbiotPubMsgCommand.reserve(128);
-  nbiotSubMsgContent.reserve(128);
+
+  nbiotSubMsgContent.reserve(16);
+
+  /*=== Modbus485 ===*/
+  String rs485SerialRecv = "";
 
 
   /*=== NBIoT ===*/

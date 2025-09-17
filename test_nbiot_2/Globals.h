@@ -17,6 +17,10 @@ String nbiotIMEI = "";
 String nbiotCGATT = "";
 String nbiotCEREG = "";
 
+String nbiotPubMsgPayload = "";
+String nbiotPubMsgPrepare = "";
+String nbiotPubMsgCommand = "";
+
 /*=== Modbus485 ===*/
 String serialRecv485 = "";
 

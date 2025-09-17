@@ -107,31 +107,31 @@ public:
 
     /*=== 2. prepare the msg to be published ===*/
     if (!nbiot.pubMsgPayloadLock) {
-      nbiot.pubMsgPayload = "{\"csq\":";
-      nbiot.pubMsgPayload.concat(nbiot.CSQ);
-      nbiot.pubMsgPayload.concat(",");
-      nbiot.pubMsgPayload.concat("\"din\":");
-      nbiot.pubMsgPayload.concat(this->DIPayload);
-      nbiot.pubMsgPayload.concat(",");
-      nbiot.pubMsgPayload.concat("\"dout\":");
-      nbiot.pubMsgPayload.concat(this->DOPayload);
-      nbiot.pubMsgPayload.concat(",");
-      nbiot.pubMsgPayload.concat("\"ain\":");
-      nbiot.pubMsgPayload.concat(AIPayload);
-      nbiot.pubMsgPayload.concat(",");
-      nbiot.pubMsgPayload.concat("\"aout\":");
-      nbiot.pubMsgPayload.concat(AOPayload);
-      nbiot.pubMsgPayload.concat("}");
+      nbiotPubMsgPayload = "{\"csq\":";
+      nbiotPubMsgPayload.concat(nbiot.CSQ);
+      nbiotPubMsgPayload.concat(",");
+      nbiotPubMsgPayload.concat("\"din\":");
+      nbiotPubMsgPayload.concat(this->DIPayload);
+      nbiotPubMsgPayload.concat(",");
+      nbiotPubMsgPayload.concat("\"dout\":");
+      nbiotPubMsgPayload.concat(this->DOPayload);
+      nbiotPubMsgPayload.concat(",");
+      nbiotPubMsgPayload.concat("\"ain\":");
+      nbiotPubMsgPayload.concat(AIPayload);
+      nbiotPubMsgPayload.concat(",");
+      nbiotPubMsgPayload.concat("\"aout\":");
+      nbiotPubMsgPayload.concat(AOPayload);
+      nbiotPubMsgPayload.concat("}");
     }
 
-    nbiot.pubMsgPrepare = "AT+QMTPUB=0,0,0,0,rgt/";
-    nbiot.pubMsgPrepare.concat(nbiot.IMEI);
-    nbiot.pubMsgPrepare.concat("/in,");
-    nbiot.pubMsgPrepare.concat(nbiot.pubMsgPayload.length());
+    nbiotPubMsgPrepare = "AT+QMTPUB=0,0,0,0,rgt/";
+    nbiotPubMsgPrepare.concat(nbiot.IMEI);
+    nbiotPubMsgPrepare.concat("/in,");
+    nbiotPubMsgPrepare.concat(nbiotPubMsgPayload.length());
 
-    nbiot.pubMsgCommand = nbiot.pubMsgPrepare;
-    nbiot.pubMsgCommand.concat(",");
-    nbiot.pubMsgCommand.concat(nbiot.pubMsgPayload);
+    nbiotPubMsgCommand = nbiotPubMsgPrepare;
+    nbiotPubMsgCommand.concat(",");
+    nbiotPubMsgCommand.concat(nbiotPubMsgPayload);
   }
 
   void handleSubscribeContent() {

@@ -79,16 +79,6 @@ public:
   NBIOT_STATE connState = STATE_WAITING_RESET;
   PUBSUB_PIPELINE pipelineState = PIPELINE_DEFAULT;
 
-  // for monitoring
-  String IP = "";
-  String CSQ = "";
-  String IMEI = "";
-  String CGATT = "";
-  String CEREG = "";
-
-  // for publish
-  String pubMsgPayload = "";
-  String pubMsgPrepare = "";
   String pubMsgCommand = "";
 
   // important, for pubMsgCommand consistency due to the async concat property of "pubMsgPrepare" & "pubMsgPayload"
@@ -126,9 +116,9 @@ public:
     // nbiotCGATT.reserve(8);
     // nbiotCEREG.reserve(8);
 
-    // this->pubMsgPayload.reserve(64);
-    // this->pubMsgPrepare.reserve(64);
-    // this->pubMsgCommand.reserve(128);
+    // nbiotPubMsgPayload.reserve(64);
+    // nbiotPubMsgPrepare.reserve(64);
+    // nbiotPubMsgCommand.reserve(128);
     // this->subMsgContent.reserve(32);
   }
 
@@ -176,9 +166,9 @@ public:
       nbiotCGATT = "";
       nbiotCEREG = "";
 
-      this->pubMsgPayload = "";
-      this->pubMsgPrepare = "";
-      this->pubMsgCommand = "";
+      nbiotPubMsgPayload = "";
+      nbiotPubMsgPrepare = "";
+      nbiotPubMsgCommand = "";
 
       digitalWrite(this->resetPin, LOW);
       if (nbiotTimer.autoExpired(1000)) {
@@ -296,7 +286,7 @@ public:
       if (this->pipelineState == PIPELINE_FINISH_CEREG) {
         if (nbiotTimer.autoExpired(13000)) {
           // Serial.println("EXECUTE REGULAR PUBLISH");
-          this->printlnFlush(this->pubMsgPrepare);
+          this->printlnFlush(nbiotPubMsgPrepare);
           this->pubMsgPayloadLock = true;  // disable the preparation of payload
           this->pipelineState = PIPELINE_WAITING_PREPARE_PUBMSG;
         }
@@ -304,7 +294,7 @@ public:
 
       if (this->pipelineState == PIPELINE_FINISH_PREPARE_PUBMSG) {
         if (nbiotTimer.autoExpired(2000)) {
-          this->printlnFlush(this->pubMsgPayload);
+          this->printlnFlush(nbiotPubMsgPayload);
           this->pubMsgPayloadLock = false;  // release the lock
           this->pipelineState = PIPELINE_WAITING_PUBLISH;
         }
@@ -593,7 +583,7 @@ public:
         return;
       } else {
         // Serial.println("FORCE PUBLISH STOPPED");
-        this->printlnFlush(this->pubMsgCommand);
+        this->printlnFlush(nbiotPubMsgCommand);
       }
     }
   }

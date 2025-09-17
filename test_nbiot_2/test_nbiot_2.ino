@@ -152,8 +152,8 @@ void setup() {
   nbiotPubMsgPrepare.reserve(64);
   rs485SerialRecv.reserve(128);
   nbiotSerialRecv.reserve(128);
-  nbiotPubMsgPayload.reserve(192);
-  bool res = nbiotPubMsgCommand.reserve(256);
+  nbiotPubMsgPayload.reserve(256);
+  bool res = nbiotPubMsgCommand.reserve(355);
   Serial.print(res ? "[Str Space OK]" : "[String Space NOT OK]");
 
   /*=== NBIoT ===*/
@@ -178,5 +178,5 @@ void loop() {
   // test.DO(digitalOutputs);
   // test.AO(analogOutputs);
 
-  delay(10);
+  delay(1);
 }

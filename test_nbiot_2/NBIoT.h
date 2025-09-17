@@ -444,7 +444,9 @@ public:
     // === handle IMEI ===
     idx = nbiotSerialRecv.indexOf("+CGSN:");
     if (idx > -1) {
-      nbiotIMEI = nbiotSerialRecv.substring(7, 7 + 15);
+      {
+        nbiotIMEI = nbiotSerialRecv.substring(7, 7 + 15);
+      }
       if (!utils.isNumeric(nbiotIMEI)) {
         nbiotSoftReset = true;
       }
@@ -461,7 +463,9 @@ public:
     // === handle CGATT ===
     idx = nbiotSerialRecv.indexOf("+CGATT:");
     if (idx > -1) {
-      nbiotCGATT = nbiotSerialRecv.substring(8, 8 + 1);
+      {
+        nbiotCGATT = nbiotSerialRecv.substring(8, 8 + 1);
+      }
 
       if (nbiotCGATT != "1") {
         nbiotSoftReset = true;
@@ -471,7 +475,9 @@ public:
     // === handle CEREG ===
     idx = nbiotSerialRecv.indexOf("+CEREG:");
     if (idx > -1) {
-      nbiotCEREG = nbiotSerialRecv.substring(8, 8 + 3);
+      {
+        nbiotCEREG = nbiotSerialRecv.substring(8, 8 + 3);
+      }
 
       if (nbiotCEREG != "0,1") {
         nbiotSoftReset = true;
@@ -483,7 +489,10 @@ public:
     if (idx > -1) {
       int winStart = idx + 6;
       int winEnd = winStart + 2;
-      nbiotCSQ = nbiotSerialRecv.substring(winStart, winEnd);
+
+      {
+        nbiotCSQ = nbiotSerialRecv.substring(winStart, winEnd);
+      }
 
       if (nbiotCSQ == "99") {
         nbiotSoftReset = true;
@@ -504,7 +513,11 @@ public:
     // === handle publish ACK ===
     idx = nbiotSerialRecv.indexOf("+QMTPUB:");
     if (idx > -1) {
-      nbiotPubAck = nbiotSerialRecv.substring(9, 9 + 5);
+
+      {
+        nbiotPubAck = nbiotSerialRecv.substring(9, 9 + 5);
+      }
+
       if (nbiotPubAck != "0,0,0") {
         nbiotSoftReset = true;
       }
@@ -513,7 +526,11 @@ public:
     // === handle SUB ACK ===
     idx = nbiotSerialRecv.indexOf("+QMTSUB:");
     if (idx > -1) {
-      nbiotSubAck = nbiotSerialRecv.substring(9, 9 + 7);
+
+      {
+        nbiotSubAck = nbiotSerialRecv.substring(9, 9 + 7);
+      }
+
       if (nbiotSubAck != "0,1,0,0") {
         nbiotSoftReset = true;
       }
@@ -522,7 +539,9 @@ public:
     // === handle SUB received msg and parse it's content ===
     idx = nbiotSerialRecv.indexOf("+QMTRECV:");
     if (idx > -1) {
-      nbiotSubMsgContent = nbiotSerialRecv.substring(41, 46);
+      {
+        nbiotSubMsgContent = nbiotSerialRecv.substring(41, 46);
+      }
       Serial.println(nbiotSubMsgContent);
     }
   }

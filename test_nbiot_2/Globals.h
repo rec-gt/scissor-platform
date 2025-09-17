@@ -27,4 +27,6 @@ String nbiotSubAck = "";
 /*=== Modbus485 ===*/
 String rs485SerialRecv = "";
 
+String rubbishStr = "";
+
 #endif

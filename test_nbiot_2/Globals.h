@@ -4,7 +4,6 @@
 /*=== Main System ===*/
 String AIPayload = "";
 String AOPayload = "";
-String subsMsg = "";
 
 /*=== NBIoT ===*/
 String nbiotSerialRecv = "";

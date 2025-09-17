@@ -135,9 +135,8 @@ public:
   }
 
   void handleSubscribeContent() {
-    nbiot.readRecvMsg(subsMsg);
 
-    if (subsMsg.length() <= 0) {
+    if (nbiotSubMsgContent.length() <= 0) {
       return;
     }
 
@@ -145,13 +144,13 @@ public:
     int idx = -1;
 
     /*=== DO Control ===*/
-    idx = subsMsg.indexOf("D");
+    idx = nbiotSubMsgContent.indexOf("D");
 
     if (idx > -1) {
-      char c1 = subsMsg[1];
-      char c2 = subsMsg[2];
-      char c3 = subsMsg[3];
-      char c4 = subsMsg[4];
+      char c1 = nbiotSubMsgContent[1];
+      char c2 = nbiotSubMsgContent[2];
+      char c3 = nbiotSubMsgContent[3];
+      char c4 = nbiotSubMsgContent[4];
 
       if ("1" <= c1 && c1 <= "8") {
         /*=== DO Single Control ===*/
@@ -177,12 +176,12 @@ public:
     }
 
     /*=== AO Control ===*/
-    idx = subsMsg.indexOf("A");
+    idx = nbiotSubMsgContent.indexOf("A");
     if (idx > -1) {
-      char c1 = subsMsg[1];
-      char c2 = subsMsg[2];
-      char c3 = subsMsg[3];
-      char c4 = subsMsg[4];
+      char c1 = nbiotSubMsgContent[1];
+      char c2 = nbiotSubMsgContent[2];
+      char c3 = nbiotSubMsgContent[3];
+      char c4 = nbiotSubMsgContent[4];
 
       byte b1 = utils.hexCharToByte(c3);
       byte b2 = utils.hexCharToByte(c4);
@@ -190,6 +189,8 @@ public:
 
       analogOutputs[atoi(c1) - 1].set(finalByte);
     }
+
+    nbiotSubMsgContent = "";
   }
 
   ~MainSystem() {}

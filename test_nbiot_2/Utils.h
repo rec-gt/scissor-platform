@@ -5,7 +5,7 @@ class Utils {
 public:
   Utils(void){};
 
-  bool isNumeric(String str) {
+  bool isNumeric(const String& str) {
     for (size_t i = 0; i < str.length(); i++) {
       if (!isDigit(str.charAt(i))) {
         return false;

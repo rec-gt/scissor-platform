@@ -157,7 +157,6 @@ void setup() {
 
   int res = nbiotPubMsgCommand.reserve(256);
   Serial.print(res);
-  Serial.print(res ? "String Space OK" : "String Space NOT OK");
 
   /*=== NBIoT ===*/
   nbiot.init(true);

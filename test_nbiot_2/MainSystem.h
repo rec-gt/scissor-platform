@@ -144,10 +144,13 @@ public:
 
     /*=== DO Control ===*/
     idx = nbiotSubMsgContent.indexOf("D");
+    
+    Serial.println(nbiotSubMsgContent);
     Serial.println("recv:" + idx);
+    Serial.println(nbiotSubMsgContent.charAt(1));
 
     if (idx > -1) {
-      char c1 = nbiotSubMsgContent[1];
+      char c1 = nbiotSubMsgContent.charAt(1);
       char c2 = nbiotSubMsgContent[2];
       char c3 = nbiotSubMsgContent[3];
       char c4 = nbiotSubMsgContent[4];

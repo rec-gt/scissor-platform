@@ -136,7 +136,6 @@ Utils utils;
 void setup() {
   Serial.begin(9600);
   analogReference(EXTERNAL);
-  DIDR0 |= (1 << ADC8D);
 
   /*=== String Management ===*/
   nbiotCSQ.reserve(8);

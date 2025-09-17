@@ -67,22 +67,22 @@ public:
     /*=== DI ===*/
     this->DIPayload = 0;
     for (size_t i = 0; i < DI_NUMS; i++) {
-      // this->DIPayload |= digitalInputs[i].getState() << i;
-      this->DIPayload = 255;
+      this->DIPayload |= digitalInputs[i].getState() << i;
+      // this->DIPayload = 255;
     }
 
     /*=== DO ===*/
     this->DOPayload = 0;
     for (size_t i = 0; i < DO_NUMS; i++) {
-      // this->DOPayload |= digitalOutputs[i].getState() << i;
-      this->DOPayload = 255;
+      this->DOPayload |= digitalOutputs[i].getState() << i;
+      // this->DOPayload = 255;
     }
 
     /*=== AI ===*/
     AIPayload = "[";
     for (size_t i = 0; i < AI_NUMS; i++) {
-      // AIPayload += analogInputs[i].getValue();
-      AIPayload += 4095;
+      AIPayload += analogInputs[i].getValue();
+      // AIPayload += 4095;
       if (i < AI_NUMS - 1) {
         AIPayload += ",";
       }

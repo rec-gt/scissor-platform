@@ -146,14 +146,13 @@ void setup() {
   nbIotConnCmd.reserve(32);
   nbiotSubsCmd.reserve(32);
 
-  nbiotIP.reserve(8);
   nbiotCSQ.reserve(8);
   nbiotIMEI.reserve(8);
   nbiotCGATT.reserve(8);
   nbiotCEREG.reserve(8);
 
-  nbiotPubAck.reserve(16);
-  nbiotSubAck.reserve(16);
+  nbiotPubAck.reserve(8);
+  nbiotSubAck.reserve(8);
 
   nbiotPubMsgPayload.reserve(128);
   nbiotPubMsgPrepare.reserve(128);

@@ -136,7 +136,6 @@ public:
       nbIotConnCmd = "";
       nbiotSubsCmd = "";
 
-      nbiotIP = "";
       nbiotCSQ = "";
       nbiotIMEI = "";
       nbiotCGATT = "";
@@ -441,12 +440,6 @@ public:
 
   void handleReadMsg() {
     int idx = -1;
-
-    // === handle IP ===
-    idx = nbiotSerialRecv.indexOf("+IP:");
-    if (idx > -1) {
-      nbiotIP = nbiotSerialRecv.substring(5, 5 + 16);
-    }
 
     // === handle IMEI ===
     idx = nbiotSerialRecv.indexOf("+CGSN:");

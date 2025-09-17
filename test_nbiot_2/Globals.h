@@ -10,7 +10,6 @@ String nbiotSerialRecv = "";
 String nbIotConnCmd = "";
 String nbiotSubsCmd = "";
 
-String nbiotIP = "";
 String nbiotCSQ = "";
 String nbiotIMEI = "";
 String nbiotCGATT = "";

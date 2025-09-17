@@ -144,19 +144,20 @@ void setup() {
   nbiotCEREG.reserve(8);
   nbiotPubAck.reserve(8);
   nbiotSubAck.reserve(8);
-  nbiotSubMsgContent.reserve(16);
+  nbiotSubMsgContent.reserve(8);
   nbiotIMEI.reserve(32);
   AOPayload.reserve(32);
   AIPayload.reserve(64);
   nbIotConnCmd.reserve(64);
   nbiotSubsCmd.reserve(64);
   nbiotPubMsgPrepare.reserve(64);
+  rs485SerialRecv.reserve(128);
+  nbiotSerialRecv.reserve(128);
   nbiotPubMsgPayload.reserve(192);
-  nbiotPubMsgCommand.reserve(256);
-  rs485SerialRecv.reserve(256);
-  int res = nbiotSerialRecv.reserve(256);
+
+  int res = nbiotPubMsgCommand.reserve(256);
   Serial.print(res);
-  Serial.print(res ? "OK" : "NOT OK");
+  Serial.print(res ? "String Space OK" : "String Space NOT OK");
 
   /*=== NBIoT ===*/
   nbiot.init(true);

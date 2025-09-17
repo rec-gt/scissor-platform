@@ -7,7 +7,15 @@ String AOPayload = "";
 String subsMsg = "";
 
 /*=== NBIoT ===*/
-String serialRecvNBIoT = "";
+String nbiotSerialRecv = "";
+String nbIotConnCmd = "";
+String nbiotSubsCmd = "";
+
+String nbiotIP = "";
+String nbiotCSQ = "";
+String nbiotIMEI = "";
+String nbiotCGATT = "";
+String nbiotCEREG = "";
 
 /*=== Modbus485 ===*/
 String serialRecv485 = "";

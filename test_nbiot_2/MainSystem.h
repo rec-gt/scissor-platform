@@ -144,16 +144,16 @@ public:
 
     /*=== DO Control ===*/
     idx = nbiotSubMsgContent.indexOf("D");
-    
+
     Serial.println(nbiotSubMsgContent);
-    Serial.println("recv:" + idx);
-    Serial.println(nbiotSubMsgContent.charAt(1));
+    Serial.print("idx:");
+    Serial.println(idx);
 
     if (idx > -1) {
       char c1 = nbiotSubMsgContent.charAt(1);
-      char c2 = nbiotSubMsgContent[2];
-      char c3 = nbiotSubMsgContent[3];
-      char c4 = nbiotSubMsgContent[4];
+      char c2 = nbiotSubMsgContent.charAt(2);
+      char c3 = nbiotSubMsgContent.charAt(3);
+      char c4 = nbiotSubMsgContent.charAt(4);
 
       if ("1" <= c1 && c1 <= "8") {
         /*=== DO Single Control ===*/

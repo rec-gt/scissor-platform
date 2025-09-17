@@ -139,8 +139,8 @@ void setup() {
   DIDR0 |= (1 << ADC8D);
 
   /*=== String Management ===*/
-  AIPayload.reserve(128);
-  AOPayload.reserve(128);
+  AIPayload.reserve(64);
+  AOPayload.reserve(32);
 
   nbiotSerialRecv.reserve(64);
   nbIotConnCmd.reserve(32);

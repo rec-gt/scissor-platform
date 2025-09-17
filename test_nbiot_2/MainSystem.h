@@ -60,7 +60,7 @@ public:
 
   void handleDisplayContent() {
     if (millis() - this->prevMillisDisplay > 2000) {
-      displayClient.prepareBuffer(nbiot.connState, nbiot.CSQ.toInt(), this->DIPayload, this->DOPayload, analogInputs, analogOutputs, aiMappingMode);
+      displayClient.prepareBuffer(nbiot.connState, nbiotCSQ.toInt(), this->DIPayload, this->DOPayload, analogInputs, analogOutputs, aiMappingMode);
       displayClient.sendBuffer();
       this->prevMillisDisplay = millis();
     }
@@ -108,7 +108,7 @@ public:
     /*=== 2. prepare the msg to be published ===*/
     if (!nbiot.pubMsgPayloadLock) {
       nbiotPubMsgPayload = "{\"csq\":";
-      nbiotPubMsgPayload.concat(nbiot.CSQ);
+      nbiotPubMsgPayload.concat(nbiotCSQ);
       nbiotPubMsgPayload.concat(",");
       nbiotPubMsgPayload.concat("\"din\":");
       nbiotPubMsgPayload.concat(this->DIPayload);
@@ -125,7 +125,7 @@ public:
     }
 
     nbiotPubMsgPrepare = "AT+QMTPUB=0,0,0,0,rgt/";
-    nbiotPubMsgPrepare.concat(nbiot.IMEI);
+    nbiotPubMsgPrepare.concat(nbiotIMEI);
     nbiotPubMsgPrepare.concat("/in,");
     nbiotPubMsgPrepare.concat(nbiotPubMsgPayload.length());
 

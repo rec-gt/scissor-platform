@@ -24,7 +24,7 @@ public:
     while (Serial3.available()) {
       char c = Serial3.read();
       if (c != '\r' && c != '\n') {
-        serialRecv485 += c;
+        rs485SerialRecv += c;
       }
       if (c == '\r') {
         this->answer();
@@ -33,7 +33,7 @@ public:
   }
 
   void answer() {
-    int idx = serialRecv485.indexOf("AT");
+    int idx = rs485SerialRecv.indexOf("AT");
     if (idx > -1) {
       digitalWrite(RE_DE_PIN, HIGH);
       Serial3.println("[Hello from RGT Hello from RGT Hello from RGT]");

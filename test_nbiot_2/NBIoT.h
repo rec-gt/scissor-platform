@@ -79,13 +79,8 @@ public:
   NBIOT_STATE connState = STATE_WAITING_RESET;
   PUBSUB_PIPELINE pipelineState = PIPELINE_DEFAULT;
 
-  String pubMsgCommand = "";
-
-  // important, for pubMsgCommand consistency due to the async concat property of "pubMsgPrepare" & "pubMsgPayload"
+  // important, do not remove
   bool pubMsgPayloadLock = false;
-
-  // for subscribe
-  String subMsgContent = "";
 
   NBIoT() {
     NBIoTSerial.begin(9600);
@@ -119,7 +114,7 @@ public:
     // nbiotPubMsgPayload.reserve(64);
     // nbiotPubMsgPrepare.reserve(64);
     // nbiotPubMsgCommand.reserve(128);
-    // this->subMsgContent.reserve(32);
+    // nbiotSubMsgContent.reserve(32);
   }
 
   void init(bool asyncInitMode = false) {
@@ -520,25 +515,23 @@ public:
         nbiotSoftReset = true;
       }
 
-      String strNum = nbiotCSQ;
-
-      if (!utils.isNumeric(strNum)) {
+      if (!utils.isNumeric(nbiotCSQ)) {
         nbiotSoftReset = true;
+        nbiotCSQ = "ER";
       }
 
-      int numCSQ = strNum.toInt();
+      int numCSQ = nbiotCSQ.toInt();
       if (!(numCSQ >= 5 && numCSQ <= 31)) {
         nbiotSoftReset = true;
+        nbiotCSQ = "ER";
       }
-
-      nbiotCSQ = String(numCSQ);
     }
 
     // === handle publish ACK ===
     idx = nbiotSerialRecv.indexOf("+QMTPUB:");
     if (idx > -1) {
-      String QMTPUB = nbiotSerialRecv.substring(9, 9 + 5);
-      if (QMTPUB != "0,0,0") {
+      nbiotPubAck = nbiotSerialRecv.substring(9, 9 + 5);
+      if (nbiotPubAck != "0,0,0") {
         nbiotSoftReset = true;
       }
     }
@@ -546,8 +539,8 @@ public:
     // === handle SUB ACK ===
     idx = nbiotSerialRecv.indexOf("+QMTSUB:");
     if (idx > -1) {
-      String QMTSUB = nbiotSerialRecv.substring(9, 9 + 7);
-      if (QMTSUB != "0,1,0,0") {
+      nbiotSubAck = nbiotSerialRecv.substring(9, 9 + 7);
+      if (nbiotSubAck != "0,1,0,0") {
         nbiotSoftReset = true;
       }
     }
@@ -559,18 +552,18 @@ public:
     //   int endPos = nbiotSerialRecv.indexOf("]", startPos);
 
     //   if (startPos > -1 && endPos > -1) {
-    //     this->subMsgContent = nbiotSerialRecv.substring(startPos + 1, endPos);
-    //     Serial.print(this->subMsgContent);
+    //     nbiotSubMsgContent = nbiotSerialRecv.substring(startPos + 1, endPos);
+    //     Serial.print(nbiotSubMsgContent);
     //   } else {
-    //     this->subMsgContent = "";
+    //     nbiotSubMsgContent = "";
     //   }
     // }
 
     idx = nbiotSerialRecv.indexOf("+QMTRECV:");
     if (idx > -1) {
-      this->subMsgContent = nbiotSerialRecv.substring(9, 20);
-      this->subMsgContent = nbiotSerialRecv.substring(41, 46);
-      Serial.println(this->subMsgContent);
+      nbiotSubMsgContent = nbiotSerialRecv.substring(9, 20);
+      nbiotSubMsgContent = nbiotSerialRecv.substring(41, 46);
+      Serial.println(nbiotSubMsgContent);
     }
   }
 
@@ -589,8 +582,8 @@ public:
   }
 
   void readRecvMsg(String& assign) {
-    assign = this->subMsgContent;
-    this->subMsgContent = "";
+    assign = nbiotSubMsgContent;
+    nbiotSubMsgContent = "";
   }
 
   ~NBIoT() {}

@@ -21,7 +21,12 @@ String nbiotPubMsgPayload = "";
 String nbiotPubMsgPrepare = "";
 String nbiotPubMsgCommand = "";
 
+String nbiotSubMsgContent = "";
+
+String nbiotPubAck = "";
+String nbiotSubAck = "";
+
 /*=== Modbus485 ===*/
-String serialRecv485 = "";
+String rs485SerialRecv = "";
 
 #endif

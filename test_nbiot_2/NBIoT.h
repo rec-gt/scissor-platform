@@ -69,7 +69,7 @@ private:
     nbiotSerialRecv = "";
   }
 
-  void printlnFlush(String cmd, unsigned int delayTime = 2) {
+  void printlnFlush(const String& cmd, unsigned int delayTime = 2) {
     NBIoTSerial.println(cmd);
     NBIoTSerial.flush();
     delay(delayTime);

@@ -29,11 +29,6 @@ public:
     : digitalInputs(digitalInputs), digitalOutputs(digitalOutputs), analogInputs(analogInputs), analogOutputs(analogOutputs), aiMappingMode(aiMappingMode) {
   }
 
-  void setup() {
-    // AIPayload.reserve(96);
-    // AOPayload.reserve(32);
-  }
-
   void loop() {
     /*=== Listen Input Ports ===*/
     this->listen();
@@ -87,7 +82,7 @@ public:
     AIPayload = "[";
     for (size_t i = 0; i < AI_NUMS; i++) {
       // AIPayload += analogInputs[i].getValue();
-      AIPayload += 9999;
+      AIPayload += 4095;
       if (i < AI_NUMS - 1) {
         AIPayload += ",";
       }
@@ -156,6 +151,7 @@ public:
       char c4 = nbiotSubMsgContent.charAt(4);
 
       if ("1" <= c1 && c1 <= "8") {
+        
         /*=== DO Single Control ===*/
         if (c3 == "0") {
           digitalOutputs[atoi(c1) - 1].connect();

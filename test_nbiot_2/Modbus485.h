@@ -7,9 +7,7 @@
 
 class Modbus485 {
 public:
-  Modbus485(){};
-
-  void setup() {
+  Modbus485() {
     pinMode(RE_DE_PIN, OUTPUT);
     digitalWrite(RE_DE_PIN, LOW);  // HIGH = send, LOW = receive
     Serial3.begin(9600, SERIAL_8N1);

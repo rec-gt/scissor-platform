@@ -139,19 +139,28 @@ void setup() {
   analogReference(EXTERNAL);
   DIDR0 |= (1 << ADC8D);
 
+  nbiotSerialRecv.reserve(128);
+  nbIotConnCmd.reserve(128);
+  nbiotSubsCmd.reserve(128);
+
+  nbiotIP.reserve(8);
+  nbiotCSQ.reserve(8);
+  nbiotIMEI.reserve(8);
+  nbiotCGATT.reserve(8);
+  nbiotCEREG.reserve(8);
+
+  nbiotPubMsgPayload.reserve(128);
+  nbiotPubMsgPrepare.reserve(128);
+  nbiotPubMsgCommand.reserve(128);
+  nbiotSubMsgContent.reserve(128);
+
+
   /*=== NBIoT ===*/
-  nbiot.setup();
   nbiot.init(true);
   nbiot.debug();
 
   /*=== Display ===*/
   displayClient.setup();
-
-  /*=== Modbus 485 ===*/
-  modbus485.setup();
-
-  /*=== Main System ===*/
-  mainSystem.setup();
 }
 
 void loop() {

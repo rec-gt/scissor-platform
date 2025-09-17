@@ -97,26 +97,7 @@ public:
   void debug() {
     this->debugMode = true;
   }
-
-  void setup() {
-    NBIoTSerial.begin(9600);
-
-    // nbiotSerialRecv.reserve(32);
-    // nbIotConnCmd.reserve(39);
-    // nbiotSubsCmd.reserve(128);
-
-    // nbiotIP.reserve(16);
-    // nbiotCSQ.reserve(8);
-    // nbiotIMEI.reserve(32);
-    // nbiotCGATT.reserve(8);
-    // nbiotCEREG.reserve(8);
-
-    // nbiotPubMsgPayload.reserve(64);
-    // nbiotPubMsgPrepare.reserve(64);
-    // nbiotPubMsgCommand.reserve(128);
-    // nbiotSubMsgContent.reserve(32);
-  }
-
+  
   void init(bool asyncInitMode = false) {
     Serial.println("\r\n=== NBIOT START ===");
     nbiotWatchdog.enable();

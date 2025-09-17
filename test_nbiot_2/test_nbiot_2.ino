@@ -142,27 +142,25 @@ void setup() {
   AIPayload.reserve(64);
   AOPayload.reserve(32);
 
-  nbiotSerialRecv.reserve(64);
-  nbIotConnCmd.reserve(32);
-  nbiotSubsCmd.reserve(32);
+  nbiotSerialRecv.reserve(256);
+  nbIotConnCmd.reserve(64);
+  nbiotSubsCmd.reserve(64);
 
   nbiotCSQ.reserve(8);
-  nbiotIMEI.reserve(8);
+  nbiotIMEI.reserve(32);
   nbiotCGATT.reserve(8);
   nbiotCEREG.reserve(8);
 
   nbiotPubAck.reserve(8);
   nbiotSubAck.reserve(8);
 
+  nbiotPubMsgPrepare.reserve(64);
   nbiotPubMsgPayload.reserve(128);
-  nbiotPubMsgPrepare.reserve(128);
-  nbiotPubMsgCommand.reserve(256);
+  nbiotPubMsgCommand.reserve(192);
 
   nbiotSubMsgContent.reserve(16);
 
-  /*=== Modbus485 ===*/
-  String rs485SerialRecv = "";
-
+  rs485SerialRecv.reserve(256);
 
   /*=== NBIoT ===*/
   nbiot.init(true);

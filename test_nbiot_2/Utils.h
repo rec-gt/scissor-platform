@@ -11,7 +11,6 @@ public:
         return false;
       }
     }
-
     return true;
   }
 
@@ -27,7 +26,7 @@ public:
     }
   }
 
-  ~Utils(){};
+  ~Utils(void){};
 };
 
 extern Utils utils;

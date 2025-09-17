@@ -155,8 +155,7 @@ void setup() {
   nbiotSerialRecv.reserve(128);
   nbiotPubMsgPayload.reserve(192);
   bool res = nbiotPubMsgCommand.reserve(256);
-  Serial.print(res);
-  Serial.print(res ? "Str Space OK" : "String Space NOT OK");
+  Serial.print(res ? "[Str Space OK]" : "[String Space NOT OK]");
 
   /*=== NBIoT ===*/
   nbiot.init(true);

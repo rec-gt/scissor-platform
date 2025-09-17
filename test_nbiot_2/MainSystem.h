@@ -135,7 +135,6 @@ public:
   }
 
   void handleSubscribeContent() {
-
     if (nbiotSubMsgContent.length() <= 0) {
       return;
     }
@@ -145,6 +144,7 @@ public:
 
     /*=== DO Control ===*/
     idx = nbiotSubMsgContent.indexOf("D");
+    Serial.println("recv:" + idx);
 
     if (idx > -1) {
       char c1 = nbiotSubMsgContent[1];

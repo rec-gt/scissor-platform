@@ -546,19 +546,6 @@ public:
     }
 
     // === handle SUB received msg and parse it's content ===
-    // idx = nbiotSerialRecv.indexOf("+QMTRECV:");
-    // if (idx > -1) {
-    //   int startPos = nbiotSerialRecv.indexOf("[");
-    //   int endPos = nbiotSerialRecv.indexOf("]", startPos);
-
-    //   if (startPos > -1 && endPos > -1) {
-    //     nbiotSubMsgContent = nbiotSerialRecv.substring(startPos + 1, endPos);
-    //     Serial.print(nbiotSubMsgContent);
-    //   } else {
-    //     nbiotSubMsgContent = "";
-    //   }
-    // }
-
     idx = nbiotSerialRecv.indexOf("+QMTRECV:");
     if (idx > -1) {
       nbiotSubMsgContent = nbiotSerialRecv.substring(41, 46);

@@ -5,6 +5,7 @@
 #include "NBIoT.h"
 #include "DisplayClient.h"
 #include "Utils.h"
+#include "Globals.h"
 
 #ifndef MainSystem_H
 #define MainSystem_H
@@ -19,13 +20,9 @@ private:
 
   byte DIPayload = 0;
   byte DOPayload = 0;
-  String AIPayload = "";
-  String AOPayload = "";
 
   unsigned long prevMillisDisplay;
 
-  String subsMsg = "";
-  String strCraft = "";
 
 public:
   MainSystem(DigitalInput *digitalInputs, DigitalOutput *digitalOutputs, AnalogInput *analogInputs, AnalogOutput *analogOutputs, uint8_t aiMappingMode)
@@ -75,36 +72,38 @@ public:
     /*=== DI ===*/
     this->DIPayload = 0;
     for (size_t i = 0; i < DI_NUMS; i++) {
-      this->DIPayload |= digitalInputs[i].getState() << i;
+      // this->DIPayload |= digitalInputs[i].getState() << i;
+      this->DIPayload = 255;
     }
 
     /*=== DO ===*/
     this->DOPayload = 0;
     for (size_t i = 0; i < DO_NUMS; i++) {
-      this->DOPayload |= digitalOutputs[i].getState() << i;
+      // this->DOPayload |= digitalOutputs[i].getState() << i;
+      this->DOPayload = 255;
     }
 
     /*=== AI ===*/
-    this->AIPayload = "[";
+    AIPayload = "[";
     for (size_t i = 0; i < AI_NUMS; i++) {
-      // this->AIPayload += analogInputs[i].getValue();
-      this->AIPayload += 9999;
+      // AIPayload += analogInputs[i].getValue();
+      AIPayload += 9999;
       if (i < AI_NUMS - 1) {
-        this->AIPayload += ",";
+        AIPayload += ",";
       }
     }
-    this->AIPayload += "]";
+    AIPayload += "]";
 
     /*=== AO ===*/
-    this->AOPayload = "[";
+    AOPayload = "[";
     for (size_t i = 0; i < AO_NUMS; i++) {
-      // this->AOPayload += analogOutputs[i].getValue();
-      this->AOPayload += 255;
+      // AOPayload += analogOutputs[i].getValue();
+      AOPayload += 255;
       if (i < AO_NUMS - 1) {
-        this->AOPayload += ",";
+        AOPayload += ",";
       }
     }
-    this->AOPayload += "]";
+    AOPayload += "]";
 
     /*=== 2. prepare the msg to be published ===*/
     if (!nbiot.pubMsgPayloadLock) {
@@ -118,10 +117,10 @@ public:
       nbiot.pubMsgPayload.concat(this->DOPayload);
       nbiot.pubMsgPayload.concat(",");
       nbiot.pubMsgPayload.concat("\"ain\":");
-      nbiot.pubMsgPayload.concat(this->AIPayload);
+      nbiot.pubMsgPayload.concat(AIPayload);
       nbiot.pubMsgPayload.concat(",");
       nbiot.pubMsgPayload.concat("\"aout\":");
-      nbiot.pubMsgPayload.concat(this->AOPayload);
+      nbiot.pubMsgPayload.concat(AOPayload);
       nbiot.pubMsgPayload.concat("}");
     }
 

@@ -1,12 +1,11 @@
+#include "Globals.h"
+
 #ifndef Modbus485_h
 #define Modbus485_h
 
 #define RE_DE_PIN 22
 
 class Modbus485 {
-private:
-  String serialRecv = "";
-
 public:
   Modbus485(){};
 
@@ -25,7 +24,7 @@ public:
     while (Serial3.available()) {
       char c = Serial3.read();
       if (c != '\r' && c != '\n') {
-        this->serialRecv += c;
+        serialRecv485 += c;
       }
       if (c == '\r') {
         this->answer();
@@ -34,7 +33,7 @@ public:
   }
 
   void answer() {
-    int idx = this->serialRecv.indexOf("AT");
+    int idx = serialRecv485.indexOf("AT");
     if (idx > -1) {
       digitalWrite(RE_DE_PIN, HIGH);
       Serial3.println("[Hello from RGT Hello from RGT Hello from RGT]");

@@ -83,7 +83,7 @@ public:
     AIPayload = F("[");
     for (size_t i = 0; i < AI_NUMS; i++) {
       // AIPayload += analogInputs[i].getValue();
-      AIPayload += 4095;
+      AIPayload += random(4095);
       if (i < AI_NUMS - 1) {
         AIPayload += F(",");
       }
@@ -94,7 +94,7 @@ public:
     AOPayload = F("[");
     for (size_t i = 0; i < AO_NUMS; i++) {
       AOPayload += analogOutputs[i].getValue();
-      // AOPayload += 255;
+      AOPayload += random(255);
       if (i < AO_NUMS - 1) {
         AOPayload += F(",");
       }
@@ -102,26 +102,26 @@ public:
     AOPayload += F("]");
 
     /*=== 2. prepare the msg to be published ===*/
-    // if (!nbiot.pubMsgPayloadLock) {
-    nbiotPubMsgPayload = F("{\"csq\":");
-    nbiotPubMsgPayload.concat(nbiotCSQ);
-    nbiotPubMsgPayload.concat(F(","));
-    nbiotPubMsgPayload.concat(F("\"din\":"));
-    nbiotPubMsgPayload.concat(this->DIPayload);
-    nbiotPubMsgPayload.concat(F(","));
-    nbiotPubMsgPayload.concat(F("\"dout\":"));
-    nbiotPubMsgPayload.concat(this->DOPayload);
-    nbiotPubMsgPayload.concat(F(","));
-    nbiotPubMsgPayload.concat(F("\"ain\":"));
-    nbiotPubMsgPayload.concat(AIPayload);
-    nbiotPubMsgPayload.concat(F(","));
-    nbiotPubMsgPayload.concat(F("\"aout\":"));
-    nbiotPubMsgPayload.concat(AOPayload);
-    nbiotPubMsgPayload.concat(F("}"));
-    // }
+    if (!nbiot.pubMsgPayloadLock) {
+      nbiotPubMsgPayload = F("{\"csq\":");
+      nbiotPubMsgPayload.concat(nbiotCSQ);
+      nbiotPubMsgPayload.concat(F(","));
+      nbiotPubMsgPayload.concat(F("\"din\":"));
+      nbiotPubMsgPayload.concat(this->DIPayload);
+      nbiotPubMsgPayload.concat(F(","));
+      nbiotPubMsgPayload.concat(F("\"dout\":"));
+      nbiotPubMsgPayload.concat(this->DOPayload);
+      nbiotPubMsgPayload.concat(F(","));
+      nbiotPubMsgPayload.concat(F("\"ain\":"));
+      nbiotPubMsgPayload.concat(AIPayload);
+      nbiotPubMsgPayload.concat(F(","));
+      nbiotPubMsgPayload.concat(F("\"aout\":"));
+      nbiotPubMsgPayload.concat(AOPayload);
+      nbiotPubMsgPayload.concat(F("}"));
+    }
 
     nbiotPubMsgPrepare = F("AT+QMTPUB=0,0,0,0,rgt/");
-    nbiotPubMsgPrepare.concat(nbiotIMEI);
+    nbiotPubMsgPrepare.concat(F("861096060571706"));
     nbiotPubMsgPrepare.concat(F("/in,"));
     nbiotPubMsgPrepare.concat(nbiotPubMsgPayload.length());
 

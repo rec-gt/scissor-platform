@@ -79,53 +79,53 @@ public:
     }
 
     /*=== AI ===*/
-    AIPayload = "[";
+    AIPayload = F("[");
     for (size_t i = 0; i < AI_NUMS; i++) {
       // AIPayload += analogInputs[i].getValue();
       AIPayload += 4095;
       if (i < AI_NUMS - 1) {
-        AIPayload += ",";
+        AIPayload += F(",");
       }
     }
-    AIPayload += "]";
+    AIPayload += F("]");
 
     /*=== AO ===*/
-    AOPayload = "[";
+    AOPayload = F("[");
     for (size_t i = 0; i < AO_NUMS; i++) {
       // AOPayload += analogOutputs[i].getValue();
       AOPayload += 255;
       if (i < AO_NUMS - 1) {
-        AOPayload += ",";
+        AOPayload += F(",");
       }
     }
-    AOPayload += "]";
+    AOPayload += F("]");
 
     /*=== 2. prepare the msg to be published ===*/
     if (!nbiot.pubMsgPayloadLock) {
-      nbiotPubMsgPayload = "{\"csq\":";
+      nbiotPubMsgPayload = F("{\"csq\":");
       nbiotPubMsgPayload.concat(nbiotCSQ);
-      nbiotPubMsgPayload.concat(",");
-      nbiotPubMsgPayload.concat("\"din\":");
+      nbiotPubMsgPayload.concat(F(","));
+      nbiotPubMsgPayload.concat(F("\"din\":"));
       nbiotPubMsgPayload.concat(this->DIPayload);
-      nbiotPubMsgPayload.concat(",");
-      nbiotPubMsgPayload.concat("\"dout\":");
+      nbiotPubMsgPayload.concat(F(","));
+      nbiotPubMsgPayload.concat(F("\"dout\":"));
       nbiotPubMsgPayload.concat(this->DOPayload);
-      nbiotPubMsgPayload.concat(",");
-      nbiotPubMsgPayload.concat("\"ain\":");
+      nbiotPubMsgPayload.concat(F(","));
+      nbiotPubMsgPayload.concat(F("\"ain\":"));
       nbiotPubMsgPayload.concat(AIPayload);
-      nbiotPubMsgPayload.concat(",");
-      nbiotPubMsgPayload.concat("\"aout\":");
+      nbiotPubMsgPayload.concat(F(","));
+      nbiotPubMsgPayload.concat(F("\"aout\":"));
       nbiotPubMsgPayload.concat(AOPayload);
-      nbiotPubMsgPayload.concat("}");
+      nbiotPubMsgPayload.concat(F("}"));
     }
 
     nbiotPubMsgPrepare = "AT+QMTPUB=0,0,0,0,rgt/";
     nbiotPubMsgPrepare.concat(nbiotIMEI);
-    nbiotPubMsgPrepare.concat("/in,");
+    nbiotPubMsgPrepare.concat(F("/in,"));
     nbiotPubMsgPrepare.concat(nbiotPubMsgPayload.length());
 
     nbiotPubMsgCommand = nbiotPubMsgPrepare;
-    nbiotPubMsgCommand.concat(",");
+    nbiotPubMsgCommand.concat(F(","));
     nbiotPubMsgCommand.concat(nbiotPubMsgPayload);
   }
 
@@ -151,7 +151,7 @@ public:
       char c4 = nbiotSubMsgContent.charAt(4);
 
       if ("1" <= c1 && c1 <= "8") {
-        
+
         /*=== DO Single Control ===*/
         if (c3 == "0") {
           digitalOutputs[atoi(c1) - 1].connect();

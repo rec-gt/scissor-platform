@@ -134,82 +134,37 @@ public:
       return;
     }
 
-    /*=== DO/AO Control ===*/
-    int idx = -1;
+    byte b0 = nbiotSubMsgContent.charAt(0);
+    byte b1 = nbiotSubMsgContent.charAt(1);
+    byte b2 = nbiotSubMsgContent.charAt(2);
+    byte b3 = nbiotSubMsgContent.charAt(3);
+    byte b4 = nbiotSubMsgContent.charAt(4);
 
-    /*=== DO Control ===*/
-    idx = nbiotSubMsgContent.indexOf("D");
-
-    Serial.println(nbiotSubMsgContent);
-    Serial.print("idx:");
-    Serial.println(idx);
-
-    if (idx > -1) {
-      char c1 = nbiotSubMsgContent.charAt(1);
-      char c2 = nbiotSubMsgContent.charAt(2);
-      char c3 = nbiotSubMsgContent.charAt(3);
-      char c4 = nbiotSubMsgContent.charAt(4);
-
-
-      if (1 <= (int)(c1 - '0') && (int)(c1 - '0') <= 8) {
-        /*=== DO Single Control ===*/
-        if (c3 == "0") {
-          digitalOutputs[(int)(c1 - '0') - 1].cut();
-        } else {
-          digitalOutputs[(int)(c1 - '0') - 1].connect();
+    if (b0 == 68) {    // D
+      if (b1 == 58) {  // :
+        byte finalByte = (b3 << 4) | b4;
+        for (size_t i = 7; i > 0; i--) {
+          if (bitRead(finalByte, i) == 1) {
+            if (b2 == 0) {
+              digitalOutputs[7 - i].cut();
+            } else {
+              digitalOutputs[7 - i].connect();
+            }
+          }
         }
-      } else if ((int)(c1 - '0') == 10) {
-        /*=== DO Bulk Control ===*/
-        byte b1 = utils.hexCharToByte(c3);
-        byte b2 = utils.hexCharToByte(c4);
-        byte finalByte = (b1 << 4) | b2;
-        Serial.print(finalByte);
-
-        Serial.print(bitRead(finalByte, 0));
-        Serial.print(bitRead(finalByte, 1));
-        Serial.print(bitRead(finalByte, 2));
-        Serial.print(bitRead(finalByte, 3));
-        Serial.print(bitRead(finalByte, 4));
-        Serial.print(bitRead(finalByte, 5));
-        Serial.print(bitRead(finalByte, 6));
-        Serial.print(bitRead(finalByte, 7));
-
-        // for (int i = 7; i > 0; i--) {
-        //   if (bitRead(finalByte, i) == 1) {
-        //     Serial.print(7 - i);
-        //     if (c2 == "0") {
-        //       digitalOutputs[7 - i].cut();
-        //     } else {
-        //       digitalOutputs[7 - i].connect();
-        //     }
-        //   }
-        // }
+      } else if (49 <= b1 && b1 <= 56) {  // 1-8
+        if (b3 == 48) {                   // 0
+          digitalOutputs[b1 - 49].cut();
+        } else {
+          digitalOutputs[b1 - 49].connect();
+        }
       }
-      nbiotSubMsgContent = "";
-      return;
-    }
-
-    /*=== AO Control ===*/
-    idx = nbiotSubMsgContent.indexOf("A");
-
-    Serial.println(nbiotSubMsgContent);
-    Serial.print("idx:");
-    Serial.println(idx);
-
-    if (idx > -1) {
-      char c1 = nbiotSubMsgContent.charAt(1);
-      char c2 = nbiotSubMsgContent.charAt(2);
-      char c3 = nbiotSubMsgContent.charAt(3);
-      char c4 = nbiotSubMsgContent.charAt(4);
-
-      byte b1 = utils.hexCharToByte(c3);
-      byte b2 = utils.hexCharToByte(c4);
+    } else if (b0 == 65) {  // A
       byte finalByte = (b1 << 4) | b2;
-      analogOutputs[(int)(c1 - '0') - 1].set(finalByte);
-
-      nbiotSubMsgContent = "";
-      return;
+      analogOutputs[b1 - 49].set(finalByte);
     }
+
+    nbiotSubMsgContent = "";
   }
 
   ~MainSystem() {}

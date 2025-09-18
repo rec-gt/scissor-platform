@@ -579,10 +579,12 @@ public:
         nbiotCSQ = F("0");
       }
 
-      int numCSQ = nbiotCSQ.toInt();
-      if (!(numCSQ >= 5 && numCSQ <= 31)) {
-        nbiotSoftReset = true;
-        nbiotCSQ = F("0");
+      {
+        int numCSQ = nbiotCSQ.toInt();
+        if (!(numCSQ >= 5 && numCSQ <= 31)) {
+          nbiotSoftReset = true;
+          nbiotCSQ = F("0");
+        }
       }
     }
 

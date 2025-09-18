@@ -55,8 +55,11 @@ public:
 
   void handleDisplayContent() {
     if (millis() - this->prevMillisDisplay > 2000) {
-      displayClient.prepareBuffer(nbiot.connState, nbiotCSQ.toInt(), this->DIPayload, this->DOPayload, analogInputs, analogOutputs, aiMappingMode);
-      displayClient.sendBuffer();
+      {
+        int csq = nbiotCSQ.toInt();
+        displayClient.prepareBuffer(nbiot.connState, csq, this->DIPayload, this->DOPayload, analogInputs, analogOutputs, aiMappingMode);
+        displayClient.sendBuffer();
+      }
       this->prevMillisDisplay = millis();
     }
   }

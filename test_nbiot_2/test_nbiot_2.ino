@@ -154,7 +154,7 @@ void setup() {
   nbiotSerialRecv.reserve(128);
   nbiotPubMsgPayload.reserve(256);
   nbiotPubMsgCommand.reserve(256);
-  bool res = rubbishStr.reserve(306);  //push it to limit
+  bool res = rubbishStr.reserve(310);  //push it to limit
 
   Serial.print(res ? F("[Str Space OK]") : F("[String Space NOT OK]"));
 

@@ -130,7 +130,6 @@ public:
   }
 
   void handleSubscribeContent() {
-    Serial.println(nbiotSubMsgContent);
     if (nbiotSubMsgContent.length() <= 0) {
       return;
     }
@@ -152,14 +151,6 @@ public:
         bitRead(finalByte, 5) == 0 ? digitalOutputs[2].cut() : digitalOutputs[2].connect();
         bitRead(finalByte, 6) == 0 ? digitalOutputs[1].cut() : digitalOutputs[1].connect();
         bitRead(finalByte, 7) == 0 ? digitalOutputs[0].cut() : digitalOutputs[0].connect();
-
-        // for (size_t i = 0; i < 7; i++) {
-        //   if (bitRead(finalByte, i) == 0) {
-        //     digitalOutputs[7 - i].cut();
-        //   } else {
-        //     digitalOutputs[7 - i].connect();
-        //   }
-        // }
       } else if (49 <= b1 && b1 <= 56) {  // 1-8
         if (b3 == 48) {                   // 0
           digitalOutputs[b1 - 49].cut();

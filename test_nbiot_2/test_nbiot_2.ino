@@ -145,6 +145,7 @@ void setup() {
   nbiotSubAck.reserve(8);
   nbiotSubMsgContent.reserve(8);
   nbiotIMEI.reserve(32);
+  cmpStr.reserve(32);
   AOPayload.reserve(64);
   nbIotConnCmd.reserve(64);
   nbiotSubsCmd.reserve(64);
@@ -154,7 +155,7 @@ void setup() {
   nbiotSerialRecv.reserve(128);
   nbiotPubMsgPayload.reserve(256);
   nbiotPubMsgCommand.reserve(256);
-  bool res = rubbishStr.reserve(310);  //push it to limit
+  bool res = rubbishStr.reserve(278);  //push it to limit
 
   Serial.print(res ? F("[Str Space OK]") : F("[String Space NOT OK]"));
 

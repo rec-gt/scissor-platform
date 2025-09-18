@@ -425,7 +425,9 @@ public:
     }
 
     if (this->connState == STATE_WAITING_SUB) {
-      idx = nbiotSerialRecv.indexOf("+QMTSUB:");
+      cmpStr = F("+QMTSUB:");
+      idx = nbiotSerialRecv.indexOf(cmpStr);
+
       if (idx > -1) {
         Serial.println(F("\r\nSUB TOPIC OK"));
 
@@ -437,7 +439,10 @@ public:
     if (this->connState == STATE_FINISH_NBIOT_INIT) {
       int idx = -1;
       if (this->pipelineState == PIPELINE_WAITING_CSQ) {
-        idx = nbiotSerialRecv.indexOf("+CSQ:");
+
+        cmpStr = F("+CSQ:");
+        idx = nbiotSerialRecv.indexOf(cmpStr);
+
         if (idx > -1) {
           Serial.println(F("\r\nFINISH GETTING CSQ"));
 
@@ -447,7 +452,10 @@ public:
       }
 
       if (this->pipelineState == PIPELINE_WAITING_CGATT) {
-        idx = nbiotSerialRecv.indexOf("+CGATT:");
+
+        cmpStr = F("+CGATT:");
+        idx = nbiotSerialRecv.indexOf(cmpStr);
+
         if (idx > -1) {
           Serial.println(F("\r\nFINISH GETTING CGATT"));
 
@@ -457,7 +465,10 @@ public:
       }
 
       if (this->pipelineState == PIPELINE_WAITING_CEREG) {
-        idx = nbiotSerialRecv.indexOf("+CEREG:");
+
+        cmpStr = F("+CEREG:");
+        idx = nbiotSerialRecv.indexOf(cmpStr);
+
         if (idx > -1) {
           Serial.println(F("\r\nFINISH GETTING CEREG"));
 
@@ -467,7 +478,10 @@ public:
       }
 
       if (this->pipelineState == PIPELINE_WAITING_PREPARE_PUBMSG) {
-        idx = nbiotSerialRecv.indexOf(">");
+
+        cmpStr = F(">");
+        idx = nbiotSerialRecv.indexOf(cmpStr);
+
         if (idx > -1) {
           this->pipelineState = PIPELINE_FINISH_PREPARE_PUBMSG;
           nbiotWatchdog.pet();
@@ -475,7 +489,10 @@ public:
       }
 
       if (this->pipelineState == PIPELINE_WAITING_PUBLISH) {
-        idx = nbiotSerialRecv.indexOf("+QMTPUB: 0,0,0");
+
+        cmpStr = F("+QMTPUB: 0,0,0");
+        idx = nbiotSerialRecv.indexOf(cmpStr);
+
         if (idx > -1) {
           this->pipelineState = PIPELINE_DEFAULT;
           Serial.println(F("\r\nFINISH REGULAR PUBLISH"));
@@ -490,7 +507,10 @@ public:
     int idx = -1;
 
     // === handle IMEI ===
-    idx = nbiotSerialRecv.indexOf("+CGSN:");
+
+    cmpStr = F("+CGSN:");
+    idx = nbiotSerialRecv.indexOf(cmpStr);
+
     if (idx > -1) {
       {
         nbiotIMEI = nbiotSerialRecv.substring(7, 7 + 15);
@@ -509,7 +529,9 @@ public:
     }
 
     // === handle CGATT ===
-    idx = nbiotSerialRecv.indexOf("+CGATT:");
+    cmpStr = F("+CGATT:");
+    idx = nbiotSerialRecv.indexOf(cmpStr);
+
     if (idx > -1) {
       {
         nbiotCGATT = nbiotSerialRecv.substring(8, 8 + 1);
@@ -521,7 +543,10 @@ public:
     }
 
     // === handle CEREG ===
-    idx = nbiotSerialRecv.indexOf("+CEREG:");
+
+    cmpStr = F("+CEREG:");
+    idx = nbiotSerialRecv.indexOf(cmpStr);
+
     if (idx > -1) {
       {
         nbiotCEREG = nbiotSerialRecv.substring(8, 8 + 3);
@@ -533,7 +558,10 @@ public:
     }
 
     // === handle CSQ ===
-    idx = nbiotSerialRecv.indexOf("+CSQ:");
+
+    cmpStr = F("+CSQ:");
+    idx = nbiotSerialRecv.indexOf(cmpStr);
+
     if (idx > -1) {
       int winStart = idx + 6;
       int winEnd = winStart + 2;
@@ -559,7 +587,9 @@ public:
     }
 
     // === handle publish ACK ===
-    idx = nbiotSerialRecv.indexOf("+QMTPUB:");
+    cmpStr = F("+QMTPUB:");
+    idx = nbiotSerialRecv.indexOf(cmpStr);
+
     if (idx > -1) {
 
       {
@@ -572,7 +602,9 @@ public:
     }
 
     // === handle SUB ACK ===
-    idx = nbiotSerialRecv.indexOf("+QMTSUB:");
+    cmpStr = F("+QMTSUB:");
+    idx = nbiotSerialRecv.indexOf(cmpStr);
+
     if (idx > -1) {
 
       {
@@ -585,7 +617,9 @@ public:
     }
 
     // === handle SUB received msg and parse it's content ===
-    idx = nbiotSerialRecv.indexOf("+QMTRECV:");
+    cmpStr = F("+QMTRECV:");
+    idx = nbiotSerialRecv.indexOf(cmpStr);
+
     if (idx > -1) {
       {
         nbiotSubMsgContent = nbiotSerialRecv.substring(41, 46);

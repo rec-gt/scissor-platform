@@ -31,7 +31,8 @@ public:
   }
 
   void answer() {
-    int idx = rs485SerialRecv.indexOf("AT");
+    cmpStr = F("AT");
+    int idx = rs485SerialRecv.indexOf(cmpStr);
     if (idx > -1) {
       digitalWrite(RE_DE_PIN, HIGH);
       Serial3.println("[Hello from RGT Hello from RGT Hello from RGT]");

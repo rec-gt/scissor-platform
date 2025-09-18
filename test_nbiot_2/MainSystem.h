@@ -151,11 +151,6 @@ public:
       char c4 = nbiotSubMsgContent.charAt(4);
 
       if (1 <= (int)(c1 - '0') && (int)(c1 - '0') <= 8) {
-        Serial.print("C1: ");
-        Serial.println(c1);
-        Serial.print("C1 int: ");
-        Serial.println((int)(c1 - '0'));
-
         /*=== DO Single Control ===*/
         if (c3 == "0") {
           digitalOutputs[(int)(c1 - '0') - 1].cut();
@@ -168,13 +163,25 @@ public:
         byte b2 = utils.hexCharToByte(c4);
         byte finalByte = (b1 << 4) | b2;
 
-        for (int i = 7; i >= 0; i--) {
-          if (bitRead(finalByte, i) == 1) {
-            digitalOutputs[7 - i].connect();
-          } else {
-            digitalOutputs[7 - i].cut();
-          }
-        }
+        Serial.print(bitRead(finalByte, 0));
+        Serial.print(bitRead(finalByte, 1));
+        Serial.print(bitRead(finalByte, 2));
+        Serial.print(bitRead(finalByte, 3));
+        Serial.print(bitRead(finalByte, 4));
+        Serial.print(bitRead(finalByte, 5));
+        Serial.print(bitRead(finalByte, 6));
+        Serial.print(bitRead(finalByte, 7));
+
+        // for (int i = 7; i > 0; i--) {
+        //   if (bitRead(finalByte, i) == 1) {
+        //     Serial.print(7 - i);
+        //     if (c2 == "0") {
+        //       digitalOutputs[7 - i].cut();
+        //     } else {
+        //       digitalOutputs[7 - i].connect();
+        //     }
+        //   }
+        // }
       }
       nbiotSubMsgContent = "";
       return;

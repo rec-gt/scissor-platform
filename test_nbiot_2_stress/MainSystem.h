@@ -2,7 +2,6 @@
 #include "DigitalOutput.h"
 #include "AnalogInput.h"
 #include "AnalogOutput.h"
-// #include "NBIoT.h"
 #include "NBIoT_Stress.h"
 #include "DisplayClient.h"
 #include "Utils.h"
@@ -93,7 +92,7 @@ public:
     /*=== AO ===*/
     AOPayload = F("[");
     for (size_t i = 0; i < AO_NUMS; i++) {
-      AOPayload += analogOutputs[i].getValue();
+      // AOPayload += analogOutputs[i].getValue();
       AOPayload += random(255);
       if (i < AO_NUMS - 1) {
         AOPayload += F(",");

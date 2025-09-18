@@ -146,6 +146,8 @@ public:
       nbiotPubMsgPrepare = "";
       nbiotPubMsgCommand = "";
 
+      this->pubMsgPayloadLock = false;
+
       digitalWrite(this->resetPin, LOW);
       if (nbiotTimer.autoExpired(1000)) {
         digitalWrite(this->resetPin, HIGH);

@@ -119,7 +119,7 @@ public:
       nbiotPubMsgPayload.concat(F("}"));
     }
 
-    nbiotPubMsgPrepare = "AT+QMTPUB=0,0,0,0,rgt/";
+    nbiotPubMsgPrepare = F("AT+QMTPUB=0,0,0,0,rgt/");
     nbiotPubMsgPrepare.concat(nbiotIMEI);
     nbiotPubMsgPrepare.concat(F("/in,"));
     nbiotPubMsgPrepare.concat(nbiotPubMsgPayload.length());

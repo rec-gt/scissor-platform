@@ -186,13 +186,7 @@ public:
       byte b1 = utils.hexCharToByte(c3);
       byte b2 = utils.hexCharToByte(c4);
       byte finalByte = (b1 << 4) | b2;
-      int pos = atoi(c1) - 1;
-      Serial.println(c1);
-      Serial.println(atoi(c1));
-      Serial.println(pos);
-      Serial.println((int)(c1 - '0'));
-      analogOutputs[atoi(c1) - 1]
-        .set(finalByte);
+      analogOutputs[(int)(c1 - '0') - 1].set(finalByte);
     }
 
     nbiotSubMsgContent = "";

@@ -130,6 +130,7 @@ public:
   }
 
   void handleSubscribeContent() {
+    Serial.println(nbiotSubMsgContent);
     if (nbiotSubMsgContent.length() <= 0) {
       return;
     }
@@ -160,7 +161,7 @@ public:
         }
       }
     } else if (b0 == 65) {  // A
-      byte finalByte = (b1 << 4) | b2;
+      byte finalByte = (b3 << 4) | b4;
       analogOutputs[b1 - 49].set(finalByte);
     }
 

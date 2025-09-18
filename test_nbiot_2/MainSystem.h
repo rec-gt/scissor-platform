@@ -145,12 +145,10 @@ public:
       if (b1 == 58) {                                                               // :
         byte finalByte = (utils.hexCharToByte(b3) << 4) | utils.hexCharToByte(b4);  // hex -> dec -> byte
         for (size_t i = 7; i > 0; i--) {
-          if (bitRead(finalByte, i) == 1) {
-            if (b2 == 0) {
-              digitalOutputs[7 - i].cut();
-            } else {
-              digitalOutputs[7 - i].connect();
-            }
+          if (bitRead(finalByte, i) == 0) {
+            digitalOutputs[7 - i].cut();
+          } else {
+            digitalOutputs[7 - i].connect();
           }
         }
       } else if (49 <= b1 && b1 <= 56) {  // 1-8
@@ -160,9 +158,11 @@ public:
           digitalOutputs[b1 - 49].connect();
         }
       }
-    } else if (b0 == 65) {                                                        // A
-      byte finalByte = (utils.hexCharToByte(b3) << 4) | utils.hexCharToByte(b4);  // hex -> dec -> byte
-      analogOutputs[b1 - 49].set(finalByte);
+    } else if (b0 == 65) {  // A
+      if (49 <= b1 && b1 <= 53) {
+        byte finalByte = (utils.hexCharToByte(b3) << 4) | utils.hexCharToByte(b4);  // hex -> dec -> byte
+        analogOutputs[b1 - 49].set(finalByte);
+      }
     }
 
     nbiotSubMsgContent = "";

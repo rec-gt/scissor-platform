@@ -2,8 +2,7 @@
 #include "DigitalOutput.h"
 #include "AnalogInput.h"
 #include "AnalogOutput.h"
-// #include "NBIoT.h"
-#include "NBIoT_Stress.h"
+#include "NBIoT.h"
 #include "DisplayClient.h"
 #include "Utils.h"
 #include "Globals.h"
@@ -128,10 +127,6 @@ public:
     nbiotPubMsgCommand = nbiotPubMsgPrepare;
     nbiotPubMsgCommand.concat(F(","));
     nbiotPubMsgCommand.concat(nbiotPubMsgPayload);
-
-    Serial.println(nbiotPubMsgPayload);
-    Serial.println(nbiotPubMsgPrepare);
-    Serial.println(nbiotPubMsgCommand);
   }
 
   void handleSubscribeContent() {

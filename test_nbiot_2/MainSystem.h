@@ -147,12 +147,11 @@ public:
       char c4 = nbiotSubMsgContent.charAt(4);
 
       if ("1" <= c1 && c1 <= "8") {
-
         /*=== DO Single Control ===*/
         if (c3 == "0") {
-          digitalOutputs[atoi(c1) - 1].connect();
+          digitalOutputs[(int)(c1 - '0') - 1].connect();
         } else {
-          digitalOutputs[atoi(c1) - 1].cut();
+          digitalOutputs[(int)(c1 - '0') - 1].cut();
         }
       } else if (c1 == ":") {
         /*=== DO Bulk Control ===*/
@@ -168,6 +167,8 @@ public:
           }
         }
       }
+      nbiotSubMsgContent = "";
+      return;
     }
 
     /*=== AO Control ===*/
@@ -187,9 +188,10 @@ public:
       byte b2 = utils.hexCharToByte(c4);
       byte finalByte = (b1 << 4) | b2;
       analogOutputs[(int)(c1 - '0') - 1].set(finalByte);
-    }
 
-    nbiotSubMsgContent = "";
+      nbiotSubMsgContent = "";
+      return;
+    }
   }
 
   ~MainSystem() {}

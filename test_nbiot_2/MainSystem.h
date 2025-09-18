@@ -71,21 +71,18 @@ public:
     this->DIPayload = 0;
     for (size_t i = 0; i < DI_NUMS; i++) {
       this->DIPayload |= digitalInputs[i].getState() << i;
-      // this->DIPayload = 255;
     }
 
     /*=== DO ===*/
     this->DOPayload = 0;
     for (size_t i = 0; i < DO_NUMS; i++) {
       this->DOPayload |= digitalOutputs[i].getState() << i;
-      // this->DOPayload = 255;
     }
 
     /*=== AI ===*/
     AIPayload = F("[");
     for (size_t i = 0; i < AI_NUMS; i++) {
-      // AIPayload += analogInputs[i].getValue();
-      AIPayload += 4095;
+      AIPayload += analogInputs[i].getValue();
       if (i < AI_NUMS - 1) {
         AIPayload += F(",");
       }
@@ -96,7 +93,6 @@ public:
     AOPayload = F("[");
     for (size_t i = 0; i < AO_NUMS; i++) {
       AOPayload += analogOutputs[i].getValue();
-      // AOPayload += 255;
       if (i < AO_NUMS - 1) {
         AOPayload += F(",");
       }
@@ -104,23 +100,23 @@ public:
     AOPayload += F("]");
 
     /*=== 2. prepare the msg to be published ===*/
-    // if (!nbiot.pubMsgPayloadLock) {
-    nbiotPubMsgPayload = F("{\"csq\":");
-    nbiotPubMsgPayload.concat(nbiotCSQ);
-    nbiotPubMsgPayload.concat(F(","));
-    nbiotPubMsgPayload.concat(F("\"din\":"));
-    nbiotPubMsgPayload.concat(this->DIPayload);
-    nbiotPubMsgPayload.concat(F(","));
-    nbiotPubMsgPayload.concat(F("\"dout\":"));
-    nbiotPubMsgPayload.concat(this->DOPayload);
-    nbiotPubMsgPayload.concat(F(","));
-    nbiotPubMsgPayload.concat(F("\"ain\":"));
-    nbiotPubMsgPayload.concat(AIPayload);
-    nbiotPubMsgPayload.concat(F(","));
-    nbiotPubMsgPayload.concat(F("\"aout\":"));
-    nbiotPubMsgPayload.concat(AOPayload);
-    nbiotPubMsgPayload.concat(F("}"));
-    // }
+    if (!nbiot.pubMsgPayloadLock) {
+      nbiotPubMsgPayload = F("{\"csq\":");
+      nbiotPubMsgPayload.concat(nbiotCSQ);
+      nbiotPubMsgPayload.concat(F(","));
+      nbiotPubMsgPayload.concat(F("\"din\":"));
+      nbiotPubMsgPayload.concat(this->DIPayload);
+      nbiotPubMsgPayload.concat(F(","));
+      nbiotPubMsgPayload.concat(F("\"dout\":"));
+      nbiotPubMsgPayload.concat(this->DOPayload);
+      nbiotPubMsgPayload.concat(F(","));
+      nbiotPubMsgPayload.concat(F("\"ain\":"));
+      nbiotPubMsgPayload.concat(AIPayload);
+      nbiotPubMsgPayload.concat(F(","));
+      nbiotPubMsgPayload.concat(F("\"aout\":"));
+      nbiotPubMsgPayload.concat(AOPayload);
+      nbiotPubMsgPayload.concat(F("}"));
+    }
 
     nbiotPubMsgPrepare = F("AT+QMTPUB=0,0,0,0,rgt/");
     nbiotPubMsgPrepare.concat(nbiotIMEI);

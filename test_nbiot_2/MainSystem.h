@@ -141,16 +141,25 @@ public:
     byte b3 = nbiotSubMsgContent.charAt(3);
     byte b4 = nbiotSubMsgContent.charAt(4);
 
-    if (b0 == 68) {                                                                 // D
-      if (b1 == 58) {                                                               // :
-        byte finalByte = (utils.hexCharToByte(b3) << 4) | utils.hexCharToByte(b4);  // hex -> dec -> byte
-        for (size_t i = 0; i < 7; i++) {
-          if (bitRead(finalByte, i) == 0) {
-            digitalOutputs[7 - i].cut();
-          } else {
-            digitalOutputs[7 - i].connect();
-          }
-        }
+    if (b0 == 68) {                                                                   // D
+      if (b1 == 58) {                                                                 // :
+        byte finalByte = (utils.hexCharToByte(b3) << 4) | (utils.hexCharToByte(b4));  // hex -> dec -> byte
+        bitRead(finalByte, 0) == 0 ? digitalOutputs[7].cut() : digitalOutputs[7].connect();
+        bitRead(finalByte, 1) == 0 ? digitalOutputs[6].cut() : digitalOutputs[6].connect();
+        bitRead(finalByte, 2) == 0 ? digitalOutputs[5].cut() : digitalOutputs[5].connect();
+        bitRead(finalByte, 3) == 0 ? digitalOutputs[4].cut() : digitalOutputs[4].connect();
+        bitRead(finalByte, 4) == 0 ? digitalOutputs[3].cut() : digitalOutputs[3].connect();
+        bitRead(finalByte, 5) == 0 ? digitalOutputs[2].cut() : digitalOutputs[2].connect();
+        bitRead(finalByte, 6) == 0 ? digitalOutputs[1].cut() : digitalOutputs[1].connect();
+        bitRead(finalByte, 7) == 0 ? digitalOutputs[0].cut() : digitalOutputs[0].connect();
+
+        // for (size_t i = 0; i < 7; i++) {
+        //   if (bitRead(finalByte, i) == 0) {
+        //     digitalOutputs[7 - i].cut();
+        //   } else {
+        //     digitalOutputs[7 - i].connect();
+        //   }
+        // }
       } else if (49 <= b1 && b1 <= 56) {  // 1-8
         if (b3 == 48) {                   // 0
           digitalOutputs[b1 - 49].cut();

@@ -359,6 +359,8 @@ public:
     }
 
     if (this->connState == STATE_WAITING_IMEI) {
+      Serial.print("===DEBUG===");
+
       cmpStr = F("+CGSN:");
       idx = nbiotSerialRecv.indexOf(cmpStr);
       // if (idx > -1) {

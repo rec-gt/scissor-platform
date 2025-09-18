@@ -103,7 +103,7 @@ public:
     /*=== 2. prepare the msg to be published ===*/
     if (!nbiot.pubMsgPayloadLock) {
       nbiotPubMsgPayload = F("{\"csq\":");
-      nbiotPubMsgPayload.concat(nbiotCSQ);
+      nbiotPubMsgPayload.concat(30);
       nbiotPubMsgPayload.concat(F(","));
       nbiotPubMsgPayload.concat(F("\"din\":"));
       nbiotPubMsgPayload.concat(this->DIPayload);

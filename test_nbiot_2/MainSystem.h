@@ -68,14 +68,14 @@ public:
     this->DIPayload = 0;
     for (size_t i = 0; i < DI_NUMS; i++) {
       this->DIPayload |= digitalInputs[i].getState() << i;
-      this->DIPayload = 255;
+      // this->DIPayload = 255;
     }
 
     /*=== DO ===*/
     this->DOPayload = 0;
     for (size_t i = 0; i < DO_NUMS; i++) {
       this->DOPayload |= digitalOutputs[i].getState() << i;
-      this->DOPayload = 255;
+      // this->DOPayload = 255;
     }
 
     /*=== AI ===*/
@@ -92,8 +92,8 @@ public:
     /*=== AO ===*/
     AOPayload = F("[");
     for (size_t i = 0; i < AO_NUMS; i++) {
-      // AOPayload += analogOutputs[i].getValue();
-      AOPayload += 255;
+      AOPayload += analogOutputs[i].getValue();
+      // AOPayload += 255;
       if (i < AO_NUMS - 1) {
         AOPayload += F(",");
       }
@@ -140,10 +140,6 @@ public:
     /*=== DO Control ===*/
     idx = nbiotSubMsgContent.indexOf("D");
 
-    Serial.println(nbiotSubMsgContent);
-    Serial.print("idx:");
-    Serial.println(idx);
-
     if (idx > -1) {
       char c1 = nbiotSubMsgContent.charAt(1);
       char c2 = nbiotSubMsgContent.charAt(2);
@@ -176,17 +172,27 @@ public:
 
     /*=== AO Control ===*/
     idx = nbiotSubMsgContent.indexOf("A");
+
+    Serial.println(nbiotSubMsgContent);
+    Serial.print("idx:");
+    Serial.println(idx);
+
     if (idx > -1) {
-      char c1 = nbiotSubMsgContent[1];
-      char c2 = nbiotSubMsgContent[2];
-      char c3 = nbiotSubMsgContent[3];
-      char c4 = nbiotSubMsgContent[4];
+      char c1 = nbiotSubMsgContent.charAt(1);
+      char c2 = nbiotSubMsgContent.charAt(2);
+      char c3 = nbiotSubMsgContent.charAt(3);
+      char c4 = nbiotSubMsgContent.charAt(4);
 
       byte b1 = utils.hexCharToByte(c3);
       byte b2 = utils.hexCharToByte(c4);
       byte finalByte = (b1 << 4) | b2;
-
-      analogOutputs[atoi(c1) - 1].set(finalByte);
+      int pos = atoi(c1) - 1;
+      Serial.println(c1);
+      Serial.println(atoi(c1));
+      Serial.println(pos);
+      Serial.println((int)(c1 - '0'));
+      analogOutputs[atoi(c1) - 1]
+        .set(finalByte);
     }
 
     nbiotSubMsgContent = "";

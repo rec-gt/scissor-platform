@@ -130,7 +130,6 @@ public:
   }
 
   void handleSubscribeContent() {
-    Serial.println(nbiotSubMsgContent);
     if (nbiotSubMsgContent.length() <= 0) {
       return;
     }
@@ -144,7 +143,7 @@ public:
     if (b0 == 68) {                                                                 // D
       if (b1 == 58) {                                                               // :
         byte finalByte = (utils.hexCharToByte(b3) << 4) | utils.hexCharToByte(b4);  // hex -> dec -> byte
-        for (size_t i = 7; i > 0; i--) {
+        for (size_t i = 7; i >= 0; i--) {
           if (bitRead(finalByte, i) == 0) {
             digitalOutputs[7 - i].cut();
           } else {

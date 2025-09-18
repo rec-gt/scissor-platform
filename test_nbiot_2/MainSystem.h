@@ -150,6 +150,7 @@ public:
       char c3 = nbiotSubMsgContent.charAt(3);
       char c4 = nbiotSubMsgContent.charAt(4);
 
+
       if (1 <= (int)(c1 - '0') && (int)(c1 - '0') <= 8) {
         /*=== DO Single Control ===*/
         if (c3 == "0") {
@@ -157,11 +158,12 @@ public:
         } else {
           digitalOutputs[(int)(c1 - '0') - 1].connect();
         }
-      } else if (c1 == ":") {
+      } else if ((int)(c1 - '0') == 10) {
         /*=== DO Bulk Control ===*/
         byte b1 = utils.hexCharToByte(c3);
         byte b2 = utils.hexCharToByte(c4);
         byte finalByte = (b1 << 4) | b2;
+        Serial.print(finalByte);
 
         Serial.print(bitRead(finalByte, 0));
         Serial.print(bitRead(finalByte, 1));

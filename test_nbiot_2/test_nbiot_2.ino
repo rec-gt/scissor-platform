@@ -180,5 +180,5 @@ void loop() {
   // test.DO(digitalOutputs);
   // test.AO(analogOutputs);
 
-  delay(1);
+  delay(10);
 }

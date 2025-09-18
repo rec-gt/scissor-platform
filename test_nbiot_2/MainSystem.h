@@ -141,9 +141,9 @@ public:
     byte b3 = nbiotSubMsgContent.charAt(3);
     byte b4 = nbiotSubMsgContent.charAt(4);
 
-    if (b0 == 68) {    // D
-      if (b1 == 58) {  // :
-        byte finalByte = (b3 << 4) | b4;
+    if (b0 == 68) {                                     // D
+      if (b1 == 58) {                                   // :
+        byte finalByte = ((b3 - 48) << 4) | (b4 - 48);  // ascii -> dec -> byte
         for (size_t i = 7; i > 0; i--) {
           if (bitRead(finalByte, i) == 1) {
             if (b2 == 0) {
@@ -161,7 +161,7 @@ public:
         }
       }
     } else if (b0 == 65) {  // A
-      byte finalByte = (b3 << 4) | b4;
+      byte finalByte = ((b3 - 48) << 4) | (b4 - 48);
       analogOutputs[b1 - 49].set(finalByte);
     }
 

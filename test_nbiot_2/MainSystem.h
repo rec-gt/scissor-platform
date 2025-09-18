@@ -144,11 +144,11 @@ public:
     if (b0 == 68) {                                                                 // D
       if (b1 == 58) {                                                               // :
         byte finalByte = (utils.hexCharToByte(b3) << 4) | utils.hexCharToByte(b4);  // hex -> dec -> byte
-        for (size_t i = 8; i >= 1; i--) {
+        for (size_t i = 0; i < 7; i++) {
           if (bitRead(finalByte, i) == 0) {
-            digitalOutputs[8 - i].cut();
+            digitalOutputs[7 - i].cut();
           } else {
-            digitalOutputs[8 - i].connect();
+            digitalOutputs[7 - i].connect();
           }
         }
       } else if (49 <= b1 && b1 <= 56) {  // 1-8

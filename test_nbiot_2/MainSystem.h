@@ -140,18 +140,27 @@ public:
     /*=== DO Control ===*/
     idx = nbiotSubMsgContent.indexOf("D");
 
+    Serial.println(nbiotSubMsgContent);
+    Serial.print("idx:");
+    Serial.println(idx);
+
     if (idx > -1) {
       char c1 = nbiotSubMsgContent.charAt(1);
       char c2 = nbiotSubMsgContent.charAt(2);
       char c3 = nbiotSubMsgContent.charAt(3);
       char c4 = nbiotSubMsgContent.charAt(4);
 
-      if ("1" <= c1 && c1 <= "8") {
+      if (1 <= (int)(c1 - '0') && (int)(c1 - '0') <= 8) {
+        Serial.print("C1: ");
+        Serial.println(c1);
+        Serial.print("C1 int: ");
+        Serial.println((int)(c1 - '0'));
+
         /*=== DO Single Control ===*/
         if (c3 == "0") {
-          digitalOutputs[(int)(c1 - '0') - 1].connect();
-        } else {
           digitalOutputs[(int)(c1 - '0') - 1].cut();
+        } else {
+          digitalOutputs[(int)(c1 - '0') - 1].connect();
         }
       } else if (c1 == ":") {
         /*=== DO Bulk Control ===*/

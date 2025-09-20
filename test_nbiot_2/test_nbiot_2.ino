@@ -97,6 +97,9 @@ AnalogOutput analogOutputs[AO_NUMS]{
 
 byte aiMappingMode = dryContact1.isConnected() ? AI_MAPPING_MODE_4_20MA : AI_MAPPING_MODE_0_10V;
 
+// TODO: change the config method
+uint16_t aiMappingModeSetting = 0;
+
 AnalogInput analogInputsA[AI_NUMS] = {
   AnalogInputA(AI_PIN_1, aiMappingMode, 1590, 3205, 4819, 6441, 8055),
   AnalogInputA(AI_PIN_2, aiMappingMode, 1591, 3204, 4816, 6434, 8047),

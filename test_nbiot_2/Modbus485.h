@@ -35,7 +35,9 @@ public:
     int idx = rs485SerialRecv.indexOf(cmpStr);
     if (idx > -1) {
       digitalWrite(RE_DE_PIN, HIGH);
-      Serial3.println("[Hello from RGT Hello from RGT Hello from RGT]");
+      Serial3.println(F("
+      Setting\r\n
+      1. Analog Input Mode\r\n"));
       Serial3.flush();
     }
   }

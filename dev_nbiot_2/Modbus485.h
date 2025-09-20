@@ -1,5 +1,4 @@
-#include <ArduinoRS485.h>
-#include <ArduinoModbus.h>
+#include "Globals.h"
 
 #ifndef Modbus485_h
 #define Modbus485_h
@@ -7,25 +6,37 @@
 #define RE_DE_PIN 22
 
 class Modbus485 {
-private:
-  unsigned long prevMillis = millis();
-
 public:
-  Modbus485(){};
-
-  void setup() {
+  Modbus485() {
     pinMode(RE_DE_PIN, OUTPUT);
     digitalWrite(RE_DE_PIN, LOW);  // HIGH = send, LOW = receive
-    Serial3.begin(9600);
+    Serial3.begin(9600, SERIAL_8N1);
   };
 
   void loop() {
-    // if (millis() - prevMillis > 1000) {
-    //   Serial3.print("q");
-    //   prevMillis = millis();
-    // }
+    this->listen();
+  }
+
+  void listen() {
+    digitalWrite(RE_DE_PIN, LOW);
     while (Serial3.available()) {
-      Serial.println((char)Serial3.read());
+      char c = Serial3.read();
+      if (c != '\r' && c != '\n') {
+        rs485SerialRecv += c;
+      }
+      if (c == '\r') {
+        this->answer();
+      }
+    }
+  }
+
+  void answer() {
+    cmpStr = F("AT");
+    int idx = rs485SerialRecv.indexOf(cmpStr);
+    if (idx > -1) {
+      digitalWrite(RE_DE_PIN, HIGH);
+      Serial3.println("[Hello from RGT Hello from RGT Hello from RGT]");
+      Serial3.flush();
     }
   }
 

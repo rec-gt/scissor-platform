@@ -153,7 +153,9 @@ void getAnalogInputMode() {
 //   AnalogInputV(AI_PIN_12, aiMappingMode, 793, 1615, 4069, 8164, 16323),
 // };
 
-MainSystem mainSystem(digitalInputs, digitalOutputs, aiMappingMode == 0 ? analogInputsA : analogInputsV, analogOutputs, aiMappingMode);
+// MainSystem mainSystem(digitalInputs, digitalOutputs, aiMappingMode == 0 ? analogInputsA : analogInputsV, analogOutputs, aiMappingMode);
+
+MainSystem mainSystem(digitalInputs, digitalOutputs, analogInputs, analogOutputs, aiMappingMode);
 
 NBIoT nbiot;
 

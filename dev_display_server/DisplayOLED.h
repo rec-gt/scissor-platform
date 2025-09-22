@@ -6,8 +6,6 @@
 U8G2_SSD1309_128X64_NONAME0_1_HW_I2C u8g2(U8G2_R0, U8X8_PIN_NONE);
 
 class DisplayOLED {
-private:
-
 public:
   bool heartbeatToggle = true;
 
@@ -148,7 +146,7 @@ public:
       /*=== AO ===*/
       y = 53;
       u8g2.setCursor(0, y);
-      u8g2.print("Ao");
+      u8g2.print(F("Ao"));
       u8g2.setCursor(12, y);
       u8g2.print(ao1);
       u8g2.setCursor(42, y);
@@ -161,13 +159,13 @@ public:
 
       y = 63;
       u8g2.setCursor(0, y);
-      u8g2.print("NBIoT");
+      u8g2.print(F("NBIoT"));
       u8g2.setCursor(32, y);
-      u8g2.print("Csq:");
+      u8g2.print(F("Csq:"));
       u8g2.setCursor(52, y);
       u8g2.print(iotCsq);
       u8g2.setCursor(67, y);
-      u8g2.print("Conn:");
+      u8g2.print(F("Conn:"));
       u8g2.setCursor(92, y);
       u8g2.print(iotConn);
       u8g2.setCursor(107, y);

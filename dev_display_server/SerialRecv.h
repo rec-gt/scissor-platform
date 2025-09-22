@@ -26,7 +26,7 @@ public:
   uint8_t dos;
   uint16_t ais[12];
   uint16_t aos[4];
-  uint16_t aiInputModes;
+  uint16_t aiModes;
 
   SerialRecv(){};
 
@@ -74,7 +74,7 @@ public:
       this->aos[i] = (buffer[idx++] << 8) | buffer[idx++];
     }
 
-    this->aiInputModes = (buffer[idx++] << 8) | buffer[idx++];
+    this->aiModes = (buffer[idx++] << 8) | buffer[idx++];
   }
 
   // void debug() {
@@ -94,7 +94,7 @@ public:
   //     Serial.print(", ");
   //   }
 
-  //   Serial.println(this->aiInputModes);
+  //   Serial.println(this->aiModes);
 
   //   Serial.println();
   // }

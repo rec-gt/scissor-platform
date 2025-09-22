@@ -98,22 +98,30 @@ AnalogOutput analogOutputs[AO_NUMS]{
 byte aiMappingMode = dryContact1.isConnected() ? AI_MAPPING_MODE_4_20MA : AI_MAPPING_MODE_0_10V;
 
 // TODO: change the config method
-uint16_t aiMappingModeSetting = 0x000000000000000;
+
 
 AnalogInput analogInputs[AI_NUMS] = {
-  AnalogInputV(AI_PIN_1, aiMappingMode, 789, 1610, 4063, 8158, 16317),
-  AnalogInputV(AI_PIN_2, aiMappingMode, 791, 1611, 4061, 8150, 16302),
-  AnalogInputV(AI_PIN_3, aiMappingMode, 790, 1610, 4064, 8160, 16319),
-  AnalogInputV(AI_PIN_4, aiMappingMode, 0, 0, 0, 0, 0),
-  AnalogInputV(AI_PIN_5, aiMappingMode, 790, 1610, 4060, 8150, 16304),
-  AnalogInputV(AI_PIN_6, aiMappingMode, 789, 1607, 4055, 8142, 16292),
-  AnalogInputV(AI_PIN_7, aiMappingMode, 789, 1609, 4061, 8154, 16312),
-  AnalogInputV(AI_PIN_8, aiMappingMode, 793, 1614, 4069, 8165, 16325),
-  AnalogInputV(AI_PIN_9, aiMappingMode, 788, 1606, 4053, 8139, 16289),
-  AnalogInputV(AI_PIN_10, aiMappingMode, 789, 1608, 4056, 8142, 16292),
-  AnalogInputV(AI_PIN_11, aiMappingMode, 788, 1607, 4055, 8141, 16292),
-  AnalogInputV(AI_PIN_12, aiMappingMode, 793, 1615, 4069, 8164, 16323),
+  AnalogInputV(AI_PIN_1, AI_MAPPING_MODE_4_20MA),
+  AnalogInputV(AI_PIN_2, AI_MAPPING_MODE_0_10V),
+  AnalogInputV(AI_PIN_3, AI_MAPPING_MODE_4_20MA),
+  AnalogInputV(AI_PIN_4, AI_MAPPING_MODE_0_10V),
+  AnalogInputV(AI_PIN_5, AI_MAPPING_MODE_4_20MA),
+  AnalogInputV(AI_PIN_6, AI_MAPPING_MODE_0_10V),
+  AnalogInputV(AI_PIN_7, AI_MAPPING_MODE_4_20MA),
+  AnalogInputV(AI_PIN_8, AI_MAPPING_MODE_0_10V),
+  AnalogInputV(AI_PIN_9, AI_MAPPING_MODE_4_20MA),
+  AnalogInputV(AI_PIN_10, AI_MAPPING_MODE_0_10V),
+  AnalogInputV(AI_PIN_11, AI_MAPPING_MODE_4_20MA),
+  AnalogInputV(AI_PIN_12, AI_MAPPING_MODE_0_10V)
 };
+
+void getAnalogInputMode() {
+  for (size_t i = 0; i < AI_NUMS; i++) {
+    analogInputsMode |= (analogInputs[i].mappingMode == AI_MAPPING_MODE_4_20MA ? 1 : 0) << i;
+  }
+  Serial.print(F("AI MAPPING: "));
+  Serial.println(analogInputsMode);
+}
 
 // AnalogInput analogInputsA[AI_NUMS] = {
 //   AnalogInputA(AI_PIN_1, aiMappingMode, 1590, 3205, 4819, 6441, 8055),
@@ -189,6 +197,9 @@ void setup() {
 
   /*=== Display ===*/
   displayClient.setup();
+
+  /*=== AI mapping mode===*/
+  getAnalogInputMode();
 }
 
 void loop() {

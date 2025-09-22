@@ -10,7 +10,6 @@
 class AnalogInput {
 private:
   byte pin;
-  byte mappingMode;
 
 public:
   uint16_t reading;
@@ -22,6 +21,7 @@ public:
   uint16_t bp3;
   uint16_t bp4;
   uint16_t bp5;
+  byte mappingMode;
 
   AnalogInput() {}
 

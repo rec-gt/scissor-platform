@@ -2,6 +2,7 @@
 #define GLOBALS_H
 
 /*=== Main System ===*/
+uint16_t analogInputsMode;
 String AIPayload = "";
 String AOPayload = "";
 String cmpStr = "";

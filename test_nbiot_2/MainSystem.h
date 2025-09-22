@@ -16,7 +16,6 @@ private:
   DigitalOutput *digitalOutputs;
   AnalogInput *analogInputs;
   AnalogOutput *analogOutputs;
-  uint8_t web;
 
   byte DIPayload = 0;
   byte DOPayload = 0;
@@ -25,8 +24,8 @@ private:
 
 
 public:
-  MainSystem(DigitalInput *digitalInputs, DigitalOutput *digitalOutputs, AnalogInput *analogInputs, AnalogOutput *analogOutputs, uint8_t aiMappingMode)
-    : digitalInputs(digitalInputs), digitalOutputs(digitalOutputs), analogInputs(analogInputs), analogOutputs(analogOutputs), aiMappingMode(aiMappingMode) {
+  MainSystem(DigitalInput *digitalInputs, DigitalOutput *digitalOutputs, AnalogInput *analogInputs, AnalogOutput *analogOutputs)
+    : digitalInputs(digitalInputs), digitalOutputs(digitalOutputs), analogInputs(analogInputs), analogOutputs(analogOutputs) {
   }
 
   void loop() {
@@ -57,7 +56,7 @@ public:
     if (millis() - this->prevMillisDisplay > 2000) {
       {
         int csq = nbiotCSQ.toInt();
-        displayClient.prepareBuffer(nbiot.connState, csq, this->DIPayload, this->DOPayload, analogInputs, analogOutputs, aiMappingMode);
+        displayClient.prepareBuffer(nbiot.connState, csq, this->DIPayload, this->DOPayload, analogInputs, analogOutputs, analogInputsMode);
         displayClient.sendBuffer();
       }
       this->prevMillisDisplay = millis();

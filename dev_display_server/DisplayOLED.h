@@ -7,9 +7,12 @@ U8G2_SSD1309_128X64_NONAME0_1_HW_I2C u8g2(U8G2_R0, U8X8_PIN_NONE);
 
 class DisplayOLED {
 private:
-  void printStr(byte x, byte y, const String &str) {
-    u8g2.setCursor(x, y);
-    u8g2.print(str);
+  char charBuffer[20];
+
+  void printFlash(const String& str) {
+    strcpy_P(charBuffer, (PGM_P)(str.c_str()));
+    u8g2.setCursor(0, 10);
+    u8g2.print(charBuffer);
   }
 
 public:
@@ -55,26 +58,28 @@ public:
     u8g2.firstPage();
 
     do {
+      printFlash(F("RGT NB-IoT Controller"));
+
       int y = 7;
-      this->printStr(0, y, F("RGT NB-IoT Controller"));
-
-      // u8g2.setCursor(0, y);
-      // u8g2.print(F("RGT NB-IoT Controller"));
-
+      u8g2.setCursor(0, y);
+      u8g2.print(F("RGT NB-IoT Controller"));
       u8g2.setCursor(108, y);
       u8g2.print(F("V2.0"));
       u8g2.drawLine(0, 8, 128, 8);
 
       /*=== DI ===*/
       y = 17;
-
-      u8g2.drawStr(0, y, "Di");
+      u8g2.setCursor(0, y);
+      u8g2.print(F("Di"));
       for (size_t i = 0; i < 8; i++) {
-        u8g2.drawStr(12 + 5 * i, y, bitRead(diValue, i) ? "1" : "0");
+        u8g2.setCursor(12 + 5 * i, y);
+        u8g2.print(bitRead(diValue, i) ? F("1") : F("0"));
       }
 
       /*=== DO ===*/
-      u8g2.drawStr(75, y, "Do");
+      u8g2.setCursor(75, y);
+      u8g2.print(F("Do"));
+      // u8g2.drawStr(75, y, "Do");
       for (size_t i = 0; i < 8; i++) {
         u8g2.drawStr(87 + 5 * i, y, bitRead(doValue, i) ? "1" : "0");
       }

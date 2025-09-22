@@ -102,26 +102,18 @@ byte aiMappingMode = dryContact1.isConnected() ? AI_MAPPING_MODE_4_20MA : AI_MAP
 
 AnalogInput analogInputs[AI_NUMS] = {
   AnalogInput(AI_PIN_1, AI_MAPPING_MODE_4_20MA),
-  AnalogInput(AI_PIN_2, AI_MAPPING_MODE_4_20MA),
-  AnalogInput(AI_PIN_3, AI_MAPPING_MODE_4_20MA),
+  AnalogInput(AI_PIN_2, AI_MAPPING_MODE_0_10V),
+  AnalogInput(AI_PIN_3, AI_MAPPING_MODE_0_10V),
   AnalogInput(AI_PIN_4, AI_MAPPING_MODE_4_20MA),
   AnalogInput(AI_PIN_5, AI_MAPPING_MODE_4_20MA),
   AnalogInput(AI_PIN_6, AI_MAPPING_MODE_4_20MA),
   AnalogInput(AI_PIN_7, AI_MAPPING_MODE_4_20MA),
   AnalogInput(AI_PIN_8, AI_MAPPING_MODE_4_20MA),
-  AnalogInput(AI_PIN_9, AI_MAPPING_MODE_4_20MA),
+  AnalogInput(AI_PIN_9, AI_MAPPING_MODE_0_10V),
   AnalogInput(AI_PIN_10, AI_MAPPING_MODE_4_20MA),
   AnalogInput(AI_PIN_11, AI_MAPPING_MODE_0_10V),
   AnalogInput(AI_PIN_12, AI_MAPPING_MODE_4_20MA)
 };
-
-void getAnalogInputMode() {
-  for (size_t i = 0; i < AI_NUMS; i++) {
-    analogInputsMode |= (analogInputs[i].mappingMode == AI_MAPPING_MODE_4_20MA ? 1 : 0) << i;
-  }
-  Serial.print(F("AI MAPPING: "));
-  Serial.println(analogInputsMode);
-}
 
 // AnalogInput analogInputsA[AI_NUMS] = {
 //   AnalogInputA(AI_PIN_1, aiMappingMode, 1590, 3205, 4819, 6441, 8055),
@@ -199,9 +191,6 @@ void setup() {
 
   /*=== Display ===*/
   displayClient.setup();
-
-  /*=== AI mapping mode===*/
-  getAnalogInputMode();
 }
 
 void loop() {

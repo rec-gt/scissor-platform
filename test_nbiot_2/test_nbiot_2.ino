@@ -97,9 +97,6 @@ AnalogOutput analogOutputs[AO_NUMS]{
 
 byte aiMappingMode = dryContact1.isConnected() ? AI_MAPPING_MODE_4_20MA : AI_MAPPING_MODE_0_10V;
 
-// TODO: change the config method
-
-
 AnalogInput analogInputs[AI_NUMS] = {
   AnalogInput(AI_PIN_1, AI_MAPPING_MODE_4_20MA),
   AnalogInput(AI_PIN_2, AI_MAPPING_MODE_0_10V),
@@ -203,8 +200,7 @@ void loop() {
   /*=== Register MainSystem ===*/
   mainSystem.loop();
 
-  Serial.println(analogInputs[10].smoothedReading);
-  Serial.println(analogInputs[11].smoothedReading);
+  Serial.println(analogInputs[0].smoothedReading);
 
   delay(10);
 }

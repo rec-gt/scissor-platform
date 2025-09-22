@@ -16,7 +16,7 @@ private:
   DigitalOutput *digitalOutputs;
   AnalogInput *analogInputs;
   AnalogOutput *analogOutputs;
-  uint8_t aiMappingMode;
+  uint8_t web;
 
   byte DIPayload = 0;
   byte DOPayload = 0;

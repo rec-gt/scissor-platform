@@ -6,6 +6,12 @@
 U8G2_SSD1309_128X64_NONAME0_1_HW_I2C u8g2(U8G2_R0, U8X8_PIN_NONE);
 
 class DisplayOLED {
+private:
+  void printStr(byte x, byte y, const String &str) {
+    u8g2.setCursor(x, y);
+    u8g2.print(str);
+  }
+
 public:
   bool heartbeatToggle = true;
 
@@ -13,7 +19,7 @@ public:
 
   void init() {
     if (!u8g2.begin()) {
-      Serial.println("Display Failed");
+      Serial.println(F("Display Failed"));
       while (1) {}
     }
 
@@ -50,8 +56,13 @@ public:
 
     do {
       int y = 7;
-      u8g2.drawStr(0, y, "RGT NBIoT");
-      u8g2.drawStr(108, y, "V2.0");
+      this->printStr(0, y, F("RGT NB-IoT Controller"));
+
+      // u8g2.setCursor(0, y);
+      // u8g2.print(F("RGT NB-IoT Controller"));
+
+      u8g2.setCursor(108, y);
+      u8g2.print(F("V2.0"));
       u8g2.drawLine(0, 8, 128, 8);
 
       /*=== DI ===*/

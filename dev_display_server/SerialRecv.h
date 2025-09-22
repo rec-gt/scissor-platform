@@ -50,7 +50,7 @@ public:
           if (payloadChecksum == calculatedChecksum) {
             this->extractValues();
           } else {
-            Serial.println("wtf");
+            Serial.println(F("wtf"));
           }
         }
       }

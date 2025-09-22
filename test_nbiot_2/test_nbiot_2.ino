@@ -213,13 +213,6 @@ void loop() {
 
   /*=== Register MainSystem ===*/
   mainSystem.loop();
-  // analogOutputs[0].set(255);
-  // analogOutputs[1].set(255);
-  // analogOutputs[2].set(255);
-  // analogOutputs[3].set(255);
-  /*=== Register Outputs Testing ===*/
-  // test.DO(digitalOutputs);
-  // test.AO(analogOutputs);
-
+ 
   delay(10);
 }

@@ -5,10 +5,11 @@
 #define DisplayClient_H
 
 #define DisplaySerial Serial2
+#define DISPLAY_BUFFER_SIZE 41
 
 class DisplayClient {
 private:
-  uint8_t buffer[40];
+  uint8_t buffer[DISPLAY_BUFFER_SIZE];
 
   uint8_t getChecksum(uint8_t *buffer, uint8_t idx_from, uint8_t idx_to) {
     uint8_t checksum = 0;
@@ -25,10 +26,11 @@ public:
     DisplaySerial.begin(9600);
   };
 
-  void prepareBuffer(uint8_t nbiotConn, uint8_t nbiotCsq, uint8_t dis, uint8_t dos, AnalogInput *ais, AnalogOutput *aos, uint8_t aiMappingMode) {
+  void prepareBuffer(uint8_t nbiotConn, uint8_t nbiotCsq, uint8_t dis, uint8_t dos, AnalogInput *ais, AnalogOutput *aos, uint16_t aiMappingMode) {
     uint8_t idx = 0;
 
     this->buffer[idx++] = 0x5B;  // '['
+
     this->buffer[idx++] = nbiotConn;
     this->buffer[idx++] = nbiotCsq;
     this->buffer[idx++] = dis;
@@ -44,9 +46,11 @@ public:
       this->buffer[idx++] = aos[i].value & 0xFF;
     }
 
-    this->buffer[idx++] = aiMappingMode;
+    this->buffer[idx++] = (aiMappingMode >> 8) & 0xFF;
 
-    this->buffer[idx++] = getChecksum(this->buffer, 1, 37);
+    this->buffer[idx++] = aiMappingMode & 0xFF;
+
+    this->buffer[idx++] = getChecksum(this->buffer, 1, idx - 1);
 
     this->buffer[idx++] = 0x5D;  // ']'
   }
@@ -57,7 +61,7 @@ public:
   }
 
   void debug() {
-    for (size_t i = 0; i < 40; i++) {
+    for (size_t i = 0; i < DISPLAY_BUFFER_SIZE; i++) {
       Serial.print(this->buffer[i]);
       Serial.print(", ");
     }

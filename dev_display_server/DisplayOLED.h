@@ -113,22 +113,39 @@ public:
       u8g2.print(ai6);
 
       u8g2.setCursor(72, y);
+      u8g2.print(F("A"));
+      u8g2.setCursor(77, y);
       u8g2.print(ai7);
 
       u8g2.setCursor(102, y);
+      u8g2.print(F("A"));
+      u8g2.setCursor(107, y);
       u8g2.print(ai8);
 
       y = 43;
       u8g2.setCursor(0, y);
-      u8g2.print(aiMappingMode == 0 ? F("A") : (aiMappingMode == 1 ? F("V") : F("VA")));
+      // u8g2.print(aiMappingMode == 0 ? F("A") : (aiMappingMode == 1 ? F("V") : F("VA")));
+
       u8g2.setCursor(12, y);
+      u8g2.print(F("A"));
+      u8g2.setCursor(17, y);
       u8g2.print(ai9);
+
       u8g2.setCursor(42, y);
+      u8g2.print(F("A"));
+      u8g2.setCursor(47, y);
       u8g2.print(ai10);
+
       u8g2.setCursor(72, y);
+      u8g2.print(F("A"));
+      u8g2.setCursor(77, y);
       u8g2.print(ai11);
+
       u8g2.setCursor(102, y);
+      u8g2.print(F("A"));
+      u8g2.setCursor(107, y);
       u8g2.print(ai12);
+
       u8g2.drawLine(0, 44, 128, 44);
 
       /*=== AO ===*/

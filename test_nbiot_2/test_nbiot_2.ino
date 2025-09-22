@@ -111,7 +111,7 @@ AnalogInput analogInputs[AI_NUMS] = {
   AnalogInput(AI_PIN_8, AI_MAPPING_MODE_4_20MA),
   AnalogInput(AI_PIN_9, AI_MAPPING_MODE_4_20MA),
   AnalogInput(AI_PIN_10, AI_MAPPING_MODE_4_20MA),
-  AnalogInput(AI_PIN_11, AI_MAPPING_MODE_4_20MA),
+  AnalogInput(AI_PIN_11, AI_MAPPING_MODE_0_10V),
   AnalogInput(AI_PIN_12, AI_MAPPING_MODE_4_20MA)
 };
 

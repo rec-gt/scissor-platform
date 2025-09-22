@@ -6,6 +6,8 @@
 U8G2_SSD1309_128X64_NONAME0_1_HW_I2C u8g2(U8G2_R0, U8X8_PIN_NONE);
 
 class DisplayOLED {
+private:
+
 public:
   bool heartbeatToggle = true;
 
@@ -13,7 +15,7 @@ public:
 
   void init() {
     if (!u8g2.begin()) {
-      Serial.println("Display Failed");
+      Serial.println(F("Display Failed"));
       while (1) {}
     }
 
@@ -43,67 +45,110 @@ public:
     uint16_t ao2,
     uint16_t ao3,
     uint16_t ao4,
-    byte aiMappingMode) {
+    uint16_t aiModes) {
     this->heartbeatToggle = !this->heartbeatToggle;
 
     u8g2.firstPage();
 
     do {
       int y = 7;
-      u8g2.drawStr(0, y, "RGT NBIoT Controller");
-      u8g2.drawStr(108, y, "V2.0");
+      u8g2.setCursor(0, y);
+      u8g2.print(F("RGT NB-IoT Controller"));
+      u8g2.setCursor(108, y);
+      u8g2.print(F("V2.0"));
       u8g2.drawLine(0, 8, 128, 8);
 
       /*=== DI ===*/
       y = 17;
-
-      u8g2.drawStr(0, y, "Di");
+      u8g2.setCursor(0, y);
+      u8g2.print(F("Di"));
       for (size_t i = 0; i < 8; i++) {
-        u8g2.drawStr(12 + 5 * i, y, bitRead(diValue, i) ? "1" : "0");
+        u8g2.setCursor(12 + 5 * i, y);
+        u8g2.print(bitRead(diValue, i) ? F("1") : F("0"));
       }
 
       /*=== DO ===*/
-      u8g2.drawStr(75, y, "Do");
+      u8g2.setCursor(75, y);
+      u8g2.print(F("Do"));
       for (size_t i = 0; i < 8; i++) {
-        u8g2.drawStr(87 + 5 * i, y, bitRead(doValue, i) ? "1" : "0");
+        u8g2.setCursor(87 + 5 * i, y);
+        u8g2.print(bitRead(doValue, i) ? F("1") : F("0"));
       }
       u8g2.drawLine(0, 18, 128, 18);
 
       /*=== AI ===*/
       y = 27;
-      u8g2.drawStr(0, y, "Ai");
+      u8g2.setCursor(0, y);
+      u8g2.print(F("Ai"));
+
       u8g2.setCursor(12, y);
+      u8g2.print(bitRead(aiModes, 0) ? F("A") : F("V"));
+      u8g2.setCursor(17, y);
       u8g2.print(ai1);
+
       u8g2.setCursor(42, y);
+      u8g2.print(bitRead(aiModes, 1) ? F("A") : F("V"));
+      u8g2.setCursor(47, y);
       u8g2.print(ai2);
+
       u8g2.setCursor(72, y);
+      u8g2.print(bitRead(aiModes, 2) ? F("A") : F("V"));
+      u8g2.setCursor(77, y);
       u8g2.print(ai3);
+
       u8g2.setCursor(102, y);
+      u8g2.print(bitRead(aiModes, 3) ? F("A") : F("V"));
+      u8g2.setCursor(107, y);
       u8g2.print(ai4);
+
       y = 35;
       u8g2.setCursor(12, y);
+      u8g2.print(bitRead(aiModes, 4) ? F("A") : F("V"));
+      u8g2.setCursor(17, y);
       u8g2.print(ai5);
+
       u8g2.setCursor(42, y);
+      u8g2.print(bitRead(aiModes, 5) ? F("A") : F("V"));
+      u8g2.setCursor(47, y);
       u8g2.print(ai6);
+
       u8g2.setCursor(72, y);
+      u8g2.print(bitRead(aiModes, 6) ? F("A") : F("V"));
+      u8g2.setCursor(77, y);
       u8g2.print(ai7);
+
       u8g2.setCursor(102, y);
+      u8g2.print(bitRead(aiModes, 7) ? F("A") : F("V"));
+      u8g2.setCursor(107, y);
       u8g2.print(ai8);
+
       y = 43;
-      u8g2.drawStr(0, y, aiMappingMode ? "A" : "V");
       u8g2.setCursor(12, y);
+      u8g2.print(bitRead(aiModes, 8) ? F("A") : F("V"));
+      u8g2.setCursor(17, y);
       u8g2.print(ai9);
+
       u8g2.setCursor(42, y);
+      u8g2.print(bitRead(aiModes, 9) ? F("A") : F("V"));
+      u8g2.setCursor(47, y);
       u8g2.print(ai10);
+
       u8g2.setCursor(72, y);
+      u8g2.print(bitRead(aiModes, 10) ? F("A") : F("V"));
+      u8g2.setCursor(77, y);
       u8g2.print(ai11);
+
       u8g2.setCursor(102, y);
+      u8g2.print(bitRead(aiModes, 11) ? F("A") : F("V"));
+      u8g2.setCursor(107, y);
       u8g2.print(ai12);
+
       u8g2.drawLine(0, 44, 128, 44);
 
       /*=== AO ===*/
       y = 53;
-      u8g2.drawStr(0, y, "Ao");
+      u8g2.setCursor(0, y);
+      u8g2.print("Ao");
       u8g2.setCursor(12, y);
       u8g2.print(ao1);
       u8g2.setCursor(42, y);
@@ -115,14 +160,18 @@ public:
       u8g2.drawLine(0, 54, 128, 54);
 
       y = 63;
-      u8g2.drawStr(0, y, "NBIoT");
-      u8g2.drawStr(32, y, "Csq:");
+      u8g2.setCursor(0, y);
+      u8g2.print("NBIoT");
+      u8g2.setCursor(32, y);
+      u8g2.print("Csq:");
       u8g2.setCursor(52, y);
       u8g2.print(iotCsq);
-      u8g2.drawStr(67, y, "Conn:");
+      u8g2.setCursor(67, y);
+      u8g2.print("Conn:");
       u8g2.setCursor(92, y);
       u8g2.print(iotConn);
-      u8g2.drawStr(107, y, this->heartbeatToggle ? "Hrbt" : "    ");
+      u8g2.setCursor(107, y);
+      u8g2.print(this->heartbeatToggle ? F("Hrbt") : F("    "));
     } while (u8g2.nextPage());
   }
 

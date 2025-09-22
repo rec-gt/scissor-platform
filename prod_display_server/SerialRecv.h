@@ -1,12 +1,13 @@
 #ifndef SerialRecv_H
 #define SerialRecv_H
 #define PeripheralSerial Serial
+#define DISPLAY_BUFFER_SIZE 41
 
 class SerialRecv {
 private:
-  const uint8_t START_MARKER = 0x5B;  // '['
-  const uint8_t END_MARKER = 0x5D;    // ']'
-  uint8_t buffer[40];                 // START_MARKER + 8 + checksum + END_MARKER
+  const uint8_t START_MARKER = 0x5B;    // '['
+  const uint8_t END_MARKER = 0x5D;      // ']'
+  uint8_t buffer[DISPLAY_BUFFER_SIZE];  // START_MARKER + 8 + checksum + END_MARKER
   uint8_t idx = 0;
   bool isReceiving = false;
 
@@ -25,7 +26,7 @@ public:
   uint8_t dos;
   uint16_t ais[12];
   uint16_t aos[4];
-  uint8_t aiMappingMode;
+  uint16_t aiModes;
 
   SerialRecv(){};
 
@@ -45,10 +46,12 @@ public:
           this->isReceiving = false;
           this->idx = 0;
 
-          uint8_t payloadChecksum = this->buffer[38];
-          uint8_t calculatedChecksum = this->getChecksum(this->buffer, 1, 37);
+          uint8_t payloadChecksum = this->buffer[39];
+          uint8_t calculatedChecksum = this->getChecksum(this->buffer, 1, 38);
           if (payloadChecksum == calculatedChecksum) {
             this->extractValues();
+          } else {
+            Serial.println(F("wtf"));
           }
         }
       }
@@ -71,30 +74,30 @@ public:
       this->aos[i] = (buffer[idx++] << 8) | buffer[idx++];
     }
 
-    this->aiMappingMode = buffer[idx++];
+    this->aiModes = (buffer[idx++] << 8) | buffer[idx++];
   }
 
-  void debug() {
-    Serial.println(this->nbiotConn);
-    Serial.println(this->nbiotCsq);
-    Serial.println(this->dis);
-    Serial.println(this->dos);
+  // void debug() {
+  //   Serial.println(this->nbiotConn);
+  //   Serial.println(this->nbiotCsq);
+  //   Serial.println(this->dis);
+  //   Serial.println(this->dos);
 
-    for (size_t i = 0; i < 12; i++) {
-      Serial.print(this->ais[i]);
-      Serial.print(", ");
-    }
-    Serial.println();
+  //   for (size_t i = 0; i < 12; i++) {
+  //     Serial.print(this->ais[i]);
+  //     Serial.print(", ");
+  //   }
+  //   Serial.println();
 
-    for (size_t i = 0; i < 4; i++) {
-      Serial.print(this->aos[i]);
-      Serial.print(", ");
-    }
-    
-    Serial.println(this->aiMappingMode);
+  //   for (size_t i = 0; i < 4; i++) {
+  //     Serial.print(this->aos[i]);
+  //     Serial.print(", ");
+  //   }
 
-    Serial.println();
-  }
+  //   Serial.println(this->aiModes);
+
+  //   Serial.println();
+  // }
 
   ~SerialRecv(){};
 };

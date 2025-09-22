@@ -24,7 +24,6 @@ void setup() {
 }
 
 void loop() {
-  serialRecv.aiMappingMode = 2;
   serialRecv.listen();
   displayOLED.draw(
     serialRecv.nbiotConn,

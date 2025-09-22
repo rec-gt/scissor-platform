@@ -45,7 +45,7 @@ public:
     uint16_t ao2,
     uint16_t ao3,
     uint16_t ao4,
-    byte aiMappingMode) {
+    uint16_t aiMappingMode) {
     this->heartbeatToggle = !this->heartbeatToggle;
 
     u8g2.firstPage();
@@ -124,7 +124,7 @@ public:
 
       y = 43;
       u8g2.setCursor(0, y);
-      // u8g2.print(aiMappingMode == 0 ? F("A") : (aiMappingMode == 1 ? F("V") : F("VA")));
+      u8g2.print(aiMappingMode == 0x0000000000000001 ? F("A") : (aiMappingMode == 1 ? F("V") : F("VA")));
 
       u8g2.setCursor(12, y);
       u8g2.print(F("A"));

@@ -200,7 +200,5 @@ void loop() {
   /*=== Register MainSystem ===*/
   mainSystem.loop();
 
-  Serial.println(analogInputs[0].smoothedReading);
-
   delay(10);
 }

@@ -63,30 +63,30 @@ public:
   uint16_t getValue(bool w = false) {  // turn smoothings on or off
     switch (this->mappingMode) {
       case AI_MAPPING_MODE_4_20MA:
-        if (this->smoothedReading <= this->bp1) {
-          this->value = map(this->smoothedReading, 0, this->bp1, 0, 4000);
-        } else if (this->smoothedReading <= this->bp2) {
-          this->value = map(this->smoothedReading, this->bp1 + 1, this->bp2, 4001, 8000);
-        } else if (this->smoothedReading <= this->bp3) {
-          this->value = map(this->smoothedReading, this->bp2 + 1, this->bp3, 8001, 12000);
-        } else if (this->smoothedReading <= this->bp4) {
-          this->value = map(this->smoothedReading, this->bp3 + 1, this->bp4, 12001, 16000);
-        } else if (this->smoothedReading <= this->bp5) {
-          this->value = map(this->smoothedReading, this->bp4 + 1, this->bp5, 16001, 20000);
+        if (this->smoothedReading <= 1591) {
+          this->value = map(this->smoothedReading, 0, 1591, 0, 4000);
+        } else if (this->smoothedReading <= 3204) {
+          this->value = map(this->smoothedReading, 1591 + 1, 3204, 4001, 8000);
+        } else if (this->smoothedReading <= 4817) {
+          this->value = map(this->smoothedReading, 3204 + 1, 4817, 8001, 12000);
+        } else if (this->smoothedReading <= 6437) {
+          this->value = map(this->smoothedReading, 4817 + 1, 6437, 12001, 16000);
+        } else if (this->smoothedReading <= 8051) {
+          this->value = map(this->smoothedReading, 6437 + 1, 8051, 16001, 20000);
         }
         this->value = map(this->value, 0, 20000, 0, 4095);
         break;
       case AI_MAPPING_MODE_0_10V:
-        if (this->smoothedReading <= this->bp1) {
-          this->value = map(this->smoothedReading, 0, this->bp1, 0, 500);
-        } else if (this->smoothedReading <= this->bp2) {
-          this->value = map(this->smoothedReading, this->bp1 + 1, this->bp2, 501, 1000);
-        } else if (this->smoothedReading <= this->bp3) {
-          this->value = map(this->smoothedReading, this->bp2 + 1, this->bp3, 1001, 2500);
-        } else if (this->smoothedReading <= this->bp4) {
-          this->value = map(this->smoothedReading, this->bp3 + 1, this->bp4, 2501, 5000);
-        } else if (this->smoothedReading <= this->bp5) {
-          this->value = map(this->smoothedReading, this->bp4 + 1, this->bp5, 5001, 10000);
+        if (this->smoothedReading <= 790) {
+          this->value = map(this->smoothedReading, 0, 790, 0, 500);
+        } else if (this->smoothedReading <= 1610) {
+          this->value = map(this->smoothedReading, 790 + 1, 1610, 501, 1000);
+        } else if (this->smoothedReading <= 4061) {
+          this->value = map(this->smoothedReading, 1610 + 1, 4061, 1001, 2500);
+        } else if (this->smoothedReading <= 8151) {
+          this->value = map(this->smoothedReading, 4061 + 1, 8151, 2501, 5000);
+        } else if (this->smoothedReading <= 16306) {
+          this->value = map(this->smoothedReading, 8151 + 1, 16306, 5001, 10000);
         }
         this->value = map(this->value, 0, 10000, 0, 4095);
         break;
@@ -95,6 +95,42 @@ public:
     }
     return this->value;
   }
+
+  // uint16_t getValue(bool w = false) {  // turn smoothings on or off
+  //   switch (this->mappingMode) {
+  //     case AI_MAPPING_MODE_4_20MA:
+  //       if (this->smoothedReading <= this->bp1) {
+  //         this->value = map(this->smoothedReading, 0, this->bp1, 0, 4000);
+  //       } else if (this->smoothedReading <= this->bp2) {
+  //         this->value = map(this->smoothedReading, this->bp1 + 1, this->bp2, 4001, 8000);
+  //       } else if (this->smoothedReading <= this->bp3) {
+  //         this->value = map(this->smoothedReading, this->bp2 + 1, this->bp3, 8001, 12000);
+  //       } else if (this->smoothedReading <= this->bp4) {
+  //         this->value = map(this->smoothedReading, this->bp3 + 1, this->bp4, 12001, 16000);
+  //       } else if (this->smoothedReading <= this->bp5) {
+  //         this->value = map(this->smoothedReading, this->bp4 + 1, this->bp5, 16001, 20000);
+  //       }
+  //       this->value = map(this->value, 0, 20000, 0, 4095);
+  //       break;
+  //     case AI_MAPPING_MODE_0_10V:
+  //       if (this->smoothedReading <= this->bp1) {
+  //         this->value = map(this->smoothedReading, 0, this->bp1, 0, 500);
+  //       } else if (this->smoothedReading <= this->bp2) {
+  //         this->value = map(this->smoothedReading, this->bp1 + 1, this->bp2, 501, 1000);
+  //       } else if (this->smoothedReading <= this->bp3) {
+  //         this->value = map(this->smoothedReading, this->bp2 + 1, this->bp3, 1001, 2500);
+  //       } else if (this->smoothedReading <= this->bp4) {
+  //         this->value = map(this->smoothedReading, this->bp3 + 1, this->bp4, 2501, 5000);
+  //       } else if (this->smoothedReading <= this->bp5) {
+  //         this->value = map(this->smoothedReading, this->bp4 + 1, this->bp5, 5001, 10000);
+  //       }
+  //       this->value = map(this->value, 0, 10000, 0, 4095);
+  //       break;
+  //     default:
+  //       this->value = 0;
+  //   }
+  //   return this->value;
+  // }
 
   void readPlain() {
     Serial.println(analogRead(this->pin));

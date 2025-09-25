@@ -27,11 +27,11 @@ public:
 
   byte aoStrength = 0;  // max 255
   void AO(AnalogOutput* aos) {
-    if (timerAO.autoExpired(520)) {
+    if (timerAO.autoExpired(2000)) {
       for (size_t i = 0; i < AO_NUMS; i++) {
         aos[i].set(this->aoStrength);
       }
-      this->aoStrength += 5;
+      this->aoStrength += 85;
     }
   }
 

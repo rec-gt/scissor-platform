@@ -61,20 +61,25 @@ public:
   }
 
   uint16_t getValue(bool w = false) {  // turn smoothings on or off
+    uint32_t tmpInt = 0;
     switch (this->mappingMode) {
       case AI_MAPPING_MODE_4_20MA:
         if (this->smoothedReading <= 1591) {
-          this->value = map(this->smoothedReading, 0, 1591, 0, 4000);
+          tmpInt = map(this->smoothedReading, 0, 1591, 0, 4000);
         } else if (this->smoothedReading <= 3204) {
-          this->value = map(this->smoothedReading, 1591 + 1, 3204, 4001, 8000);
+          tmpInt = map(this->smoothedReading, 1591 + 1, 3204, 4001, 8000);
         } else if (this->smoothedReading <= 4817) {
-          this->value = map(this->smoothedReading, 3204 + 1, 4817, 8001, 12000);
+          tmpInt = map(this->smoothedReading, 3204 + 1, 4817, 8001, 12000);
         } else if (this->smoothedReading <= 6437) {
-          this->value = map(this->smoothedReading, 4817 + 1, 6437, 12001, 16000);
+          tmpInt = map(this->smoothedReading, 4817 + 1, 6437, 12001, 16000);
         } else if (this->smoothedReading <= 8051) {
-          this->value = map(this->smoothedReading, 6437 + 1, 8051, 16001, 20000);
+          tmpInt = map(this->smoothedReading, 6437 + 1, 8051, 16001, 20000UL);
         }
-        this->value = map(this->value, 0, 20000, 0, 4095);
+        this->value = map(tmpInt, 0, 20000UL, 0, 4095);
+        Serial.print(tmpInt);
+        Serial.print(" ");
+        Serial.println(this->smoothedReading);
+
         break;
       case AI_MAPPING_MODE_0_10V:
         if (this->smoothedReading <= 790) {

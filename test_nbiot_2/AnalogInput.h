@@ -72,14 +72,9 @@ public:
           tmpInt = map(this->smoothedReading, 3204 + 1, 4817, 8001, 12000);
         } else if (this->smoothedReading <= 6437) {
           tmpInt = map(this->smoothedReading, 4817 + 1, 6437, 12001, 16000);
-        } else if (this->smoothedReading <= 8051) {
-          tmpInt = map(this->smoothedReading, 6437 + 1, 8051, 16001, 20000UL);
+        } else {
+          tmpInt = map(this->smoothedReading, 6437 + 1, 8051, 16001, 20000);
         }
-        this->value = map(tmpInt, 0, 20000UL, 0, 4095);
-        Serial.print(tmpInt);
-        Serial.print(" ");
-        Serial.println(this->smoothedReading);
-
         break;
       case AI_MAPPING_MODE_0_10V:
         if (this->smoothedReading <= 790) {
@@ -90,7 +85,7 @@ public:
           this->value = map(this->smoothedReading, 1610 + 1, 4061, 1001, 2500);
         } else if (this->smoothedReading <= 8151) {
           this->value = map(this->smoothedReading, 4061 + 1, 8151, 2501, 5000);
-        } else if (this->smoothedReading <= 16306) {
+        } else {
           this->value = map(this->smoothedReading, 8151 + 1, 16306, 5001, 10000);
         }
         this->value = map(this->value, 0, 10000, 0, 4095);

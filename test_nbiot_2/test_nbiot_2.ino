@@ -98,12 +98,12 @@ AnalogOutput analogOutputs[AO_NUMS]{
 byte aiMappingMode = dryContact1.isConnected() ? AI_MAPPING_MODE_4_20MA : AI_MAPPING_MODE_0_10V;
 
 AnalogInput analogInputs[AI_NUMS] = {
-  AnalogInput(AI_PIN_1, AI_MAPPING_MODE_4_20MA),
-  AnalogInput(AI_PIN_2, AI_MAPPING_MODE_4_20MA),
-  AnalogInput(AI_PIN_3, AI_MAPPING_MODE_4_20MA),
-  AnalogInput(AI_PIN_4, AI_MAPPING_MODE_4_20MA),
-  AnalogInput(AI_PIN_5, AI_MAPPING_MODE_4_20MA),
-  AnalogInput(AI_PIN_6, AI_MAPPING_MODE_4_20MA),
+  AnalogInput(AI_PIN_1, AI_MAPPING_MODE_0_10V),
+  AnalogInput(AI_PIN_2, AI_MAPPING_MODE_0_10V),
+  AnalogInput(AI_PIN_3, AI_MAPPING_MODE_0_10V),
+  AnalogInput(AI_PIN_4, AI_MAPPING_MODE_0_10V),
+  AnalogInput(AI_PIN_5, AI_MAPPING_MODE_0_10V),
+  AnalogInput(AI_PIN_6, AI_MAPPING_MODE_0_10V),
   AnalogInput(AI_PIN_7, AI_MAPPING_MODE_0_10V),
   AnalogInput(AI_PIN_8, AI_MAPPING_MODE_0_10V),
   AnalogInput(AI_PIN_9, AI_MAPPING_MODE_0_10V),

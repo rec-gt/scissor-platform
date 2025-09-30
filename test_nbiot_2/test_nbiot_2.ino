@@ -34,12 +34,6 @@
 #define AO_PIN_3 6
 #define AO_PIN_4 7
 
-// TODO: change to these pins later
-// #define AO_PIN_1 2
-// #define AO_PIN_2 3
-// #define AO_PIN_3 5
-// #define AO_PIN_4 6
-
 #define DRY_CONTACT_PIN_1 27
 #define DRY_CONTACT_PIN_2 28
 #define DRY_CONTACT_PIN_3 29

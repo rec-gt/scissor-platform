@@ -44,7 +44,7 @@ public:
 
     if (measurement) {
       if (!this->detected) {
-        if ((millis() - this->lastDetectedMillis) > 50) {
+        if ((millis() - this->lastDetectedMillis) > 100) {
           this->detected = true;
         }
       } else {
@@ -52,7 +52,7 @@ public:
       }
     } else {
       if (this->detected) {
-        if ((millis() - this->lastEscapedMillis) > 50) {
+        if ((millis() - this->lastEscapedMillis) > 100) {
           this->detected = false;
         }
       } else {

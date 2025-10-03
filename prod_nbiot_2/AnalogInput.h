@@ -79,17 +79,17 @@ public:
         break;
       case AI_MAPPING_MODE_0_10V:
         if (this->smoothedReading <= 790) {
-          this->value = map(this->smoothedReading, 0, 790, 0, 500);
+          tmpInt = map(this->smoothedReading, 0, 790, 0, 500);
         } else if (this->smoothedReading <= 1610) {
-          this->value = map(this->smoothedReading, 790 + 1, 1610, 501, 1000);
+          tmpInt = map(this->smoothedReading, 790 + 1, 1610, 501, 1000);
         } else if (this->smoothedReading <= 4061) {
-          this->value = map(this->smoothedReading, 1610 + 1, 4061, 1001, 2500);
+          tmpInt = map(this->smoothedReading, 1610 + 1, 4061, 1001, 2500);
         } else if (this->smoothedReading <= 8151) {
-          this->value = map(this->smoothedReading, 4061 + 1, 8151, 2501, 5000);
+          tmpInt = map(this->smoothedReading, 4061 + 1, 8151, 2501, 5000);
         } else {
-          this->value = map(this->smoothedReading, 8151 + 1, 16306, 5001, 10000);
+          tmpInt = map(this->smoothedReading, 8151 + 1, 16306, 5001, 10000);
         }
-        this->value = map(this->value, 0, 10000, 0, 4095);
+        this->value = map(tmpInt, 0, 10000, 0, 4095);
         break;
       default:
         this->value = 0;

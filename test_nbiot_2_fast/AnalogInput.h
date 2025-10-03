@@ -26,7 +26,7 @@ public:
     for (size_t i = 0; i < 32; i++) {
       avg += analogRead(this->pin);
     };
-    this->value = avg / 32;
+    this->value = (avg / 32.);
   }
 
   uint16_t getValue() {

@@ -56,6 +56,7 @@
 #include "DisplayClient.h"
 #include "Modbus485.h"
 #include "Utils.h"
+#include "DetectSystem.h"
 
 DryContact dryContact1(DRY_CONTACT_PIN_1);
 
@@ -113,6 +114,8 @@ Modbus485 modbus485;
 
 Utils utils;
 
+DetectSystem detectSystem(digitalInputs, digitalOutputs, analogInputs, analogOutputs);
+
 void setup() {
   Serial.begin(9600);
   analogReference(EXTERNAL);
@@ -157,6 +160,7 @@ void loop() {
   /*=== Register MainSystem ===*/
   mainSystem.loop();
 
+  /*=== Register DetectSystem ===*/
   detectSystem.loop();
 
   delay(10);

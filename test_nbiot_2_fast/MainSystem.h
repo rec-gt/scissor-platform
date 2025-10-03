@@ -133,10 +133,6 @@ public:
     nbiotPubMsgCommand = nbiotPubMsgPrepare;
     nbiotPubMsgCommand.concat(F(","));
     nbiotPubMsgCommand.concat(nbiotPubMsgPayload);
-
-    // Serial.println(nbiotPubMsgPrepare);
-    // Serial.println(nbiotPubMsgPayload);
-    // Serial.println(nbiotPubMsgCommand);
   }
 
   void handleSubscribeContent() {

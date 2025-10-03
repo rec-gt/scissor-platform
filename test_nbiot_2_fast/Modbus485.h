@@ -19,8 +19,12 @@ public:
 
   void listen() {
     digitalWrite(RE_DE_PIN, LOW);
+    delay(1);
     while (Serial3.available()) {
       char c = Serial3.read();
+
+      Serial.print(c);
+
       if (c != '\r' && c != '\n') {
         rs485SerialRecv += c;
       }
@@ -33,8 +37,10 @@ public:
   void answer() {
     cmpStr = F("AT");
     int idx = rs485SerialRecv.indexOf(cmpStr);
+
     if (idx > -1) {
       digitalWrite(RE_DE_PIN, HIGH);
+      delay(1);
       Serial3.println(F("[Hello from RGT Hello from RGT Hello from RGT]"));
       Serial3.flush();
     }

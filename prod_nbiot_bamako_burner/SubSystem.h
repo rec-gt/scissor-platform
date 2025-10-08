@@ -22,9 +22,15 @@ public:
     : digitalInputs(digitalInputs), digitalOutputs(digitalOutputs), analogInputs(analogInputs), analogOutputs(analogOutputs) {}
 
   void loop() {
-    int actualTemp = map(analogInputs[0].getValue(), 0, 504, 0, 1300);
-    int displayTemp = map(actualTemp, 0, 1300, 0, 255);
-    analogOutputs[0].set(displayTemp);
+    int reading = analogInputs[0].getValue();
+    Serial.println(reading);
+    if (reading < 99) {
+      analogOutputs[0].set(0);
+    } else {
+      int actualTemp = map(reading, 99, 504, 0, 1300);
+      int displayTemp = map(actualTemp, 0, 1300, 0, 255);
+      analogOutputs[0].set(displayTemp);
+    }
   }
 
   ~SubSystem() {}

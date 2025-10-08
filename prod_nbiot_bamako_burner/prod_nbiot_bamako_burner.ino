@@ -56,8 +56,7 @@
 #include "DisplayClient.h"
 #include "Modbus485.h"
 #include "Utils.h"
-
-DryContact dryContact1(DRY_CONTACT_PIN_1);
+#include "SubSystem.h"
 
 DigitalInput digitalInputs[DI_NUMS] = {
   DigitalInput(DI_PIN_1),
@@ -113,6 +112,8 @@ Modbus485 modbus485;
 
 Utils utils;
 
+SubSystem subSystem(digitalInputs, digitalOutputs, analogInputs, analogOutputs);
+
 void setup() {
   Serial.begin(9600);
   analogReference(EXTERNAL);
@@ -156,6 +157,9 @@ void loop() {
 
   /*=== Register MainSystem ===*/
   mainSystem.loop();
+
+  /*=== Register subSystem ===*/
+  subSystem.loop();
 
   delay(10);
 }

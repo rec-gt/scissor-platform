@@ -577,12 +577,17 @@ public:
       }
 
       if (!utils.isNumeric(nbiotCSQ)) {
+        Serial.println("Z+" + nbiotCSQ);
+
         nbiotSoftReset = true;
         nbiotCSQ = F("0");
       }
 
       {
         int numCSQ = nbiotCSQ.toInt();
+
+        Serial.println("Z+" + numCSQ);
+
         if (!(numCSQ >= 5 && numCSQ <= 31)) {
           nbiotSoftReset = true;
           nbiotCSQ = F("0");

@@ -37,7 +37,6 @@ public:
     this->buffer[idx++] = dos;
 
     for (int i = 0; i < 12; i++) {
-      Serial.println(ais[i].value);
       this->buffer[idx++] = (ais[i].value >> 8) & 0xFF;
       this->buffer[idx++] = ais[i].value & 0xFF;
     }

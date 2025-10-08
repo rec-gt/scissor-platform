@@ -565,11 +565,13 @@ public:
     idx = nbiotSerialRecv.indexOf(cmpStr);
 
     if (idx > -1) {
-      int winStart = idx + 6;
-      int winEnd = winStart + 2;
+      cmpStr = F(": ");
+      int winStart = nbiotSerialRecv.indexOf(cmpStr);
+      cmpStr = F(",");
+      int winEnd = nbiotSerialRecv.indexOf(cmpStr);
 
       {
-        nbiotCSQ = nbiotSerialRecv.substring(winStart, winEnd);
+        nbiotCSQ = nbiotSerialRecv.substring(winStart + 2, winEnd);
       }
 
       if (nbiotCSQ == "99") {
@@ -577,17 +579,12 @@ public:
       }
 
       if (!utils.isNumeric(nbiotCSQ)) {
-        Serial.println("Z+" + nbiotCSQ);
-
         nbiotSoftReset = true;
         nbiotCSQ = F("0");
       }
 
       {
         int numCSQ = nbiotCSQ.toInt();
-
-        Serial.println("Z+" + numCSQ);
-
         if (!(numCSQ >= 5 && numCSQ <= 31)) {
           nbiotSoftReset = true;
           nbiotCSQ = F("0");

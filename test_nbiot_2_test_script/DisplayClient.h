@@ -52,7 +52,7 @@ public:
 
     this->buffer[idx++] = getChecksum(this->buffer, 1, idx - 1);
 
-    this->buffer[idx] = 0x5D;  // ']'
+    this->buffer[idx++] = 0x5D;  // ']'
   }
 
   void sendBuffer() {

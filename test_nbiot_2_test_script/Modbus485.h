@@ -23,6 +23,8 @@ public:
     while (Serial3.available()) {
       char c = Serial3.read();
 
+      Serial.print(c);
+
       if (c != '\r' && c != '\n') {
         rs485SerialRecv += c;
       }

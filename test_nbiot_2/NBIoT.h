@@ -565,11 +565,13 @@ public:
     idx = nbiotSerialRecv.indexOf(cmpStr);
 
     if (idx > -1) {
-      int winStart = idx + 6;
-      int winEnd = winStart + 2;
+      cmpStr = F(": ");
+      int winStart = nbiotSerialRecv.indexOf(cmpStr);
+      cmpStr = F(",");
+      int winEnd = nbiotSerialRecv.indexOf(cmpStr);
 
       {
-        nbiotCSQ = nbiotSerialRecv.substring(winStart, winEnd);
+        nbiotCSQ = nbiotSerialRecv.substring(winStart + 2, winEnd);
       }
 
       if (nbiotCSQ == "99") {

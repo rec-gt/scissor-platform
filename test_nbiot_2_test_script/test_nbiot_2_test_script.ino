@@ -56,8 +56,7 @@
 #include "DisplayClient.h"
 #include "Modbus485.h"
 #include "Utils.h"
-
-DryContact dryContact1(DRY_CONTACT_PIN_1);
+#include "Test.h"
 
 DigitalInput digitalInputs[DI_NUMS] = {
   DigitalInput(DI_PIN_1),
@@ -89,16 +88,16 @@ AnalogOutput analogOutputs[AO_NUMS]{
 };
 
 AnalogInput analogInputs[AI_NUMS] = {
-  AnalogInput(AI_PIN_1, AI_MAPPING_MODE_4_20MA),
-  AnalogInput(AI_PIN_2, AI_MAPPING_MODE_4_20MA),
-  AnalogInput(AI_PIN_3, AI_MAPPING_MODE_4_20MA),
-  AnalogInput(AI_PIN_4, AI_MAPPING_MODE_4_20MA),
-  AnalogInput(AI_PIN_5, AI_MAPPING_MODE_4_20MA),
-  AnalogInput(AI_PIN_6, AI_MAPPING_MODE_4_20MA),
-  AnalogInput(AI_PIN_7, AI_MAPPING_MODE_4_20MA),
-  AnalogInput(AI_PIN_8, AI_MAPPING_MODE_4_20MA),
-  AnalogInput(AI_PIN_9, AI_MAPPING_MODE_4_20MA),
-  AnalogInput(AI_PIN_10, AI_MAPPING_MODE_4_20MA),
+  AnalogInput(AI_PIN_1, AI_MAPPING_MODE_0_10V),
+  AnalogInput(AI_PIN_2, AI_MAPPING_MODE_0_10V),
+  AnalogInput(AI_PIN_3, AI_MAPPING_MODE_0_10V),
+  AnalogInput(AI_PIN_4, AI_MAPPING_MODE_0_10V),
+  AnalogInput(AI_PIN_5, AI_MAPPING_MODE_0_10V),
+  AnalogInput(AI_PIN_6, AI_MAPPING_MODE_0_10V),
+  AnalogInput(AI_PIN_7, AI_MAPPING_MODE_0_10V),
+  AnalogInput(AI_PIN_8, AI_MAPPING_MODE_0_10V),
+  AnalogInput(AI_PIN_9, AI_MAPPING_MODE_0_10V),
+  AnalogInput(AI_PIN_10, AI_MAPPING_MODE_0_10V),
   AnalogInput(AI_PIN_11, AI_MAPPING_MODE_0_10V),
   AnalogInput(AI_PIN_12, AI_MAPPING_MODE_0_10V)
 };
@@ -112,6 +111,8 @@ DisplayClient displayClient;
 Modbus485 modbus485;
 
 Utils utils;
+
+Test test;
 
 void setup() {
   Serial.begin(9600);
@@ -140,8 +141,8 @@ void setup() {
   Serial.print(res ? F("[Str Space OK]") : F("[String Space NOT OK]"));
 
   /*=== NBIoT ===*/
-  // nbiot.init(true);
-  // nbiot.debug();
+  nbiot.init(true);
+  nbiot.debug();
 
   /*=== Display ===*/
   displayClient.setup();
@@ -149,13 +150,16 @@ void setup() {
 
 void loop() {
   /*=== Register NBIoT ===*/
-  // nbiot.loop();
+  nbiot.loop();
 
   /*=== Register Modbus ===*/
   modbus485.loop();
 
   /*=== Register MainSystem ===*/
   mainSystem.loop();
+
+  test.DO(digitalOutputs);
+  test.AO(analogOutputs);
 
   delay(10);
 }

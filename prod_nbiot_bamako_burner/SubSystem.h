@@ -22,7 +22,7 @@ public:
     : digitalInputs(digitalInputs), digitalOutputs(digitalOutputs), analogInputs(analogInputs), analogOutputs(analogOutputs) {}
 
   void loop() {
-    int actualTemp = map(analogInputs[0].getValue(), 0, 511, 0, 1300);
+    int actualTemp = map(analogInputs[0].getValue(), 0, 504, 0, 1300);
     int displayTemp = map(actualTemp, 0, 1300, 0, 255);
     analogOutputs[0].set(displayTemp);
   }

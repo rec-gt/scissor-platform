@@ -61,6 +61,8 @@ public:
         mostFrequent = arr[i];
       }
     }
+
+    return mostFrequent;
   }
 
   uint16_t getValue() {

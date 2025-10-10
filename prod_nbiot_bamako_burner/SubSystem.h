@@ -26,10 +26,11 @@ private:
   }
 
 public:
-  int configurableTemp = 40;
-
   SubSystem(DigitalInput *digitalInputs, DigitalOutput *digitalOutputs, AnalogInput *analogInputs, AnalogOutput *analogOutputs)
-    : digitalInputs(digitalInputs), digitalOutputs(digitalOutputs), analogInputs(analogInputs), analogOutputs(analogOutputs) {}
+    : digitalInputs(digitalInputs), digitalOutputs(digitalOutputs), analogInputs(analogInputs), analogOutputs(analogOutputs) {
+    digitalOutputs[0].connect();
+    digitalOutputs[1].connect();
+  }
 
   void loop() {
     this->handle800Temp();
@@ -67,12 +68,12 @@ public:
     analogOutputs[3].set(aoValue);
 
     // === logic control ===
-    if (actualTemp > this->configurableTemp) {
+    if (reading >= 113) {
       digitalOutputs[1].cut();
-    } else {
-      if (actualTemp <= this->configurableTemp - 5) {
-        digitalOutputs[1].connect();
-      }
+    }
+
+    if (reading <= 111) {
+      digitalOutputs[1].connect();
     }
   }
 

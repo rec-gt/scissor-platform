@@ -26,7 +26,7 @@ private:
   }
 
   int breakPoint1 = 372;  // value in reading, 372 (800 degree C)
-  int breakPoint2 = 135;  // value in reading
+  int breakPoint2 = 234;  // value in reading
 
   bool prevBtnState = false;
 
@@ -72,7 +72,7 @@ public:
 
     // === display actual temperature ===
     analogOutputs[1].set(aoValue);
-    analogInputs[5].value = 1234;
+    analogInputs[5].value = (this->breakPoint2) * 3 - 306;
 
     // === logic control ===
     if (reading >= this->breakPoint2) {
@@ -93,8 +93,8 @@ public:
       this->prevBtnState = state;
       if (state == 0) {
         this->breakPoint2 += 4;
-        if (this->breakPoint2 > 155) {
-          this->breakPoint2 = 135;
+        if (this->breakPoint2 >= 254) {
+          this->breakPoint2 = 234;
         }
       }
     }

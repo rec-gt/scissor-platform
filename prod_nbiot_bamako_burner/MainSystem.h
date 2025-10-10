@@ -56,6 +56,9 @@ public:
     }
 
     for (size_t i = 0; i < AI_NUMS; i++) {
+      if (i == 5) {
+        continue;
+      }
       analogInputs[i].listen();
     }
   }

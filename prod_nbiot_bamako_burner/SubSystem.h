@@ -17,24 +17,6 @@ private:
   AnalogInput *analogInputs;
   AnalogOutput *analogOutputs;
 
-public:
-  int configurableTemp = 450;
-
-  SubSystem(DigitalInput *digitalInputs, DigitalOutput *digitalOutputs, AnalogInput *analogInputs, AnalogOutput *analogOutputs)
-    : digitalInputs(digitalInputs), digitalOutputs(digitalOutputs), analogInputs(analogInputs), analogOutputs(analogOutputs) {}
-
-  void loop() {
-    int reading = analogInputs[0].getValue();
-    Serial.println(reading);
-    if (reading < 99) {
-      analogOutputs[0].set(0);
-    } else {
-      int actualTemp = map(reading, 99, 504, 0, 1300);
-      int displayTemp = map(actualTemp, 0, 1300, 0, 255);
-      analogOutputs[0].set(displayTemp);
-    }
-  }
-
   int readingToActualTemp(int reading) {
     if (reading < 99) {
       return 0;
@@ -43,9 +25,20 @@ public:
     }
   }
 
+public:
+  int configurableTemp = 450;
+
+  SubSystem(DigitalInput *digitalInputs, DigitalOutput *digitalOutputs, AnalogInput *analogInputs, AnalogOutput *analogOutputs)
+    : digitalInputs(digitalInputs), digitalOutputs(digitalOutputs), analogInputs(analogInputs), analogOutputs(analogOutputs) {}
+
+  void loop() {
+    this->handle800Temp();
+    this->handleConfigurableTemp();
+  }
+
   void handle800Temp() {
     int reading = analogInputs[0].getValue();
-    int actualTemp = readingToActualTemp(reading);
+    int actualTemp = this->readingToActualTemp(reading);
     int aoValue = map(actualTemp, 0, 1300, 0, 255);
 
     // === display actual temperature ===
@@ -61,7 +54,7 @@ public:
 
   void handleConfigurableTemp() {
     int reading = analogInputs[1].getValue();
-    int actualTemp = readingToActualTemp(reading);
+    int actualTemp = this->readingToActualTemp(reading);
     int aoValue = map(actualTemp, 0, 1300, 0, 255);
 
     // === display actual temperature ===

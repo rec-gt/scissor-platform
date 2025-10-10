@@ -72,7 +72,7 @@ public:
 
     // === display actual temperature ===
     analogOutputs[1].set(aoValue);
-    analogInputs[5].reading = this->breakPoint2;
+    analogInputs[5].value = 1234;
 
     // === logic control ===
     if (reading >= this->breakPoint2) {
@@ -99,7 +99,7 @@ public:
       }
     }
   }
-  
+
   ~SubSystem() {}
 };
 

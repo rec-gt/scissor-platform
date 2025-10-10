@@ -10,7 +10,6 @@ private:
 
 public:
   uint16_t reading;
-  uint16_t smoothedReading;
   uint16_t value;
   byte mappingMode;
 

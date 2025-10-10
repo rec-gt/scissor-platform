@@ -14,6 +14,11 @@ public:
   uint16_t value;
   byte mappingMode;
 
+  byte valueHistorySize = 10;
+  uint16_t valueHistory[10] = {};
+  byte idx = 0;
+  uint16_t majorValue = 0;
+
   AnalogInput() {}
 
   AnalogInput(byte pin, byte mappingMode = AI_MAPPING_MODE_4_20MA)
@@ -27,6 +32,35 @@ public:
       avg += analogRead(this->pin);
     };
     this->value = (avg / 64.);
+    this->updateValueHistory();
+    this->majorValue = this->findMostFrequentValue(this->valueHistory, this->valueHistorySize);
+  }
+
+  void updateValueHistory() {
+    for (size_t i = 1; i < this->valueHistorySize; i++) {
+      this->valueHistory[i - 1] = this->valueHistory[i];
+    }
+    this->valueHistory[this->valueHistorySize - 1] = this->value;
+  }
+
+  uint16_t findMostFrequentValue(uint16_t arr[], int size) {
+    int mostFrequent = 0;
+    int maxCount = 0;
+
+    for (int i = 0; i < size; i++) {
+      int count = 0;
+
+      for (int j = 0; j < size; j++) {
+        if (arr[i] == arr[j]) {
+          count++;
+        }
+      }
+
+      if (count > maxCount) {
+        maxCount = count;
+        mostFrequent = arr[i];
+      }
+    }
   }
 
   uint16_t getValue() {

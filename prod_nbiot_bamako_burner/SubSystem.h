@@ -38,6 +38,7 @@ public:
   void loop() {
     this->handle800Temp();
     this->handleConfigurableTemp();
+    this->handleChangeConfigTemp();
   }
 
   void handle800Temp() {
@@ -78,6 +79,13 @@ public:
     if (reading <= this->breakPoint2 - 4) {
       digitalOutputs[1].connect();
     }
+  }
+
+
+  void handleChangeConfigTemp() {
+    digitalInputs[1].listen();
+    bool state = digitalInputs[1].getState();
+    Serial.println(state);
   }
 
   ~SubSystem() {}

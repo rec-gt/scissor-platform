@@ -26,7 +26,7 @@ private:
   }
 
 public:
-  int configurableTemp = 450;
+  int configurableTemp = 40;
 
   SubSystem(DigitalInput *digitalInputs, DigitalOutput *digitalOutputs, AnalogInput *analogInputs, AnalogOutput *analogOutputs)
     : digitalInputs(digitalInputs), digitalOutputs(digitalOutputs), analogInputs(analogInputs), analogOutputs(analogOutputs) {}
@@ -57,14 +57,22 @@ public:
     int actualTemp = this->readingToActualTemp(reading);
     int aoValue = map(actualTemp, 0, 1300, 0, 255);
 
+    Serial.println(reading);
+    Serial.println(actualTemp);
+    Serial.println(aoValue);
+
     // === display actual temperature ===
     analogOutputs[1].set(aoValue);
+    analogOutputs[2].set(aoValue);
+    analogOutputs[3].set(aoValue);
 
     // === logic control ===
     if (actualTemp > this->configurableTemp) {
       digitalOutputs[1].cut();
     } else {
-      digitalOutputs[1].connect();
+      if (actualTemp <= this->configurableTemp - 5) {
+        digitalOutputs[1].connect();
+      }
     }
   }
 

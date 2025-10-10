@@ -28,6 +28,8 @@ private:
   int breakPoint1 = 372;  // value in reading, 372 (800 degree C)
   int breakPoint2 = 135;  // value in reading
 
+  bool prevBtnState = false;
+
 public:
   SubSystem(DigitalInput *digitalInputs, DigitalOutput *digitalOutputs, AnalogInput *analogInputs, AnalogOutput *analogOutputs)
     : digitalInputs(digitalInputs), digitalOutputs(digitalOutputs), analogInputs(analogInputs), analogOutputs(analogOutputs) {
@@ -70,6 +72,7 @@ public:
 
     // === display actual temperature ===
     analogOutputs[1].set(aoValue);
+    analogInputs[5].reading = this->breakPoint2;
 
     // === logic control ===
     if (reading >= this->breakPoint2) {
@@ -83,11 +86,20 @@ public:
 
 
   void handleChangeConfigTemp() {
-    digitalInputs[1].listen();
-    bool state = digitalInputs[1].getState();
-    Serial.println(state);
-  }
+    digitalInputs[6].listen();
+    bool state = digitalInputs[6].getState();
 
+    if (this->prevBtnState != state) {  // state change detected
+      this->prevBtnState = state;
+      if (state == 0) {
+        this->breakPoint2 += 4;
+        if (this->breakPoint2 > 155) {
+          this->breakPoint2 = 135;
+        }
+      }
+    }
+  }
+  
   ~SubSystem() {}
 };
 

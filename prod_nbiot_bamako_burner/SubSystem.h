@@ -25,6 +25,9 @@ private:
     }
   }
 
+  int breakPoint1 = 372;  // value in reading, 372 (800 degree C)
+  int breakPoint2 = 135;  // value in reading
+
 public:
   SubSystem(DigitalInput *digitalInputs, DigitalOutput *digitalOutputs, AnalogInput *analogInputs, AnalogOutput *analogOutputs)
     : digitalInputs(digitalInputs), digitalOutputs(digitalOutputs), analogInputs(analogInputs), analogOutputs(analogOutputs) {
@@ -46,9 +49,11 @@ public:
     analogOutputs[0].set(aoValue);
 
     // === logic control ===
-    if (actualTemp > 800) {
+    if (reading >= this->breakPoint1) {
       digitalOutputs[0].cut();
-    } else {
+    }
+
+    if (reading <= this->breakPoint1 - 4) {
       digitalOutputs[0].connect();
     }
   }
@@ -64,15 +69,13 @@ public:
 
     // === display actual temperature ===
     analogOutputs[1].set(aoValue);
-    analogOutputs[2].set(aoValue);
-    analogOutputs[3].set(aoValue);
 
     // === logic control ===
-    if (reading >= 113) {
+    if (reading >= this->breakPoint2) {
       digitalOutputs[1].cut();
     }
 
-    if (reading <= 113 - 3) {
+    if (reading <= this->breakPoint2 - 4) {
       digitalOutputs[1].connect();
     }
   }

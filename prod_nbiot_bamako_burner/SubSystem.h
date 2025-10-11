@@ -60,9 +60,9 @@ public:
     int actualTemp = this->readingToActualTemp(reading);
     int aoValue = map(actualTemp, 0, 1300, 0, 255);
 
-    // Serial.println(reading);
-    // Serial.println(actualTemp);
-    // Serial.println(aoValue);
+    Serial.println(reading);
+    Serial.println(actualTemp);
+    Serial.println(aoValue);
 
     // === display actual temperature ===
     analogOutputs[1].set(aoValue);

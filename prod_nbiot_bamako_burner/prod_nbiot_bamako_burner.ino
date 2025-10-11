@@ -58,8 +58,6 @@
 #include "Utils.h"
 #include "SubSystem.h"
 
-
-
 MainSystem mainSystem;
 
 NBIoT nbiot;
@@ -99,7 +97,7 @@ void setup() {
   Serial.print(res ? F("[Str Space OK]") : F("[String Space NOT OK]"));
 
   /*=== NBIoT ===*/
-  nbiot.init(true);
+  // nbiot.init(true);
   // nbiot.debug();
 
   /*=== Display ===*/
@@ -108,7 +106,7 @@ void setup() {
 
 void loop() {
   /*=== Register NBIoT ===*/
-  nbiot.loop();
+  // nbiot.loop();
 
   /*=== Register Modbus ===*/
   modbus485.loop();

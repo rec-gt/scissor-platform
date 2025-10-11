@@ -1,22 +1,21 @@
 #ifndef AnalogInput_H
 #define AnalogInput_H
 
+#define AI_SHIFT_BITS 4
+#define AI_OVERSAMPLING_FACTOR 256  // 2 ^ (2 * 4)
 #define AI_MAPPING_MODE_4_20MA 0
 #define AI_MAPPING_MODE_0_10V 1
+#define AI_SMOOTHING_SAMPLE_SIZE 24
 
 class AnalogInput {
-private:
+protected:
   byte pin;
 
 public:
   uint16_t reading;
+  uint16_t smoothedReading;
+  uint16_t readinHistory[AI_SMOOTHING_SAMPLE_SIZE];
   uint16_t value;
-  byte mappingMode;
-
-  byte valueHistorySize = 9;
-  uint16_t valueHistory[9] = {};
-  byte idx = 0;
-  uint16_t majorValue = 0;
 
   AnalogInput() {}
 
@@ -26,42 +25,47 @@ public:
   }
 
   void listen() {
+    uint32_t sum = 0;
+
+    for (int i = 0; i < AI_OVERSAMPLING_FACTOR; i++) {
+      sum += analogRead(this->pin);
+      delayMicroseconds(1);
+    }
+
+    /*=== Update Reading ===*/
+    this->reading = sum >> AI_SHIFT_BITS;
+
+    /*=== Update Reading History ===*/
+    for (size_t i = 1; i < AI_SMOOTHING_SAMPLE_SIZE; i++) {
+      this->readinHistory[i - 1] = this->readinHistory[i];
+    }
+    this->readinHistory[AI_SMOOTHING_SAMPLE_SIZE - 1] = this->reading;
+
+    /*=== get smoothed reading ===*/
+    uint32_t smoothSum = 0;
+    for (size_t i = 0; i < AI_SMOOTHING_SAMPLE_SIZE; i++) {
+      smoothSum += this->readinHistory[i];
+    }
+    this->smoothedReading = smoothSum / AI_SMOOTHING_SAMPLE_SIZE;
+  }
+
+  uint16_t getValue() {
+    this->value = map(this->smoothedReading, 0, 16063, 0, 4095);
+    return this->value;
+  }
+};
+
+class AnalogInputFaster : public AnalogInput {
+public:
+  AnalogInputFaster(byte pin)
+    : AnalogInput(pin) {}
+
+  void listen() {
     uint32_t avg = 0;
-    for (size_t i = 0; i < 32; i++) {
+    for (size_t i = 0; i < 64; i++) {
       avg += analogRead(this->pin);
     };
-    this->value = (avg / 32.);
-    this->updateValueHistory();
-    this->majorValue = this->findMostFrequentValue(this->valueHistory, this->valueHistorySize);
-  }
-
-  void updateValueHistory() {
-    for (size_t i = 1; i < this->valueHistorySize; i++) {
-      this->valueHistory[i - 1] = this->valueHistory[i];
-    }
-    this->valueHistory[this->valueHistorySize - 1] = this->value;
-  }
-
-  uint16_t findMostFrequentValue(uint16_t arr[], int size) {
-    uint16_t mostFrequent = 0;
-    int maxCount = 0;
-
-    for (int i = 0; i < size; i++) {
-      int count = 0;
-
-      for (int j = 0; j < size; j++) {
-        if (arr[i] == arr[j]) {
-          count++;
-        }
-      }
-
-      if (count > maxCount) {
-        maxCount = count;
-        mostFrequent = arr[i];
-      }
-    }
-
-    return mostFrequent;
+    this->value = (avg / 64);
   }
 
   uint16_t getValue() {

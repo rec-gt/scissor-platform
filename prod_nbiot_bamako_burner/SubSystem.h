@@ -38,7 +38,7 @@ public:
   }
 
   void handle800Temp() {
-    int reading = analogInputs[0].majorValue;
+    int reading = analogInputs[0].getValue();
     int actualTemp = this->readingToActualTemp(reading);
     int aoValue = map(actualTemp, 0, 1300, 0, 255);
 
@@ -56,7 +56,7 @@ public:
   }
 
   void handleConfigurableTemp() {
-    int reading = analogInputs[1].majorValue;
+    int reading = analogInputs[1].getValue();
     int actualTemp = this->readingToActualTemp(reading);
     int aoValue = map(actualTemp, 0, 1300, 0, 255);
 

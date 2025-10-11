@@ -8,7 +8,7 @@
 #define AI_SMOOTHING_SAMPLE_SIZE 24
 
 class AnalogInput {
-private:
+protected:
   byte pin;
 
 public:
@@ -55,15 +55,10 @@ public:
   }
 };
 
-class AnalogInputFaster {
-private:
-  byte pin;
-
+class AnalogInputFaster : public AnalogInput {
 public:
-  uint16_t value;
-
   AnalogInputFaster(byte pin)
-    : pin(pin) {}
+    : AnalogInput(pin) {}
 
   void listen() {
     uint32_t avg = 0;
@@ -74,6 +69,7 @@ public:
   }
 
   uint16_t getValue() {
+    Serial.print("here");
     return this->value;
   }
 };

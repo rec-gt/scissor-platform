@@ -15,7 +15,7 @@ public:
   uint16_t readingHistory[AI_SMOOTHING_SAMPLE_SIZE];
   uint16_t value;
 
-  AnalogInput() {}
+  AnalogInput(void) {}
 
   AnalogInput(byte pin)
     : pin(pin) {
@@ -51,6 +51,8 @@ public:
     this->value = map(this->smoothedReading, 0, 16063, 0, 4095);
     return this->value;
   }
+
+  ~AnalogInput() {}
 };
 
 class AnalogInputFaster : public AnalogInput {
@@ -78,6 +80,8 @@ private:
   }
 
 public:
+  AnalogInputFaster(void){};
+
   AnalogInputFaster(byte pin)
     : AnalogInput(pin) {}
 
@@ -94,12 +98,15 @@ public:
     }
     this->readingHistory[AI_SMOOTHING_SAMPLE_SIZE - 1] = this->reading;
 
+    /*=== Find Most Frequent Value ===*/
     this->value = this->findMostFrequentValue(this->readingHistory, AI_SMOOTHING_SAMPLE_SIZE);
   }
 
   uint16_t getValue() {
     return this->value;
   }
+
+  ~AnalogInputFaster(){};
 };
 
 #endif

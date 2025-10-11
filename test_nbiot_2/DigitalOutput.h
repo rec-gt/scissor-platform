@@ -7,7 +7,7 @@ private:
   bool prevState = false;  // true = connect, false = cut
 
 public:
-  DigitalOutput() {}
+  DigitalOutput(void) {}
 
   DigitalOutput(byte pin)
     : pin(pin) {
@@ -33,6 +33,8 @@ public:
   bool getState() {
     return this->prevState;
   }
+
+  ~DigitalOutput() {}
 };
 
 #endif

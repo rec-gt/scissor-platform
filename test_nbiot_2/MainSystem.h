@@ -12,25 +12,19 @@
 
 class MainSystem {
 private:
-  DigitalInput *digitalInputs;
-  DigitalOutput *digitalOutputs;
-  AnalogInput *analogInputs;
-  AnalogOutput *analogOutputs;
-
   byte DIPayload = 0;
   byte DOPayload = 0;
 
   unsigned long prevMillisDisplay;
 
 public:
-  MainSystem(DigitalInput *digitalInputs, DigitalOutput *digitalOutputs, AnalogInput *analogInputs, AnalogOutput *analogOutputs)
-    : digitalInputs(digitalInputs), digitalOutputs(digitalOutputs), analogInputs(analogInputs), analogOutputs(analogOutputs) {}
+  MainSystem(void){};
 
   void loop() {
     /*=== Listen Input Ports ===*/
     this->listen();
 
-    /*=== Display (for NBIoT, DO, AO, DI, AI)===*/
+    /*=== Display===*/
     this->handleDisplayContent();
 
     /*=== NBIoT Publish ===*/

@@ -62,14 +62,13 @@ public:
 
   void listen() {
     uint32_t avg = 0;
-    for (size_t i = 0; i < 32; i++) {
+    for (size_t i = 0; i < 64; i++) {
       avg += analogRead(this->pin);
     };
-    this->value = (avg / 32);
+    this->value = (avg / 64);
   }
 
   uint16_t getValue() {
-    Serial.print("here");
     return this->value;
   }
 };

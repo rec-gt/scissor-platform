@@ -40,7 +40,7 @@ public:
 
     if (idx > -1) {
       digitalWrite(RE_DE_PIN, HIGH);
-      delay(1);
+      delay(2);
       Serial3.println(F("[Hello from RGT Hello from RGT Hello from RGT]"));
       Serial3.flush();
     }

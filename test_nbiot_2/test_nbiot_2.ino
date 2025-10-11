@@ -13,13 +13,9 @@
 #include "Globals.h"
 
 MainSystem mainSystem;
-
 NBIoT nbiot;
-
 DisplayClient displayClient;
-
 Modbus485 modbus485;
-
 Utils utils;
 
 void setup() {
@@ -45,11 +41,10 @@ void setup() {
   nbiotPubMsgPayload.reserve(256);
   nbiotPubMsgCommand.reserve(256);
   bool res = rubbishStr.reserve(278);  //push it to limit
-
   Serial.print(res ? F("[Str Space OK]") : F("[String Space NOT OK]"));
 
   /*=== NBIoT ===*/
-  // nbiot.init(true);
+  nbiot.init(true);
   // nbiot.debug();
 
   /*=== Display ===*/
@@ -58,16 +53,13 @@ void setup() {
 
 void loop() {
   /*=== Register NBIoT ===*/
-  // nbiot.loop();
+  nbiot.loop();
 
   /*=== Register Modbus ===*/
   modbus485.loop();
 
   /*=== Register MainSystem ===*/
   mainSystem.loop();
-
-  Serial.println(analogInputs[4].smoothedReading);
-  Serial.println(analogInputs[4].value);
 
   delay(10);
 }

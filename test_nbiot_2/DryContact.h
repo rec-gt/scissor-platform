@@ -6,6 +6,8 @@ private:
   byte pin;
 
 public:
+  DryContact(void) {}
+
   DryContact(byte pin)
     : pin(pin) {
     pinMode(this->pin, INPUT_PULLUP);
@@ -14,6 +16,8 @@ public:
   bool isConnected() {
     return digitalRead(this->pin) == LOW;
   }
+  
+  ~DryContact() {}
 };
 
 #endif

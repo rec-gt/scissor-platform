@@ -162,6 +162,7 @@ void loop() {
   mainSystem.loop();
 
   Serial.println(analogInputs[4].smoothedReading);
+  Serial.println(analogInputs[4].value);
 
   delay(10);
 }

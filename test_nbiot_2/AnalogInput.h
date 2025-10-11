@@ -8,7 +8,7 @@
 #define AI_SMOOTHING_SAMPLE_SIZE 24
 
 class AnalogInput {
-private:
+protected:
   byte pin;
 
 public:
@@ -51,6 +51,24 @@ public:
 
   uint16_t getValue() {
     this->value = map(this->smoothedReading, 0, 16063, 0, 4095);
+    return this->value;
+  }
+};
+
+class AnalogInputFaster : public AnalogInput {
+public:
+  AnalogInputFaster(byte pin)
+    : AnalogInput(pin) {}
+
+  void listen() {
+    uint32_t avg = 0;
+    for (size_t i = 0; i < 32; i++) {
+      avg += analogRead(this->pin);
+    };
+    this->value = (avg / 32);
+  }
+
+  uint16_t getValue() {
     return this->value;
   }
 };

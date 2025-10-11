@@ -12,6 +12,11 @@
 
 class SubSystem {
 private:
+  DigitalInput *digitalInputs;
+  DigitalOutput *digitalOutputs;
+  AnalogInput *analogInputs;
+  AnalogOutput *analogOutputs;
+
   int readingToActualTemp(int reading) {
     if (reading < 99) {
       return 0;
@@ -26,7 +31,8 @@ private:
   bool prevBtnState = false;
 
 public:
-  SubSystem(void) {
+  SubSystem(DigitalInput *digitalInputs, DigitalOutput *digitalOutputs, AnalogInput *analogInputs, AnalogOutput *analogOutputs)
+    : digitalInputs(digitalInputs), digitalOutputs(digitalOutputs), analogInputs(analogInputs), analogOutputs(analogOutputs) {
     digitalOutputs[0].connect();
     digitalOutputs[1].connect();
   }

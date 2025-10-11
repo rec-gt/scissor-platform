@@ -58,9 +58,51 @@
 #include "Utils.h"
 #include "SubSystem.h"
 
+DigitalInput digitalInputs[DI_NUMS] = {
+  DigitalInput(DI_PIN_1),
+  DigitalInput(DI_PIN_2),
+  DigitalInput(DI_PIN_3),
+  DigitalInput(DI_PIN_4),
+  DigitalInput(DI_PIN_5),
+  DigitalInput(DI_PIN_6),
+  DigitalInput(DI_PIN_7),
+  DigitalInput(DI_PIN_8),
+};
 
+DigitalOutput digitalOutputs[DO_NUMS]{
+  DigitalOutput(DO_PIN_1),
+  DigitalOutput(DO_PIN_2),
+  DigitalOutput(DO_PIN_3),
+  DigitalOutput(DO_PIN_4),
+  DigitalOutput(DO_PIN_5),
+  DigitalOutput(DO_PIN_6),
+  DigitalOutput(DO_PIN_7),
+  DigitalOutput(DO_PIN_8),
+};
 
-MainSystem mainSystem;
+AnalogOutput analogOutputs[AO_NUMS]{
+  AnalogOutput(AO_PIN_1),
+  AnalogOutput(AO_PIN_2),
+  AnalogOutput(AO_PIN_3),
+  AnalogOutput(AO_PIN_4),
+};
+
+AnalogInput analogInputs[AI_NUMS] = {
+  AnalogInput(AI_PIN_1, AI_MAPPING_MODE_4_20MA),
+  AnalogInput(AI_PIN_2, AI_MAPPING_MODE_4_20MA),
+  AnalogInput(AI_PIN_3, AI_MAPPING_MODE_4_20MA),
+  AnalogInput(AI_PIN_4, AI_MAPPING_MODE_4_20MA),
+  AnalogInput(AI_PIN_5, AI_MAPPING_MODE_4_20MA),
+  AnalogInput(AI_PIN_6, AI_MAPPING_MODE_4_20MA),
+  AnalogInput(AI_PIN_7, AI_MAPPING_MODE_4_20MA),
+  AnalogInput(AI_PIN_8, AI_MAPPING_MODE_4_20MA),
+  AnalogInput(AI_PIN_9, AI_MAPPING_MODE_4_20MA),
+  AnalogInput(AI_PIN_10, AI_MAPPING_MODE_4_20MA),
+  AnalogInput(AI_PIN_11, AI_MAPPING_MODE_0_10V),
+  AnalogInput(AI_PIN_12, AI_MAPPING_MODE_0_10V)
+};
+
+MainSystem mainSystem(digitalInputs, digitalOutputs, analogInputs, analogOutputs);
 
 NBIoT nbiot;
 
@@ -70,7 +112,7 @@ Modbus485 modbus485;
 
 Utils utils;
 
-SubSystem subSystem;
+SubSystem subSystem(digitalInputs, digitalOutputs, analogInputs, analogOutputs);
 
 void setup() {
   Serial.begin(9600);

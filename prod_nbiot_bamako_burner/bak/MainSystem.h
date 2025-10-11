@@ -12,19 +12,35 @@
 
 class MainSystem {
 private:
+  DigitalInput *digitalInputs;
+  DigitalOutput *digitalOutputs;
+  AnalogInput *analogInputs;
+  AnalogOutput *analogOutputs;
+
   byte DIPayload = 0;
   byte DOPayload = 0;
 
   unsigned long prevMillisDisplay;
 
+  void getAIMode() {
+    for (size_t i = 0; i < AI_NUMS; i++) {
+      aiModes |= (analogInputs[i].mappingMode == AI_MAPPING_MODE_4_20MA ? 1 : 0) << i;
+    }
+    Serial.print(F("AI MAPPING: "));
+    Serial.println(aiModes);
+  }
+
 public:
-  MainSystem(void){};
+  MainSystem(DigitalInput *digitalInputs, DigitalOutput *digitalOutputs, AnalogInput *analogInputs, AnalogOutput *analogOutputs)
+    : digitalInputs(digitalInputs), digitalOutputs(digitalOutputs), analogInputs(analogInputs), analogOutputs(analogOutputs) {
+    this->getAIMode();
+  }
 
   void loop() {
     /*=== Listen Input Ports ===*/
     this->listen();
 
-    /*=== Display===*/
+    /*=== Display (for NBIoT, DO, AO, DI, AI)===*/
     this->handleDisplayContent();
 
     /*=== NBIoT Publish ===*/
@@ -40,6 +56,9 @@ public:
     }
 
     for (size_t i = 0; i < AI_NUMS; i++) {
+      if (i == 5) {
+        continue;
+      }
       analogInputs[i].listen();
     }
   }
@@ -48,7 +67,7 @@ public:
     if (millis() - this->prevMillisDisplay > 2000) {
       {
         int csq = nbiotCSQ.toInt();
-        displayClient.prepareBuffer(nbiot.connState, csq, this->DIPayload, this->DOPayload, analogInputs, analogOutputs, 65535);
+        displayClient.prepareBuffer(nbiot.connState, csq, this->DIPayload, this->DOPayload, analogInputs, analogOutputs, aiModes);
         displayClient.sendBuffer();
       }
       this->prevMillisDisplay = millis();

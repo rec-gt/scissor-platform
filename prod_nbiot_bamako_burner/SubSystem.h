@@ -13,7 +13,7 @@
 class SubSystem {
 private:
   int readingToActualTemp(int reading) {
-    if (reading < 99) {
+    if (reading < 204) {
       return 0;
     } else {
       return map(reading, 204, 1023, 0, 1300);
@@ -65,7 +65,7 @@ public:
     Serial.println(aoValue);
 
     // === display actual temperature ===
-    analogOutputs[1].set(aoValue);
+    analogOutputs[1].set(aoValue + 2);
     analogInputs[5].value = (this->breakPoint2) * 3 - 306;
 
     // === logic control ===

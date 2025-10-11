@@ -22,19 +22,9 @@ private:
 
   unsigned long prevMillisDisplay;
 
-  void getAIMode() {
-    for (size_t i = 0; i < AI_NUMS; i++) {
-      aiModes |= (analogInputs[i].mappingMode == AI_MAPPING_MODE_4_20MA ? 1 : 0) << i;
-    }
-    Serial.print(F("AI MAPPING: "));
-    Serial.println(aiModes);
-  }
-
 public:
   MainSystem(DigitalInput *digitalInputs, DigitalOutput *digitalOutputs, AnalogInput *analogInputs, AnalogOutput *analogOutputs)
-    : digitalInputs(digitalInputs), digitalOutputs(digitalOutputs), analogInputs(analogInputs), analogOutputs(analogOutputs) {
-    this->getAIMode();
-  }
+    : digitalInputs(digitalInputs), digitalOutputs(digitalOutputs), analogInputs(analogInputs), analogOutputs(analogOutputs) {}
 
   void loop() {
     /*=== Listen Input Ports ===*/
@@ -64,7 +54,7 @@ public:
     if (millis() - this->prevMillisDisplay > 2000) {
       {
         int csq = nbiotCSQ.toInt();
-        displayClient.prepareBuffer(nbiot.connState, csq, this->DIPayload, this->DOPayload, analogInputs, analogOutputs, aiModes);
+        displayClient.prepareBuffer(nbiot.connState, csq, this->DIPayload, this->DOPayload, analogInputs, analogOutputs, 65535);
         displayClient.sendBuffer();
       }
       this->prevMillisDisplay = millis();

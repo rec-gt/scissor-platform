@@ -11,12 +11,14 @@
 #include "Modbus485.h"
 #include "Utils.h"
 #include "Globals.h"
+#include "Test.h"
 
 MainSystem mainSystem;
 NBIoT nbiot;
 DisplayClient displayClient;
 Modbus485 modbus485;
 Utils utils;
+Test test;
 
 void setup() {
   Serial.begin(9600);
@@ -60,6 +62,8 @@ void loop() {
 
   /*=== Register MainSystem ===*/
   mainSystem.loop();
+
+  /*=== Register Testing Script ===*/
 
   delay(10);
 }

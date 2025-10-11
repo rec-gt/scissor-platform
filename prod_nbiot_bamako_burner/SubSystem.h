@@ -21,7 +21,7 @@ private:
     if (reading < 99) {
       return 0;
     } else {
-      return map(reading, 99, 504, 0, 1300);
+      return map(reading, 204, 1023, 0, 1300);
     }
   }
 

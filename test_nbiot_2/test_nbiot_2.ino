@@ -57,8 +57,6 @@
 #include "Modbus485.h"
 #include "Utils.h"
 
-DryContact dryContact1(DRY_CONTACT_PIN_1);
-
 DigitalInput digitalInputs[DI_NUMS] = {
   DigitalInput(DI_PIN_1),
   DigitalInput(DI_PIN_2),
@@ -89,19 +87,25 @@ AnalogOutput analogOutputs[AO_NUMS]{
 };
 
 AnalogInput analogInputs[AI_NUMS] = {
-  AnalogInput(AI_PIN_1, AI_MAPPING_MODE_4_20MA),
-  AnalogInput(AI_PIN_2, AI_MAPPING_MODE_4_20MA),
-  AnalogInput(AI_PIN_3, AI_MAPPING_MODE_4_20MA),
-  AnalogInput(AI_PIN_4, AI_MAPPING_MODE_4_20MA),
-  AnalogInput(AI_PIN_5, AI_MAPPING_MODE_4_20MA),
-  AnalogInput(AI_PIN_6, AI_MAPPING_MODE_4_20MA),
-  AnalogInput(AI_PIN_7, AI_MAPPING_MODE_4_20MA),
-  AnalogInput(AI_PIN_8, AI_MAPPING_MODE_4_20MA),
-  AnalogInput(AI_PIN_9, AI_MAPPING_MODE_4_20MA),
-  AnalogInput(AI_PIN_10, AI_MAPPING_MODE_4_20MA),
-  AnalogInput(AI_PIN_11, AI_MAPPING_MODE_0_10V),
-  AnalogInput(AI_PIN_12, AI_MAPPING_MODE_0_10V)
+  AnalogInput(AI_PIN_1),
+  AnalogInput(AI_PIN_2),
+  AnalogInput(AI_PIN_3),
+  AnalogInput(AI_PIN_4),
+  AnalogInput(AI_PIN_5),
+  AnalogInput(AI_PIN_6),
+  AnalogInput(AI_PIN_7),
+  AnalogInput(AI_PIN_8),
+  AnalogInput(AI_PIN_9),
+  AnalogInput(AI_PIN_10),
+  AnalogInput(AI_PIN_11),
+  AnalogInput(AI_PIN_12)
 };
+
+DryContact dryContact1(DRY_CONTACT_PIN_1);
+DryContact dryContact2(DRY_CONTACT_PIN_2);
+DryContact dryContact3(DRY_CONTACT_PIN_3);
+DryContact dryContact4(DRY_CONTACT_PIN_4);
+DryContact dryContact5(DRY_CONTACT_PIN_5);
 
 MainSystem mainSystem(digitalInputs, digitalOutputs, analogInputs, analogOutputs);
 
@@ -140,8 +144,8 @@ void setup() {
   Serial.print(res ? F("[Str Space OK]") : F("[String Space NOT OK]"));
 
   /*=== NBIoT ===*/
-  nbiot.init(true);
-  nbiot.debug();
+  // nbiot.init(true);
+  // nbiot.debug();
 
   /*=== Display ===*/
   displayClient.setup();
@@ -149,13 +153,15 @@ void setup() {
 
 void loop() {
   /*=== Register NBIoT ===*/
-  nbiot.loop();
+  // nbiot.loop();
 
   /*=== Register Modbus ===*/
   modbus485.loop();
 
   /*=== Register MainSystem ===*/
   mainSystem.loop();
+
+  Serial.println(analogInputs[4].smoothedReading);
 
   delay(10);
 }

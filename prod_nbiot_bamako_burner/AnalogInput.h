@@ -13,8 +13,8 @@ public:
   uint16_t value;
   byte mappingMode;
 
-  byte valueHistorySize = 7;
-  uint16_t valueHistory[7] = {};
+  byte valueHistorySize = 9;
+  uint16_t valueHistory[9] = {};
   byte idx = 0;
   uint16_t majorValue = 0;
 

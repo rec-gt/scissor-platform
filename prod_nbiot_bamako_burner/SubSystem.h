@@ -10,13 +10,48 @@
 #ifndef SubSystem_H
 #define SubSystem_H
 
+class Relay {
+private:
+  byte nth;
+  bool isCut = false;
+  unsigned long prevMillis = 0;
+
+public:
+  Relay(byte nth)
+    : nth(nth) {}
+
+  void cut() {
+    digitalOutputs[this->nth].cut();
+    this->isCut = true;
+    this->prevMillis = millis();
+  }
+
+  void debounceConnect() {
+    if (this->isCut) {
+      if (millis() - this->prevMillis >= 10000UL) {
+        this->isCut = false;
+        digitalOutputs[this->nth].connect();
+      }
+    }
+  }
+
+  void forceConnect() {
+    this->isCut = false;
+    digitalOutputs[this->nth].connect();
+  }
+};
+
+Relay relay1(0);
+Relay relay2(1);
+Relay relay3(2);
+
 class SubSystem {
 private:
   int readingToActualTemp(int reading) {
     if (reading < 204) {
       return 0;
     } else {
-      return map(reading, 204, 1023, 0, 1300);
+      return map(reading, 196, 1023, 0, 1300);
     }
   }
 
@@ -27,8 +62,9 @@ private:
 
 public:
   SubSystem(void) {
-    digitalOutputs[0].connect();
-    digitalOutputs[1].connect();
+    relay1.forceConnect();
+    relay2.forceConnect();
+    relay3.forceConnect();
   }
 
   void loop() {
@@ -42,16 +78,18 @@ public:
     int actualTemp = this->readingToActualTemp(reading);
     int aoValue = map(actualTemp, 0, 1300, 0, 255);
 
+    Serial.println(reading);
+    Serial.println(actualTemp);
+    Serial.println(aoValue);
+
     // === display actual temperature ===
     analogOutputs[0].set(aoValue);
 
     // === logic control ===
-    if (reading >= this->breakPoint1) {
-      digitalOutputs[0].cut();
-    }
-
-    if (reading <= this->breakPoint1 - 4) {
-      digitalOutputs[0].connect();
+    if (actualTemp >= 60) {
+      relay1.cut();
+    } else {
+      relay1.debounceConnect();
     }
   }
 
@@ -60,9 +98,6 @@ public:
     int actualTemp = this->readingToActualTemp(reading);
     int aoValue = map(actualTemp, 0, 1300, 0, 255);
 
-    Serial.println(reading);
-    Serial.println(actualTemp);
-    Serial.println(aoValue);
 
     // === display actual temperature ===
     analogOutputs[1].set(aoValue + 2);

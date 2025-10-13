@@ -102,15 +102,15 @@ public:
   void loop() {
     temperatureSensor1.listen();
     temperatureSensor1.displayTemp(0);
-    temperatureSensor1.breakpoint(relay1, 60);
+    temperatureSensor1.breakpoint(relay1, 800);
 
     temperatureSensor2.listen();
     temperatureSensor2.displayTemp(1);
-    temperatureSensor2.breakpoint(relay2, 60);
+    temperatureSensor2.breakpoint(relay2, 450);
 
     temperatureSensor3.listen();
     temperatureSensor3.displayTemp(2);
-    temperatureSensor3.breakpoint(relay3, 60);
+    temperatureSensor3.breakpoint(relay3, 250);
   }
 
   ~SubSystem() {}

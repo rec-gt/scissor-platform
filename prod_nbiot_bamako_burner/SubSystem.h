@@ -49,7 +49,7 @@ private:
   int aoValue;
 
   int readingToActualTemp(int reading) {
-    if (reading < 204) {
+    if (reading < 196) {
       return 0;
     } else {
       return map(reading, 196, 1023, 0, 1300);
@@ -92,19 +92,6 @@ TemperatureSensor temperatureSensor2(1);
 TemperatureSensor temperatureSensor3(2);
 
 class SubSystem {
-private:
-  int readingToActualTemp(int reading) {
-    if (reading < 204) {
-      return 0;
-    } else {
-      return map(reading, 196, 1023, 0, 1300);
-    }
-  }
-
-  int breakPoint2 = 234;  // value in reading
-
-  bool prevBtnState = false;
-
 public:
   SubSystem(void) {
     relay1.forceConnect();
@@ -116,47 +103,15 @@ public:
     temperatureSensor1.listen();
     temperatureSensor1.displayTemp(0);
     temperatureSensor1.breakpoint(relay1, 60);
+
     temperatureSensor2.listen();
     temperatureSensor1.displayTemp(1);
+    temperatureSensor1.breakpoint(relay1, 60);
+
     temperatureSensor3.listen();
     temperatureSensor1.displayTemp(2);
+    temperatureSensor1.breakpoint(relay1, 60);
   }
-
-
-  // void handleConfigurableTemp() {
-  //   int reading = analogInputs[1].getValue();
-  //   int actualTemp = this->readingToActualTemp(reading);
-  //   int aoValue = map(actualTemp, 0, 1300, 0, 255);
-
-
-  //   // === display actual temperature ===
-  //   analogOutputs[1].set(aoValue + 2);
-  //   analogInputs[5].value = (this->breakPoint2) * 3 - 306;
-
-  //   // === logic control ===
-  //   if (reading >= this->breakPoint2) {
-  //     digitalOutputs[1].cut();
-  //   }
-
-  //   if (reading <= this->breakPoint2 - 4) {
-  //     digitalOutputs[1].connect();
-  //   }
-  // }
-
-  // void handleChangeConfigTemp() {
-  //   digitalInputs[6].listen();
-  //   bool state = digitalInputs[6].getState();
-
-  //   if (this->prevBtnState != state) {  // state change detected
-  //     this->prevBtnState = state;
-  //     if (state == 0) {
-  //       this->breakPoint2 += 4;
-  //       if (this->breakPoint2 >= 254) {
-  //         this->breakPoint2 = 234;
-  //       }
-  //     }
-  //   }
-  // }
 
   ~SubSystem() {}
 };

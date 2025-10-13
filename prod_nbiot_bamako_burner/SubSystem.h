@@ -71,7 +71,7 @@ public:
   }
 
   void displayTemp(byte targetNth) {
-    analogOutputs[targetNth].set(this->aoValue + 1);
+    analogOutputs[targetNth].set(this->aoValue);
   }
 
   void breakpoint(Relay &relay, int threshold) {

@@ -65,9 +65,9 @@ public:
     this->actualTemp = this->readingToActualTemp(this->reading);
     this->aoValue = map(this->actualTemp, 0, 1300, 0, 255);
 
-    Serial.println(this->reading);
+    Serial.print(this->nth);
+    Serial.print(" : ");
     Serial.println(this->actualTemp);
-    Serial.println(this->aoValue);
   }
 
   void displayTemp(byte targetNth) {

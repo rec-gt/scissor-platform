@@ -41,9 +41,47 @@ public:
   }
 };
 
+class TemperatureSensor {
+private:
+  byte nth;
+  int reading;
+  int actualTemp;
+  int aoValue;
+
+  int readingToActualTemp(int reading) {
+    if (reading < 204) {
+      return 0;
+    } else {
+      return map(reading, 196, 1023, 0, 1300);
+    }
+  }
+
+public:
+  TemperatureSensor(byte nth)
+    : nth(nth) {}
+
+  void listen() {
+    this->reading = analogInputs[this->nth].getValue();
+    this->actualTemp = this->readingToActualTemp(this->reading);
+    this->aoValue = map(this->actualTemp, 0, 1300, 0, 255);
+
+    Serial.println(this->reading);
+    Serial.println(this->actualTemp);
+    Serial.println(this->aoValue);
+  }
+
+  void displayTemp(byte target) {
+    analogOutputs[0].set(this->aoValue + 1);
+  }
+};
+
 Relay relay1(0);
 Relay relay2(1);
 Relay relay3(2);
+
+TemperatureSensor temperatureSensor1(0);
+TemperatureSensor temperatureSensor2(1);
+TemperatureSensor temperatureSensor3(2);
 
 class SubSystem {
 private:
@@ -55,7 +93,6 @@ private:
     }
   }
 
-  int breakPoint1 = 372;  // value in reading, 372 (800 degree C)
   int breakPoint2 = 234;  // value in reading
 
   bool prevBtnState = false;
@@ -68,66 +105,68 @@ public:
   }
 
   void loop() {
-    this->handle800Temp();
-    this->handleConfigurableTemp();
-    this->handleChangeConfigTemp();
+    temperatureSensor1.listen();
+    temperatureSensor1.displayTemp(0);
+    temperatureSensor2.listen();
+    temperatureSensor1.displayTemp(1);
+    temperatureSensor3.listen();
+    temperatureSensor1.displayTemp(2);
   }
 
-  void handle800Temp() {
-    int reading = analogInputs[0].getValue();
-    int actualTemp = this->readingToActualTemp(reading);
-    int aoValue = map(actualTemp, 0, 1300, 0, 255);
+  // void handle800Temp() {
+  //   int reading = analogInputs[0].getValue();
+  //   int actualTemp = this->readingToActualTemp(reading);
+  //   int aoValue = map(actualTemp, 0, 1300, 0, 255);
 
-    Serial.println(reading);
-    Serial.println(actualTemp);
-    Serial.println(aoValue);
+  //   Serial.println(reading);
+  //   Serial.println(actualTemp);
+  //   Serial.println(aoValue);
 
-    // === display actual temperature ===
-    analogOutputs[0].set(aoValue);
+  //   // === display actual temperature ===
+  //   analogOutputs[0].set(aoValue + 1);
 
-    // === logic control ===
-    if (actualTemp >= 60) {
-      relay1.cut();
-    } else {
-      relay1.debounceConnect();
-    }
-  }
+  //   // === logic control ===
+  //   if (actualTemp >= 60) {
+  //     relay1.cut();
+  //   } else {
+  //     relay1.debounceConnect();
+  //   }
+  // }
 
-  void handleConfigurableTemp() {
-    int reading = analogInputs[1].getValue();
-    int actualTemp = this->readingToActualTemp(reading);
-    int aoValue = map(actualTemp, 0, 1300, 0, 255);
-
-
-    // === display actual temperature ===
-    analogOutputs[1].set(aoValue + 2);
-    analogInputs[5].value = (this->breakPoint2) * 3 - 306;
-
-    // === logic control ===
-    if (reading >= this->breakPoint2) {
-      digitalOutputs[1].cut();
-    }
-
-    if (reading <= this->breakPoint2 - 4) {
-      digitalOutputs[1].connect();
-    }
-  }
+  // void handleConfigurableTemp() {
+  //   int reading = analogInputs[1].getValue();
+  //   int actualTemp = this->readingToActualTemp(reading);
+  //   int aoValue = map(actualTemp, 0, 1300, 0, 255);
 
 
-  void handleChangeConfigTemp() {
-    digitalInputs[6].listen();
-    bool state = digitalInputs[6].getState();
+  //   // === display actual temperature ===
+  //   analogOutputs[1].set(aoValue + 2);
+  //   analogInputs[5].value = (this->breakPoint2) * 3 - 306;
 
-    if (this->prevBtnState != state) {  // state change detected
-      this->prevBtnState = state;
-      if (state == 0) {
-        this->breakPoint2 += 4;
-        if (this->breakPoint2 >= 254) {
-          this->breakPoint2 = 234;
-        }
-      }
-    }
-  }
+  //   // === logic control ===
+  //   if (reading >= this->breakPoint2) {
+  //     digitalOutputs[1].cut();
+  //   }
+
+  //   if (reading <= this->breakPoint2 - 4) {
+  //     digitalOutputs[1].connect();
+  //   }
+  // }
+
+  // void handleChangeConfigTemp() {
+  //   digitalInputs[6].listen();
+  //   bool state = digitalInputs[6].getState();
+
+  //   if (this->prevBtnState != state) {  // state change detected
+  //     this->prevBtnState = state;
+  //     if (state == 0) {
+  //       this->breakPoint2 += 4;
+  //       if (this->breakPoint2 >= 254) {
+  //         this->breakPoint2 = 234;
+  //       }
+  //     }
+  //   }
+  // }
 
   ~SubSystem() {}
 };

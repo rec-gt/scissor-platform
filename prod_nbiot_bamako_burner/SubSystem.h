@@ -70,8 +70,16 @@ public:
     Serial.println(this->aoValue);
   }
 
-  void displayTemp(byte target) {
-    analogOutputs[0].set(this->aoValue + 1);
+  void displayTemp(byte targetNth) {
+    analogOutputs[targetNth].set(this->aoValue + 1);
+  }
+
+  void breakpoint(Relay &relay, int threshold) {
+    if (this->actualTemp >= threshold) {
+      relay.cut();
+    } else {
+      relay.debounceConnect();
+    }
   }
 };
 
@@ -107,31 +115,13 @@ public:
   void loop() {
     temperatureSensor1.listen();
     temperatureSensor1.displayTemp(0);
+    temperatureSensor1.breakpoint(relay1, 60);
     temperatureSensor2.listen();
     temperatureSensor1.displayTemp(1);
     temperatureSensor3.listen();
     temperatureSensor1.displayTemp(2);
   }
 
-  // void handle800Temp() {
-  //   int reading = analogInputs[0].getValue();
-  //   int actualTemp = this->readingToActualTemp(reading);
-  //   int aoValue = map(actualTemp, 0, 1300, 0, 255);
-
-  //   Serial.println(reading);
-  //   Serial.println(actualTemp);
-  //   Serial.println(aoValue);
-
-  //   // === display actual temperature ===
-  //   analogOutputs[0].set(aoValue + 1);
-
-  //   // === logic control ===
-  //   if (actualTemp >= 60) {
-  //     relay1.cut();
-  //   } else {
-  //     relay1.debounceConnect();
-  //   }
-  // }
 
   // void handleConfigurableTemp() {
   //   int reading = analogInputs[1].getValue();

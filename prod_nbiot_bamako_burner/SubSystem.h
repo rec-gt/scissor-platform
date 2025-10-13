@@ -106,11 +106,11 @@ public:
 
     temperatureSensor2.listen();
     temperatureSensor1.displayTemp(1);
-    temperatureSensor1.breakpoint(relay1, 60);
+    temperatureSensor1.breakpoint(relay2, 60);
 
     temperatureSensor3.listen();
     temperatureSensor1.displayTemp(2);
-    temperatureSensor1.breakpoint(relay1, 60);
+    temperatureSensor1.breakpoint(relay3, 60);
   }
 
   ~SubSystem() {}

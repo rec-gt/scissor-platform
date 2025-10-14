@@ -63,9 +63,9 @@ public:
     this->actualTemp = this->readingToActualTemp(this->reading);
     this->aoValue = map(constrain(this->actualTemp, 0, 1300), 0, 1300, 0, 255);
 
-    Serial.print(this->id);
-    Serial.print(F(" : "));
-    Serial.println(this->actualTemp);
+    // Serial.print(this->id);
+    // Serial.print(F(" : "));
+    // Serial.println(this->actualTemp);
   }
 
   void displayTemp(AnalogOutput &aoModule) {
@@ -127,7 +127,7 @@ TempSensor tempSensor3(AI_3, analogInputs[AI_3]);
 
 TempSwitch tempSwitch1(DI_1, digitalInputs[DI_1], 800, 800, 800);
 TempSwitch tempSwitch2(DI_2, digitalInputs[DI_2], 450, 400, 500);
-TempSwitch tempSwitch3(DI_3, digitalInputs[DI_3], 250, 200, 300);
+TempSwitch tempSwitch3(DI_3, digitalInputs[DI_3], 50, 40, 60);
 
 class SubSystem {
 public:

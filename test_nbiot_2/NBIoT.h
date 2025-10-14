@@ -336,7 +336,7 @@ public:
       nbiotSoftReset = false;
       this->connState = STATE_WAITING_RESET;
       this->pipelineState = PIPELINE_DEFAULT;
-      Serial.println("[SOFT_RESET]");
+      Serial.println(F("[SOFT_RESET]"));
     }
   }
 

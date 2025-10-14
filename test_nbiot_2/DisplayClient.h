@@ -79,7 +79,7 @@ public:
   void debug() {
     for (size_t i = 0; i < DISPLAY_BUFFER_SIZE; i++) {
       Serial.print(this->buffer[i]);
-      Serial.print(", ");
+      Serial.print(F(", "));
     }
     Serial.println();
   }

@@ -13,16 +13,16 @@
 class Relay {
 private:
   byte id;
-  DigitalOutput &di;
+  DigitalOutput &doModule;
   bool isCut = false;
   unsigned long prevMillis = 0;
 
 public:
-  Relay(byte id, DigitalOutput &di)
-    : id(id), di(di) {}
+  Relay(byte id, DigitalOutput &doModule)
+    : id(id), doModule(doModule) {}
 
   void cut() {
-    this->di.cut();
+    this->doModule.cut();
     this->isCut = true;
     this->prevMillis = millis();
   }
@@ -31,21 +31,21 @@ public:
     if (this->isCut) {
       if (millis() - this->prevMillis >= 10000UL) {
         this->isCut = false;
-        this->di.connect();
+        this->doModule.connect();
       }
     }
   }
 
   void forceConnect() {
     this->isCut = false;
-    this->di.connect();
+    this->doModule.connect();
   }
 };
 
 class TempSensor {
 private:
   byte id;
-  AnalogInputFaster &ai;
+  AnalogInputFaster &aiModule;
   int reading;
   int actualTemp;
   int aoValue;
@@ -55,11 +55,11 @@ private:
   }
 
 public:
-  TempSensor(byte id, AnalogInputFaster &ai)
-    : id(id), ai(ai) {}
+  TempSensor(byte id, AnalogInputFaster &aiModule)
+    : id(id), aiModule(aiModule) {}
 
   void listen() {
-    this->reading = this->ai.getValue();
+    this->reading = this->aiModule.getValue();
     this->actualTemp = this->readingToActualTemp(this->reading);
     this->aoValue = map(constrain(this->actualTemp, 0, 1300), 0, 1300, 0, 255);
 
@@ -68,8 +68,8 @@ public:
     Serial.println(this->actualTemp);
   }
 
-  void displayTemp(byte targetNth) {
-    analogOutputs[targetNth].set(this->aoValue + 2);
+  void displayTemp(AnalogOutput &aoModule) {
+    aoModule.set(this->aoValue + 2);
   }
 
   void breakpoint(Relay &relay, int threshold) {
@@ -80,6 +80,10 @@ public:
     }
   }
 };
+
+class TempSwitch {
+
+}
 
 Relay relay1(DO_1, digitalOutputs[DO_1]);
 Relay relay2(DO_2, digitalOutputs[DO_2]);
@@ -99,15 +103,15 @@ public:
 
   void loop() {
     tempSensor1.listen();
-    tempSensor1.displayTemp(AO_1);
+    tempSensor1.displayTemp(analogOutputs[AO_1]);
     tempSensor1.breakpoint(relay1, 800);
 
     tempSensor2.listen();
-    tempSensor2.displayTemp(AO_2);
+    tempSensor2.displayTemp(analogOutputs[AO_2]);
     tempSensor2.breakpoint(relay2, 450);
 
     tempSensor3.listen();
-    tempSensor3.displayTemp(AO_3);
+    tempSensor3.displayTemp(analogOutputs[AO_3]);
     tempSensor3.breakpoint(relay3, 250);
   }
 

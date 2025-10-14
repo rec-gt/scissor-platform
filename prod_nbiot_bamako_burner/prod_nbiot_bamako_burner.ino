@@ -114,7 +114,7 @@ void loop() {
   mainSystem.loop();
 
   /*=== Register subSystem ===*/
-  // subSystem.loop();
+  subSystem.loop();
 
   delay(10);
 }

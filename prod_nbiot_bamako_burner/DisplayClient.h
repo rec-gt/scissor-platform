@@ -10,9 +10,6 @@
 
 class DisplayClient {
 private:
-  byte DIPayload = 0;
-  byte DOPayload = 0;
-
   uint8_t buffer[DISPLAY_BUFFER_SIZE];
 
   uint8_t getChecksum(uint8_t *buffer, uint8_t idx_from, uint8_t idx_to) {

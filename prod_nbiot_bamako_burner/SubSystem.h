@@ -101,7 +101,7 @@ public:
     if (state != this->prevState) {
       this->prevState = state;
       if (state == 1) {
-        if (this->temperature <= this->minTemp || this->temperature >= this->maxTemp) {
+        if (this->temperature < this->minTemp || this->temperature >= this->maxTemp) {
           this->temperature = this->minTemp;
         } else {
           this->temperature += 10;

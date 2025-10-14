@@ -79,6 +79,10 @@ public:
       relay.debounceConnect();
     }
   }
+
+  void displayTemp(AnalogInput &aiModule) {
+    aiModule.set(this->aoValue + 2);
+  }
 };
 
 class TempSwitch {

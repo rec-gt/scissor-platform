@@ -129,6 +129,9 @@ public:
         delay(10);
       }
     }
+
+    // update global variable
+    nbiotConnState = this->connState;
   }
 
   void ask() {

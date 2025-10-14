@@ -1,4 +1,5 @@
 #include "AsyncTimer.h"
+#include "Globals.h"
 #ifndef Test_H
 #define Test_H
 
@@ -15,9 +16,9 @@ public:
   int doCnt = 0;
   bool doToggle = true;
 
-  void DO(DigitalOutput* dos) {
+  void DO() {
     if (timerDO.autoExpired(2000)) {
-      this->doToggle ? dos[this->doCnt].connect() : dos[this->doCnt].cut();
+      this->doToggle ? digitalOutputs[this->doCnt].connect() : digitalOutputs[this->doCnt].cut();
       if (this->doCnt++ == DO_NUMS - 1) {
         this->doCnt = 0;
         this->doToggle = !this->doToggle;
@@ -26,10 +27,10 @@ public:
   }
 
   byte aoStrength = 0;  // max 255
-  void AO(AnalogOutput* aos) {
+  void AO() {
     if (timerAO.autoExpired(520)) {
       for (size_t i = 0; i < AO_NUMS; i++) {
-        aos[i].set(this->aoStrength);
+        analogOutputs[i].set(this->aoStrength);
       }
       this->aoStrength += 5;
     }

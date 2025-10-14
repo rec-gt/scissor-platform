@@ -50,7 +50,7 @@ public:
   }
 
   uint16_t getValue() {
-    this->value = map(this->smoothedReading, 0, 16063, 0, 4095);
+    this->value = map(constrain(this->smoothedReading, 0, 16063), 0, 16063, 0, 4095);
     return this->value;
   }
 };

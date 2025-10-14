@@ -64,7 +64,7 @@ public:
     this->aoValue = map(constrain(this->actualTemp, 0, 1300), 0, 1300, 0, 255);
 
     Serial.print(this->id);
-    Serial.print(" : ");
+    Serial.print(F(" : "));
     Serial.println(this->actualTemp);
   }
 
@@ -85,13 +85,28 @@ class TempSwitch {
 private:
   byte id;
   DigitalInput &diModule;
+  byte prevState = 1;
+  int minTemp;
+  int maxTemp;
+
 public:
-  TempSwitch(byte id, DigitalInput &diModule)
-    : id(id), diModule(diModule) {}
+  int temperature = 800;
+
+  TempSwitch(byte id, DigitalInput &diModule, int temperature, int minTemp, int maxTemp)
+    : id(id), diModule(diModule), temperature(temperature), minTemp(minTemp), maxTemp(maxTemp) {}
 
   void listen() {
-    if (this->diModule.getState() == LOW) {
-      Serial.println("Connected");
+    byte state = this->diModule.getState();
+
+    if (state != this->prevState) {
+      this->prevState = state;
+      if (state == 1) {
+        if (this->temperature <= this->minTemp || this->temperature >= this->maxTemp) {
+          this->temperature = this->minTemp;
+        } else {
+          this->temperature += 10;
+        }
+      }
     }
   }
 
@@ -106,7 +121,9 @@ TempSensor tempSensor1(AI_1, analogInputs[AI_1]);
 TempSensor tempSensor2(AI_2, analogInputs[AI_2]);
 TempSensor tempSensor3(AI_3, analogInputs[AI_3]);
 
-TempSwitch tempSwitch(DI_1, digitalInputs[DI_1]);
+TempSwitch tempSwitch1(DI_1, digitalInputs[DI_1], 800, 800, 800);
+TempSwitch tempSwitch2(DI_2, digitalInputs[DI_2], 450, 400, 500);
+TempSwitch tempSwitch3(DI_3, digitalInputs[DI_3], 250, 200, 300);
 
 class SubSystem {
 public:
@@ -119,17 +136,19 @@ public:
   void loop() {
     tempSensor1.listen();
     tempSensor1.displayTemp(analogOutputs[AO_1]);
-    tempSensor1.breakpoint(relay1, 800);
+    tempSensor1.breakpoint(relay1, tempSwitch1.temperature);
 
     tempSensor2.listen();
     tempSensor2.displayTemp(analogOutputs[AO_2]);
-    tempSensor2.breakpoint(relay2, 450);
+    tempSensor2.breakpoint(relay2, tempSwitch2.temperature);
 
     tempSensor3.listen();
     tempSensor3.displayTemp(analogOutputs[AO_3]);
-    tempSensor3.breakpoint(relay3, 250);
+    tempSensor3.breakpoint(relay3, tempSwitch3.temperature);
 
-    tempSwitch.listen();
+    tempSwitch1.listen();
+    tempSwitch2.listen();
+    tempSwitch3.listen();
   }
 
   ~SubSystem() {}

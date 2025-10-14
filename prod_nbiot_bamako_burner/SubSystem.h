@@ -19,7 +19,7 @@ private:
 
 public:
   Relay(byte id, DigitalOutput &di)
-    : id(id) {}
+    : id(id), di(di) {}
 
   void cut() {
     this->di.cut();

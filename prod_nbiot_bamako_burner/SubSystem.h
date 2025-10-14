@@ -79,10 +79,6 @@ public:
       relay.debounceConnect();
     }
   }
-
-  // void displayTemp(AnalogInput &aiModule) {
-  //   aiModule.set(this->aoValue + 2);
-  // }
 };
 
 class TempSwitch {
@@ -112,6 +108,10 @@ public:
         }
       }
     }
+  }
+
+  void displayTemp(AnalogInput &aiModule) {
+    aiModule.value = this->temperature;
   }
 
   ~TempSwitch(){};
@@ -151,8 +151,11 @@ public:
     tempSensor3.breakpoint(relay3, tempSwitch3.temperature);
 
     tempSwitch1.listen();
+    tempSwitch1.displayTemp(analogInputs[AI_5]);
     tempSwitch2.listen();
+    tempSwitch2.displayTemp(analogInputs[AI_6]);
     tempSwitch3.listen();
+    tempSwitch3.displayTemp(analogInputs[AI_7]);
   }
 
   ~SubSystem() {}

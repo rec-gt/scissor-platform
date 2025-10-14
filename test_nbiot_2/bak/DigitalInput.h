@@ -8,7 +8,7 @@ private:
   unsigned long prevMillis;
 
 public:
-  DigitalInput() {}
+  DigitalInput(void) {}
 
   DigitalInput(byte pin)
     : pin(pin) {
@@ -30,6 +30,8 @@ public:
   byte getState() {
     return !this->state;
   }
+
+  ~DigitalInput() {}
 };
 
 #endif

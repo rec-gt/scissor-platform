@@ -50,43 +50,6 @@
 #define AO_NUMS 4
 #define DRY_CONTACT_NUMS 5
 
-// High level IO reference
-#define DI_1 0
-#define DI_2 1
-#define DI_3 2
-#define DI_4 3
-#define DI_5 4
-#define DI_6 5
-#define DI_7 6
-#define DI_8 7
-
-#define DO_1 0
-#define DO_2 1
-#define DO_3 2
-#define DO_4 3
-#define DO_5 4
-#define DO_6 5
-#define DO_7 6
-#define DO_8 7
-
-#define AI_1 0
-#define AI_2 1
-#define AI_3 2
-#define AI_4 3
-#define AI_5 4
-#define AI_6 5
-#define AI_7 6
-#define AI_8 7
-#define AI_9 8
-#define AI_10 9
-#define AI_11 10
-#define AI_12 11
-
-#define AO_1 0
-#define AO_2 1
-#define AO_3 2
-#define AO_4 3
-
 DigitalInput digitalInputs[DI_NUMS] = {
   DigitalInput(DI_PIN_1),
   DigitalInput(DI_PIN_2),
@@ -139,15 +102,11 @@ DryContact dryContacts[DRY_CONTACT_NUMS] = {
   DryContact(DRY_CONTACT_PIN_5),
 };
 
-byte DIPayload = 0;
-byte DOPayload = 0;
 String AIPayload = "";
 String AOPayload = "";
-
 String cmpStr = "";
 
 /*=== NBIoT ===*/
-byte nbiotConnState = 0;
 String nbiotSerialRecv = "";
 String nbIotConnCmd = "";
 String nbiotSubsCmd = "";
@@ -169,6 +128,7 @@ String nbiotSubAck = "";
 /*=== Modbus485 ===*/
 String rs485SerialRecv = "";
 
+/*=== Rubbish String ===*/
 String rubbishStr = "";
 
 #endif

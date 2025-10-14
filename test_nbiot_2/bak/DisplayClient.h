@@ -1,6 +1,5 @@
 #include "AnalogInput.h"
 #include "AnalogOutput.h"
-#include "Globals.h"
 
 #ifndef DisplayClient_H
 #define DisplayClient_H
@@ -10,9 +9,6 @@
 
 class DisplayClient {
 private:
-  byte DIPayload = 0;
-  byte DOPayload = 0;
-
   uint8_t buffer[DISPLAY_BUFFER_SIZE];
 
   uint8_t getChecksum(uint8_t *buffer, uint8_t idx_from, uint8_t idx_to) {
@@ -23,27 +19,12 @@ private:
     return checksum;
   }
 
-  unsigned long prevMillis;
-
 public:
   DisplayClient(){};
 
   void setup() {
     DisplaySerial.begin(9600);
   };
-
-  void loop() {
-    unsigned long currMillis = millis();
-
-    if (currMillis - this->prevMillis > 2000) {
-      {
-        int csq = nbiotCSQ.toInt();
-        this->prepareBuffer(nbiotConnState, csq, DIPayload, DOPayload, analogInputs, analogOutputs, 65535);
-        this->sendBuffer();
-      }
-      this->prevMillis = currMillis;
-    }
-  }
 
   void prepareBuffer(uint8_t nbiotConn, uint8_t nbiotCsq, uint8_t dis, uint8_t dos, AnalogInput *ais, AnalogOutput *aos, uint16_t aiMappingMode) {
     uint8_t idx = 0;

@@ -8,7 +8,7 @@ private:
 public:
   uint16_t value;
 
-  AnalogOutput() {}
+  AnalogOutput(void) {}
 
   AnalogOutput(byte pin)
     : pin(pin) {
@@ -23,6 +23,8 @@ public:
   uint16_t getValue() {
     return this->value;
   }
+
+  ~AnalogOutput() {}
 };
 
 #endif

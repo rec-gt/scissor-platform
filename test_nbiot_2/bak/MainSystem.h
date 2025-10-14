@@ -11,6 +11,11 @@
 #define MainSystem_H
 
 class MainSystem {
+private:
+  byte DIPayload = 0;
+  byte DOPayload = 0;
+
+  unsigned long prevMillisDisplay;
 
 public:
   MainSystem(void){};
@@ -19,8 +24,8 @@ public:
     /*=== Listen Input Ports ===*/
     this->listen();
 
-    /*=== Build Payloads ===*/
-    this->buildPayloads();
+    /*=== Display===*/
+    this->handleDisplayContent();
 
     /*=== NBIoT Publish ===*/
     this->handlePublishContent();
@@ -39,17 +44,30 @@ public:
     }
   }
 
-  void buildPayloads() {
+  void handleDisplayContent() {
+    if (millis() - this->prevMillisDisplay > 2000) {
+      {
+        int csq = nbiotCSQ.toInt();
+        displayClient.prepareBuffer(nbiot.connState, csq, this->DIPayload, this->DOPayload, analogInputs, analogOutputs, 65535);
+        displayClient.sendBuffer();
+      }
+      this->prevMillisDisplay = millis();
+    }
+  }
+
+  void handlePublishContent() {
+    /*=== 1. build the payload ===*/
+
     /*=== DI ===*/
-    DIPayload = 0;
+    this->DIPayload = 0;
     for (size_t i = 0; i < DI_NUMS; i++) {
-      DIPayload |= digitalInputs[i].getState() << i;
+      this->DIPayload |= digitalInputs[i].getState() << i;
     }
 
     /*=== DO ===*/
-    DOPayload = 0;
+    this->DOPayload = 0;
     for (size_t i = 0; i < DO_NUMS; i++) {
-      DOPayload |= digitalOutputs[i].getState() << i;
+      this->DOPayload |= digitalOutputs[i].getState() << i;
     }
 
     /*=== AI ===*/
@@ -71,18 +89,17 @@ public:
       }
     }
     AOPayload += F("]");
-  }
 
-  void handlePublishContent() {
+    /*=== 2. prepare the msg to be published ===*/
     if (!nbiot.pubMsgPayloadLock) {
       nbiotPubMsgPayload = F("{\"csq\":");
       nbiotPubMsgPayload.concat(nbiotCSQ);
       nbiotPubMsgPayload.concat(F(","));
       nbiotPubMsgPayload.concat(F("\"din\":"));
-      nbiotPubMsgPayload.concat(DIPayload);
+      nbiotPubMsgPayload.concat(this->DIPayload);
       nbiotPubMsgPayload.concat(F(","));
       nbiotPubMsgPayload.concat(F("\"dout\":"));
-      nbiotPubMsgPayload.concat(DOPayload);
+      nbiotPubMsgPayload.concat(this->DOPayload);
       nbiotPubMsgPayload.concat(F(","));
       nbiotPubMsgPayload.concat(F("\"ain\":"));
       nbiotPubMsgPayload.concat(AIPayload);

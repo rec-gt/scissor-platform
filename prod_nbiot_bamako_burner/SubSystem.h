@@ -82,8 +82,21 @@ public:
 };
 
 class TempSwitch {
+private:
+  byte id;
+  DigitalInput &diModule;
+public:
+  TempSwitch(byte id, DigitalInput &diModule)
+    : id(id), diModule(diModule) {}
 
-}
+  void listen() {
+    if (this->diModule.getState() == LOW) {
+      Serial.println("Connected");
+    }
+  }
+
+  ~TempSwitch(){};
+};
 
 Relay relay1(DO_1, digitalOutputs[DO_1]);
 Relay relay2(DO_2, digitalOutputs[DO_2]);
@@ -92,6 +105,8 @@ Relay relay3(DO_3, digitalOutputs[DO_3]);
 TempSensor tempSensor1(AI_1, analogInputs[AI_1]);
 TempSensor tempSensor2(AI_2, analogInputs[AI_2]);
 TempSensor tempSensor3(AI_3, analogInputs[AI_3]);
+
+TempSwitch tempSwitch(DI_1, digitalInputs[DI_1]);
 
 class SubSystem {
 public:
@@ -113,6 +128,8 @@ public:
     tempSensor3.listen();
     tempSensor3.displayTemp(analogOutputs[AO_3]);
     tempSensor3.breakpoint(relay3, 250);
+
+    tempSwitch.listen();
   }
 
   ~SubSystem() {}

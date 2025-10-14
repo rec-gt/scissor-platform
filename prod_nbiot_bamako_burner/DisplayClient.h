@@ -39,23 +39,10 @@ public:
     if (currMillis - this->prevMillis > 2000) {
       {
         int csq = nbiotCSQ.toInt();
-        this->preparePayload();
-        this->prepareBuffer(nbiot.connState, csq, this->DIPayload, this->DOPayload, analogInputs, analogOutputs, 65535);
+        this->prepareBuffer(nbiot.connState, csq, DIPayload, DOPayload, analogInputs, analogOutputs, 65535);
         this->sendBuffer();
       }
       this->prevMillis = currMillis;
-    }
-  }
-
-  void preparePayload() {
-    this->DIPayload = 0;
-    for (size_t i = 0; i < DI_NUMS; i++) {
-      this->DIPayload |= digitalInputs[i].getState() << i;
-    }
-
-    this->DOPayload = 0;
-    for (size_t i = 0; i < DO_NUMS; i++) {
-      this->DOPayload |= digitalOutputs[i].getState() << i;
     }
   }
 

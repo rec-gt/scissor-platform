@@ -139,11 +139,15 @@ DryContact dryContacts[DRY_CONTACT_NUMS] = {
   DryContact(DRY_CONTACT_PIN_5),
 };
 
+byte DIPayload = 0;
+byte DOPayload = 0;
 String AIPayload = "";
 String AOPayload = "";
+
 String cmpStr = "";
 
 /*=== NBIoT ===*/
+byte nbiotConnState = 0;
 String nbiotSerialRecv = "";
 String nbIotConnCmd = "";
 String nbiotSubsCmd = "";

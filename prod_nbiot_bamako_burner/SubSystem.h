@@ -41,7 +41,7 @@ public:
   }
 };
 
-class TemperatureSensor {
+class TempSensor {
 private:
   byte nth;
   int reading;
@@ -57,7 +57,7 @@ private:
   }
 
 public:
-  TemperatureSensor(byte nth)
+  TempSensor(byte nth)
     : nth(nth) {}
 
   void listen() {
@@ -83,13 +83,13 @@ public:
   }
 };
 
-Relay relay1(0);
-Relay relay2(1);
-Relay relay3(2);
+Relay relay1(DI_1);
+Relay relay2(DI_2);
+Relay relay3(DI_3);
 
-TemperatureSensor temperatureSensor1(0);
-TemperatureSensor temperatureSensor2(1);
-TemperatureSensor temperatureSensor3(2);
+TempSensor tempSensor1(AI_1);
+TempSensor tempSensor2(AI_2);
+TempSensor tempSensor3(AI_3);
 
 class SubSystem {
 public:
@@ -100,17 +100,17 @@ public:
   }
 
   void loop() {
-    temperatureSensor1.listen();
-    temperatureSensor1.displayTemp(0);
-    temperatureSensor1.breakpoint(relay1, 800);
+    tempSensor1.listen();
+    tempSensor1.displayTemp(AO_1);
+    tempSensor1.breakpoint(relay1, 800);
 
-    temperatureSensor2.listen();
-    temperatureSensor2.displayTemp(1);
-    temperatureSensor2.breakpoint(relay2, 450);
+    tempSensor2.listen();
+    tempSensor2.displayTemp(AO_2);
+    tempSensor2.breakpoint(relay2, 450);
 
-    temperatureSensor3.listen();
-    temperatureSensor3.displayTemp(2);
-    temperatureSensor3.breakpoint(relay3, 250);
+    tempSensor3.listen();
+    tempSensor3.displayTemp(AO_3);
+    tempSensor3.breakpoint(relay3, 250);
   }
 
   ~SubSystem() {}

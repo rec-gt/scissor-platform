@@ -24,6 +24,9 @@ public:
     /*=== Listen Input Ports ===*/
     this->listen();
 
+    /*=== Build Payloads ===*/
+    this->buildPayloads();
+
     /*=== NBIoT Publish ===*/
     this->handlePublishContent();
 
@@ -41,9 +44,7 @@ public:
     }
   }
 
-  void handlePublishContent() {
-    /*=== 1. build the payload ===*/
-
+  void buildPayloads() {
     /*=== DI ===*/
     this->DIPayload = 0;
     for (size_t i = 0; i < DI_NUMS; i++) {
@@ -75,8 +76,9 @@ public:
       }
     }
     AOPayload += F("]");
+  }
 
-    /*=== 2. prepare the msg to be published ===*/
+  void handlePublishContent() {
     if (!nbiot.pubMsgPayloadLock) {
       nbiotPubMsgPayload = F("{\"csq\":");
       nbiotPubMsgPayload.concat(nbiotCSQ);

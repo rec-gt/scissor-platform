@@ -107,14 +107,14 @@ void loop() {
   /*=== Register NBIoT ===*/
   nbiot.loop();
 
-  /*=== Register Modbus ===*/
-  modbus485.loop();
-
   /*=== Register MainSystem ===*/
   mainSystem.loop();
 
   /*=== Register subSystem ===*/
   subSystem.loop();
+
+  /*=== Register Modbus ===*/
+  modbus485.loop();
 
   /*=== Register display ===*/
   displayClient.loop();

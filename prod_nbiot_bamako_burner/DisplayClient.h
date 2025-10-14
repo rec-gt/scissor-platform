@@ -1,7 +1,6 @@
 #include "AnalogInput.h"
 #include "AnalogOutput.h"
 #include "Globals.h"
-#include "NBIoT.h"
 
 #ifndef DisplayClient_H
 #define DisplayClient_H
@@ -39,7 +38,7 @@ public:
     if (currMillis - this->prevMillis > 2000) {
       {
         int csq = nbiotCSQ.toInt();
-        this->prepareBuffer(nbiot.connState, csq, DIPayload, DOPayload, analogInputs, analogOutputs, 65535);
+        this->prepareBuffer(nbiotConnState, csq, DIPayload, DOPayload, analogInputs, analogOutputs, 65535);
         this->sendBuffer();
       }
       this->prevMillis = currMillis;

@@ -24,9 +24,6 @@ public:
     /*=== Listen Input Ports ===*/
     this->listen();
 
-    /*=== Display===*/
-    this->handleDisplayContent();
-
     /*=== NBIoT Publish ===*/
     this->handlePublishContent();
 
@@ -41,17 +38,6 @@ public:
 
     for (size_t i = 0; i < AI_NUMS; i++) {
       analogInputs[i].listen();
-    }
-  }
-
-  void handleDisplayContent() {
-    if (millis() - this->prevMillisDisplay > 2000) {
-      {
-        int csq = nbiotCSQ.toInt();
-        displayClient.prepareBuffer(nbiot.connState, csq, this->DIPayload, this->DOPayload, analogInputs, analogOutputs, 65535);
-        displayClient.sendBuffer();
-      }
-      this->prevMillisDisplay = millis();
     }
   }
 

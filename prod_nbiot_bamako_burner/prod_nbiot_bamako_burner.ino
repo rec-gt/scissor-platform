@@ -116,5 +116,8 @@ void loop() {
   /*=== Register subSystem ===*/
   subSystem.loop();
 
+  /*=== Register display ===*/
+  displayClient.loop();
+
   delay(10);
 }

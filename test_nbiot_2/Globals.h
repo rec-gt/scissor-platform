@@ -169,6 +169,7 @@ String nbiotSubAck = "";
 /*=== Modbus485 ===*/
 String rs485SerialRecv = "";
 
+/*=== Debug ===*/
 String rubbishStr = "";
 
 #endif

@@ -12,16 +12,17 @@
 
 class Relay {
 private:
-  byte nth;
+  byte id;
+  DigitalOutput &di;
   bool isCut = false;
   unsigned long prevMillis = 0;
 
 public:
-  Relay(byte nth)
-    : nth(nth) {}
+  Relay(byte id, DigitalOutput &di)
+    : id(id) {}
 
   void cut() {
-    digitalOutputs[this->nth].cut();
+    this->di.cut();
     this->isCut = true;
     this->prevMillis = millis();
   }
@@ -30,42 +31,39 @@ public:
     if (this->isCut) {
       if (millis() - this->prevMillis >= 10000UL) {
         this->isCut = false;
-        digitalOutputs[this->nth].connect();
+        this->di.connect();
       }
     }
   }
 
   void forceConnect() {
     this->isCut = false;
-    digitalOutputs[this->nth].connect();
+    this->di.connect();
   }
 };
 
 class TempSensor {
 private:
-  byte nth;
+  byte id;
+  AnalogInputFaster &ai;
   int reading;
   int actualTemp;
   int aoValue;
 
   int readingToActualTemp(int reading) {
-    if (reading < 196) {
-      return 0;
-    } else {
-      return map(reading, 196, 1023, 0, 1300);
-    }
+    return map(constrain(reading, 196, 1023), 196, 1023, 0, 1300);
   }
 
 public:
-  TempSensor(byte nth)
-    : nth(nth) {}
+  TempSensor(byte id, AnalogInputFaster &ai)
+    : id(id), ai(ai) {}
 
   void listen() {
-    this->reading = analogInputs[this->nth].getValue();
+    this->reading = this->ai.getValue();
     this->actualTemp = this->readingToActualTemp(this->reading);
-    this->aoValue = map(this->actualTemp, 0, 1300, 0, 255);
+    this->aoValue = map(constrain(this->actualTemp, 0, 1300), 0, 1300, 0, 255);
 
-    Serial.print(this->nth);
+    Serial.print(this->id);
     Serial.print(" : ");
     Serial.println(this->actualTemp);
   }
@@ -83,13 +81,13 @@ public:
   }
 };
 
-Relay relay1(DI_1);
-Relay relay2(DI_2);
-Relay relay3(DI_3);
+Relay relay1(DO_1, digitalOutputs[DO_1]);
+Relay relay2(DO_2, digitalOutputs[DO_2]);
+Relay relay3(DO_3, digitalOutputs[DO_3]);
 
-TempSensor tempSensor1(AI_1);
-TempSensor tempSensor2(AI_2);
-TempSensor tempSensor3(AI_3);
+TempSensor tempSensor1(AI_1, analogInputs[AI_1]);
+TempSensor tempSensor2(AI_2, analogInputs[AI_2]);
+TempSensor tempSensor3(AI_3, analogInputs[AI_3]);
 
 class SubSystem {
 public:

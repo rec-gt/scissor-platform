@@ -73,7 +73,7 @@ public:
   }
 
   void displayTemp(AnalogOutput &aoModule) {
-    aoModule.set(this->aoValue + 2);
+    aoModule.set(this->aoValue + 1);
   }
 
   void breakpoint(Relay &relay, int threshold) {

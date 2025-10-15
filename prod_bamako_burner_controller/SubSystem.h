@@ -63,9 +63,9 @@ public:
     this->actualTemp = this->readingToActualTemp(this->reading);
     this->aoValue = map(constrain(this->actualTemp, 0, 1300), 0, 1300, 0, 255);
 
-    Serial.print(this->id);
-    Serial.print(F(" : "));
-    Serial.println(this->actualTemp);
+    // Serial.print(this->id);
+    // Serial.print(F(" : "));
+    // Serial.println(this->actualTemp);
   }
 
   void displayScreenTemp(AnalogInput &aiDisplayModule) {

@@ -61,7 +61,7 @@ public:
   void listen() {
     this->reading = this->aiModule.getValue();
     this->actualTemp = this->readingToActualTemp(this->reading);
-    this->aoValue = constrain(map(constrain(this->actualTemp, 0, 1300), 0, 1300, 0, 255) + (this->actualTemp * 2 / 100), 0, 255);
+    this->aoValue = constrain(map(constrain(this->actualTemp, 0, 1300), 0, 1300, 0, 255) + (this->actualTemp * 2 / 100) + 1, 0, 255);
     // Serial.print(this->id);
     // Serial.print(F(" : "));
     // Serial.println(this->actualTemp);
@@ -72,7 +72,7 @@ public:
   }
 
   void displayTemp(AnalogOutput &aoModule) {
-    aoModule.set(this->aoValue + 1);
+    aoModule.set(this->aoValue);
   }
 
   void breakpoint(Relay &relay, int threshold) {

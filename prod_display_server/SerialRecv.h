@@ -1,7 +1,8 @@
 #ifndef SerialRecv_H
 #define SerialRecv_H
 #define PeripheralSerial Serial
-#define DISPLAY_BUFFER_SIZE 41
+#define DISPLAY_BUFFER_SIZE 55
+// #define DISPLAY_BUFFER_SIZE 41
 
 class SerialRecv {
 private:
@@ -26,9 +27,7 @@ public:
   uint8_t dos;
   uint16_t ais[12];
   uint16_t aos[4];
-  uint16_t aiModes;
-
-  SerialRecv(){};
+  char imei[16] = {};
 
   void listen() {
     while (PeripheralSerial.available() > 0) {
@@ -46,8 +45,8 @@ public:
           this->isReceiving = false;
           this->idx = 0;
 
-          uint8_t payloadChecksum = this->buffer[39];
-          uint8_t calculatedChecksum = this->getChecksum(this->buffer, 1, 38);
+          uint8_t payloadChecksum = this->buffer[DISPLAY_BUFFER_SIZE - 2];
+          uint8_t calculatedChecksum = this->getChecksum(this->buffer, 1, DISPLAY_BUFFER_SIZE - 3);
           if (payloadChecksum == calculatedChecksum) {
             this->extractValues();
           } else {
@@ -74,7 +73,9 @@ public:
       this->aos[i] = (buffer[idx++] << 8) | buffer[idx++];
     }
 
-    this->aiModes = (buffer[idx++] << 8) | buffer[idx++];
+    for (size_t i = 0; i < 16; i++) {
+      this->imei[i] = buffer[idx++];
+    }
   }
 
   // void debug() {

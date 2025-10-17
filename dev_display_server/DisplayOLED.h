@@ -43,7 +43,7 @@ public:
     uint16_t ao2,
     uint16_t ao3,
     uint16_t ao4,
-    char &imei) {
+    char imei[]) {
     this->heartbeatToggle = !this->heartbeatToggle;
 
     u8g2.firstPage();

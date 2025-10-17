@@ -113,7 +113,7 @@ public:
 
     byte b0 = nbiotSubMsgContent.charAt(0);
     byte b1 = nbiotSubMsgContent.charAt(1);
-    byte b2 = nbiotSubMsgContent.charAt(2);
+    // byte b2 = nbiotSubMsgContent.charAt(2); // b2 is useless
     byte b3 = nbiotSubMsgContent.charAt(3);
     byte b4 = nbiotSubMsgContent.charAt(4);
 

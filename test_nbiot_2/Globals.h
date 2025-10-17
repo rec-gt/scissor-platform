@@ -116,19 +116,19 @@ AnalogOutput analogOutputs[AO_NUMS]{
   AnalogOutput(AO_PIN_4),
 };
 
-AnalogInputFaster analogInputs[AI_NUMS] = {
-  AnalogInputFaster(AI_PIN_1),
-  AnalogInputFaster(AI_PIN_2),
-  AnalogInputFaster(AI_PIN_3),
-  AnalogInputFaster(AI_PIN_4),
-  AnalogInputFaster(AI_PIN_5),
-  AnalogInputFaster(AI_PIN_6),
-  AnalogInputFaster(AI_PIN_7),
-  AnalogInputFaster(AI_PIN_8),
-  AnalogInputFaster(AI_PIN_9),
-  AnalogInputFaster(AI_PIN_10),
-  AnalogInputFaster(AI_PIN_11),
-  AnalogInputFaster(AI_PIN_12)
+AnalogInput1024 analogInputs[AI_NUMS] = {
+  AnalogInput1024(AI_PIN_1),
+  AnalogInput1024(AI_PIN_2),
+  AnalogInput1024(AI_PIN_3),
+  AnalogInput1024(AI_PIN_4),
+  AnalogInput1024(AI_PIN_5),
+  AnalogInput1024(AI_PIN_6),
+  AnalogInput1024(AI_PIN_7),
+  AnalogInput1024(AI_PIN_8),
+  AnalogInput1024(AI_PIN_9),
+  AnalogInput1024(AI_PIN_10),
+  AnalogInput1024(AI_PIN_11),
+  AnalogInput1024(AI_PIN_12)
 };
 
 DryContact dryContacts[DRY_CONTACT_NUMS] = {

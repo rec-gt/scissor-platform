@@ -6,7 +6,8 @@
 #define DisplayClient_H
 
 #define DisplaySerial Serial2
-#define DISPLAY_BUFFER_SIZE 41
+#define DISPLAY_BUFFER_SIZE 55
+// #define DISPLAY_BUFFER_SIZE 41
 
 class DisplayClient {
 private:
@@ -35,14 +36,18 @@ public:
     if (currMillis - this->prevMillis > 2000) {
       {
         int csq = nbiotCSQ.toInt();
-        this->prepareBuffer(nbiotConnState, csq, DIPayload, DOPayload, analogInputs, analogOutputs, 65535);
+        // for (size_t i = 0; i < nbiotIMEI.length(); i++) {
+        //   Serial.print(nbiotIMEI.charAt(i));
+        // }
+
+        this->prepareBuffer(nbiotConnState, csq, DIPayload, DOPayload, analogInputs, analogOutputs);
         this->sendBuffer();
       }
       this->prevMillis = currMillis;
     }
   }
 
-  void prepareBuffer(uint8_t nbiotConn, uint8_t nbiotCsq, uint8_t dis, uint8_t dos, AnalogInput *ais, AnalogOutput *aos, uint16_t aiMappingMode) {
+  void prepareBuffer(uint8_t nbiotConn, uint8_t nbiotCsq, uint8_t dis, uint8_t dos, AnalogInput *ais, AnalogOutput *aos) {
     uint8_t idx = 0;
 
     this->buffer[idx++] = 0x5B;  // '['
@@ -62,11 +67,12 @@ public:
       this->buffer[idx++] = aos[i].value & 0xFF;
     }
 
-    this->buffer[idx++] = (aiMappingMode >> 8) & 0xFF;
+    for (int i = 0; i < 16; i++) {
+      this->buffer[idx++] = nbiotIMEI.charAt(i);
+    }
 
-    this->buffer[idx++] = aiMappingMode & 0xFF;
-
-    this->buffer[idx++] = getChecksum(this->buffer, 1, idx - 1);
+    uint8_t currIdx = idx;
+    this->buffer[idx++] = getChecksum(this->buffer, 1, currIdx - 1);
 
     this->buffer[idx++] = 0x5D;  // ']'
   }

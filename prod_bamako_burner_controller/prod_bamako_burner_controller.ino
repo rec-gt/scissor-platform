@@ -57,6 +57,7 @@
 #include "Modbus485.h"
 #include "Utils.h"
 #include "SubSystem.h"
+#include <avr/wdt.h>
 
 MainSystem mainSystem;
 
@@ -101,6 +102,9 @@ void setup() {
 
   /*=== Display ===*/
   displayClient.setup();
+
+  /*=== Display ===*/
+  wdt_enable(WDTO_8S);
 }
 
 void loop() {
@@ -119,5 +123,8 @@ void loop() {
   /*=== Register display ===*/
   displayClient.loop();
 
+  /*=== Pet the dog ===*/
+  wdt_reset();
+  
   delay(10);
 }

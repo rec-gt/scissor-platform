@@ -34,15 +34,8 @@ public:
     unsigned long currMillis = millis();
 
     if (currMillis - this->prevMillis > 2000) {
-      {
-        int csq = nbiotCSQ.toInt();
-        // for (size_t i = 0; i < nbiotIMEI.length(); i++) {
-        //   Serial.print(nbiotIMEI.charAt(i));
-        // }
-
-        this->prepareBuffer();
-        this->sendBuffer();
-      }
+      this->prepareBuffer();
+      this->sendBuffer();
       this->prevMillis = currMillis;
     }
   }

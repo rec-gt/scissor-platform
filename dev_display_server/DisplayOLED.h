@@ -49,12 +49,28 @@ public:
     u8g2.firstPage();
 
     do {
+      /*=== Header ===*/
       int y = 7;
       u8g2.setCursor(0, y);
-      u8g2.print(imei);
-      // u8g2.print(F("RGT NB-IoT Controller"));
-      u8g2.setCursor(108, y);
-      u8g2.print(F("V2.0"));
+
+      bool hasIMEI = false;
+      for (int i = 0; i < 16; i++) {
+        if (imei[i] != '\0') {
+          hasIMEI = true;
+          break;
+        }
+      }
+
+      if (hasIMEI) {
+        u8g2.print(F("RGT IoT v2"));
+        u8g2.setCursor(48, y);
+        u8g2.print(imei);
+      } else {
+        u8g2.print(F("RGT NB-IoT Controller"));
+        u8g2.setCursor(108, y);
+        u8g2.print(F("V2.0"));
+      }
+
       u8g2.drawLine(0, 8, 128, 8);
 
       /*=== DI ===*/

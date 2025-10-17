@@ -48,22 +48,6 @@ void loop() {
     serialRecv.aos[3],
     serialRecv.imei);
 
-  // serialRecv.imei[0],
-  // serialRecv.imei[1],
-  // serialRecv.imei[2],
-  // serialRecv.imei[3],
-  // serialRecv.imei[4],
-  // serialRecv.imei[5],
-  // serialRecv.imei[6],
-  // serialRecv.imei[7],
-  // serialRecv.imei[8],
-  // serialRecv.imei[9],
-  // serialRecv.imei[10],
-  // serialRecv.imei[11],
-  // serialRecv.imei[12],
-  // serialRecv.imei[13],
-  // serialRecv.imei[14],
-  // serialRecv.imei[15],
   autoReset();
   delay(500);
 }

@@ -40,41 +40,45 @@ public:
         //   Serial.print(nbiotIMEI.charAt(i));
         // }
 
-        this->prepareBuffer(nbiotConnState, csq, DIPayload, DOPayload, analogInputs, analogOutputs);
+        this->prepareBuffer();
         this->sendBuffer();
       }
       this->prevMillis = currMillis;
     }
   }
 
-  void prepareBuffer(uint8_t nbiotConn, uint8_t nbiotCsq, uint8_t dis, uint8_t dos, AnalogInput *ais, AnalogOutput *aos) {
-    uint8_t idx = 0;
+  void prepareBuffer() {
+    {
+      int csq = nbiotCSQ.toInt();
 
-    this->buffer[idx++] = 0x5B;  // '['
+      uint8_t idx = 0;
 
-    this->buffer[idx++] = nbiotConn;
-    this->buffer[idx++] = nbiotCsq;
-    this->buffer[idx++] = dis;
-    this->buffer[idx++] = dos;
+      this->buffer[idx++] = 0x5B;  // '['
 
-    for (int i = 0; i < 12; i++) {
-      this->buffer[idx++] = (ais[i].value >> 8) & 0xFF;
-      this->buffer[idx++] = ais[i].value & 0xFF;
+      this->buffer[idx++] = nbiotConnState;
+      this->buffer[idx++] = csq;
+      this->buffer[idx++] = DIPayload;
+      this->buffer[idx++] = DOPayload;
+
+      for (int i = 0; i < AI_NUMS; i++) {
+        this->buffer[idx++] = (analogInputs[i].value >> 8) & 0xFF;
+        this->buffer[idx++] = analogInputs[i].value & 0xFF;
+      }
+
+      for (int i = 0; i < AO_NUMS; i++) {
+        this->buffer[idx++] = (analogOutputs[i].value >> 8) & 0xFF;
+        this->buffer[idx++] = analogOutputs[i].value & 0xFF;
+      }
+
+      for (int i = 0; i < 16; i++) {
+        this->buffer[idx++] = nbiotIMEI.charAt(i);
+      }
+
+      uint8_t currIdx = idx;
+      this->buffer[idx++] = getChecksum(this->buffer, 1, currIdx - 1);
+
+      this->buffer[idx++] = 0x5D;  // ']'
     }
-
-    for (int i = 0; i < 4; i++) {
-      this->buffer[idx++] = (aos[i].value >> 8) & 0xFF;
-      this->buffer[idx++] = aos[i].value & 0xFF;
-    }
-
-    for (int i = 0; i < 16; i++) {
-      this->buffer[idx++] = nbiotIMEI.charAt(i);
-    }
-
-    uint8_t currIdx = idx;
-    this->buffer[idx++] = getChecksum(this->buffer, 1, currIdx - 1);
-
-    this->buffer[idx++] = 0x5D;  // ']'
   }
 
   void sendBuffer() {

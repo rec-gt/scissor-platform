@@ -51,7 +51,8 @@ public:
     do {
       int y = 7;
       u8g2.setCursor(0, y);
-      u8g2.print(F("RGT NB-IoT Controller"));
+      u8g2.print(imei);
+      // u8g2.print(F("RGT NB-IoT Controller"));
       u8g2.setCursor(108, y);
       u8g2.print(F("V2.0"));
       u8g2.drawLine(0, 8, 128, 8);
@@ -80,64 +81,64 @@ public:
       u8g2.print(F("Ai"));
 
       u8g2.setCursor(12, y);
-      u8g2.print(bitRead(aiModes, 0) ? F("A") : F("V"));
+      u8g2.print(F("A"));
       u8g2.setCursor(17, y);
       u8g2.print(ai1);
 
       u8g2.setCursor(42, y);
-      u8g2.print(bitRead(aiModes, 1) ? F("A") : F("V"));
+      u8g2.print(F("A"));
       u8g2.setCursor(47, y);
       u8g2.print(ai2);
 
       u8g2.setCursor(72, y);
-      u8g2.print(bitRead(aiModes, 2) ? F("A") : F("V"));
+      u8g2.print(F("A"));
       u8g2.setCursor(77, y);
       u8g2.print(ai3);
 
       u8g2.setCursor(102, y);
-      u8g2.print(bitRead(aiModes, 3) ? F("A") : F("V"));
+      u8g2.print(F("A"));
       u8g2.setCursor(107, y);
       u8g2.print(ai4);
 
       y = 35;
       u8g2.setCursor(12, y);
-      u8g2.print(bitRead(aiModes, 4) ? F("A") : F("V"));
+      u8g2.print(F("A"));
       u8g2.setCursor(17, y);
       u8g2.print(ai5);
 
       u8g2.setCursor(42, y);
-      u8g2.print(bitRead(aiModes, 5) ? F("A") : F("V"));
+      u8g2.print(F("A"));
       u8g2.setCursor(47, y);
       u8g2.print(ai6);
 
       u8g2.setCursor(72, y);
-      u8g2.print(bitRead(aiModes, 6) ? F("A") : F("V"));
+      u8g2.print(F("A"));
       u8g2.setCursor(77, y);
       u8g2.print(ai7);
 
       u8g2.setCursor(102, y);
-      u8g2.print(bitRead(aiModes, 7) ? F("A") : F("V"));
+      u8g2.print(F("A"));
       u8g2.setCursor(107, y);
       u8g2.print(ai8);
 
       y = 43;
       u8g2.setCursor(12, y);
-      u8g2.print(bitRead(aiModes, 8) ? F("A") : F("V"));
+      u8g2.print(F("A"));
       u8g2.setCursor(17, y);
       u8g2.print(ai9);
 
       u8g2.setCursor(42, y);
-      u8g2.print(bitRead(aiModes, 9) ? F("A") : F("V"));
+      u8g2.print(F("A"));
       u8g2.setCursor(47, y);
       u8g2.print(ai10);
 
       u8g2.setCursor(72, y);
-      u8g2.print(bitRead(aiModes, 10) ? F("A") : F("V"));
+      u8g2.print(F("A"));
       u8g2.setCursor(77, y);
       u8g2.print(ai11);
 
       u8g2.setCursor(102, y);
-      u8g2.print(bitRead(aiModes, 11) ? F("A") : F("V"));
+      u8g2.print(F("A"));
       u8g2.setCursor(107, y);
       u8g2.print(ai12);
 

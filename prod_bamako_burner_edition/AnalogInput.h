@@ -48,14 +48,14 @@ public:
   }
 
   uint16_t getValue() {
-    this->value = map(constrain(this->smoothedReading, 0, 16063), 0, 16063, 0, 4095);
+    this->value = map(constrain((int32_t)this->smoothedReading, 0, 16063), 0, 16063, 0, 4095);
     return this->value;
   }
 };
 
-class AnalogInputFaster : public AnalogInput {
+class AnalogInput1024 : public AnalogInput {
 public:
-  AnalogInputFaster(byte pin)
+  AnalogInput1024(byte pin)
     : AnalogInput(pin) {}
 
   void listen() {

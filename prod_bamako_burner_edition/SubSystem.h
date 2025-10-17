@@ -45,7 +45,7 @@ public:
 class TempSensor {
 private:
   byte id;
-  AnalogInputFaster &aiModule;
+  AnalogInput1024 &aiModule;
   int reading;
   int actualTemp;
   int aoValue;
@@ -55,7 +55,7 @@ private:
   }
 
 public:
-  TempSensor(byte id, AnalogInputFaster &aiModule)
+  TempSensor(byte id, AnalogInput1024 &aiModule)
     : id(id), aiModule(aiModule) {}
 
   void listen() {

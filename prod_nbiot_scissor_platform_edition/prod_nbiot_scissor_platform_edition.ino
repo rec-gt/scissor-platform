@@ -1,0 +1,125 @@
+#define DI_PIN_1 32
+#define DI_PIN_2 33
+#define DI_PIN_3 34
+#define DI_PIN_4 35
+#define DI_PIN_5 36
+#define DI_PIN_6 37
+#define DI_PIN_7 38
+#define DI_PIN_8 39
+
+#define DO_PIN_1 40
+#define DO_PIN_2 41
+#define DO_PIN_3 42
+#define DO_PIN_4 43
+#define DO_PIN_5 44
+#define DO_PIN_6 45
+#define DO_PIN_7 46
+#define DO_PIN_8 47
+
+#define AI_PIN_1 A0
+#define AI_PIN_2 A1
+#define AI_PIN_3 A2
+#define AI_PIN_4 A3
+#define AI_PIN_5 A4
+#define AI_PIN_6 A5
+#define AI_PIN_7 A6
+#define AI_PIN_8 A7
+#define AI_PIN_9 A8
+#define AI_PIN_10 A9
+#define AI_PIN_11 A10
+#define AI_PIN_12 A11
+
+#define AO_PIN_1 4
+#define AO_PIN_2 5
+#define AO_PIN_3 6
+#define AO_PIN_4 7
+
+#define DRY_CONTACT_PIN_1 27
+#define DRY_CONTACT_PIN_2 28
+#define DRY_CONTACT_PIN_3 29
+#define DRY_CONTACT_PIN_4 30
+#define DRY_CONTACT_PIN_5 31
+
+#define DI_NUMS 8
+#define DO_NUMS 8
+#define AI_NUMS 12
+#define AO_NUMS 4
+#define DRY_CONTACT_NUMS 5
+
+#include "DigitalInput.h"
+#include "DigitalOutput.h"
+#include "AnalogInput.h"
+#include "AnalogOutput.h"
+#include "DryContact.h"
+#include "MainSystem.h"
+#include "NBIoT.h"
+#include "DisplayClient.h"
+#include "Modbus485.h"
+#include "Utils.h"
+#include "Test.h"
+
+MainSystem mainSystem;
+
+NBIoT nbiot;
+
+DisplayClient displayClient;
+
+Modbus485 modbus485;
+
+Utils utils;
+
+Test test;
+
+void setup() {
+  Serial.begin(9600);
+  analogReference(EXTERNAL);
+
+  /*=== String Management ===*/
+  nbiotCSQ.reserve(8);
+  nbiotCGATT.reserve(8);
+  nbiotCEREG.reserve(8);
+  nbiotPubAck.reserve(8);
+  nbiotSubAck.reserve(8);
+  nbiotSubMsgContent.reserve(8);
+  nbiotIMEI.reserve(32);
+  cmpStr.reserve(32);
+  AOPayload.reserve(64);
+  nbIotConnCmd.reserve(64);
+  nbiotSubsCmd.reserve(64);
+  nbiotPubMsgPrepare.reserve(64);
+  AIPayload.reserve(128);
+  rs485SerialRecv.reserve(128);
+  nbiotSerialRecv.reserve(128);
+  nbiotPubMsgPayload.reserve(256);
+  nbiotPubMsgCommand.reserve(512);
+  bool rubbishStrRes = rubbishStr.reserve(1024);  // push it to limit (variable amount)
+  Serial.print(rubbishStrRes ? F("[Str Space OK]") : F("[String Space NOT OK]"));
+
+  /*=== NBIoT ===*/
+  nbiot.init(true);
+  nbiot.debug();
+
+  /*=== Display ===*/
+  displayClient.setup();
+}
+
+void loop() {
+  /*=== Register NBIoT ===*/
+  nbiot.loop();
+
+  /*=== Register MainSystem ===*/
+  mainSystem.loop();
+
+  /*=== Register Modbus ===*/
+  modbus485.loop();
+
+  /*=== Register display ===*/
+  displayClient.loop();
+  displayClient.debug();
+
+  /*=== Register test script ===*/
+  test.DO();
+  test.AO();
+
+  delay(10);
+}

@@ -56,7 +56,7 @@
 #include "DisplayClient.h"
 #include "Modbus485.h"
 #include "Utils.h"
-#include "Test.h"
+#include "SubSystem.h"
 
 MainSystem mainSystem;
 
@@ -68,7 +68,7 @@ Modbus485 modbus485;
 
 Utils utils;
 
-Test test;
+SubSystem subSystem;
 
 void setup() {
   Serial.begin(9600);
@@ -110,6 +110,9 @@ void loop() {
   /*=== Register MainSystem ===*/
   mainSystem.loop();
 
+  /*=== Register Subsystem ===*/
+  subSystem.loop();
+
   /*=== Register Modbus ===*/
   modbus485.loop();
 
@@ -117,9 +120,6 @@ void loop() {
   displayClient.loop();
   displayClient.debug();
 
-  /*=== Register test script ===*/
-  test.DO();
-  test.AO();
 
   delay(10);
 }

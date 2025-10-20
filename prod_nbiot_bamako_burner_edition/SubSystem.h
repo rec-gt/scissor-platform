@@ -142,15 +142,15 @@ DigitalOutput &relay1 = digitalOutputs[0];
 DigitalOutput &relay2 = digitalOutputs[1];
 DigitalOutput &relay3 = digitalOutputs[2];
 
-AnalogInput &temp1 = analogInputs[0];
-AnalogInput &temp2 = analogInputs[1];
-AnalogInput &temp3 = analogInputs[2];
-AnalogInput &ev1 = analogInputs[6];
-AnalogInput &ev2 = analogInputs[7];
-AnalogInput &ev3 = analogInputs[8];
-AnalogInput &ev4 = analogInputs[9];
-AnalogInput &ev5 = analogInputs[10];
-AnalogInput &ev6 = analogInputs[11];
+AnalogInput1024 &temp1 = analogInputs[0];
+AnalogInput1024 &temp2 = analogInputs[1];
+AnalogInput1024 &temp3 = analogInputs[2];
+AnalogInput1024 &ev1 = analogInputs[6];
+AnalogInput1024 &ev2 = analogInputs[7];
+AnalogInput1024 &ev3 = analogInputs[8];
+AnalogInput1024 &ev4 = analogInputs[9];
+AnalogInput1024 &ev5 = analogInputs[10];
+AnalogInput1024 &ev6 = analogInputs[11];
 
 // Relay relay1(DO_1, digitalOutputs[DO_1]);
 // Relay relay2(DO_2, digitalOutputs[DO_2]);
@@ -181,24 +181,24 @@ public:
     int actualTemp1 = readingToActualTemp(temp1.getValue());
     int actualTemp2 = readingToActualTemp(temp2.getValue());
     int actualTemp3 = readingToActualTemp(temp3.getValue());
-
+    Serial.println(temp1.getValue());
     int aoValue1 = getAoValue(actualTemp1);
     int aoValue2 = getAoValue(actualTemp2);
     int aoValue3 = getAoValue(actualTemp3);
 
-    if (actualTemp1 < 800) {
+    if (actualTemp1 > 800) {
       relay1.connect();
     } else {
       relay1.cut();
     }
 
-    if (actualTemp2 < 250) {
+    if (actualTemp2 > 250) {
       relay2.connect();
     } else {
       relay2.cut();
     }
 
-    if (actualTemp3 < 250) {
+    if (actualTemp3 > 250) {
       relay3.connect();
     } else {
       relay3.cut();

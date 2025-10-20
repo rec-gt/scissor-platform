@@ -1,3 +1,4 @@
+#include "HardwareSerial.h"
 #include "DigitalInput.h"
 #include "DigitalOutput.h"
 #include "AnalogInput.h"
@@ -28,19 +29,21 @@ private:
 
   DigitalOutput relay = digitalOutputs[0];
   DigitalOutput alarm = digitalOutputs[1];
-  DigitalOutput powerLight = digitalOutputs[2];
-  DigitalOutput warningLight = digitalOutputs[3];
-  DigitalOutput trafficGreen = digitalOutputs[4];
-  DigitalOutput trafficYellow = digitalOutputs[5];
-  DigitalOutput trafficRed = digitalOutputs[6];
+  DigitalOutput &powerLight = digitalOutputs[2];
+  DigitalOutput &warningLight = digitalOutputs[3];
+  DigitalOutput &trafficGreen = digitalOutputs[4];
+  DigitalOutput &trafficYellow = digitalOutputs[5];
+  DigitalOutput &trafficRed = digitalOutputs[6];
 
-  DigitalInput thresholdSwitch = digitalInputs[0];
-  DigitalInput pressButton = digitalInputs[1];
+  DigitalInput &thresholdSwitch = digitalInputs[0];
+  DigitalInput &pressButton = digitalInputs[1];
 
   unsigned long tenSecondTimer = 0;
 
 public:
-  SubSystem() {}
+  SubSystem() {
+    this->status = SYS_RUNNING;
+  }
 
   void loop() {
     powerLight.connect();
@@ -67,28 +70,29 @@ public:
       trafficYellow.cut();
       trafficRed.connect();
 
-      if (areAllExcaped()) {
+      if (areAllEscaped()) {
         this->status = SYS_RUNNING;
       }
 
-      if (pressButton.getState() == LOW) {
+      if (pressButton.getState()) {
         this->status = SYS_ALLOW_10S;
         this->tenSecondTimer = millis();
       }
-
     } else if (this->status == SYS_ALLOW_10S) {
       relay.connect();
       alarm.cut();
-      warningLight.connect();
+      warningLight.cut();
 
       trafficGreen.connect();
       trafficYellow.connect();
       trafficRed.cut();
 
-      if ((millis() - this->tenSecondTimer) <= 10000) {
-        this->status == SYS_STOPPED;
+      if ((millis() - this->tenSecondTimer) >= 10000) {
+        this->status = SYS_STOPPED;
       }
     }
+
+    Serial.println(this->status);
   }
 
   bool isOneDetected() {
@@ -102,12 +106,12 @@ public:
     return false;
   }
 
-  bool areAllExcaped() {
+  bool areAllEscaped() {
     bool flag = true;
     for (size_t i = 0; i < 10; i++) {
       uint16_t distance = analogInputs[i].value;
       int thresholdDistance = (thresholdSwitch.getState() ? this->threshold500 : this->threshold800) + 25;
-      if (distance >= thresholdDistance) {
+      if (distance <= thresholdDistance) {
         flag = false;
       }
     }

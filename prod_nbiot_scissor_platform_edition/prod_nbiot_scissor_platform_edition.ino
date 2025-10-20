@@ -118,8 +118,6 @@ void loop() {
 
   /*=== Register display ===*/
   displayClient.loop();
-  displayClient.debug();
-
 
   delay(10);
 }

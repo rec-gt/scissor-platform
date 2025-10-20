@@ -152,13 +152,9 @@ AnalogInput1024 &ev4 = analogInputs[9];
 AnalogInput1024 &ev5 = analogInputs[10];
 AnalogInput1024 &ev6 = analogInputs[11];
 
-// Relay relay1(DO_1, digitalOutputs[DO_1]);
-// Relay relay2(DO_2, digitalOutputs[DO_2]);
-// Relay relay3(DO_3, digitalOutputs[DO_3]);
-
-// TempSensor tempSensor1(AI_1, analogInputs[AI_1]);
-// TempSensor tempSensor2(AI_2, analogInputs[AI_2]);
-// TempSensor tempSensor3(AI_3, analogInputs[AI_3]);
+AnalogOutputs &ao1 = analogOutputs[0];
+AnalogOutputs &ao2 = analogOutputs[1];
+AnalogOutputs &ao3 = analogOutputs[2];
 
 class SubSystem {
 public:
@@ -181,7 +177,6 @@ public:
     int actualTemp1 = readingToActualTemp(temp1.getValue());
     int actualTemp2 = readingToActualTemp(temp2.getValue());
     int actualTemp3 = readingToActualTemp(temp3.getValue());
-    Serial.println(temp1.getValue());
     int aoValue1 = getAoValue(actualTemp1);
     int aoValue2 = getAoValue(actualTemp2);
     int aoValue3 = getAoValue(actualTemp3);
@@ -203,6 +198,10 @@ public:
     } else {
       relay3.cut();
     }
+
+    ao1.set(aoValue1);
+    ao2.set(aoValue2);
+    ao3.set(aoValue3);
   }
 
   ~SubSystem() {}

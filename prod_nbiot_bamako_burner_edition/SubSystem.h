@@ -193,7 +193,7 @@ public:
       relay2.cut();
     }
 
-    if (actualTemp3 > 250) {
+    if (actualTemp3 > 30) {
       relay3.connect();
     } else {
       relay3.cut();

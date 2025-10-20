@@ -152,9 +152,9 @@ AnalogInput1024 &ev4 = analogInputs[9];
 AnalogInput1024 &ev5 = analogInputs[10];
 AnalogInput1024 &ev6 = analogInputs[11];
 
-AnalogOutputs &ao1 = analogOutputs[0];
-AnalogOutputs &ao2 = analogOutputs[1];
-AnalogOutputs &ao3 = analogOutputs[2];
+AnalogOutput &ao1 = analogOutputs[0];
+AnalogOutput &ao2 = analogOutputs[1];
+AnalogOutput &ao3 = analogOutputs[2];
 
 class SubSystem {
 public:

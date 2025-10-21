@@ -1,14 +1,13 @@
-#include "DigitalInput.h"
-#include "DigitalOutput.h"
-#include "AnalogInput.h"
-#include "AnalogOutput.h"
-#include "DryContact.h"
-#include "MainSystem.h"
-#include "NBIoT.h"
-#include "DisplayClient.h"
-#include "Modbus485.h"
-#include "Utils.h"
-#include "Test.h"
+#include "./core/DigitalInput.h"
+#include "./core/DigitalOutput.h"
+#include "./core/AnalogInput.h"
+#include "./core/AnalogOutput.h"
+#include "./core/DryContact.h"
+#include "./core/MainSystem.h"
+#include "./core/NBIoT.h"
+#include "./core/DisplayClient.h"
+#include "./core/Modbus485.h"
+#include "./core/Utils.h"
 
 MainSystem mainSystem;
 
@@ -20,13 +19,11 @@ Modbus485 modbus485;
 
 Utils utils;
 
-Test test;
-
 void setup() {
   Serial.begin(9600);
   analogReference(EXTERNAL);
 
-  /*=== String Management ===*/
+  /*=== String / Heap Memory Management ===*/
   nbiotCSQ.reserve(8);
   nbiotCGATT.reserve(8);
   nbiotCEREG.reserve(8);
@@ -49,10 +46,14 @@ void setup() {
 
   /*=== NBIoT ===*/
   nbiot.init(true);
-  nbiot.debug();
 
   /*=== Display ===*/
   displayClient.setup();
+
+  /*=== Config AI Resolution ===*/
+  for (size_t i = 0; i < AI_NUMS; i++) {
+    analogInputs[i].setResolution(0);
+  }
 }
 
 void loop() {
@@ -67,11 +68,6 @@ void loop() {
 
   /*=== Register display ===*/
   displayClient.loop();
-  displayClient.debug();
-
-  /*=== Register test script ===*/
-  test.DO();
-  test.AO();
 
   delay(10);
 }

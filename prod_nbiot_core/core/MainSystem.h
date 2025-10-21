@@ -1,11 +1,11 @@
-#include "DigitalInput.h"
-#include "DigitalOutput.h"
-#include "AnalogInput.h"
-#include "AnalogOutput.h"
-#include "NBIoT.h"
-#include "DisplayClient.h"
-#include "Utils.h"
-#include "Globals.h"
+#include "./Globals.h"
+#include "./DigitalInput.h"
+#include "./DigitalOutput.h"
+#include "./AnalogInput.h"
+#include "./AnalogOutput.h"
+#include "./NBIoT.h"
+#include "./DisplayClient.h"
+#include "./Utils.h"
 
 #ifndef MainSystem_H
 #define MainSystem_H

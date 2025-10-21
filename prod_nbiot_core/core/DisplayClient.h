@@ -1,13 +1,12 @@
-#include "AnalogInput.h"
-#include "AnalogOutput.h"
-#include "Globals.h"
+#include "./AnalogInput.h"
+#include "./AnalogOutput.h"
+#include "./Globals.h"
 
 #ifndef DisplayClient_H
 #define DisplayClient_H
 
 #define DisplaySerial Serial2
 #define DISPLAY_BUFFER_SIZE 55
-// #define DISPLAY_BUFFER_SIZE 41
 
 class DisplayClient {
 private:

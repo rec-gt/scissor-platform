@@ -67,25 +67,33 @@ public:
     int aoValue1 = getAoValue(actualTemp1);
     int aoValue2 = getAoValue(actualTemp2);
     int aoValue3 = getAoValue(actualTemp3);
-    
+
     Serial.println(actualTemp1);
+    Serial.println(actualTemp1 > 800);
+    Serial.println(actualTemp1 < 790);
 
     if (actualTemp1 > 800) {
       relay1.connect();
     } else {
-      relay1.cut();
+      if (actualTemp1 < 790) {
+        relay1.cut();
+      }
     }
 
     if (actualTemp2 > 250) {
       relay2.connect();
     } else {
-      relay2.cut();
+      if (actualTemp2 < 240) {
+        relay2.cut();
+      }
     }
 
     if (actualTemp3 > 30) {
       relay3.connect();
     } else {
-      relay3.cut();
+      if (actualTemp3 < 25) {
+        relay3.cut();
+      }
     }
 
     ao1.set(aoValue1);

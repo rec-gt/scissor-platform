@@ -1,12 +1,6 @@
 #ifndef GLOBALS_H
 #define GLOBALS_H
 
-#include "./DigitalInput.h"
-#include "./DigitalOutput.h"
-#include "./AnalogInput.h"
-#include "./AnalogOutput.h"
-#include "./DryContact.h"
-
 /*=== Main System ===*/
 #define DI_PIN_1 32
 #define DI_PIN_2 33

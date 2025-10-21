@@ -1,15 +1,10 @@
-#include "./core/DigitalInput.h"
-#include "./core/DigitalOutput.h"
-#include "./core/AnalogInput.h"
-#include "./core/AnalogOutput.h"
-#include "./core/DryContact.h"
 #include "./core/MainSystem.h"
 #include "./core/NBIoT.h"
 #include "./core/DisplayClient.h"
 #include "./core/Modbus485.h"
 #include "./core/Utils.h"
+#include "./edition/SubSystem.h"
 #include <avr/wdt.h>
-#include "./subsystem/SubSystem.h"
 
 MainSystem mainSystem;
 

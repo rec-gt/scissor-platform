@@ -54,6 +54,9 @@ void setup() {
     analogInputs[i].setResolution(0);
   }
 
+  /*=== SubSystem Init ===*/
+  subSystem.init();
+
   /*=== Watchdog ===*/
   wdt_enable(WDTO_8S);
 }

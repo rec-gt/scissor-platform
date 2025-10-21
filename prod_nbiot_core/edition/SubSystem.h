@@ -5,6 +5,8 @@ class SubSystem {
 public:
   SubSystem(void) {}
 
+  void init() {}
+  
   void loop() {}
 
   ~SubSystem() {}

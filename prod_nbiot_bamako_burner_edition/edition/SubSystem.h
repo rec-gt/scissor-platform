@@ -68,8 +68,8 @@ public:
     int aoValue2 = getAoValue(actualTemp2);
     int aoValue3 = getAoValue(actualTemp3);
 
-    Serial.print("Actual Temp1: ");
-    Serial.println(actualTemp1);
+    // Serial.print("Actual Temp1: ");
+    // Serial.println(actualTemp1);
    
     if (actualTemp1 > 800) {
       relay1.connect();

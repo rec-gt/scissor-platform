@@ -87,7 +87,7 @@ public:
     if (actualTemp3 > 30) {
       relay3.connect();
     } else {
-      if (actualTemp3 < 25) {
+      if (actualTemp3 < 27) {
         relay3.cut();
       }
     }

@@ -25,7 +25,7 @@ public:
 
   void listen() {
     /* === For 4096 Resolution === */
-    if (this->resolution == 0) {
+    if (this->resolution == 1) {
       uint32_t sum = 0;
 
       for (int i = 0; i < AI_OVERSAMPLING_FACTOR; i++) {
@@ -61,9 +61,12 @@ public:
   }
 
   uint16_t getValue() {
-    if (this->resolution == 0) {
+    /* === For 4096 Resolution === */
+    if (this->resolution == 1) {
       this->value = map(constrain((int32_t)this->smoothedReading, 0, 16063), 0, 16063, 0, 4095);
-    } else {
+    }
+    /* === For 1024 Resolution === */
+    else {
       this->value = constrain((int32_t)this->smoothedReading, 0, 1023);
     }
 

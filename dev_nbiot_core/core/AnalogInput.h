@@ -23,6 +23,10 @@ public:
     pinMode(pin, INPUT);
   }
 
+  void setResolution(byte resolution) {
+    this->resolution = resolution;
+  }
+
   void listen() {
     /* === For 4096 Resolution === */
     if (this->resolution == 1) {

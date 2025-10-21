@@ -23,7 +23,7 @@ void setup() {
   Serial.begin(9600);
   analogReference(EXTERNAL);
 
-  /*=== String Management ===*/
+  /*=== String / Heap Memory Management ===*/
   nbiotCSQ.reserve(8);
   nbiotCGATT.reserve(8);
   nbiotCEREG.reserve(8);
@@ -49,6 +49,11 @@ void setup() {
 
   /*=== Display ===*/
   displayClient.setup();
+
+  /*=== Config AI Resolution ===*/
+  for (size_t i = 0; i < AI_NUMS; i++) {
+    analogInputs[i].setResolution(0);
+  }
 }
 
 void loop() {

@@ -82,6 +82,9 @@
 #define AI_11 10
 #define AI_12 11
 
+#define AI_RESOLUTION_1024 0
+#define AI_RESOLUTION_4096 1
+
 #define AO_1 0
 #define AO_2 1
 #define AO_3 2
@@ -116,19 +119,19 @@ AnalogOutput analogOutputs[AO_NUMS]{
   AnalogOutput(AO_PIN_4),
 };
 
-AnalogInput1024 analogInputs[AI_NUMS] = {
-  AnalogInput1024(AI_PIN_1),
-  AnalogInput1024(AI_PIN_2),
-  AnalogInput1024(AI_PIN_3),
-  AnalogInput1024(AI_PIN_4),
-  AnalogInput1024(AI_PIN_5),
-  AnalogInput1024(AI_PIN_6),
-  AnalogInput1024(AI_PIN_7),
-  AnalogInput1024(AI_PIN_8),
-  AnalogInput1024(AI_PIN_9),
-  AnalogInput1024(AI_PIN_10),
-  AnalogInput1024(AI_PIN_11),
-  AnalogInput1024(AI_PIN_12)
+AnalogInput analogInputs[AI_NUMS] = {
+  AnalogInput(AI_PIN_1, AI_RESOLUTION_1024),
+  AnalogInput(AI_PIN_2, AI_RESOLUTION_1024),
+  AnalogInput(AI_PIN_3, AI_RESOLUTION_1024),
+  AnalogInput(AI_PIN_4, AI_RESOLUTION_1024),
+  AnalogInput(AI_PIN_5, AI_RESOLUTION_1024),
+  AnalogInput(AI_PIN_6, AI_RESOLUTION_1024),
+  AnalogInput(AI_PIN_7, AI_RESOLUTION_1024),
+  AnalogInput(AI_PIN_8, AI_RESOLUTION_1024),
+  AnalogInput(AI_PIN_9, AI_RESOLUTION_1024),
+  AnalogInput(AI_PIN_10, AI_RESOLUTION_1024),
+  AnalogInput(AI_PIN_11, AI_RESOLUTION_1024),
+  AnalogInput(AI_PIN_12, AI_RESOLUTION_1024)
 };
 
 DryContact dryContacts[DRY_CONTACT_NUMS] = {

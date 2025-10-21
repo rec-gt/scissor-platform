@@ -8,6 +8,8 @@
 #include "./core/DisplayClient.h"
 #include "./core/Modbus485.h"
 #include "./core/Utils.h"
+#include <avr/wdt.h>
+#include "./subsystem/SubSystem.h"
 
 MainSystem mainSystem;
 
@@ -18,6 +20,8 @@ DisplayClient displayClient;
 Modbus485 modbus485;
 
 Utils utils;
+
+SubSystem subSystem;
 
 void setup() {
   Serial.begin(9600);
@@ -54,6 +58,9 @@ void setup() {
   for (size_t i = 0; i < AI_NUMS; i++) {
     analogInputs[i].setResolution(0);
   }
+
+  /*=== Watchdog ===*/
+  wdt_enable(WDTO_8S);
 }
 
 void loop() {
@@ -68,6 +75,12 @@ void loop() {
 
   /*=== Register display ===*/
   displayClient.loop();
+
+  /*=== Register subSystem ===*/
+  subSystem.loop();
+
+  /*=== Pet the dog ===*/
+  wdt_reset();
 
   delay(10);
 }

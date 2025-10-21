@@ -1,6 +1,10 @@
 #ifndef AnalogInput_H
 #define AnalogInput_H
 
+#define AI_RESOLUTION_1024 0
+#define AI_RESOLUTION_4096 1
+
+/* === For 4096 Resolution === */
 #define AI_SHIFT_BITS 4
 #define AI_OVERSAMPLING_FACTOR 256  // 2 ^ (2 * 4)
 #define AI_SMOOTHING_SAMPLE_SIZE 24
@@ -8,6 +12,7 @@
 class AnalogInput {
 protected:
   byte pin;
+  byte resolution = AI_RESOLUTION_4096;
 
 public:
   uint16_t reading;
@@ -19,6 +24,11 @@ public:
 
   AnalogInput(byte pin)
     : pin(pin) {
+    pinMode(pin, INPUT);
+  }
+
+  AnalogInput(byte pin, byte resolution)
+    : pin(pin), resolution(resolution) {
     pinMode(pin, INPUT);
   }
 

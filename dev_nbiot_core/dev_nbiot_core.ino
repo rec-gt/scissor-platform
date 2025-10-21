@@ -44,9 +44,8 @@ void setup() {
   bool rubbishStrRes = rubbishStr.reserve(1024);  // push it to limit (variable amount)
   Serial.print(rubbishStrRes ? F("[Str Space OK]") : F("[String Space NOT OK]"));
 
-  /*=== NBIoT ===*/c:\Users\recckyt\Documents\Arduino\dev_nbiot_core\core\AnalogInput.h
+  /*=== NBIoT ===*/
   nbiot.init(true);
-  nbiot.debug();c:\Users\recckyt\Documents\Arduino\dev_nbiot_core\core\AnalogInput.h
 
   /*=== Display ===*/
   displayClient.setup();

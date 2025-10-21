@@ -1,40 +1,26 @@
-#include "DigitalInput.h"
-#include "DigitalOutput.h"
-#include "AnalogInput.h"
-#include "AnalogOutput.h"
-#include "NBIoT.h"
-#include "DisplayClient.h"
-#include "Utils.h"
-#include "Globals.h"
+#include "./DigitalInput.h"
+#include "./DigitalOutput.h"
+#include "./AnalogInput.h"
+#include "./AnalogOutput.h"
+#include "./NBIoT.h"
+#include "./DisplayClient.h"
+#include "./Utils.h"
+#include "./Globals.h"
 
 #ifndef MainSystem_H
 #define MainSystem_H
 
 class MainSystem {
-private:
-  DigitalInput *digitalInputs;
-  DigitalOutput *digitalOutputs;
-  AnalogInput *analogInputs;
-  AnalogOutput *analogOutputs;
-  uint8_t aiMappingMode;
-
-  byte DIPayload = 0;
-  byte DOPayload = 0;
-
-  unsigned long prevMillisDisplay;
-
 
 public:
-  MainSystem(DigitalInput *digitalInputs, DigitalOutput *digitalOutputs, AnalogInput *analogInputs, AnalogOutput *analogOutputs, uint8_t aiMappingMode)
-    : digitalInputs(digitalInputs), digitalOutputs(digitalOutputs), analogInputs(analogInputs), analogOutputs(analogOutputs), aiMappingMode(aiMappingMode) {
-  }
+  MainSystem(void){};
 
   void loop() {
     /*=== Listen Input Ports ===*/
     this->listen();
 
-    /*=== Display (for NBIoT, DO, AO, DI, AI)===*/
-    this->handleDisplayContent();
+    /*=== Build Payloads ===*/
+    this->buildPayloads();
 
     /*=== NBIoT Publish ===*/
     this->handlePublishContent();
@@ -53,30 +39,17 @@ public:
     }
   }
 
-  void handleDisplayContent() {
-    if (millis() - this->prevMillisDisplay > 2000) {
-      {
-        int csq = nbiotCSQ.toInt();
-        displayClient.prepareBuffer(nbiot.connState, csq, this->DIPayload, this->DOPayload, analogInputs, analogOutputs, aiMappingMode);
-        displayClient.sendBuffer();
-      }
-      this->prevMillisDisplay = millis();
-    }
-  }
-
-  void handlePublishContent() {
-    /*=== 1. build the payload ===*/
-
+  void buildPayloads() {
     /*=== DI ===*/
-    this->DIPayload = 0;
+    DIPayload = 0;
     for (size_t i = 0; i < DI_NUMS; i++) {
-      this->DIPayload |= digitalInputs[i].getState() << i;
+      DIPayload |= digitalInputs[i].getState() << i;
     }
 
     /*=== DO ===*/
-    this->DOPayload = 0;
+    DOPayload = 0;
     for (size_t i = 0; i < DO_NUMS; i++) {
-      this->DOPayload |= digitalOutputs[i].getState() << i;
+      DOPayload |= digitalOutputs[i].getState() << i;
     }
 
     /*=== AI ===*/
@@ -98,17 +71,18 @@ public:
       }
     }
     AOPayload += F("]");
+  }
 
-    /*=== 2. prepare the msg to be published ===*/
+  void handlePublishContent() {
     if (!nbiot.pubMsgPayloadLock) {
       nbiotPubMsgPayload = F("{\"csq\":");
       nbiotPubMsgPayload.concat(nbiotCSQ);
       nbiotPubMsgPayload.concat(F(","));
       nbiotPubMsgPayload.concat(F("\"din\":"));
-      nbiotPubMsgPayload.concat(this->DIPayload);
+      nbiotPubMsgPayload.concat(DIPayload);
       nbiotPubMsgPayload.concat(F(","));
       nbiotPubMsgPayload.concat(F("\"dout\":"));
-      nbiotPubMsgPayload.concat(this->DOPayload);
+      nbiotPubMsgPayload.concat(DOPayload);
       nbiotPubMsgPayload.concat(F(","));
       nbiotPubMsgPayload.concat(F("\"ain\":"));
       nbiotPubMsgPayload.concat(AIPayload);
@@ -139,7 +113,7 @@ public:
 
     byte b0 = nbiotSubMsgContent.charAt(0);
     byte b1 = nbiotSubMsgContent.charAt(1);
-    byte b2 = nbiotSubMsgContent.charAt(2);
+    // byte b2 = nbiotSubMsgContent.charAt(2); // b2 is useless
     byte b3 = nbiotSubMsgContent.charAt(3);
     byte b4 = nbiotSubMsgContent.charAt(4);
 

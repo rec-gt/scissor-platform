@@ -1,7 +1,7 @@
-#include "AsyncTimer.h"
-#include "Utils.h"
-#include "Watchdog.h"
-#include "Globals.h"
+#include "./AsyncTimer.h"
+#include "./Utils.h"
+#include "./Watchdog.h"
+#include "./Globals.h"
 
 #ifndef NBIoT_h
 #define NBIoT_h
@@ -129,6 +129,9 @@ public:
         delay(10);
       }
     }
+
+    // update global variable
+    nbiotConnState = this->connState;
   }
 
   void ask() {
@@ -333,7 +336,7 @@ public:
       nbiotSoftReset = false;
       this->connState = STATE_WAITING_RESET;
       this->pipelineState = PIPELINE_DEFAULT;
-      Serial.println("[SOFT_RESET]");
+      Serial.println(F("[SOFT_RESET]"));
     }
   }
 
@@ -565,11 +568,13 @@ public:
     idx = nbiotSerialRecv.indexOf(cmpStr);
 
     if (idx > -1) {
-      int winStart = idx + 6;
-      int winEnd = winStart + 2;
+      cmpStr = F(": ");
+      int winStart = nbiotSerialRecv.indexOf(cmpStr);
+      cmpStr = F(",");
+      int winEnd = nbiotSerialRecv.indexOf(cmpStr);
 
       {
-        nbiotCSQ = nbiotSerialRecv.substring(winStart, winEnd);
+        nbiotCSQ = nbiotSerialRecv.substring(winStart + 2, winEnd);
       }
 
       if (nbiotCSQ == "99") {

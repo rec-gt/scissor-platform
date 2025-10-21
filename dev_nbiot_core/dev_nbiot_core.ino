@@ -1,15 +1,13 @@
-#include "DigitalInput.h"
-#include "DigitalOutput.h"
-#include "AnalogInput.h"
-#include "AnalogOutput.h"
-#include "DryContact.h"
-#include "MainSystem.h"
-#include "NBIoT.h"
-#include "DisplayClient.h"
-#include "Modbus485.h"
-#include "Utils.h"
-#include "SubSystem.h"
-#include <avr/wdt.h>
+#include "./core/DigitalInput.h"
+#include "./core/DigitalOutput.h"
+#include "./core/AnalogInput.h"
+#include "./core/AnalogOutput.h"
+#include "./core/DryContact.h"
+#include "./core/MainSystem.h"
+#include "./core/NBIoT.h"
+#include "./core/DisplayClient.h"
+#include "./core/Modbus485.h"
+#include "./core/Utils.h"
 
 MainSystem mainSystem;
 
@@ -20,8 +18,6 @@ DisplayClient displayClient;
 Modbus485 modbus485;
 
 Utils utils;
-
-SubSystem subSystem;
 
 void setup() {
   Serial.begin(9600);
@@ -45,18 +41,15 @@ void setup() {
   nbiotSerialRecv.reserve(128);
   nbiotPubMsgPayload.reserve(256);
   nbiotPubMsgCommand.reserve(512);
-  bool rubbishStrRes = rubbishStr.reserve(1024);  //push it to limit
+  bool rubbishStrRes = rubbishStr.reserve(1024);  // push it to limit (variable amount)
   Serial.print(rubbishStrRes ? F("[Str Space OK]") : F("[String Space NOT OK]"));
 
-  /*=== NBIoT ===*/
+  /*=== NBIoT ===*/c:\Users\recckyt\Documents\Arduino\dev_nbiot_core\core\AnalogInput.h
   nbiot.init(true);
-  // nbiot.debug();
+  nbiot.debug();c:\Users\recckyt\Documents\Arduino\dev_nbiot_core\core\AnalogInput.h
 
   /*=== Display ===*/
   displayClient.setup();
-
-  /*=== Display ===*/
-  wdt_enable(WDTO_8S);
 }
 
 void loop() {
@@ -66,17 +59,11 @@ void loop() {
   /*=== Register MainSystem ===*/
   mainSystem.loop();
 
-  /*=== Register subSystem ===*/
-  subSystem.loop();
-
   /*=== Register Modbus ===*/
   modbus485.loop();
 
   /*=== Register display ===*/
   displayClient.loop();
 
-  /*=== Pet the dog ===*/
-  wdt_reset();
-  
   delay(10);
 }

@@ -230,7 +230,8 @@ public:
       if (nbiotTimer.autoExpired(1000UL)) {
         Serial.println(F("\r\nOPENING MQTT..."));
 
-        this->printlnFlush(F("AT+QMTOPEN=0,8.210.84.24,1880"));
+        // this->printlnFlush(F("AT+QMTOPEN=0,8.210.84.24,1880"));
+        this->printlnFlush(F("AT+QMTOPEN=0,iot.rec-gt.com,1880"));
 
         this->connState = STATE_WAITING_OPEN;
       }
@@ -262,7 +263,7 @@ public:
     if (this->connState == STATE_FINISH_NBIOT_INIT) {
       if (this->pipelineState == PIPELINE_DEFAULT) {
         if (nbiotTimer.autoExpired(5000)) {
-          Serial.println(F("\r\nQUERYING CSQ"));
+          Serial.println(F("\r\n[Connected] QUERYING CSQ"));
           this->printlnFlush(F("AT+CSQ"));
 
           this->pipelineState = PIPELINE_WAITING_CSQ;
@@ -271,7 +272,7 @@ public:
 
       if (this->pipelineState == PIPELINE_FINISH_CSQ) {
         if (nbiotTimer.autoExpired(5000)) {
-          Serial.println(F("\r\nQUERYING CGATT"));
+          Serial.println(F("\r\n[Connected] QUERYING CGATT"));
           this->printlnFlush(F("AT+CGATT?"));
 
           this->pipelineState = PIPELINE_WAITING_CGATT;
@@ -280,7 +281,7 @@ public:
 
       if (this->pipelineState == PIPELINE_FINISH_CGATT) {
         if (nbiotTimer.autoExpired(5000)) {
-          Serial.println(F("\r\nQUERYING CEREG"));
+          Serial.println(F("\r\n[Connected] QUERYING CEREG"));
           this->printlnFlush(F("AT+CEREG?"));
 
           this->pipelineState = PIPELINE_WAITING_CEREG;

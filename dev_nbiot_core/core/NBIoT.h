@@ -170,10 +170,8 @@ public:
     }
 
     if (this->connState == STATE_FINISH_IMEI) {
-      if (nbiotTimer.autoExpired(1000)) {
-        Serial.println(F("\r\nWaiting IP"));
-        this->connState = STATE_WAITING_IP;
-      }
+      Serial.println(F("\r\nWaiting IP"));
+      this->connState = STATE_WAITING_IP;
     }
 
     if (this->connState == STATE_FINISH_IP) {

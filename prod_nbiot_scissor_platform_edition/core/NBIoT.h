@@ -24,8 +24,6 @@ private:
     STATE_FINISH_IP,
     STATE_WAITING_SETUP,
     STATE_FINISH_SETUP,
-    STATE_WAITING_IMEI,
-    STATE_FINISH_IMEI,
     STATE_WAITING_CSQ,
     STATE_FINISH_CSQ,
     STATE_WAITING_CGATT,
@@ -155,16 +153,15 @@ public:
       if (nbiotTimer.autoExpired(1000)) {
         digitalWrite(this->resetPin, HIGH);
         this->connState = STATE_FINISH_RESET;
-        delay(100);
       }
     }
 
     if (this->connState == STATE_FINISH_RESET) {
-      if (nbiotTimer.autoExpired(1000)) {
-        Serial.println(F("\r\nWAITING IP"));
-
+      if (nbiotTimer.autoExpired(500)) {
+        this->printlnFlush(F("AT+QIDNSCFG=0,8.8.8.8,223.5.5.5"));
+        this->printlnFlush(F("AT+CGSN=1"));
         this->printlnFlush(F("AT+QSCLK=0"));
-
+        Serial.println(F("\r\nWaiting IP"));
         this->connState = STATE_WAITING_IP;
       }
     }
@@ -190,16 +187,6 @@ public:
     }
 
     if (this->connState == STATE_FINISH_SETUP) {
-      if (nbiotTimer.autoExpired(1000UL)) {
-        Serial.println(F("\r\nGETTING IMEI"));
-
-        this->printlnFlush(F("AT+CGSN=1"));
-
-        this->connState = STATE_WAITING_IMEI;
-      }
-    }
-
-    if (this->connState == STATE_FINISH_IMEI) {
       if (nbiotTimer.autoExpired(1000UL)) {
         Serial.println(F("\r\nGETTING CSQ"));
 
@@ -232,8 +219,8 @@ public:
     if (this->connState == STATE_FINISH_CEREG) {
       if (nbiotTimer.autoExpired(1000UL)) {
         Serial.println(F("\r\nOPENING MQTT..."));
-
-        this->printlnFlush(F("AT+QMTOPEN=0,8.210.84.24,1880"));
+        // this->printlnFlush(F("AT+QMTOPEN=0,8.210.84.24,1880"));
+        this->printlnFlush(F("AT+QMTOPEN=0,iot.rec-gt.com,1880"));
 
         this->connState = STATE_WAITING_OPEN;
       }
@@ -265,7 +252,7 @@ public:
     if (this->connState == STATE_FINISH_NBIOT_INIT) {
       if (this->pipelineState == PIPELINE_DEFAULT) {
         if (nbiotTimer.autoExpired(5000)) {
-          Serial.println(F("\r\nQUERYING CSQ"));
+          Serial.println(F("\r\n[Connected] QUERYING CSQ"));
           this->printlnFlush(F("AT+CSQ"));
 
           this->pipelineState = PIPELINE_WAITING_CSQ;
@@ -274,7 +261,7 @@ public:
 
       if (this->pipelineState == PIPELINE_FINISH_CSQ) {
         if (nbiotTimer.autoExpired(5000)) {
-          Serial.println(F("\r\nQUERYING CGATT"));
+          Serial.println(F("\r\n[Connected] QUERYING CGATT"));
           this->printlnFlush(F("AT+CGATT?"));
 
           this->pipelineState = PIPELINE_WAITING_CGATT;
@@ -283,7 +270,7 @@ public:
 
       if (this->pipelineState == PIPELINE_FINISH_CGATT) {
         if (nbiotTimer.autoExpired(5000)) {
-          Serial.println(F("\r\nQUERYING CEREG"));
+          Serial.println(F("\r\n[Connected] QUERYING CEREG"));
           this->printlnFlush(F("AT+CEREG?"));
 
           this->pipelineState = PIPELINE_WAITING_CEREG;
@@ -359,17 +346,6 @@ public:
         Serial.println(F("\r\nFINISH SETUP"));
 
         this->connState = STATE_FINISH_SETUP;
-        nbiotWatchdog.pet();
-      }
-    }
-
-    if (this->connState == STATE_WAITING_IMEI) {
-      cmpStr = F("+CGSN:");
-      idx = nbiotSerialRecv.indexOf(cmpStr);
-      if (idx > -1) {
-        Serial.println(F("\r\nFINISH GETTING IMEI"));
-
-        this->connState = STATE_FINISH_IMEI;
         nbiotWatchdog.pet();
       }
     }

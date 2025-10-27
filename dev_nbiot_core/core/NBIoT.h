@@ -161,6 +161,8 @@ public:
 
     if (this->connState == STATE_FINISH_RESET) {
       if (nbiotTimer.autoExpired(1000)) {
+        this->printlnFlush(F("AT+QIDNSCFG=0,8.8.8.8,223.5.5.5"));
+        this->printlnFlush(F("AT+CGSN=1"));
         this->printlnFlush(F("AT+QSCLK=0"));
         Serial.println(F("\r\nWaiting IMEI"));
         this->connState = STATE_WAITING_IMEI;

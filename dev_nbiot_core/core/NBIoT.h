@@ -20,12 +20,12 @@ private:
     STATE_DEFAULT,
     STATE_WAITING_RESET,
     STATE_FINISH_RESET,
+    STATE_WAITING_IMEI,
+    STATE_FINISH_IMEI,
     STATE_WAITING_IP,
     STATE_FINISH_IP,
     STATE_WAITING_SETUP,
     STATE_FINISH_SETUP,
-    STATE_WAITING_IMEI,
-    STATE_FINISH_IMEI,
     STATE_WAITING_CSQ,
     STATE_FINISH_CSQ,
     STATE_WAITING_CGATT,
@@ -161,10 +161,15 @@ public:
 
     if (this->connState == STATE_FINISH_RESET) {
       if (nbiotTimer.autoExpired(1000)) {
-        Serial.println(F("\r\nWAITING IP"));
-
         this->printlnFlush(F("AT+QSCLK=0"));
+        Serial.println(F("\r\nWaiting IMEI"));
+        this->connState = STATE_WAITING_IMEI;
+      }
+    }
 
+    if (this->connState == STATE_FINISH_IMEI) {
+      if (nbiotTimer.autoExpired(1000)) {
+        Serial.println(F("\r\nWaiting IP"));
         this->connState = STATE_WAITING_IP;
       }
     }
@@ -190,16 +195,6 @@ public:
     }
 
     if (this->connState == STATE_FINISH_SETUP) {
-      if (nbiotTimer.autoExpired(1000UL)) {
-        Serial.println(F("\r\nGETTING IMEI"));
-
-        this->printlnFlush(F("AT+CGSN=1"));
-
-        this->connState = STATE_WAITING_IMEI;
-      }
-    }
-
-    if (this->connState == STATE_FINISH_IMEI) {
       if (nbiotTimer.autoExpired(1000UL)) {
         Serial.println(F("\r\nGETTING CSQ"));
 
@@ -343,6 +338,17 @@ public:
   void answer() {
     int idx = -1;
 
+    if (this->connState == STATE_WAITING_IMEI) {
+      cmpStr = F("+CGSN:");
+      idx = nbiotSerialRecv.indexOf(cmpStr);
+      if (idx > -1) {
+        Serial.println(F("\r\nFINISH GETTING IMEI"));
+
+        this->connState = STATE_FINISH_IMEI;
+        nbiotWatchdog.pet();
+      }
+    }
+
     if (this->connState == STATE_WAITING_IP) {
       cmpStr = F("+IP:");
       idx = nbiotSerialRecv.indexOf(cmpStr);
@@ -359,17 +365,6 @@ public:
         Serial.println(F("\r\nFINISH SETUP"));
 
         this->connState = STATE_FINISH_SETUP;
-        nbiotWatchdog.pet();
-      }
-    }
-
-    if (this->connState == STATE_WAITING_IMEI) {
-      cmpStr = F("+CGSN:");
-      idx = nbiotSerialRecv.indexOf(cmpStr);
-      if (idx > -1) {
-        Serial.println(F("\r\nFINISH GETTING IMEI"));
-
-        this->connState = STATE_FINISH_IMEI;
         nbiotWatchdog.pet();
       }
     }

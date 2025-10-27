@@ -160,18 +160,17 @@ public:
 
     if (this->connState == STATE_FINISH_RESET) {
       if (nbiotTimer.autoExpired(500)) {
-        this->printlnFlush(F("AT+QIDNSCFG=0,8.8.8.8,223.5.5.5"));
         this->printlnFlush(F("AT+CGSN=1"));
         this->printlnFlush(F("AT+QSCLK=0"));
-        Serial.println(F("\r\nWaiting IMEI"));
-        this->connState = STATE_WAITING_IMEI;
+        Serial.println(F("\r\nWaiting IP"));
+        this->connState = STATE_WAITING_IP;
       }
     }
 
-    if (this->connState == STATE_FINISH_IMEI) {
-      Serial.println(F("\r\nWaiting IP"));
-      this->connState = STATE_WAITING_IP;
-    }
+    // if (this->connState == STATE_FINISH_IMEI) {
+    //   Serial.println(F("\r\nWaiting IP"));
+    //   this->connState = STATE_WAITING_IP;
+    // }
 
     if (this->connState == STATE_FINISH_IP) {
       Serial.println(F("\r\nSETTING UP NBIOT"));
@@ -185,6 +184,8 @@ public:
       this->printlnFlush(F("AT+CSCON=0"));
 
       this->printlnFlush(F("AT+CEDRXS=0,5"));
+
+      this->printlnFlush(F("AT+QIDNSCFG=0,8.8.8.8,223.5.5.5"));
 
       this->printlnFlush(F("AT+QMTCLOSE=0"));
 
@@ -226,7 +227,6 @@ public:
     if (this->connState == STATE_FINISH_CEREG) {
       if (nbiotTimer.autoExpired(1000UL)) {
         Serial.println(F("\r\nOPENING MQTT..."));
-
         // this->printlnFlush(F("AT+QMTOPEN=0,8.210.84.24,1880"));
         this->printlnFlush(F("AT+QMTOPEN=0,iot.rec-gt.com,1880"));
 
@@ -338,16 +338,16 @@ public:
   void answer() {
     int idx = -1;
 
-    if (this->connState == STATE_WAITING_IMEI) {
-      cmpStr = F("+CGSN:");
-      idx = nbiotSerialRecv.indexOf(cmpStr);
-      if (idx > -1) {
-        Serial.println(F("\r\nFINISH GETTING IMEI"));
+    // if (this->connState == STATE_WAITING_IMEI) {
+    //   cmpStr = F("+CGSN:");
+    //   idx = nbiotSerialRecv.indexOf(cmpStr);
+    //   if (idx > -1) {
+    //     Serial.println(F("\r\nFINISH GETTING IMEI"));
 
-        this->connState = STATE_FINISH_IMEI;
-        nbiotWatchdog.pet();
-      }
-    }
+    //     this->connState = STATE_FINISH_IMEI;
+    //     nbiotWatchdog.pet();
+    //   }
+    // }
 
     if (this->connState == STATE_WAITING_IP) {
       cmpStr = F("+IP:");

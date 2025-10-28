@@ -104,12 +104,11 @@ public:
     ao3.set(aoValue3);
 
     byte powerStatusState = powerStatus.getState();
-    if (powerStatusState == 0) {  // once the external relay open the circuit
-      if (this->prevPowerStatus != powerStatusState) {
-        this->prevPowerStatus = powerStatusState;
-        nbiot.forcePublish();
-      };
-    }
+    Serial.println(powerStatusState);
+    if (this->prevPowerStatus != powerStatusState) {
+      this->prevPowerStatus = powerStatusState;
+      nbiot.forcePublish();
+    };
   }
 
   ~SubSystem() {}

@@ -104,15 +104,13 @@ public:
     ao2.set(aoValue2);
     ao3.set(aoValue3);
 
+    // handle last will for power loss
     byte powerStatusState = powerStatus.getState();
-    Serial.println(powerStatusState);
     if (this->prevPowerStatus != powerStatusState) {
       this->prevPowerStatus = powerStatusState;
       if (powerStatusState == 0) {
         mainSystem.buildPayloads();
         mainSystem.handlePublishContent();
-        Serial.println(nbiotPubMsgCommand);
-
         nbiot.forcePublish();
       }
     };

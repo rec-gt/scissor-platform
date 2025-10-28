@@ -45,7 +45,6 @@ void setup() {
 
   /*=== NBIoT ===*/
   nbiot.init(true);
-  nbiot.debug();
 
   /*=== Display ===*/
   displayClient.setup();

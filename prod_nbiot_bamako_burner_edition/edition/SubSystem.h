@@ -19,7 +19,7 @@ int getAoValue(int actualTemp) {
 }
 
 DigitalInput &running = digitalInputs[0];
-DigitalInput &noPower = digitalInputs[1];
+DigitalInput &powerStatus = digitalInputs[1];
 DigitalInput &fault = digitalInputs[2];
 DigitalInput &waterLevelLow = digitalInputs[3];
 DigitalInput &waterLevelHigh = digitalInputs[4];
@@ -43,6 +43,8 @@ AnalogOutput &ao2 = analogOutputs[1];
 AnalogOutput &ao3 = analogOutputs[2];
 
 class SubSystem {
+private:
+  byte prevPowerStatus = 0;
 public:
   SubSystem(void) {
     relay1.cut();
@@ -54,12 +56,10 @@ public:
 
   void loop() {
     running.listen();
-    noPower.listen();
+    powerStatus.listen();
     fault.listen();
     waterLevelLow.listen();
     waterLevelHigh.listen();
-
-    Serial.println(noPower.getState());
 
     temp1.listen();
     temp2.listen();
@@ -103,11 +103,12 @@ public:
     ao2.set(aoValue2);
     ao3.set(aoValue3);
 
-
-    Serial.println(nbiotPubMsgCommand);
-
-    if (noPower.getState() == 0) {  // once the external relay open the circuit
-      nbiot.forcePublish();
+    byte powerStatusState = powerStatus.getState();
+    if (powerStatusState == 0) {  // once the external relay open the circuit
+      if (this->prevPowerStatus != powerStatusState) {
+        this->prevPowerStatus = powerStatusState;
+        nbiot.forcePublish();
+      };
     }
   }
 

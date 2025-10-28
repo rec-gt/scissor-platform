@@ -19,6 +19,7 @@ int getAoValue(int actualTemp) {
 }
 
 DigitalInput &running = digitalInputs[0];
+DigitalInput &noPower = digitalInputs[1];
 DigitalInput &fault = digitalInputs[2];
 DigitalInput &waterLevelLow = digitalInputs[3];
 DigitalInput &waterLevelHigh = digitalInputs[4];
@@ -53,9 +54,12 @@ public:
 
   void loop() {
     running.listen();
+    noPower.listen();
     fault.listen();
     waterLevelLow.listen();
     waterLevelHigh.listen();
+
+    Serial.println(noPower.getState());
 
     temp1.listen();
     temp2.listen();
@@ -70,7 +74,7 @@ public:
 
     // Serial.print("Actual Temp1: ");
     // Serial.println(actualTemp1);
-   
+
     if (actualTemp1 > 800) {
       relay1.connect();
     } else {
@@ -98,6 +102,13 @@ public:
     ao1.set(aoValue1);
     ao2.set(aoValue2);
     ao3.set(aoValue3);
+
+
+    Serial.println(nbiotPubMsgCommand);
+
+    if (noPower.getState() == 0) {  // once the external relay open the circuit
+      nbiot.forcePublish();
+    }
   }
 
   ~SubSystem() {}

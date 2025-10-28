@@ -148,4 +148,6 @@ public:
   ~MainSystem() {}
 };
 
+extern MainSystem mainSystem;
+
 #endif

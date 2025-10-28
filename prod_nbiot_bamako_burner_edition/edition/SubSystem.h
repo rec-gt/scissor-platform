@@ -3,6 +3,7 @@
 #include "../core/AnalogInput.h"
 #include "../core/AnalogOutput.h"
 #include "../core/NBIoT.h"
+#include "../core/MainSystem.h"
 #include "../core/DisplayClient.h"
 #include "../core/Utils.h"
 #include "../core/Globals.h"
@@ -107,7 +108,13 @@ public:
     Serial.println(powerStatusState);
     if (this->prevPowerStatus != powerStatusState) {
       this->prevPowerStatus = powerStatusState;
-      nbiot.forcePublish();
+      if (powerStatusState == 0) {
+        mainSystem.buildPayloads();
+        mainSystem.handlePublishContent();
+        Serial.println(nbiotPubMsgCommand);
+
+        nbiot.forcePublish();
+      }
     };
   }
 

@@ -40,7 +40,7 @@ void setup() {
   nbiotSerialRecv.reserve(128);
   nbiotPubMsgPayload.reserve(256);
   nbiotPubMsgCommand.reserve(512);
-  bool rubbishStrRes = rubbishStr.reserve(1024);  // push it to limit (variable amount)
+  bool rubbishStrRes = rubbishStr.reserve(1141);  // push it to limit (variable amount)
   Serial.print(rubbishStrRes ? F("[Str Space OK]") : F("[String Space NOT OK]"));
 
   /*=== NBIoT ===*/

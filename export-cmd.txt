@@ -1,13 +1,21 @@
 rd /s /q "./hex"
 
-arduino-cli compile --fqbn arduino:avr:mega --output-dir "C:\Users\recckyt\Documents\Arduino\hex\prod_nbiot_bamako_burner_edition" ./prod_nbiot_bamako_burner_edition
-rename "C:\Users\recckyt\Documents\Arduino\hex\prod_nbiot_bamako_burner_edition\prod_nbiot_bamako_burner_edition.ino.hex" "Controller.hex"
+
+arduino-cli compile --fqbn arduino:avr:nano:cpu=atmega328old --output-dir "C:\Users\recckyt\Documents\Arduino\hex\prod_display_server" ./prod_display_server
+rename "C:\Users\recckyt\Documents\Arduino\hex\prod_display_server\prod_display_server.ino.hex" "Display.hex"
+
 
 arduino-cli compile --fqbn arduino:avr:mega --output-dir "C:\Users\recckyt\Documents\Arduino\hex\prod_nbiot_core" ./prod_nbiot_core
 rename "C:\Users\recckyt\Documents\Arduino\hex\prod_nbiot_core\prod_nbiot_core.ino.hex" "Controller.hex"
 
+
+arduino-cli compile --fqbn arduino:avr:mega --output-dir "C:\Users\recckyt\Documents\Arduino\hex\prod_nbiot_bamako_burner_edition" ./prod_nbiot_bamako_burner_edition
+rename "C:\Users\recckyt\Documents\Arduino\hex\prod_nbiot_bamako_burner_edition\prod_nbiot_bamako_burner_edition.ino.hex" "Controller.hex"
+
+
 arduino-cli compile --fqbn arduino:avr:mega --output-dir "C:\Users\recckyt\Documents\Arduino\hex\prod_nbiot_factory_test_edition" ./prod_nbiot_factory_test_edition
 rename "C:\Users\recckyt\Documents\Arduino\hex\prod_nbiot_factory_test_edition\prod_nbiot_factory_test_edition.ino.hex" "Controller.hex"
+
 
 arduino-cli compile --fqbn arduino:avr:mega --output-dir "C:\Users\recckyt\Documents\Arduino\hex\prod_nbiot_scissor_platform_edition" ./prod_nbiot_scissor_platform_edition
 rename "C:\Users\recckyt\Documents\Arduino\hex\prod_nbiot_scissor_platform_edition\prod_nbiot_scissor_platform_edition.ino.hex" "Controller.hex"

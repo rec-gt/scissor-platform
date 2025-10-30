@@ -64,7 +64,7 @@ private:
   }
 
   void clearResBuffer() {
-    nbiotSerialRecv = "";
+    nbiotSerialRecv = F("");
   }
 
   void printlnFlush(const String& cmd, unsigned int delayTime = 2) {
@@ -134,18 +134,18 @@ public:
 
   void ask() {
     if (this->connState == STATE_WAITING_RESET) {
-      nbiotSerialRecv = "";
-      nbIotConnCmd = "";
-      nbiotSubsCmd = "";
+      nbiotSerialRecv = F("");
+      nbIotConnCmd = F("");
+      nbiotSubsCmd = F("");
 
-      nbiotCSQ = "";
-      nbiotIMEI = "";
-      nbiotCGATT = "";
-      nbiotCEREG = "";
+      nbiotCSQ = F("");
+      nbiotIMEI = F("");
+      nbiotCGATT = F("");
+      nbiotCEREG = F("");
 
-      nbiotPubMsgPayload = "";
-      nbiotPubMsgPrepare = "";
-      nbiotPubMsgCommand = "";
+      nbiotPubMsgPayload = F("");
+      nbiotPubMsgPrepare = F("");
+      nbiotPubMsgCommand = F("");
 
       this->pubMsgPayloadLock = false;
 
@@ -252,7 +252,7 @@ public:
     if (this->connState == STATE_FINISH_NBIOT_INIT) {
       if (this->pipelineState == PIPELINE_DEFAULT) {
         if (nbiotTimer.autoExpired(5000)) {
-          Serial.println(F("\r\n[Connected] QUERYING CSQ"));
+          Serial.println(F("\r\n[CONNECTED] QUERYING CSQ"));
           this->printlnFlush(F("AT+CSQ"));
 
           this->pipelineState = PIPELINE_WAITING_CSQ;
@@ -261,7 +261,7 @@ public:
 
       if (this->pipelineState == PIPELINE_FINISH_CSQ) {
         if (nbiotTimer.autoExpired(5000)) {
-          Serial.println(F("\r\n[Connected] QUERYING CGATT"));
+          Serial.println(F("\r\n[CONNECTED] QUERYING CGATT"));
           this->printlnFlush(F("AT+CGATT?"));
 
           this->pipelineState = PIPELINE_WAITING_CGATT;
@@ -270,7 +270,7 @@ public:
 
       if (this->pipelineState == PIPELINE_FINISH_CGATT) {
         if (nbiotTimer.autoExpired(5000)) {
-          Serial.println(F("\r\n[Connected] QUERYING CEREG"));
+          Serial.println(F("\r\n[CONNECTED] QUERYING CEREG"));
           this->printlnFlush(F("AT+CEREG?"));
 
           this->pipelineState = PIPELINE_WAITING_CEREG;
@@ -608,8 +608,8 @@ public:
     if (idx > -1) {
       {
         nbiotSubMsgContent = nbiotSerialRecv.substring(41, 46);
+        Serial.println(nbiotSubMsgContent);
       }
-      Serial.println(nbiotSubMsgContent);
     }
   }
 

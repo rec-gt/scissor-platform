@@ -142,7 +142,7 @@ public:
       }
     }
 
-    nbiotSubMsgContent = "";
+    nbiotSubMsgContent = F("");
   }
 
   ~MainSystem() {}

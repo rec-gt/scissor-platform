@@ -81,7 +81,7 @@ void loop() {
   subSystem.loop();
 
   /*=== Pet the dog ===*/
-  if (systemTimer.isExpired()) {
+  if (!systemTimer.isExpired()) {
     wdt_reset();
   }
 

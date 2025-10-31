@@ -43,11 +43,12 @@ void setup() {
   nbiotSerialRecv.reserve(128);
   nbiotPubMsgPayload.reserve(256);
   nbiotPubMsgCommand.reserve(512);
-  bool rubbishStrRes = rubbishStr.reserve(1132);  // push it to limit (variable amount)
+  bool rubbishStrRes = rubbishStr.reserve(1131);  // push it to limit (variable amount)
   Serial.print(rubbishStrRes ? F("[Str Space OK]") : F("[String Space NOT OK]"));
 
   /*=== NBIoT ===*/
   nbiot.init(true);
+  nbiot.debug();
 
   /*=== Display ===*/
   displayClient.setup();
@@ -81,9 +82,9 @@ void loop() {
   subSystem.loop();
 
   /*=== Pet the dog ===*/
-  if (!systemTimer.isExpired()) {
-    wdt_reset();
-  }
+  // if (!systemTimer.isExpired()) {
+  wdt_reset();
+  // }
 
   delay(10);
 }

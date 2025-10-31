@@ -153,15 +153,15 @@ public:
       if (nbiotTimer.autoExpired(1000)) {
         digitalWrite(this->resetPin, HIGH);
         this->connState = STATE_FINISH_RESET;
+        Serial.println(F("\r\nWaiting IP"));
       }
     }
 
     if (this->connState == STATE_FINISH_RESET) {
       if (nbiotTimer.autoExpired(500)) {
-        this->printlnFlush(F("AT+QIDNSCFG=0,8.8.8.8,223.5.5.5"));
         this->printlnFlush(F("AT+CGSN=1"));
         this->printlnFlush(F("AT+QSCLK=0"));
-        Serial.println(F("\r\nWaiting IP"));
+        this->printlnFlush(F("AT+QIDNSCFG=0,8.8.8.8,223.5.5.5"));
         this->connState = STATE_WAITING_IP;
       }
     }
@@ -495,18 +495,23 @@ public:
     if (idx > -1) {
       {
         nbiotIMEI = nbiotSerialRecv.substring(7, 7 + 15);
-      }
-      if (!utils.isNumeric(nbiotIMEI)) {
-        nbiotSoftReset = true;
-      }
 
-      nbIotConnCmd = F("AT+QMTCONN=0,dev_");
-      nbIotConnCmd.concat(nbiotIMEI);
-      nbIotConnCmd.concat(F(",tswh,1Wo=[6vA0m"));
+        if (!utils.isNumeric(nbiotIMEI)) {
+          nbiotSoftReset = true;
+        }
 
-      nbiotSubsCmd = F("AT+QMTSUB=0,1,rgt/");
-      nbiotSubsCmd.concat(nbiotIMEI);
-      nbiotSubsCmd.concat(F("/out,0"));
+        if (nbiotIMEI.length() != 15) {
+          nbiotSoftReset = true;
+        }
+
+        nbIotConnCmd = F("AT+QMTCONN=0,dev_");
+        nbIotConnCmd.concat(nbiotIMEI);
+        nbIotConnCmd.concat(F(",tswh,1Wo=[6vA0m"));
+
+        nbiotSubsCmd = F("AT+QMTSUB=0,1,rgt/");
+        nbiotSubsCmd.concat(nbiotIMEI);
+        nbiotSubsCmd.concat(F("/out,0"));
+      }
     }
 
     // === handle CGATT ===
@@ -518,7 +523,7 @@ public:
         nbiotCGATT = nbiotSerialRecv.substring(8, 8 + 1);
       }
 
-      if (nbiotCGATT != "1") {
+      if (nbiotCGATT != F("1")) {
         nbiotSoftReset = true;
       }
     }
@@ -533,7 +538,7 @@ public:
         nbiotCEREG = nbiotSerialRecv.substring(8, 8 + 3);
       }
 
-      if (nbiotCEREG != "0,1") {
+      if (nbiotCEREG != F("0,1")) {
         nbiotSoftReset = true;
       }
     }
@@ -553,7 +558,7 @@ public:
         nbiotCSQ = nbiotSerialRecv.substring(winStart + 2, winEnd);
       }
 
-      if (nbiotCSQ == "99") {
+      if (nbiotCSQ == F("99")) {
         nbiotSoftReset = true;
       }
 
@@ -581,7 +586,7 @@ public:
         nbiotPubAck = nbiotSerialRecv.substring(9, 9 + 5);
       }
 
-      if (nbiotPubAck != "0,0,0") {
+      if (nbiotPubAck != F("0,0,0")) {
         nbiotSoftReset = true;
       }
     }
@@ -596,7 +601,7 @@ public:
         nbiotSubAck = nbiotSerialRecv.substring(9, 9 + 7);
       }
 
-      if (nbiotSubAck != "0,1,0,0") {
+      if (nbiotSubAck != F("0,1,0,0")) {
         nbiotSoftReset = true;
       }
     }

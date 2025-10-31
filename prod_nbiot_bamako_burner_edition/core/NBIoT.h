@@ -161,28 +161,20 @@ public:
       if (nbiotTimer.autoExpired(500)) {
         this->printlnFlush(F("AT+CGSN=1"));
         this->printlnFlush(F("AT+QSCLK=0"));
-        this->printlnFlush(F("AT+QIDNSCFG=0,8.8.8.8,223.5.5.5"));
+        this->printlnFlush(F("AT+QIDNSCFG=0,223.5.5.5,8.8.8.8"));
         this->connState = STATE_WAITING_IP;
       }
     }
 
     if (this->connState == STATE_FINISH_IP) {
       Serial.println(F("\r\nSETTING UP NBIOT"));
-
       this->printlnFlush(F("AT+CFUN=1"));
-
       this->printlnFlush(F("AT+QSCLK=0"));
-
       this->printlnFlush(F("AT+CPSMS=0"));
-
       this->printlnFlush(F("AT+CSCON=0"));
-
       this->printlnFlush(F("AT+CEDRXS=0,5"));
-
       this->printlnFlush(F("AT+QMTCLOSE=0"));
-
       this->printlnFlush(F("AT+QMTDISC=0"));
-
       this->connState = STATE_WAITING_SETUP;
     }
 

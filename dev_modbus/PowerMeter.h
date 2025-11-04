@@ -9,30 +9,30 @@ private:
   byte slaveId;
   unsigned long prevMillis = millis();
 
-  static constexpr long HOLDING_REGISTERS_START_ADDRESS = 40000;
-  static constexpr byte HOLDING_REGISTER_COUNT = 13;
-  long holdingRegisterValues[HOLDING_REGISTER_COUNT] = {};
+  uint32_t holdingRegisterValues[100] = {};
+  char* holdingRegisterDescription[100] = {
+    (char*)"Uan",
+    (char*)"Ubn",
+    (char*)"Ucn",
+    (char*)"Uab",
+    (char*)"Ubc",
+    (char*)"Uca",
+    (char*)"Ia",
+    (char*)"Ib",
+    (char*)"Ic",
+    (char*)"P Total",
+    (char*)"PF Total",
+    (char*)"In (Calculated)",
+    (char*)"kWh Total",
+    (char*)"Ia THD",
+    (char*)"Ib THD",
+    (char*)"Ic THD",
+    (char*)"S Total",
+  };
 
 public:
   PowerMeter(byte slaveId)
     : slaveId(slaveId){};
-
-  uint16_t cnt = 0;
-
-  // void listen() {
-  //   while (Serial3.available() > 0) {
-  //     char c = Serial3.read();
-
-  //     Serial.print(c);
-
-  //     if (c != '\r' && c != '\n') {
-  //       serialRes += c;
-  //     }
-
-  //     if (c == '\r') {
-  //     }
-  //   }
-  // }
 
   void read() {
     if (millis() - this->prevMillis > 1000) {
@@ -102,21 +102,6 @@ public:
 
       Serial.println(mbClient.lastError());
 
-
-
-      // if (!mbClient.requestFrom(this->slaveId, HOLDING_REGISTERS, 22, 2)) {
-      //   Serial.println(mbClient.lastError());
-      // } else {
-      //   for (uint16_t i = 0; i < 2; i++) {
-      //     Serial.println(mbClient.read());
-      //   }
-      // }
-
-      // === debug ===
-      // for (uint16_t i = 0; i < HOLDING_REGISTER_COUNT; i++) {
-      //   Serial.print(this->holdingRegisterValues[i]);
-      //   Serial.print(", ");
-      // }
       Serial.println();
 
       this->prevMillis = millis();

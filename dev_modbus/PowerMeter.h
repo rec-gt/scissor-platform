@@ -11,23 +11,23 @@ private:
 
   float holdingRegisterValues[17] = {};
   char* holdingRegisterDescription[17] = {
-    (char*)"Uan",
-    (char*)"Ubn",
-    (char*)"Ucn",
-    (char*)"Uab",
-    (char*)"Ubc",
-    (char*)"Uca",
-    (char*)"Ia",
-    (char*)"Ib",
-    (char*)"Ic",
-    (char*)"P Total",
-    (char*)"PF Total",
-    (char*)"In (Calculated)",
-    (char*)"kWh Total",
-    (char*)"Ia THD",
-    (char*)"Ib THD",
-    (char*)"Ic THD",
-    (char*)"S Total",
+    (char*)"Uan             ",
+    (char*)"Ubn             ",
+    (char*)"Ucn             ",
+    (char*)"Uab             ",
+    (char*)"Ubc             ",
+    (char*)"Uca             ",
+    (char*)"Ia              ",
+    (char*)"Ib              ",
+    (char*)"Ic              ",
+    (char*)"P Total         ",
+    (char*)"PF Total        ",
+    (char*)"In (Calculated) ",
+    (char*)"kWh Total       ",
+    (char*)"Ia THD          ",
+    (char*)"Ib THD          ",
+    (char*)"Ic THD          ",
+    (char*)"S Total         ",
   };
 
   float ieee_float(uint32_t f) {
@@ -115,7 +115,7 @@ public:
 
       for (byte i = 0; i < 17; i++) {
         Serial.print(holdingRegisterDescription[i]);
-        Serial.print(" : ");
+        Serial.print(": ");
         Serial.println(holdingRegisterValues[i]);
       }
 

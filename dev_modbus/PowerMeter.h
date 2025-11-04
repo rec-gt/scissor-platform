@@ -9,8 +9,8 @@ private:
   byte slaveId;
   unsigned long prevMillis = millis();
 
-  uint32_t holdingRegisterValues[100] = {};
-  char* holdingRegisterDescription[100] = {
+  uint32_t holdingRegisterValues[17] = {};
+  char* holdingRegisterDescription[17] = {
     (char*)"Uan",
     (char*)"Ubn",
     (char*)"Ucn",
@@ -35,74 +35,77 @@ public:
     : slaveId(slaveId){};
 
   void read() {
+    byte cnt = 0;
     if (millis() - this->prevMillis > 1000) {
       mbClient.requestFrom(this->slaveId, HOLDING_REGISTERS, 0, 6);
-      for (uint16_t i = 0; i < 6; i++) {
-        Serial.println(mbClient.read());
-      }
+      holdingRegisterValues[cnt++] = mbClient.read() << 16 | mbClient.read();
+      holdingRegisterValues[cnt++] = mbClient.read() << 16 | mbClient.read();
+      holdingRegisterValues[cnt++] = mbClient.read() << 16 | mbClient.read();
 
       delay(2);
 
       mbClient.requestFrom(this->slaveId, HOLDING_REGISTERS, 8, 6);
-      for (uint16_t i = 0; i < 6; i++) {
-        Serial.println(mbClient.read());
-      }
+      holdingRegisterValues[cnt++] = mbClient.read() << 16 | mbClient.read();
+      holdingRegisterValues[cnt++] = mbClient.read() << 16 | mbClient.read();
+      holdingRegisterValues[cnt++] = mbClient.read() << 16 | mbClient.read();
 
       delay(2);
 
       mbClient.requestFrom(this->slaveId, HOLDING_REGISTERS, 16, 6);
-      for (uint16_t i = 0; i < 6; i++) {
-        Serial.println(mbClient.read());
-      }
+      holdingRegisterValues[cnt++] = mbClient.read() << 16 | mbClient.read();
+      holdingRegisterValues[cnt++] = mbClient.read() << 16 | mbClient.read();
+      holdingRegisterValues[cnt++] = mbClient.read() << 16 | mbClient.read();
 
       delay(2);
 
       mbClient.requestFrom(this->slaveId, HOLDING_REGISTERS, 30, 2);
-      for (uint16_t i = 0; i < 2; i++) {
-        Serial.println(mbClient.read());
-      }
+      holdingRegisterValues[cnt++] = mbClient.read() << 16 | mbClient.read();
+
 
       delay(2);
 
       mbClient.requestFrom(this->slaveId, HOLDING_REGISTERS, 54, 2);
-      for (uint16_t i = 0; i < 2; i++) {
-        Serial.println(mbClient.read());
-      }
+      holdingRegisterValues[cnt++] = mbClient.read() << 16 | mbClient.read();
+
 
       delay(2);
 
       mbClient.requestFrom(this->slaveId, HOLDING_REGISTERS, 70, 2);
-      for (uint16_t i = 0; i < 2; i++) {
-        Serial.println(mbClient.read());
-      }
+      holdingRegisterValues[cnt++] = mbClient.read() << 16 | mbClient.read();
+
 
       delay(2);
 
       mbClient.requestFrom(this->slaveId, HOLDING_REGISTERS, 506, 2);
-      for (uint16_t i = 0; i < 2; i++) {
-        Serial.println(mbClient.read());
-      }
+      holdingRegisterValues[cnt++] = mbClient.read() << 16 | mbClient.read();
 
       delay(2);
 
       mbClient.requestFrom(this->slaveId, HOLDING_REGISTERS, 1400, 6);
-      for (uint16_t i = 0; i < 6; i++) {
-        Serial.println(mbClient.read());
-      }
+      holdingRegisterValues[cnt++] = mbClient.read() << 16 | mbClient.read();
+      holdingRegisterValues[cnt++] = mbClient.read() << 16 | mbClient.read();
+      holdingRegisterValues[cnt++] = mbClient.read() << 16 | mbClient.read();
 
       delay(2);
 
-
       mbClient.requestFrom(this->slaveId, HOLDING_REGISTERS, 3430, 6);
-      for (uint16_t i = 0; i < 6; i++) {
-        Serial.println(mbClient.read());
-      }
+      mbClient.read();
+      mbClient.read();
+      mbClient.read();
+      mbClient.read();
+      holdingRegisterValues[cnt++] = mbClient.read() << 16 | mbClient.read();
 
       delay(2);
 
       Serial.println(mbClient.lastError());
 
       Serial.println();
+
+      for (byte i = 0; i < 17; i++) {
+        Serial.print(holdingRegisterDescription[i]);
+        Serial.print(" : ");
+        Serial.println(holdingRegisterValues[i]);
+      }
 
       this->prevMillis = millis();
     }

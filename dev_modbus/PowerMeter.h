@@ -74,17 +74,12 @@ public:
       delay(2);
 
       mbClient.requestFrom(this->slaveId, HOLDING_REGISTERS, 54, 2);
-      uint16_t HI = mbClient.read();
-      uint16_t LO = mbClient.read();
-
-      holdingRegisterValues[cnt++] = ieee_float(((uint32_t)HI << 16) | (uint32_t)LO);
-
+      holdingRegisterValues[cnt++] = ieee_float(((uint32_t)mbClient.read() << 16) | (uint32_t)mbClient.read());
 
       delay(2);
 
       mbClient.requestFrom(this->slaveId, HOLDING_REGISTERS, 70, 2);
       holdingRegisterValues[cnt++] = mbClient.read() << 16 | mbClient.read();
-
 
       delay(2);
 

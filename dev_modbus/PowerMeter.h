@@ -65,7 +65,17 @@ public:
       delay(2);
 
       mbClient.requestFrom(this->slaveId, HOLDING_REGISTERS, 54, 2);
-      holdingRegisterValues[cnt++] = mbClient.read() << 16 | mbClient.read();
+      uint16_t HI = mbClient.read();
+      uint16_t LO = mbClient.read();
+      Serial.println((float)(HI | LO));
+
+      for (int i = 16 - 1; i >= 0; i--) {  // Loop from most significant bit to least significant
+        Serial.print(bitRead(HI, i));
+      }
+      for (int i = 16 - 1; i >= 0; i--) {  // Loop from most significant bit to least significant
+        Serial.print(bitRead(LO, i));
+      }
+      // holdingRegisterValues[cnt++] = mbClient.read() << 16 | mbClient.read();
 
 
       delay(2);

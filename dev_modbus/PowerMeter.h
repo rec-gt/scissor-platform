@@ -30,6 +30,15 @@ private:
     (char*)"S Total",
   };
 
+  float ieee_float(uint32_t f) {
+    union {
+      uint32_t i;
+      float f;
+    } u;
+    u.i = f;
+    return u.f;
+  }
+
 public:
   PowerMeter(byte slaveId)
     : slaveId(slaveId){};
@@ -67,7 +76,7 @@ public:
       mbClient.requestFrom(this->slaveId, HOLDING_REGISTERS, 54, 2);
       uint16_t HI = mbClient.read();
       uint16_t LO = mbClient.read();
-      Serial.println((float)(HI | LO));
+      Serial.println(ieee_float(HI | LO));
 
       for (int i = 16 - 1; i >= 0; i--) {  // Loop from most significant bit to least significant
         Serial.print(bitRead(HI, i));

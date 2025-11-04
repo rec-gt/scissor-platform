@@ -32,12 +32,12 @@ private:
     (char*)"S Total         ",
   };
 
-  float IEEEfloat(uint32_t f) {
+  float IEEEfloat(uint32_t uint32) {
     union {
       uint32_t i;
       float f;
     } u;
-    u.i = f;
+    u.i = uint32;
     return u.f;
   }
 

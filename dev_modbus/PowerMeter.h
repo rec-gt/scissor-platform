@@ -76,7 +76,7 @@ public:
       mbClient.requestFrom(this->slaveId, HOLDING_REGISTERS, 54, 2);
       uint16_t HI = mbClient.read();
       uint16_t LO = mbClient.read();
-      Serial.println(ieee_float(HI | LO));
+      Serial.println(ieee_float(((uint32_t)HI << 16) | (uint32_t)LO));
 
       for (int i = 16 - 1; i >= 0; i--) {  // Loop from most significant bit to least significant
         Serial.print(bitRead(HI, i));

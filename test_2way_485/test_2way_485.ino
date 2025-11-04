@@ -4,11 +4,6 @@ void setup() {
 }
 
 void loop() {
-  while (Serial.available()) {
-    Serial1.print(255);
-  }
-  while (Serial1.available()) {
-    Serial.println(Serial1.read());
-  }
+  Serial1.print(255);
   delay(1000);
 }

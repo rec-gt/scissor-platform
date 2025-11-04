@@ -3,8 +3,10 @@
 #ifndef WiFiBroker_H
 #define WiFiBroker_H
 
-const char* apSSID = "ifcu-remote-16f-test";
-const char* apPassword = "ifcu-remote-16f-test";
+// const char* apSSID = "ifcu-remote-16f-test";
+// const char* apPassword = "ifcu-remote-16f-test";
+const char* apSSID = "MIFI_1E40";
+const char* apPassword = "1234567890";
 
 IPAddress staticIP(192, 168, 1, 2);
 IPAddress gateway(192, 168, 1, 1);

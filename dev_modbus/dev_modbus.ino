@@ -1,12 +1,11 @@
 #include <ArduinoRS485.h>
 #include <ArduinoModbus.h>
-#include "IFCU.h"
+#include "PowerMeter.h"
 #include "Globals.h"
 #include "NBIoT.h"
 
-NBIoT nbiot;
 
-IFCU ifcu(100);
+PowerMeter powerMeter(100);
 
 void setup() {
   Serial.begin(9600);
@@ -16,18 +15,13 @@ void setup() {
     while (1) {};
   }
 
-  // nbiot.debug();
-  // nbiot.init(1);
-
   delay(1000);
 }
 
 void loop() {
-  // nbiot.loop();
 
-  ifcu.read();
-  // ifcu.monitor();
-  // ifcu.handleForcePublish();
-  
+  // powerMeter.listen();
+  powerMeter.read();
+
   delay(10);
 }

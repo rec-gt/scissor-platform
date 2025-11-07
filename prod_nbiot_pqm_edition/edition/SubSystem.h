@@ -14,7 +14,7 @@ public:
 
   void init() {
     if (!mbClient.begin(9600)) {
-      Serial.println("Failed to start Modbus RTU Client!");
+      Serial.println(F("Failed to start Modbus RTU Client!"));
       while (1) {};
     }
   }

@@ -41,9 +41,9 @@ void setup() {
   AIPayload.reserve(128);
   rs485SerialRecv.reserve(128);
   nbiotSerialRecv.reserve(128);
-  nbiotPubMsgPayload.reserve(256);
+  bool rubbishStrRes = nbiotPubMsgPayload.reserve(256);
   nbiotPubMsgCommand.reserve(512);
-  bool rubbishStrRes = rubbishStr.reserve(1132);  // push it to limit (variable amount)
+  // bool rubbishStrRes = rubbishStr.reserve(1);  // push it to limit (variable amount)
   Serial.print(rubbishStrRes ? F("[Str Space OK]") : F("[String Space NOT OK]"));
 
   /*=== NBIoT ===*/
@@ -73,7 +73,7 @@ void loop() {
   mainSystem.loop();
 
   /*=== Register Modbus ===*/
-  modbus485.loop();
+  // modbus485.loop();
 
   /*=== Register display ===*/
   displayClient.loop();

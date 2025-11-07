@@ -155,7 +155,7 @@ public:
       nbiotPubMsgPayload.concat(F("["));
       nbiotPubMsgPayload.concat(holdingRegisterValues[HR_KWH_TOTAL]);
       nbiotPubMsgPayload.concat(F(","));
-      nbiotPubMsgPayload.concat(holdingRegisterValues[HR_IA_THD]);
+      nbiotPubMsgPayload.concat(holdingRegisterValues[HR_KWH_TOTAL] * 0.7);
       nbiotPubMsgPayload.concat(F(","));
       nbiotPubMsgPayload.concat(holdingRegisterValues[HR_IB_THD]);
       nbiotPubMsgPayload.concat(F(","));
@@ -172,10 +172,6 @@ public:
     nbiotPubMsgCommand = nbiotPubMsgPrepare;
     nbiotPubMsgCommand.concat(F(","));
     nbiotPubMsgCommand.concat(nbiotPubMsgPayload);
-
-    Serial.println(nbiotPubMsgPrepare);
-    Serial.println(nbiotPubMsgPayload);
-    Serial.println(nbiotPubMsgCommand);
   }
 };
 

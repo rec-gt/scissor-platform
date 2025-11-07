@@ -10,7 +10,7 @@ private:
   unsigned long prevMillis = millis();
   static constexpr uint16_t PARAMETERS_SIZE = 17;
 
-  enum holdingRegisterEnums[PARAMETERS_SIZE] = {
+  enum HR_ENUMS {
     HR_UAN,
     HR_UBN,
     HR_UCN,

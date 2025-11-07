@@ -80,53 +80,53 @@ public:
     holdingRegisterValues[HR_UBN] = IEEEfloat(((uint32_t)mbClient.read() << 16) | (uint32_t)mbClient.read());
     holdingRegisterValues[HR_UCN] = IEEEfloat(((uint32_t)mbClient.read() << 16) | (uint32_t)mbClient.read());
 
-    delay(100);
+    delay(15);
 
     mbClient.requestFrom(this->slaveId, HOLDING_REGISTERS, 8, 6);
     holdingRegisterValues[HR_UAB] = IEEEfloat(((uint32_t)mbClient.read() << 16) | (uint32_t)mbClient.read());
     holdingRegisterValues[HR_UBC] = IEEEfloat(((uint32_t)mbClient.read() << 16) | (uint32_t)mbClient.read());
     holdingRegisterValues[HR_UCA] = IEEEfloat(((uint32_t)mbClient.read() << 16) | (uint32_t)mbClient.read());
 
-    delay(100);
+    delay(15);
 
     mbClient.requestFrom(this->slaveId, HOLDING_REGISTERS, 16, 6);
     holdingRegisterValues[HR_IA] = IEEEfloat(((uint32_t)mbClient.read() << 16) | (uint32_t)mbClient.read());
     holdingRegisterValues[HR_IB] = IEEEfloat(((uint32_t)mbClient.read() << 16) | (uint32_t)mbClient.read());
     holdingRegisterValues[HR_IC] = IEEEfloat(((uint32_t)mbClient.read() << 16) | (uint32_t)mbClient.read());
 
-    delay(100);
+    delay(15);
 
     mbClient.requestFrom(this->slaveId, HOLDING_REGISTERS, 30, 2);
     holdingRegisterValues[HR_P_TOTAL] = IEEEfloat(((uint32_t)mbClient.read() << 16) | (uint32_t)mbClient.read());
 
-    delay(100);
+    delay(15);
 
     mbClient.requestFrom(this->slaveId, HOLDING_REGISTERS, 54, 2);
     holdingRegisterValues[HR_PF_TOTAL] = IEEEfloat(((uint32_t)mbClient.read() << 16) | (uint32_t)mbClient.read());
 
-    delay(100);
+    delay(15);
 
     mbClient.requestFrom(this->slaveId, HOLDING_REGISTERS, 70, 2);
     holdingRegisterValues[HR_IN_CALCULATED] = IEEEfloat(((uint32_t)mbClient.read() << 16) | (uint32_t)mbClient.read());
 
-    delay(100);
+    delay(15);
 
     mbClient.requestFrom(this->slaveId, HOLDING_REGISTERS, 506, 2);
     holdingRegisterValues[HR_KWH_TOTAL] = (((uint32_t)mbClient.read() << 16) | (uint32_t)mbClient.read()) * 0.1;
 
-    delay(100);
+    delay(15);
 
     mbClient.requestFrom(this->slaveId, HOLDING_REGISTERS, 1400, 6);
     holdingRegisterValues[HR_IA_THD] = IEEEfloat(((uint32_t)mbClient.read() << 16) | (uint32_t)mbClient.read());
     holdingRegisterValues[HR_IB_THD] = IEEEfloat(((uint32_t)mbClient.read() << 16) | (uint32_t)mbClient.read());
     holdingRegisterValues[HR_IC_THD] = IEEEfloat(((uint32_t)mbClient.read() << 16) | (uint32_t)mbClient.read());
 
-    delay(100);
+    delay(15);
 
     mbClient.requestFrom(this->slaveId, HOLDING_REGISTERS, 3434, 2);
     holdingRegisterValues[HR_S_TOTAL] = IEEEfloat(((uint32_t)mbClient.read() << 16) | (uint32_t)mbClient.read());
 
-    delay(100);
+    delay(15);
 
     Serial.println(mbClient.lastError());
 

@@ -65,77 +65,79 @@ public:
   PowerMeter(byte slaveId)
     : slaveId(slaveId){};
 
-  void read() {
+  void loop() {
     if (millis() - this->prevMillis >= 1000) {
-      mbClient.requestFrom(this->slaveId, HOLDING_REGISTERS, 0, 6);
-      holdingRegisterValues[HR_UAN] = IEEEfloat(((uint32_t)mbClient.read() << 16) | (uint32_t)mbClient.read());
-      holdingRegisterValues[HR_UBN] = IEEEfloat(((uint32_t)mbClient.read() << 16) | (uint32_t)mbClient.read());
-      holdingRegisterValues[HR_UCN] = IEEEfloat(((uint32_t)mbClient.read() << 16) | (uint32_t)mbClient.read());
-
-      delay(3);
-
-      mbClient.requestFrom(this->slaveId, HOLDING_REGISTERS, 8, 6);
-      holdingRegisterValues[HR_UAB] = IEEEfloat(((uint32_t)mbClient.read() << 16) | (uint32_t)mbClient.read());
-      holdingRegisterValues[HR_UBC] = IEEEfloat(((uint32_t)mbClient.read() << 16) | (uint32_t)mbClient.read());
-      holdingRegisterValues[HR_UCA] = IEEEfloat(((uint32_t)mbClient.read() << 16) | (uint32_t)mbClient.read());
-
-      delay(3);
-
-      mbClient.requestFrom(this->slaveId, HOLDING_REGISTERS, 16, 6);
-      holdingRegisterValues[HR_IA] = IEEEfloat(((uint32_t)mbClient.read() << 16) | (uint32_t)mbClient.read());
-      holdingRegisterValues[HR_IB] = IEEEfloat(((uint32_t)mbClient.read() << 16) | (uint32_t)mbClient.read());
-      holdingRegisterValues[HR_IC] = IEEEfloat(((uint32_t)mbClient.read() << 16) | (uint32_t)mbClient.read());
-
-      delay(3);
-
-      mbClient.requestFrom(this->slaveId, HOLDING_REGISTERS, 30, 2);
-      holdingRegisterValues[HR_P_TOTAL] = IEEEfloat(((uint32_t)mbClient.read() << 16) | (uint32_t)mbClient.read());
-
-      delay(3);
-
-      mbClient.requestFrom(this->slaveId, HOLDING_REGISTERS, 54, 2);
-      holdingRegisterValues[HR_PF_TOTAL] = IEEEfloat(((uint32_t)mbClient.read() << 16) | (uint32_t)mbClient.read());
-
-      delay(3);
-
-      mbClient.requestFrom(this->slaveId, HOLDING_REGISTERS, 70, 2);
-      holdingRegisterValues[HR_IN_CALCULATED] = IEEEfloat(((uint32_t)mbClient.read() << 16) | (uint32_t)mbClient.read());
-
-      delay(3);
-
-      mbClient.requestFrom(this->slaveId, HOLDING_REGISTERS, 506, 2);
-      Serial.print(mbClient.read());
-      // holdingRegisterValues[HR_KWH_TOTAL] = IEEEfloat(((uint32_t)mbClient.read() << 16) | (uint32_t)mbClient.read());
-
-      delay(3);
-
-      mbClient.requestFrom(this->slaveId, HOLDING_REGISTERS, 1400, 6);
-      holdingRegisterValues[HR_IA_THD] = IEEEfloat(((uint32_t)mbClient.read() << 16) | (uint32_t)mbClient.read());
-      holdingRegisterValues[HR_IB_THD] = IEEEfloat(((uint32_t)mbClient.read() << 16) | (uint32_t)mbClient.read());
-      holdingRegisterValues[HR_IC_THD] = IEEEfloat(((uint32_t)mbClient.read() << 16) | (uint32_t)mbClient.read());
-
-      delay(3);
-
-      mbClient.requestFrom(this->slaveId, HOLDING_REGISTERS, 3430, 6);
-      mbClient.read();
-      mbClient.read();
-      mbClient.read();
-      mbClient.read();
-      holdingRegisterValues[HR_S_TOTAL] = ((uint32_t)mbClient.read() << 16) | (uint32_t)mbClient.read();
-
-      delay(3);
-
-      Serial.println(mbClient.lastError());
-
-      Serial.println();
-
-      for (byte i = 0; i < PARAMETERS_SIZE; i++) {
-        Serial.print(holdingRegisterDescription[i]);
-        Serial.print(": ");
-        Serial.println(holdingRegisterValues[i]);
-      }
+      this->readIn1000ms();
+      this->showData();
 
       this->prevMillis = millis();
+    }
+  }
+
+  void readIn1000ms() {
+    mbClient.requestFrom(this->slaveId, HOLDING_REGISTERS, 0, 6);
+    holdingRegisterValues[HR_UAN] = IEEEfloat(((uint32_t)mbClient.read() << 16) | (uint32_t)mbClient.read());
+    holdingRegisterValues[HR_UBN] = IEEEfloat(((uint32_t)mbClient.read() << 16) | (uint32_t)mbClient.read());
+    holdingRegisterValues[HR_UCN] = IEEEfloat(((uint32_t)mbClient.read() << 16) | (uint32_t)mbClient.read());
+
+    delay(100);
+
+    mbClient.requestFrom(this->slaveId, HOLDING_REGISTERS, 8, 6);
+    holdingRegisterValues[HR_UAB] = IEEEfloat(((uint32_t)mbClient.read() << 16) | (uint32_t)mbClient.read());
+    holdingRegisterValues[HR_UBC] = IEEEfloat(((uint32_t)mbClient.read() << 16) | (uint32_t)mbClient.read());
+    holdingRegisterValues[HR_UCA] = IEEEfloat(((uint32_t)mbClient.read() << 16) | (uint32_t)mbClient.read());
+
+    delay(100);
+
+    mbClient.requestFrom(this->slaveId, HOLDING_REGISTERS, 16, 6);
+    holdingRegisterValues[HR_IA] = IEEEfloat(((uint32_t)mbClient.read() << 16) | (uint32_t)mbClient.read());
+    holdingRegisterValues[HR_IB] = IEEEfloat(((uint32_t)mbClient.read() << 16) | (uint32_t)mbClient.read());
+    holdingRegisterValues[HR_IC] = IEEEfloat(((uint32_t)mbClient.read() << 16) | (uint32_t)mbClient.read());
+
+    delay(100);
+
+    mbClient.requestFrom(this->slaveId, HOLDING_REGISTERS, 30, 2);
+    holdingRegisterValues[HR_P_TOTAL] = IEEEfloat(((uint32_t)mbClient.read() << 16) | (uint32_t)mbClient.read());
+
+    delay(100);
+
+    mbClient.requestFrom(this->slaveId, HOLDING_REGISTERS, 54, 2);
+    holdingRegisterValues[HR_PF_TOTAL] = IEEEfloat(((uint32_t)mbClient.read() << 16) | (uint32_t)mbClient.read());
+
+    delay(100);
+
+    mbClient.requestFrom(this->slaveId, HOLDING_REGISTERS, 70, 2);
+    holdingRegisterValues[HR_IN_CALCULATED] = IEEEfloat(((uint32_t)mbClient.read() << 16) | (uint32_t)mbClient.read());
+
+    delay(100);
+
+    mbClient.requestFrom(this->slaveId, HOLDING_REGISTERS, 506, 2);
+    holdingRegisterValues[HR_KWH_TOTAL] = (((uint32_t)mbClient.read() << 16) | (uint32_t)mbClient.read()) * 0.1;
+
+    delay(100);
+
+    mbClient.requestFrom(this->slaveId, HOLDING_REGISTERS, 1400, 6);
+    holdingRegisterValues[HR_IA_THD] = IEEEfloat(((uint32_t)mbClient.read() << 16) | (uint32_t)mbClient.read());
+    holdingRegisterValues[HR_IB_THD] = IEEEfloat(((uint32_t)mbClient.read() << 16) | (uint32_t)mbClient.read());
+    holdingRegisterValues[HR_IC_THD] = IEEEfloat(((uint32_t)mbClient.read() << 16) | (uint32_t)mbClient.read());
+
+    delay(100);
+
+    mbClient.requestFrom(this->slaveId, HOLDING_REGISTERS, 3434, 2);
+    holdingRegisterValues[HR_S_TOTAL] = IEEEfloat(((uint32_t)mbClient.read() << 16) | (uint32_t)mbClient.read());
+
+    delay(100);
+
+    Serial.println(mbClient.lastError());
+
+    Serial.println();
+  }
+
+  void showData() {
+    for (byte i = 0; i < PARAMETERS_SIZE; i++) {
+      Serial.print(holdingRegisterDescription[i]);
+      Serial.print(": ");
+      Serial.println(holdingRegisterValues[i]);
     }
   }
 };

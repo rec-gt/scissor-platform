@@ -5,6 +5,7 @@
 #include "NBIoT.h"
 
 PowerMeter powerMeter(100);
+NBIoT nbiot;
 
 void setup() {
   Serial.begin(9600);
@@ -13,6 +14,8 @@ void setup() {
     Serial.println("Failed to start Modbus RTU Client!");
     while (1) {};
   }
+
+  nbiot.init(true);
 
   delay(1000);
 }

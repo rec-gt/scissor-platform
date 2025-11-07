@@ -9,8 +9,6 @@ private:
   byte slaveId;
   unsigned long prevMillis = millis();
 
- 
-
   char* holdingRegisterDescription[PARAMETERS_SIZE] = {
     (char*)"Uan             ",
     (char*)"Ubn             ",
@@ -47,6 +45,7 @@ public:
   void loop() {
     if (millis() - this->prevMillis >= 1000) {
       this->readIn1000ms();
+      this->handlePublishContent();
       this->showData();
 
       this->prevMillis = millis();
@@ -118,6 +117,65 @@ public:
       Serial.print(": ");
       Serial.println(holdingRegisterValues[i]);
     }
+  }
+
+  void handlePublishContent() {
+    if (!nbiot.pubMsgPayloadLock) {
+      nbiotPubMsgPayload = F("{\"csq\":");
+      nbiotPubMsgPayload.concat(nbiotCSQ);
+      nbiotPubMsgPayload.concat(F(","));
+      nbiotPubMsgPayload.concat(F("\"ain\":"));
+      nbiotPubMsgPayload.concat(F("["));
+      nbiotPubMsgPayload.concat(holdingRegisterValues[HR_UAN]);
+      nbiotPubMsgPayload.concat(F(","));
+      nbiotPubMsgPayload.concat(holdingRegisterValues[HR_UBN]);
+      nbiotPubMsgPayload.concat(F(","));
+      nbiotPubMsgPayload.concat(holdingRegisterValues[HR_UCN]);
+      nbiotPubMsgPayload.concat(F(","));
+      nbiotPubMsgPayload.concat(holdingRegisterValues[HR_UAB]);
+      nbiotPubMsgPayload.concat(F(","));
+      nbiotPubMsgPayload.concat(holdingRegisterValues[HR_UBC]);
+      nbiotPubMsgPayload.concat(F(","));
+      nbiotPubMsgPayload.concat(holdingRegisterValues[HR_UCA]);
+      nbiotPubMsgPayload.concat(F(","));
+      nbiotPubMsgPayload.concat(holdingRegisterValues[HR_IA]);
+      nbiotPubMsgPayload.concat(F(","));
+      nbiotPubMsgPayload.concat(holdingRegisterValues[HR_IB]);
+      nbiotPubMsgPayload.concat(F(","));
+      nbiotPubMsgPayload.concat(holdingRegisterValues[HR_IC]);
+      nbiotPubMsgPayload.concat(F(","));
+      nbiotPubMsgPayload.concat(holdingRegisterValues[HR_P_TOTAL]);
+      nbiotPubMsgPayload.concat(F(","));
+      nbiotPubMsgPayload.concat(holdingRegisterValues[HR_PF_TOTAL]);
+      nbiotPubMsgPayload.concat(F(","));
+      nbiotPubMsgPayload.concat(holdingRegisterValues[HR_IN_CALCULATED]);
+      nbiotPubMsgPayload.concat(F("]"));
+      nbiotPubMsgPayload.concat(F(","));
+      nbiotPubMsgPayload.concat(F("\"aout\":"));
+      nbiotPubMsgPayload.concat(F("["));
+      nbiotPubMsgPayload.concat(holdingRegisterValues[HR_KWH_TOTAL]);
+      nbiotPubMsgPayload.concat(F(","));
+      nbiotPubMsgPayload.concat(holdingRegisterValues[HR_IA_THD]);
+      nbiotPubMsgPayload.concat(F(","));
+      nbiotPubMsgPayload.concat(holdingRegisterValues[HR_IB_THD]);
+      nbiotPubMsgPayload.concat(F(","));
+      nbiotPubMsgPayload.concat(holdingRegisterValues[HR_IC_THD]);
+      nbiotPubMsgPayload.concat(F("]"));
+      nbiotPubMsgPayload.concat(F("}"));
+    }
+
+    nbiotPubMsgPrepare = F("AT+QMTPUB=0,0,0,0,rgt/");
+    nbiotPubMsgPrepare.concat(nbiotIMEI);
+    nbiotPubMsgPrepare.concat(F("/in,"));
+    nbiotPubMsgPrepare.concat(nbiotPubMsgPayload.length());
+
+    nbiotPubMsgCommand = nbiotPubMsgPrepare;
+    nbiotPubMsgCommand.concat(F(","));
+    nbiotPubMsgCommand.concat(nbiotPubMsgPayload);
+
+    Serial.println(nbiotPubMsgPrepare);
+    Serial.println(nbiotPubMsgPayload);
+    Serial.println(nbiotPubMsgCommand);
   }
 };
 

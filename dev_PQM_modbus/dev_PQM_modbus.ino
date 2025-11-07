@@ -21,6 +21,8 @@ void setup() {
 }
 
 void loop() {
+  nbiot.loop();
+  
   powerMeter.loop();
 
   delay(10);

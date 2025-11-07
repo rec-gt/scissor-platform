@@ -4,7 +4,6 @@
 #include "Globals.h"
 #include "NBIoT.h"
 
-
 PowerMeter powerMeter(100);
 
 void setup() {

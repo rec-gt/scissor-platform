@@ -19,7 +19,7 @@ void setup() {
 }
 
 void loop() {
-  powerMeter.read();
+  powerMeter.loop();
 
   delay(10);
 }

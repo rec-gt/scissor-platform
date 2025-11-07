@@ -10,6 +10,26 @@ private:
   unsigned long prevMillis = millis();
   static constexpr uint16_t PARAMETERS_SIZE = 17;
 
+  enum holdingRegisterEnums[PARAMETERS_SIZE] = {
+    HR_UAN,
+    HR_UBN,
+    HR_UCN,
+    HR_UAB,
+    HR_UBC,
+    HR_UCA,
+    HR_IA,
+    HR_IB,
+    HR_IC,
+    HR_P_TOTAL,
+    HR_PF_TOTAL,
+    HR_IN_CALCULATED,
+    HR_KWH_TOTAL,
+    HR_IA_THD,
+    HR_IB_THD,
+    HR_IC_THD,
+    HR_S_TOTAL
+  };
+
   float holdingRegisterValues[PARAMETERS_SIZE] = {};
 
   char* holdingRegisterDescription[PARAMETERS_SIZE] = {
@@ -46,54 +66,53 @@ public:
     : slaveId(slaveId){};
 
   void read() {
-    byte cnt = 0;
-
     if (millis() - this->prevMillis >= 1000) {
       mbClient.requestFrom(this->slaveId, HOLDING_REGISTERS, 0, 6);
-      holdingRegisterValues[cnt++] = IEEEfloat(((uint32_t)mbClient.read() << 16) | (uint32_t)mbClient.read());
-      holdingRegisterValues[cnt++] = IEEEfloat(((uint32_t)mbClient.read() << 16) | (uint32_t)mbClient.read());
-      holdingRegisterValues[cnt++] = IEEEfloat(((uint32_t)mbClient.read() << 16) | (uint32_t)mbClient.read());
+      holdingRegisterValues[HR_UAN] = IEEEfloat(((uint32_t)mbClient.read() << 16) | (uint32_t)mbClient.read());
+      holdingRegisterValues[HR_UBN] = IEEEfloat(((uint32_t)mbClient.read() << 16) | (uint32_t)mbClient.read());
+      holdingRegisterValues[HR_UCN] = IEEEfloat(((uint32_t)mbClient.read() << 16) | (uint32_t)mbClient.read());
 
       delay(3);
 
       mbClient.requestFrom(this->slaveId, HOLDING_REGISTERS, 8, 6);
-      holdingRegisterValues[cnt++] = IEEEfloat(((uint32_t)mbClient.read() << 16) | (uint32_t)mbClient.read());
-      holdingRegisterValues[cnt++] = IEEEfloat(((uint32_t)mbClient.read() << 16) | (uint32_t)mbClient.read());
-      holdingRegisterValues[cnt++] = IEEEfloat(((uint32_t)mbClient.read() << 16) | (uint32_t)mbClient.read());
+      holdingRegisterValues[HR_UAB] = IEEEfloat(((uint32_t)mbClient.read() << 16) | (uint32_t)mbClient.read());
+      holdingRegisterValues[HR_UBC] = IEEEfloat(((uint32_t)mbClient.read() << 16) | (uint32_t)mbClient.read());
+      holdingRegisterValues[HR_UCA] = IEEEfloat(((uint32_t)mbClient.read() << 16) | (uint32_t)mbClient.read());
 
       delay(3);
 
       mbClient.requestFrom(this->slaveId, HOLDING_REGISTERS, 16, 6);
-      holdingRegisterValues[cnt++] = IEEEfloat(((uint32_t)mbClient.read() << 16) | (uint32_t)mbClient.read());
-      holdingRegisterValues[cnt++] = IEEEfloat(((uint32_t)mbClient.read() << 16) | (uint32_t)mbClient.read());
-      holdingRegisterValues[cnt++] = IEEEfloat(((uint32_t)mbClient.read() << 16) | (uint32_t)mbClient.read());
+      holdingRegisterValues[HR_IA] = IEEEfloat(((uint32_t)mbClient.read() << 16) | (uint32_t)mbClient.read());
+      holdingRegisterValues[HR_IB] = IEEEfloat(((uint32_t)mbClient.read() << 16) | (uint32_t)mbClient.read());
+      holdingRegisterValues[HR_IC] = IEEEfloat(((uint32_t)mbClient.read() << 16) | (uint32_t)mbClient.read());
 
       delay(3);
 
       mbClient.requestFrom(this->slaveId, HOLDING_REGISTERS, 30, 2);
-      holdingRegisterValues[cnt++] = IEEEfloat(((uint32_t)mbClient.read() << 16) | (uint32_t)mbClient.read());
+      holdingRegisterValues[HR_P_TOTAL] = IEEEfloat(((uint32_t)mbClient.read() << 16) | (uint32_t)mbClient.read());
 
       delay(3);
 
       mbClient.requestFrom(this->slaveId, HOLDING_REGISTERS, 54, 2);
-      holdingRegisterValues[cnt++] = IEEEfloat(((uint32_t)mbClient.read() << 16) | (uint32_t)mbClient.read());
+      holdingRegisterValues[HR_PF_TOTAL] = IEEEfloat(((uint32_t)mbClient.read() << 16) | (uint32_t)mbClient.read());
 
       delay(3);
 
       mbClient.requestFrom(this->slaveId, HOLDING_REGISTERS, 70, 2);
-      holdingRegisterValues[cnt++] = IEEEfloat(((uint32_t)mbClient.read() << 16) | (uint32_t)mbClient.read());
+      holdingRegisterValues[HR_IN_CALCULATED] = IEEEfloat(((uint32_t)mbClient.read() << 16) | (uint32_t)mbClient.read());
 
       delay(3);
 
       mbClient.requestFrom(this->slaveId, HOLDING_REGISTERS, 506, 2);
-      holdingRegisterValues[cnt++] = IEEEfloat(((uint32_t)mbClient.read() << 16) | (uint32_t)mbClient.read());
+      Serial.print(mbClient.read());
+      // holdingRegisterValues[HR_KWH_TOTAL] = IEEEfloat(((uint32_t)mbClient.read() << 16) | (uint32_t)mbClient.read());
 
       delay(3);
 
       mbClient.requestFrom(this->slaveId, HOLDING_REGISTERS, 1400, 6);
-      holdingRegisterValues[cnt++] = IEEEfloat(((uint32_t)mbClient.read() << 16) | (uint32_t)mbClient.read());
-      holdingRegisterValues[cnt++] = IEEEfloat(((uint32_t)mbClient.read() << 16) | (uint32_t)mbClient.read());
-      holdingRegisterValues[cnt++] = IEEEfloat(((uint32_t)mbClient.read() << 16) | (uint32_t)mbClient.read());
+      holdingRegisterValues[HR_IA_THD] = IEEEfloat(((uint32_t)mbClient.read() << 16) | (uint32_t)mbClient.read());
+      holdingRegisterValues[HR_IB_THD] = IEEEfloat(((uint32_t)mbClient.read() << 16) | (uint32_t)mbClient.read());
+      holdingRegisterValues[HR_IC_THD] = IEEEfloat(((uint32_t)mbClient.read() << 16) | (uint32_t)mbClient.read());
 
       delay(3);
 
@@ -102,7 +121,7 @@ public:
       mbClient.read();
       mbClient.read();
       mbClient.read();
-      holdingRegisterValues[cnt++] = ((uint32_t)mbClient.read() << 16) | (uint32_t)mbClient.read();
+      holdingRegisterValues[HR_S_TOTAL] = ((uint32_t)mbClient.read() << 16) | (uint32_t)mbClient.read();
 
       delay(3);
 

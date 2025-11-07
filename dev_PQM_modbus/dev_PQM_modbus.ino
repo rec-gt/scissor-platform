@@ -19,8 +19,6 @@ void setup() {
 }
 
 void loop() {
-
-  // powerMeter.listen();
   powerMeter.read();
 
   delay(10);

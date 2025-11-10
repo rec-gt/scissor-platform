@@ -27,19 +27,19 @@ public:
     do {
       u8g2.setCursor(0, 12);
       u8g2.print(F("Sensor 1"));
-      u8g2.setCursor(10, 12);
+      u8g2.setCursor(55, 12);
       u8g2.print(r1);
       u8g2.drawLine(0, 16, 128, 16);
 
       u8g2.setCursor(0, 28);
       u8g2.print(F("Sensor 2"));
-      u8g2.setCursor(10, 28);
+      u8g2.setCursor(55, 28);
       u8g2.print(r2);
       u8g2.drawLine(0, 32, 128, 32);
 
       u8g2.setCursor(0, 44);
       u8g2.print(F("Sensor 3"));
-      u8g2.setCursor(10, 44);
+      u8g2.setCursor(55, 44);
       u8g2.print(r3);
       u8g2.drawLine(0, 48, 128, 48);
     } while (u8g2.nextPage());

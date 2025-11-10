@@ -7,7 +7,6 @@
 class Sensor {
 private:
   byte pin;
-  uint16_t reading = 0;
 
   uint16_t avgRead() {
     uint16_t avg = 0;
@@ -18,6 +17,8 @@ private:
   }
 
 public:
+  uint16_t reading = 0;
+
   Sensor(byte pin)
     : pin(pin) {
     pinMode(this->pin, INPUT);

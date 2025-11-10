@@ -10,6 +10,6 @@ void setup() {
 
 void loop() {
   Serial.println(1023 - analogRead(A0));
-  displayOLED.draw();
+  displayOLED.draw(random(0, 1023), random(0, 1023), random(0, 1023));
   delay(1000);
 }

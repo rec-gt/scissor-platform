@@ -1,12 +1,15 @@
-// #ifndef SUB_GLOBALS_H
-// #define SUB_GLOBALS_H
+#ifndef SUB_GLOBALS_H
+#define SUB_GLOBALS_H
 
-// #include <ArduinoRS485.h>
-// #include <ArduinoModbus.h>
+#include <ArduinoRS485.h>
+#include <ArduinoModbus.h>
 
-// /*=== For Modbus ===*/
-// RS485Class rs485(Serial3, 0, 0, 22);
-// ModbusRTUClientClass mbClient(rs485);
-// // ModbusRTUServerClass mbServer(rs485);
+#define RS485Serial Serial3;
+#define RS485_RE_DE_PIN 22;
 
-// #endif
+/*=== For Modbus ===*/
+RS485Class rs485(RS485Serial, 0, 0, RS485_RE_DE_PIN);
+ModbusRTUClientClass mbRtuClient(rs485);
+// ModbusRTUServerClass mbServer(rs485);
+
+#endif

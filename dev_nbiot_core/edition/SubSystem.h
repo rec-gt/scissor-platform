@@ -12,6 +12,7 @@ public:
 
   void init() {
     configAnalogInputResolution(0);
+    rStd485.init();
   }
 
   void loop() {

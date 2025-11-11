@@ -6,7 +6,9 @@
 
 class RStd485 {
 public:
-  RStd485(void) {
+  RStd485(void) {}
+
+  void init() {
     recdStd485.begin(9600);
   }
 
@@ -24,12 +26,16 @@ public:
         rs485SerialRecv += c;
       }
       if (c == '\r') {
-        Serial.println(rs485SerialRecv);
+        RS485.beginTransmission();
+        RS485.println(rs485SerialRecv);
+        RS485.endTransmission();
       }
     }
   }
 
   ~RStd485() {}
 };
+
+extern RStd485 rStd485;
 
 #endif

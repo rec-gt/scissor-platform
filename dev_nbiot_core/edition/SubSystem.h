@@ -2,7 +2,9 @@
 #define SubSystem_H
 
 #include "./SubGlobals.h"
-#include "./RS485.h"
+#include "./RStd485.h"
+
+RStd485 rStd485;
 
 class SubSystem {
 public:
@@ -13,6 +15,7 @@ public:
   }
 
   void loop() {
+    rStd485.loop();
   }
 
   ~SubSystem() {}

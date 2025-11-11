@@ -1,7 +1,6 @@
 #include "./core/MainSystem.h"
 #include "./core/NBIoT.h"
 #include "./core/DisplayClient.h"
-#include "./core/Modbus485.h"
 #include "./core/Utils.h"
 #include "./core/AsyncTimer.h"
 #include "./edition/SubSystem.h"
@@ -13,8 +12,6 @@ NBIoT nbiot;
 
 DisplayClient displayClient;
 
-Modbus485 modbus485;
-
 Utils utils;
 
 SubSystem subSystem;
@@ -23,6 +20,7 @@ AsyncTimer systemTimer(86400000UL);
 
 void setup() {
   Serial.begin(9600);
+  Serial3.begin(9600, SERIAL_8N1);
   analogReference(EXTERNAL);
 
   /*=== String / Heap Memory Management ===*/
@@ -71,9 +69,6 @@ void loop() {
 
   /*=== Register MainSystem ===*/
   mainSystem.loop();
-
-  /*=== Register Modbus ===*/
-  modbus485.loop();
 
   /*=== Register display ===*/
   displayClient.loop();

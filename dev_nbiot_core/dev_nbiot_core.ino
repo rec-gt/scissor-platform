@@ -3,6 +3,7 @@
 #include "./core/DisplayClient.h"
 #include "./core/Modbus485.h"
 #include "./core/Utils.h"
+#include "./core/AsyncTimer.h"
 #include "./edition/SubSystem.h"
 #include <avr/wdt.h>
 
@@ -17,6 +18,8 @@ Modbus485 modbus485;
 Utils utils;
 
 SubSystem subSystem;
+
+AsyncTimer systemTimer(86400000UL);
 
 void setup() {
   Serial.begin(9600);
@@ -40,11 +43,12 @@ void setup() {
   nbiotSerialRecv.reserve(128);
   nbiotPubMsgPayload.reserve(256);
   nbiotPubMsgCommand.reserve(512);
-  bool rubbishStrRes = rubbishStr.reserve(1024);  // push it to limit (variable amount)
+  bool rubbishStrRes = rubbishStr.reserve(1132);  // push it to limit (variable amount)
   Serial.print(rubbishStrRes ? F("[Str Space OK]") : F("[String Space NOT OK]"));
 
   /*=== NBIoT ===*/
   nbiot.init(true);
+  nbiot.debug();
 
   /*=== Display ===*/
   displayClient.setup();
@@ -78,7 +82,9 @@ void loop() {
   subSystem.loop();
 
   /*=== Pet the dog ===*/
-  wdt_reset();
+  if (!systemTimer.isExpired()) {
+    wdt_reset();
+  }
 
   delay(10);
 }

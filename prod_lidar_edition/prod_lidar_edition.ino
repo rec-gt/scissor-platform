@@ -13,8 +13,6 @@ NBIoT nbiot;
 
 DisplayClient displayClient;
 
-Modbus485 modbus485;
-
 Utils utils;
 
 SubSystem subSystem;
@@ -71,9 +69,6 @@ void loop() {
 
   /*=== Register MainSystem ===*/
   mainSystem.loop();
-
-  /*=== Register Modbus ===*/
-  modbus485.loop();
 
   /*=== Register display ===*/
   displayClient.loop();

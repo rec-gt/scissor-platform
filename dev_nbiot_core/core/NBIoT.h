@@ -64,7 +64,7 @@ private:
   }
 
   void clearResBuffer() {
-    nbiotSerialRecv = "";
+    nbiotSerialRecv = F("");
   }
 
   void printlnFlush(const String& cmd, unsigned int delayTime = 2) {
@@ -134,18 +134,18 @@ public:
 
   void ask() {
     if (this->connState == STATE_WAITING_RESET) {
-      nbiotSerialRecv = "";
-      nbIotConnCmd = "";
-      nbiotSubsCmd = "";
+      nbiotSerialRecv = F("");
+      nbIotConnCmd = F("");
+      nbiotSubsCmd = F("");
 
-      nbiotCSQ = "";
-      nbiotIMEI = "";
-      nbiotCGATT = "";
-      nbiotCEREG = "";
+      nbiotCSQ = F("");
+      nbiotIMEI = F("");
+      nbiotCGATT = F("");
+      nbiotCEREG = F("");
 
-      nbiotPubMsgPayload = "";
-      nbiotPubMsgPrepare = "";
-      nbiotPubMsgCommand = "";
+      nbiotPubMsgPayload = F("");
+      nbiotPubMsgPrepare = F("");
+      nbiotPubMsgCommand = F("");
 
       this->pubMsgPayloadLock = false;
 
@@ -153,36 +153,28 @@ public:
       if (nbiotTimer.autoExpired(1000)) {
         digitalWrite(this->resetPin, HIGH);
         this->connState = STATE_FINISH_RESET;
+        Serial.println(F("\r\nWaiting IP"));
       }
     }
 
     if (this->connState == STATE_FINISH_RESET) {
       if (nbiotTimer.autoExpired(500)) {
-        this->printlnFlush(F("AT+QIDNSCFG=0,8.8.8.8,223.5.5.5"));
         this->printlnFlush(F("AT+CGSN=1"));
         this->printlnFlush(F("AT+QSCLK=0"));
-        Serial.println(F("\r\nWaiting IP"));
+        this->printlnFlush(F("AT+QIDNSCFG=0,223.5.5.5,8.8.8.8"));
         this->connState = STATE_WAITING_IP;
       }
     }
 
     if (this->connState == STATE_FINISH_IP) {
       Serial.println(F("\r\nSETTING UP NBIOT"));
-
       this->printlnFlush(F("AT+CFUN=1"));
-
       this->printlnFlush(F("AT+QSCLK=0"));
-
       this->printlnFlush(F("AT+CPSMS=0"));
-
       this->printlnFlush(F("AT+CSCON=0"));
-
       this->printlnFlush(F("AT+CEDRXS=0,5"));
-
       this->printlnFlush(F("AT+QMTCLOSE=0"));
-
       this->printlnFlush(F("AT+QMTDISC=0"));
-
       this->connState = STATE_WAITING_SETUP;
     }
 
@@ -252,7 +244,7 @@ public:
     if (this->connState == STATE_FINISH_NBIOT_INIT) {
       if (this->pipelineState == PIPELINE_DEFAULT) {
         if (nbiotTimer.autoExpired(5000)) {
-          Serial.println(F("\r\n[Connected] QUERYING CSQ"));
+          Serial.println(F("\r\n[CONNECTED] QUERYING CSQ"));
           this->printlnFlush(F("AT+CSQ"));
 
           this->pipelineState = PIPELINE_WAITING_CSQ;
@@ -261,7 +253,7 @@ public:
 
       if (this->pipelineState == PIPELINE_FINISH_CSQ) {
         if (nbiotTimer.autoExpired(5000)) {
-          Serial.println(F("\r\n[Connected] QUERYING CGATT"));
+          Serial.println(F("\r\n[CONNECTED] QUERYING CGATT"));
           this->printlnFlush(F("AT+CGATT?"));
 
           this->pipelineState = PIPELINE_WAITING_CGATT;
@@ -270,7 +262,7 @@ public:
 
       if (this->pipelineState == PIPELINE_FINISH_CGATT) {
         if (nbiotTimer.autoExpired(5000)) {
-          Serial.println(F("\r\n[Connected] QUERYING CEREG"));
+          Serial.println(F("\r\n[CONNECTED] QUERYING CEREG"));
           this->printlnFlush(F("AT+CEREG?"));
 
           this->pipelineState = PIPELINE_WAITING_CEREG;
@@ -495,18 +487,23 @@ public:
     if (idx > -1) {
       {
         nbiotIMEI = nbiotSerialRecv.substring(7, 7 + 15);
-      }
-      if (!utils.isNumeric(nbiotIMEI)) {
-        nbiotSoftReset = true;
-      }
 
-      nbIotConnCmd = F("AT+QMTCONN=0,dev_");
-      nbIotConnCmd.concat(nbiotIMEI);
-      nbIotConnCmd.concat(F(",tswh,1Wo=[6vA0m"));
+        if (!utils.isNumeric(nbiotIMEI)) {
+          nbiotSoftReset = true;
+        }
 
-      nbiotSubsCmd = F("AT+QMTSUB=0,1,rgt/");
-      nbiotSubsCmd.concat(nbiotIMEI);
-      nbiotSubsCmd.concat(F("/out,0"));
+        if (nbiotIMEI.length() != 15) {
+          nbiotSoftReset = true;
+        }
+
+        nbIotConnCmd = F("AT+QMTCONN=0,dev_");
+        nbIotConnCmd.concat(nbiotIMEI);
+        nbIotConnCmd.concat(F(",tswh,1Wo=[6vA0m"));
+
+        nbiotSubsCmd = F("AT+QMTSUB=0,1,rgt/");
+        nbiotSubsCmd.concat(nbiotIMEI);
+        nbiotSubsCmd.concat(F("/out,0"));
+      }
     }
 
     // === handle CGATT ===
@@ -518,7 +515,7 @@ public:
         nbiotCGATT = nbiotSerialRecv.substring(8, 8 + 1);
       }
 
-      if (nbiotCGATT != "1") {
+      if (nbiotCGATT != F("1")) {
         nbiotSoftReset = true;
       }
     }
@@ -533,7 +530,7 @@ public:
         nbiotCEREG = nbiotSerialRecv.substring(8, 8 + 3);
       }
 
-      if (nbiotCEREG != "0,1") {
+      if (nbiotCEREG != F("0,1")) {
         nbiotSoftReset = true;
       }
     }
@@ -553,7 +550,7 @@ public:
         nbiotCSQ = nbiotSerialRecv.substring(winStart + 2, winEnd);
       }
 
-      if (nbiotCSQ == "99") {
+      if (nbiotCSQ == F("99")) {
         nbiotSoftReset = true;
       }
 
@@ -581,7 +578,7 @@ public:
         nbiotPubAck = nbiotSerialRecv.substring(9, 9 + 5);
       }
 
-      if (nbiotPubAck != "0,0,0") {
+      if (nbiotPubAck != F("0,0,0")) {
         nbiotSoftReset = true;
       }
     }
@@ -596,7 +593,7 @@ public:
         nbiotSubAck = nbiotSerialRecv.substring(9, 9 + 7);
       }
 
-      if (nbiotSubAck != "0,1,0,0") {
+      if (nbiotSubAck != F("0,1,0,0")) {
         nbiotSoftReset = true;
       }
     }
@@ -608,8 +605,8 @@ public:
     if (idx > -1) {
       {
         nbiotSubMsgContent = nbiotSerialRecv.substring(41, 46);
+        Serial.println(nbiotSubMsgContent);
       }
-      Serial.println(nbiotSubMsgContent);
     }
   }
 

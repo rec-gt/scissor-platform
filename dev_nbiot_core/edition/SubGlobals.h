@@ -10,7 +10,7 @@
 /*=== Config AI Resolution ===*/
 void configAnalogInputResolution(bool r = 0) {  // 0 = 1024, 1 = 4096
   for (size_t i = 0; i < AI_NUMS; i++) {
-    analogInputs[i].setResolution(0);
+    analogInputs[i].setResolution(r);
   }
 }
 

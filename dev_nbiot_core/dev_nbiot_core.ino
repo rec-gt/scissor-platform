@@ -39,9 +39,8 @@ void setup() {
   rs485SerialRecv.reserve(128);
   nbiotSerialRecv.reserve(128);
   nbiotPubMsgPayload.reserve(256);
-  nbiotPubMsgCommand.reserve(512);
-  bool rubbishStrRes = rubbishStr.reserve(1132);  // push it to limit (variable amount)
-  Serial.print(rubbishStrRes ? F("[Str Space OK]") : F("[String Space NOT OK]"));
+  bool remainStrRes = nbiotPubMsgCommand.reserve(512);
+  Serial.print(remainStrRes ? F("[Str Space OK]") : F("[String Space NOT OK]"));
 
   /*=== NBIoT ===*/
   nbiot.init(true);

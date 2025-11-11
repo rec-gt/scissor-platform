@@ -2,6 +2,7 @@
 #define SubSystem_H
 
 #include "./SubGlobals.h"
+#include "./RS485.h"
 
 class SubSystem {
 public:
@@ -11,7 +12,8 @@ public:
     configAnalogInputResolution(0);
   }
 
-  void loop() {}
+  void loop() {
+  }
 
   ~SubSystem() {}
 };

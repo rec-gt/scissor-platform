@@ -20,7 +20,6 @@ AsyncTimer systemTimer(86400000UL);
 
 void setup() {
   Serial.begin(9600);
-  Serial3.begin(9600, SERIAL_8N1);
   analogReference(EXTERNAL);
 
   /*=== String / Heap Memory Management ===*/

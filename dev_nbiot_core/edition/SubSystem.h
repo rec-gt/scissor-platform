@@ -7,7 +7,9 @@ class SubSystem {
 public:
   SubSystem(void) {}
 
-  void init() {}
+  void init() {
+    configAnalogInputResolution(1);
+  }
 
   void loop() {}
 

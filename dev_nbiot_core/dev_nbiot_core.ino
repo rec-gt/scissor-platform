@@ -49,11 +49,6 @@ void setup() {
   /*=== Display ===*/
   displayClient.setup();
 
-  /*=== Config AI Resolution ===*/
-  for (size_t i = 0; i < AI_NUMS; i++) {
-    analogInputs[i].setResolution(0);
-  }
-
   /*=== SubSystem Init ===*/
   subSystem.init();
 

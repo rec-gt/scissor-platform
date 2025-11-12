@@ -25,6 +25,7 @@ private:
     this->prepareSend();
     RS485Serial.println(cmd);
     RS485Serial.flush();
+    delay(1);
   }
 
 public:

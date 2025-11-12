@@ -19,3 +19,6 @@ rename "C:\Users\recckyt\Documents\Arduino\hex\prod_nbiot_factory_test_edition\p
 
 arduino-cli compile --fqbn arduino:avr:mega --output-dir "C:\Users\recckyt\Documents\Arduino\hex\prod_nbiot_scissor_platform_edition" ./prod_nbiot_scissor_platform_edition
 rename "C:\Users\recckyt\Documents\Arduino\hex\prod_nbiot_scissor_platform_edition\prod_nbiot_scissor_platform_edition.ino.hex" "Controller.hex"
+
+arduino-cli compile --fqbn arduino:avr:mega --output-dir "C:\Users\recckyt\Documents\Arduino\hex\prod_pqm_modbus" ./prod_pqm_modbus
+rename "C:\Users\recckyt\Documents\Arduino\hex\prod_pqm_modbus\prod_pqm_modbus.ino.hex" "Controller.hex"

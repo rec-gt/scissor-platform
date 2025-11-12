@@ -3,6 +3,7 @@
 
 #include "./Test.h"
 #include "./SubGlobals.h"
+#include "./SubRS485.h"
 
 SubRS485 subRS485;
 

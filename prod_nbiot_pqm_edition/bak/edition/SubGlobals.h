@@ -24,6 +24,7 @@ enum HR_ENUMS {
   HR_IC_THD,
   HR_S_TOTAL
 };
+
 static constexpr uint16_t PARAMETERS_SIZE = 17;
 float holdingRegisterValues[PARAMETERS_SIZE] = {};
 

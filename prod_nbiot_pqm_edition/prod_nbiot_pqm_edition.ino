@@ -38,8 +38,8 @@ void setup() {
   AIPayload.reserve(128);
   rs485SerialRecv.reserve(128);
   nbiotSerialRecv.reserve(128);
-  nbiotPubMsgPayload.reserve(256);
-  bool remainStrRes = nbiotPubMsgCommand.reserve(512);
+  nbiotPubMsgPayload.reserve(128);
+  bool remainStrRes = nbiotPubMsgCommand.reserve(128);
   Serial.print(remainStrRes ? F("[Str Space OK]") : F("[String Space NOT OK]"));
 
   /*=== NBIoT ===*/

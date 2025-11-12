@@ -61,7 +61,7 @@ public:
     int idx = rs485SerialRecv.indexOf(cmpStr);
 
     if (idx > -1) {
-      this->printlnFlush(F("[Hello from RGT]"));
+      this->printlnFlush(F("[Hello from REC-GT]"));
     }
   }
 

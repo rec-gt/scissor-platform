@@ -1,5 +1,5 @@
-#ifndef AsyncTimer_H
-#define AsyncTimer_H
+#ifndef AsyncTimer_h
+#define AsyncTimer_h
 
 class AsyncTimer {
 private:

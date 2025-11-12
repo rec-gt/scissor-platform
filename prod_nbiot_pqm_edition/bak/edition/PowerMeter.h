@@ -47,8 +47,7 @@ public:
   void loop() {
     if (millis() - this->prevMillis >= 1000) {
       this->readIn1000ms();
-      // this->handlePublishContent();
-      // this->showData();
+      this->showData();
 
       this->prevMillis = millis();
     }

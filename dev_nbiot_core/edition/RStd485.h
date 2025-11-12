@@ -42,9 +42,15 @@ public:
     if (idx > -1) {
       digitalWrite(RS485_RE_DE_PIN, HIGH);
       delay(1);
-      RS485Serial.println(F("[Hello from RGT Hello from RGT Hello from RGT]"));
+      // RS485Serial.println(F("[Hello from RGT Hello from RGT Hello from RGT]"));
+      RS485Serial.println(rs485SerialRecv);
       RS485Serial.flush();
+      this->clear();
     }
+  }
+
+  void clear() {
+    rs485SerialRecv = F("");
   }
 
   ~RStd485() {}

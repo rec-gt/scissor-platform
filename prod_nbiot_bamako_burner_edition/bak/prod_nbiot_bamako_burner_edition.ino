@@ -1,6 +1,7 @@
 #include "./core/MainSystem.h"
 #include "./core/NBIoT.h"
 #include "./core/DisplayClient.h"
+#include "./core/Modbus485.h"
 #include "./core/Utils.h"
 #include "./core/AsyncTimer.h"
 #include "./edition/SubSystem.h"
@@ -11,6 +12,8 @@ MainSystem mainSystem;
 NBIoT nbiot;
 
 DisplayClient displayClient;
+
+Modbus485 modbus485;
 
 Utils utils;
 
@@ -39,14 +42,20 @@ void setup() {
   rs485SerialRecv.reserve(128);
   nbiotSerialRecv.reserve(128);
   nbiotPubMsgPayload.reserve(256);
-  bool remainStrRes = nbiotPubMsgCommand.reserve(512);
-  Serial.print(remainStrRes ? F("[Str Space OK]") : F("[String Space NOT OK]"));
+  nbiotPubMsgCommand.reserve(512);
+  bool rubbishStrRes = rubbishStr.reserve(1132);  // push it to limit (variable amount)
+  Serial.print(rubbishStrRes ? F("[Str Space OK]") : F("[String Space NOT OK]"));
 
   /*=== NBIoT ===*/
   nbiot.init(true);
 
   /*=== Display ===*/
   displayClient.setup();
+
+  /*=== Config AI Resolution ===*/
+  for (size_t i = 0; i < AI_NUMS; i++) {
+    analogInputs[i].setResolution(0);
+  }
 
   /*=== SubSystem Init ===*/
   subSystem.init();
@@ -61,6 +70,9 @@ void loop() {
 
   /*=== Register MainSystem ===*/
   mainSystem.loop();
+
+  /*=== Register Modbus ===*/
+  modbus485.loop();
 
   /*=== Register display ===*/
   displayClient.loop();

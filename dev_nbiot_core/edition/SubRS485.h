@@ -1,10 +1,10 @@
-#ifndef RStd485_H
-#define RStd485_H
+#ifndef SubRS485_H
+#define SubRS485_H
 
 #include "../core/Globals.h"
 #include "./SubGlobals.h"
 
-class RStd485 {
+class SubRS485 {
 
 private:
   void prepareRecv() {
@@ -22,7 +22,7 @@ private:
   }
 
 public:
-  RStd485(void) {}
+  SubRS485(void) {}
 
   void init() {
     pinMode(RS485_RE_DE_PIN, OUTPUT);
@@ -54,15 +54,15 @@ public:
 
     if (idx > -1) {
       this->prepareSend();
-      RS485Serial.println(F("[Hello from RGT Hello from RGT Hello from RGT]"));
+      RS485Serial.println(F("[Hello from RGT]"));
       RS485Serial.flush();
       this->clear();
     }
   }
 
-  ~RStd485() {}
+  ~SubRS485() {}
 };
 
-extern RStd485 rStd485;
+extern SubRS485 rStd485;
 
 #endif

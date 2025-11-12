@@ -2,9 +2,9 @@
 #define SubSystem_H
 
 #include "./SubGlobals.h"
-#include "./RStd485.h"
+#include "./SubRS485.h"
 
-RStd485 rStd485;
+SubRS485 subRS485;
 
 class SubSystem {
 public:
@@ -12,11 +12,11 @@ public:
 
   void init() {
     configAnalogInputResolution(0);
-    rStd485.init();
+    subRS485.init();
   }
 
   void loop() {
-    rStd485.loop();
+    subRS485.loop();
   }
 
   ~SubSystem() {}

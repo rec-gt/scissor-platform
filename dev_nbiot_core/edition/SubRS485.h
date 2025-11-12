@@ -21,6 +21,12 @@ private:
     rs485SerialRecv = F("");
   }
 
+  void printlnFlush(const String& cmd) {
+    this->prepareSend();
+    RS485Serial.println(cmd);
+    RS485Serial.flush();
+  }
+
 public:
   SubRS485(void) {}
 
@@ -44,6 +50,7 @@ public:
       }
       if (c == '\r') {
         this->answer();
+        this->clear();
       }
     }
   }
@@ -53,10 +60,7 @@ public:
     int idx = rs485SerialRecv.indexOf(cmpStr);
 
     if (idx > -1) {
-      this->prepareSend();
-      RS485Serial.println(F("[Hello from RGT]"));
-      RS485Serial.flush();
-      this->clear();
+      this->printlnFlush(F("[Hello from RGT]"));
     }
   }
 

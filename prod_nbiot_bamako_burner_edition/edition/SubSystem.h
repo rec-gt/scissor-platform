@@ -7,6 +7,7 @@
 #include "../core/DisplayClient.h"
 #include "../core/Utils.h"
 #include "../core/Globals.h"
+#include "./SubGlobals.h"
 
 #ifndef SubSystem_H
 #define SubSystem_H
@@ -48,6 +49,8 @@ private:
   byte prevPowerStatus = 0;
 public:
   SubSystem(void) {
+    configAnalogInputResolution(0);
+
     relay1.cut();
     relay2.cut();
     relay3.cut();

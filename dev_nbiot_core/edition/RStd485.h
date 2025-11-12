@@ -39,8 +39,6 @@ public:
     while (RS485Serial.available()) {
       char c = RS485Serial.read();
 
-      Serial.print(c);
-
       if (c != '\r' && c != '\n') {
         rs485SerialRecv += c;
       }

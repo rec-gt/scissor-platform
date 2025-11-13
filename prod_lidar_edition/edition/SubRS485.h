@@ -57,11 +57,26 @@ public:
   }
 
   void answer() {
-    cmpStr = F("AT");
-    int idx = rs485SerialRecv.indexOf(cmpStr);
+    int idx = -1;
 
+    cmpStr = F("AT");
+    idx = rs485SerialRecv.indexOf(cmpStr);
     if (idx > -1) {
       this->printlnFlush(F("[Hello from REC-GT]"));
+    }
+
+    cmpStr = F("AT+ALARM=1");
+    idx = rs485SerialRecv.indexOf(cmpStr);
+    if (idx > -1) {
+      relay.connect();
+      Serial.println(F("Alarm ON"));
+    }
+
+    cmpStr = F("AT+ALARM=0");
+    idx = rs485SerialRecv.indexOf(cmpStr);
+    if (idx > -1) {
+      relay.cut();
+      Serial.println(F("Alarm OFF"));
     }
   }
 

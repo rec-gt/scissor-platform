@@ -3,8 +3,11 @@
 
 #include "./SubGlobals.h"
 #include "./SubRS485.h"
+#include "../core/Globals.h"
+#include "../core/DigitalOutput.h"
 
 SubRS485 subRS485;
+
 
 class SubSystem {
 public:

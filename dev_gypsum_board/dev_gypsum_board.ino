@@ -21,5 +21,5 @@ void loop() {
   uint16_t r3 = map(constrain(1023 - s3.reading, 0, 1023), 0, 1023, 0, 1000);
 
   displayOLED.draw(r1, r2, r3);
-  delay(1000);
+  delay(500);
 }

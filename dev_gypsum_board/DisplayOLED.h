@@ -26,26 +26,26 @@ public:
 
     do {
       u8g2.setCursor(0, 12);
-      u8g2.print(F("Sensor 1"));
-      u8g2.setCursor(48, 12);
+      u8g2.print(F("S1 (Seepage)"));
+      u8g2.setCursor(78, 12);
       u8g2.print(":");
-      u8g2.setCursor(60, 12);
-      u8g2.print(r1);
+      u8g2.setCursor(94, 12);
+      u8g2.print(1024);
       u8g2.drawLine(0, 16, 128, 16);
 
       u8g2.setCursor(0, 28);
-      u8g2.print(F("Sensor 2"));
-      u8g2.setCursor(48, 28);
+      u8g2.print(F("S2 (Moist)"));
+      u8g2.setCursor(78, 28);
       u8g2.print(":");
-      u8g2.setCursor(60, 28);
+      u8g2.setCursor(94, 28);
       u8g2.print(r2);
       u8g2.drawLine(0, 32, 128, 32);
 
       u8g2.setCursor(0, 44);
-      u8g2.print(F("Sensor 3"));
-      u8g2.setCursor(48, 44);
+      u8g2.print(F("S3 (Dry)"));
+      u8g2.setCursor(78, 44);
       u8g2.print(":");
-      u8g2.setCursor(60, 44);
+      u8g2.setCursor(94, 44);
       u8g2.print(r3);
       u8g2.drawLine(0, 48, 128, 48);
     } while (u8g2.nextPage());

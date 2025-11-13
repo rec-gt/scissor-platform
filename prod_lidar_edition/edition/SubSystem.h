@@ -15,6 +15,10 @@ SubModbus485 subModbus485;
 
 class SubSystem {
 private:
+  uint16_t currMillis = millis();
+  uint16_t prevMillis = millis();
+  uint16_t currMillis2 = millis();
+  uint16_t prevMillis2 = millis();
   DigitalOutput &relay = digitalOutputs[0];
 
 public:
@@ -24,7 +28,19 @@ public:
   void init() {}
 
   void loop() {
-    subModbus485.loop();
+    this->currMillis = millis();
+    if (this->currMillis - this->prevMillis > 1000) {
+      relay.connect();
+
+      this->currMillis2 = millis();
+      if (this->currMillis2 - this->prevMillis2 > 1000) {
+        this->prevMillis = this->currMillis;
+      }
+    } else {
+      relay.cut();
+
+      this->prevMillis2 = millis();
+    }
   }
 
   ~SubSystem() {}

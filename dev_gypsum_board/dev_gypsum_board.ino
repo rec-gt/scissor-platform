@@ -16,10 +16,10 @@ void loop() {
   s2.loop();
   s3.loop();
 
-  uint16_t r1 = 1023 - s1.reading;
-  uint16_t r2 = 1023 - s2.reading;
-  uint16_t r3 = 1023 - s3.reading;
-  
+  uint16_t r1 = map(constrain(1023 - s1.reading, 0, 1023), 0, 1023, 0, 1000);
+  uint16_t r2 = map(constrain(1023 - s2.reading, 0, 1023), 0, 1023, 0, 1000);
+  uint16_t r3 = map(constrain(1023 - s3.reading, 0, 1023), 0, 1023, 0, 1000);
+
   displayOLED.draw(r1, r2, r3);
   delay(1000);
 }

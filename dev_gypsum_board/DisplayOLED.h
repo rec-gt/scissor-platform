@@ -30,7 +30,7 @@ public:
       u8g2.setCursor(78, 12);
       u8g2.print(":");
       u8g2.setCursor(94, 12);
-      u8g2.print(1024);
+      u8g2.print(r1);
       u8g2.drawLine(0, 16, 128, 16);
 
       u8g2.setCursor(0, 28);

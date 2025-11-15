@@ -29,7 +29,7 @@ public:
       this->prevMillis = currMillis;
 
       if (!mbRtuClient.requestFrom(this->slaveId, INPUT_REGISTERS, 0, 3)) {
-        // Serial.println(mbRtuClient.lastError());
+        Serial.println(mbRtuClient.lastError());
       } else {
         Serial.println(mbRtuClient.read());
         this->isDetected = mbRtuClient.read();

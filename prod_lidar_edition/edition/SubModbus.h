@@ -10,9 +10,12 @@ private:
   uint16_t prevMillis = 0;
 
 public:
+  bool isDetected = false;
+
   SubModbus(void) {}
 
-  void init() {
+  void
+  init() {
     mbRtuClient.begin(9600);
   }
 
@@ -29,7 +32,7 @@ public:
         // Serial.println(mbRtuClient.lastError());
       } else {
         Serial.println(mbRtuClient.read());
-        Serial.println(mbRtuClient.read());
+        this->isDetected = mbRtuClient.read();
         Serial.println(mbRtuClient.read());
       }
     }

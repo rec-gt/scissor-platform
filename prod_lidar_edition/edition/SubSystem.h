@@ -8,7 +8,6 @@
 
 SubModbus subModbus;
 
-
 class SubSystem {
 public:
   SubSystem(void) {}
@@ -16,10 +15,16 @@ public:
   void init() {
     configAnalogInputResolution(0);
     subModbus.init();
+    relay.cut();
   }
 
   void loop() {
     subModbus.loop();
+    if (subModbus.isDetected) {
+      relay.connect();
+    } else {
+      relay.cut();
+    }
   }
 
   ~SubSystem() {}

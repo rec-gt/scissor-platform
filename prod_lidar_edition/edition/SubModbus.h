@@ -21,7 +21,9 @@ public:
   }
 
   void read() {
-    if (millis() - this->prevMillis > 1000) {
+    uint16_t currMillis = millis();
+    if (currMillis - this->prevMillis > 1000) {
+      this->prevMillis = currMillis;
 
       if (!mbRtuClient.requestFrom(this->slaveId, INPUT_REGISTERS, 0, 3)) {
         // Serial.println(mbRtuClient.lastError());

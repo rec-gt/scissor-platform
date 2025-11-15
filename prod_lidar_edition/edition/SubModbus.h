@@ -23,8 +23,8 @@ public:
   void read() {
     if (millis() - this->prevMillis > 1000) {
 
-      if (!mbRtuClient.requestFrom(this->slaveId, HOLDING_REGISTERS, 0, 3)) {
-        Serial.println(mbRtuClient.lastError());
+      if (!mbRtuClient.requestFrom(this->slaveId, INPUT_REGISTERS, 0, 3)) {
+        // Serial.println(mbRtuClient.lastError());
       } else {
         Serial.println(mbRtuClient.read());
         Serial.println(mbRtuClient.read());

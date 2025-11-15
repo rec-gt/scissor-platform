@@ -2,11 +2,11 @@
 #define SubSystem_H
 
 #include "./SubGlobals.h"
-#include "./SubRS485.h"
+#include "./SubModbus.h"
 #include "../core/Globals.h"
 #include "../core/DigitalOutput.h"
 
-SubRS485 subRS485;
+SubModbus subModbus;
 
 
 class SubSystem {
@@ -15,11 +15,11 @@ public:
 
   void init() {
     configAnalogInputResolution(0);
-    subRS485.init();
+    subModbus.init();
   }
 
   void loop() {
-    subRS485.loop();
+    subModbus.loop();
   }
 
   ~SubSystem() {}

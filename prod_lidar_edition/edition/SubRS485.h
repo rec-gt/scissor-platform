@@ -70,6 +70,13 @@ public:
       relay.cut();
       Serial.println(F("Alarm OFF"));
     }
+
+    int idx = rs485SerialRecv.indexOf(F("AT+STATUS="));
+    if (idx > -1) {
+      {
+        Serial.println(rs485SerialRecv.substring(10, 10 + 20));
+      }
+    }
   }
 
   ~SubRS485() {}

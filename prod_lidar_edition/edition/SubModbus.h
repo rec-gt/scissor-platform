@@ -1,3 +1,4 @@
+#include "Arduino.h"
 #include "HardwareSerial.h"
 #ifndef SubModbus_H
 #define SubModbus_H
@@ -18,6 +19,7 @@ public:
   void
   init() {
     // recommendedStandard485.begin(1200, SERIAL_8N1);
+    digitalWrite(RS485_DEFAULT_RE_PIN, HIGH);
     mbRtuClient.begin(1200);
   }
 

@@ -9,12 +9,12 @@ class SubRS485 {
 private:
   void prepareRecv() {
     digitalWrite(RS485_RE_DE_PIN, LOW);  // HIGH = send, LOW = receive
-    delay(1);
+    delay(2);
   }
 
   void prepareSend() {
     digitalWrite(RS485_RE_DE_PIN, HIGH);  // HIGH = send, LOW = receive
-    delay(1);
+    delay(2);
   }
 
   void clear() {
@@ -25,8 +25,10 @@ private:
     this->prepareSend();
     RS485Serial.println(cmd);
     RS485Serial.flush();
-    delay(1);
+    delay(2);
   }
+
+  uint16_t prevMillis = millis();
 
 public:
   SubRS485(void) {}
@@ -61,13 +63,21 @@ public:
     int idx = rs485SerialRecv.indexOf(cmpStr);
 
     if (idx > -1) {
-      this->printlnFlush(F("[Hello from REC-GT]"));
+      this->printlnFlush(F("[<<reply to computer, reply to computer, reply to computer]"));
+    }
+  }
+
+  void say() {
+    uint16_t currMillis = millis();
+    if (currMillis - this->prevMillis > 1000) {
+      this->printlnFlush(F("[>>send to computer, send to computer, send to computer]"));
+      this->prevMillis = millis();
     }
   }
 
   ~SubRS485() {}
 };
 
-extern SubRS485 rStd485;
-
+extern SubRS485 subRS485;
+// 4:57
 #endif

@@ -22,6 +22,7 @@ public:
     test.DO();
     test.AO();
     subRS485.loop();
+    subRS485.say();
   }
 
   ~SubSystem() {}

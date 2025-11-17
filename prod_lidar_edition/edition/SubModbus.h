@@ -17,8 +17,8 @@ public:
 
   void
   init() {
-    recommendedStandard485.begin(4800, SERIAL_8N1);
-    mbRtuClient.begin(4800);
+    // recommendedStandard485.begin(1200, SERIAL_8N1);
+    mbRtuClient.begin(1200);
   }
 
   void loop() {

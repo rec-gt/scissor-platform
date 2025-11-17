@@ -30,6 +30,8 @@ private:
 
   uint16_t prevMillis = millis();
 
+  byte mode = 0;  // 0 = ask-reply mode, 1 = active-send mode
+
 public:
   SubRS485(void) {}
 
@@ -41,6 +43,12 @@ public:
 
   void loop() {
     this->listen();
+
+    if (this->mode == 0) {
+
+    } else if (this->mode == 1) {
+      this->say();
+    }
   }
 
   void listen() {
@@ -60,10 +68,18 @@ public:
 
   void answer() {
     cmpStr = F("AT");
-    int idx = rs485SerialRecv.indexOf(cmpStr);
-
-    if (idx > -1) {
+    if (rs485SerialRecv == cmpStr) {
       this->printlnFlush(F("[<<reply to computer, reply to computer, reply to computer]"));
+    }
+
+    cmpStr = F("AT+MODE=MANUAL");
+    if (rs485SerialRecv == cmpStr) {
+      this->mode = 0;
+    }
+
+    cmpStr = F("AT+MODE=SEND");
+    if (rs485SerialRecv == cmpStr) {
+      this->mode = 1;
     }
   }
 

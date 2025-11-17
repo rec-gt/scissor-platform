@@ -1,3 +1,4 @@
+#include "HardwareSerial.h"
 #ifndef SubModbus_H
 #define SubModbus_H
 
@@ -16,7 +17,8 @@ public:
 
   void
   init() {
-    mbRtuClient.begin(9600);
+    recommendedStandard485.begin(4800, SERIAL_8N1);
+    mbRtuClient.begin(4800);
   }
 
   void loop() {

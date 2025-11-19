@@ -12,6 +12,7 @@ private:
   uint16_t prevMillis = 0;
 
 public:
+  bool lidarError = false;
   bool isDetected = false;
 
   SubModbus(void) {}
@@ -35,9 +36,10 @@ public:
       if (!mbRtuClient.requestFrom(this->slaveId, INPUT_REGISTERS, 0, 3)) {
         Serial.println(mbRtuClient.lastError());
       } else {
-        Serial.println(mbRtuClient.read());
+        this->lidarError = mbRtuClient.read();
         this->isDetected = mbRtuClient.read();
-        Serial.println(mbRtuClient.read());
+        Serial.println(this->lidarError);
+        Serial.println(this->isDetected);
       }
     }
   }

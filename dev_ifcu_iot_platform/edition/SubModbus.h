@@ -33,7 +33,7 @@ public:
       } else {
         dataStorage[0] = mbRtuClient.read();
 
-        dataStorage[1] = (mbRtuClient.read() & (1 << 6));  // on/off statue
+        dataStorage[1] = (mbRtuClient.read() & (1 << 6)) == (1 << 6);  // on/off statue
 
         dataStorage[2] = mbRtuClient.read() * 0;
 
@@ -41,9 +41,9 @@ public:
 
         dataStorage[4] = mbRtuClient.read();  // manual mode fan speed
 
-        dataStorage[5] = mbRtuClient.read();  // room temp
+        dataStorage[5] = mbRtuClient.read() / 100;  // room temp
 
-        dataStorage[6] = mbRtuClient.read();  // set temp
+        dataStorage[6] = mbRtuClient.read() / 100;  // set temp
 
         dataStorage[7] = mbRtuClient.read() * 0;
 

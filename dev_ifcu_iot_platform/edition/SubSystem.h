@@ -14,7 +14,7 @@ private:
     AIPayload = F("[");
     for (size_t i = 0; i < 12; i++) {
       AIPayload += dataStorage[i];
-      if (i < AI_NUMS - 1) {
+      if (i < 12 - 1) {
         AIPayload += F(",");
       }
     }
@@ -24,7 +24,7 @@ private:
     AOPayload = F("[");
     for (size_t i = 12; i < 16; i++) {
       AOPayload += dataStorage[i];
-      if (i < AO_NUMS - 1) {
+      if (i < 16 - 1) {
         AOPayload += F(",");
       }
     }
@@ -74,7 +74,6 @@ public:
 
   void loop() {
     subModbus.loop();
-    Serial.println(AOPayload);
     this->buildPayloads();
     this->handlePublishContent();
   }

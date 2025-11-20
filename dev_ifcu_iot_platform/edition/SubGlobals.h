@@ -19,4 +19,7 @@ RS485Class recommendedStandard485(RS485Serial, 0, 0, RS485_RE_DE_PIN);
 ModbusRTUClientClass mbRtuClient(recommendedStandard485);
 // ModbusRTUServerClass mbServer(recommendedStandard485);
 
+constexpr byte IR_SIZE = 16;
+uint16_t dataStorage[IR_SIZE] = {};
+
 #endif

@@ -8,8 +8,9 @@
 
 class SubModbus {
 private:
-  byte slaveId = 30;
+  byte slaveId = 31;
   uint16_t prevMillis = 0;
+
 
 public:
   SubModbus(void) {}
@@ -27,25 +28,12 @@ public:
     if (currMillis - this->prevMillis > 1000) {
       this->prevMillis = currMillis;
 
-      if (!mbRtuClient.requestFrom(this->slaveId, INPUT_REGISTERS, 0, 15)) {
+      if (!mbRtuClient.requestFrom(this->slaveId, INPUT_REGISTERS, 30000, 16)) {
         Serial.println(mbRtuClient.lastError());
       } else {
-        Serial.println(mbRtuClient.read());
-        Serial.println(mbRtuClient.read());
-        Serial.println(mbRtuClient.read());
-        Serial.println(mbRtuClient.read());
-        Serial.println(mbRtuClient.read());
-        Serial.println(mbRtuClient.read());
-        Serial.println(mbRtuClient.read());
-        Serial.println(mbRtuClient.read());
-        Serial.println(mbRtuClient.read());
-        Serial.println(mbRtuClient.read());
-        Serial.println(mbRtuClient.read());
-        Serial.println(mbRtuClient.read());
-        Serial.println(mbRtuClient.read());
-        Serial.println(mbRtuClient.read());
-        Serial.println(mbRtuClient.read());
-        Serial.println(mbRtuClient.read());
+        for (size_t i = 0; i < 16; i++) {
+          dataStorage[i] = mbRtuClient.read();
+        }
       }
     }
   }

@@ -69,7 +69,23 @@ public:
         // }
       }
 
-      
+      if (!mbRtuClient.requestFrom(this->slaveId, HOLDING_REGISTERS, 40000, 13)) {
+        Serial.println(mbRtuClient.lastError());
+      } else {
+        for (size_t i = 0; i < HR_SIZE; i++) {
+          hrDataStorage[i] = mbRtuClient.read();
+          Serial.println(hrDataStorage[i]);
+        }
+      }
+
+      if (!mbRtuClient.requestFrom(this->slaveId, DISCRETE_INPUTS, 20000, 34)) {
+        Serial.println(mbRtuClient.lastError());
+      } else {
+        for (size_t i = 0; i < DIR_SIZE; i++) {
+          dirDataStorage[i] = mbRtuClient.read();
+          Serial.println(dirDataStorage[i]);
+        }
+      }
     }
   }
 

@@ -25,4 +25,7 @@ uint16_t irDataStorage[IR_SIZE] = {};
 constexpr byte HR_SIZE = 16;
 uint16_t hrDataStorage[HR_SIZE] = {};
 
+constexpr byte DIR_SIZE = 34;
+uint8_t dirDataStorage[DIR_SIZE] = {};
+
 #endif

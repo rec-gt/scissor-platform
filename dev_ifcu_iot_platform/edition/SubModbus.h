@@ -31,43 +31,45 @@ public:
       if (!mbRtuClient.requestFrom(this->slaveId, INPUT_REGISTERS, 30000, 16)) {
         Serial.println(mbRtuClient.lastError());
       } else {
-        dataStorage[0] = mbRtuClient.read();
+        irDataStorage[0] = mbRtuClient.read();
 
-        dataStorage[1] = (mbRtuClient.read() & (1 << 6)) == (1 << 6);  // on/off statue
+        irDataStorage[1] = (mbRtuClient.read() & (1 << 6)) == (1 << 6);  // on/off statue
 
-        dataStorage[2] = mbRtuClient.read() * 0;
+        irDataStorage[2] = mbRtuClient.read() * 0;
 
-        dataStorage[3] = mbRtuClient.read();  // operation mode
+        irDataStorage[3] = mbRtuClient.read();  // operation mode
 
-        dataStorage[4] = mbRtuClient.read();  // manual mode fan speed
+        irDataStorage[4] = mbRtuClient.read();  // manual mode fan speed
 
-        dataStorage[5] = mbRtuClient.read() / 100;  // room temp
+        irDataStorage[5] = mbRtuClient.read() / 100;  // room temp
 
-        dataStorage[6] = mbRtuClient.read() / 100;  // set temp
+        irDataStorage[6] = mbRtuClient.read() / 100;  // set temp
 
-        dataStorage[7] = mbRtuClient.read() * 0;
+        irDataStorage[7] = mbRtuClient.read() * 0;
 
-        dataStorage[8] = mbRtuClient.read() * 0;
+        irDataStorage[8] = mbRtuClient.read() * 0;
 
-        dataStorage[9] = mbRtuClient.read() * 0;
+        irDataStorage[9] = mbRtuClient.read() * 0;
 
-        dataStorage[10] = mbRtuClient.read() * 0;
+        irDataStorage[10] = mbRtuClient.read() * 0;
 
-        dataStorage[11] = mbRtuClient.read();  // fan speed
+        irDataStorage[11] = mbRtuClient.read();  // fan speed
 
-        dataStorage[12] = mbRtuClient.read() * 0;
+        irDataStorage[12] = mbRtuClient.read() * 0;
 
-        dataStorage[13] = mbRtuClient.read() * 0;
+        irDataStorage[13] = mbRtuClient.read() * 0;
 
-        dataStorage[14] = mbRtuClient.read() * 0;
+        irDataStorage[14] = mbRtuClient.read() * 0;
 
-        dataStorage[15] = mbRtuClient.read() * 0;
+        irDataStorage[15] = mbRtuClient.read() * 0;
 
         // for (size_t i = 0; i < 16; i++) {
-        //   dataStorage[i] = mbRtuClient.read();
-        //   Serial.println(dataStorage[i]);
+        //   irDataStorage[i] = mbRtuClient.read();
+        //   Serial.println(irDataStorage[i]);
         // }
       }
+
+      
     }
   }
 

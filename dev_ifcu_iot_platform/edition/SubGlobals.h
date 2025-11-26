@@ -20,6 +20,9 @@ ModbusRTUClientClass mbRtuClient(recommendedStandard485);
 // ModbusRTUServerClass mbServer(recommendedStandard485);
 
 constexpr byte IR_SIZE = 16;
-uint16_t dataStorage[IR_SIZE] = {};
+uint16_t irDataStorage[IR_SIZE] = {};
+
+constexpr byte HR_SIZE = 16;
+uint16_t hrDataStorage[HR_SIZE] = {};
 
 #endif

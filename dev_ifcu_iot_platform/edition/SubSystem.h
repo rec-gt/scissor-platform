@@ -13,7 +13,7 @@ private:
     /*=== AI ===*/
     AIPayload = F("[");
     for (size_t i = 0; i < 12; i++) {
-      AIPayload += dataStorage[i];
+      AIPayload += irDataStorage[i];
       if (i < 12 - 1) {
         AIPayload += F(",");
       }
@@ -23,7 +23,7 @@ private:
     /*=== AO ===*/
     AOPayload = F("[");
     for (size_t i = 12; i < 16; i++) {
-      AOPayload += dataStorage[i];
+      AOPayload += irDataStorage[i];
       if (i < 16 - 1) {
         AOPayload += F(",");
       }

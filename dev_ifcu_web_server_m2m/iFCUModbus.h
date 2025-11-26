@@ -2,6 +2,7 @@
 #define IFCU_MODBUS_H
 
 #include <ModbusMaster.h>
+#include "Globals.h"
 #define RXD2 16
 #define TXD2 17
 
@@ -11,6 +12,7 @@ uint8_t result;
 class iFCUModbus {
 private:
   byte slaveId = 31;
+  uint16_t prevMillis = millis();
 
 public:
   void init() {
@@ -19,16 +21,21 @@ public:
   }
 
   void loop() {
-    result = node.readInputRegisters(30000, IR_SIZE);
-    if (result == node.ku8MBSuccess) {
-      for (int i = 0; i < IR_SIZE; i++) {
-        IR_DATABASE[i] = node.getResponseBuffer(i);
-        Serial.println(IR_DATABASE[i]);
+    uint16_t currMillis = millis();
+
+    if (currMillis - this->prevMillis >= 1000) {
+      this->prevMillis = currMillis;
+
+      result = node.readInputRegisters(30000, IR_SIZE);
+      if (result == node.ku8MBSuccess) {
+        for (int i = 0; i < IR_SIZE; i++) {
+          IR_DATABASE[i] = node.getResponseBuffer(i);
+          Serial.println(IR_DATABASE[i]);
+        }
+      } else {
+        Serial.println("Cannot Fetch Data");
       }
-    } else {
-      Serial.println("Cannot Fetch Data");
     }
-    delay(1000);
   }
 };
 

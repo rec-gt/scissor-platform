@@ -4,6 +4,9 @@
 #include "WiFiConn.h"
 #include "SerialRecv.h"
 #include "Globals.h"
+#include "iFCUModbus.h"
+
+iFCUModbus ifcuModbus;
 
 WiFiConn wifiConn;
 
@@ -18,10 +21,12 @@ void setup() {
 
   server.begin();
 
-  Serial2.begin(115200, SERIAL_8N1, 16, 17);
+  ifcuModbus.init();
 }
 
 void loop() {
+  ifcuModbus.loop();
+  
   serialRecv.listen();
 
   /* ========== Web Server ========= */

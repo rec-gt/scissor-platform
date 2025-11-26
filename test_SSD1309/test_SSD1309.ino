@@ -1,23 +1,34 @@
-#include <SPI.h>
-#include "DisplayOLED.h"
+#include "WiFi.h"
 
-bool toggle = false;
+// Replace with your network details
 
-void setup(void) {
-  Serial.begin(9600);
-  displayOLED.init();
-}
+const char* ssid = "REC Guest - 16F";
+const char* password = "guest@@2022";
 
-void stressTest() {
-  if (toggle) {
-    displayOLED.print("中文ASD456英文系統", "英文ASD456中文系統", "中文ASD456英文系統", "英文ASD456中文系統", 2);
-  } else {
-    displayOLED.print("英文ASD456中文系統", "中文ASD456英文系統", "英文ASD456中文系統", "中文ASD456英文系統", 4);
+IPAddress staticIP(192, 168, 1, 184);
+IPAddress gateway(10, 236, 208, 1);
+IPAddress subnet(255, 255, 254, 0);
+
+void setup() {
+  Serial.begin(115200);
+
+  // Configure static IP
+  if (!WiFi.config(staticIP, gateway, subnet)) {
+    Serial.println("STA Failed to configure");
   }
+
+  WiFi.begin(ssid, password);
+
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(1000);
+    Serial.println("Connecting to WiFi...");
+  }
+
+  Serial.println("Connected to WiFi");
+  Serial.print("IP Address: ");
+  Serial.println(WiFi.localIP());
 }
 
 void loop() {
-  stressTest();
-  Serial.print("");
-  delay(10);
+  // Your code here
 }

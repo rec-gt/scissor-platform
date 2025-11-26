@@ -1,33 +1,24 @@
 
 #include <WiFi.h>
 #include <WiFiClient.h>
+#include "WiFiConn.h"
 #include "SerialRecv.h"
 #include "Globals.h"
 
-const char* ssid = "REC Guest - 16F";
-const char* password = "guest@@2022";
+WiFiConn wifiConn;
 
 WiFiServer server(80);
-
-IPAddress staticIP(192, 168, 1, 184);
-IPAddress Gateway(10, 236, 208, 1);
-IPAddress SubNet(255, 255, 254, 0);
 
 SerialRecv serialRecv;
 
 void setup() {
+  wifiConn.init();
+
   Serial.begin(115200);
-  Serial2.begin(115200, SERIAL_8N1, 16, 17);
-
-  WiFi.mode(WIFI_AP);
-
-  WiFi.softAPConfig(LocalIP, Gateway, SubNet);
-  WiFi.softAP(ssid, password);
-  IPAddress ip = WiFi.softAPIP();
-  Serial.print("AP IP address: ");
-  Serial.println(ip);
 
   server.begin();
+
+  Serial2.begin(115200, SERIAL_8N1, 16, 17);
 }
 
 void loop() {

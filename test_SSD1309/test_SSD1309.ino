@@ -1,34 +1,27 @@
-#include "WiFi.h"
+#include <ModbusMaster.h>
+#define RXD2 16
+#define TXD2 17
+// instantiate ModbusMaster object
+ModbusMaster node;
+uint8_t result;
+uint16_t data[16];
 
-// Replace with your network details
-
-const char* ssid = "REC Guest - 16F";
-const char* password = "guest@@2022";
-
-IPAddress staticIP(192, 168, 1, 184);
-IPAddress gateway(10, 236, 208, 1);
-IPAddress subnet(255, 255, 254, 0);
 
 void setup() {
   Serial.begin(115200);
-
-  // Configure static IP
-  if (!WiFi.config(staticIP, gateway, subnet)) {
-    Serial.println("STA Failed to configure");
-  }
-
-  WiFi.begin(ssid, password);
-
-  while (WiFi.status() != WL_CONNECTED) {
-    delay(1000);
-    Serial.println("Connecting to WiFi...");
-  }
-
-  Serial.println("Connected to WiFi");
-  Serial.print("IP Address: ");
-  Serial.println(WiFi.localIP());
+  Serial2.begin(9600, SERIAL_8N1, RXD2, TXD2);
+  node.begin(31, Serial2);
 }
 
+
 void loop() {
-  // Your code here
+  result = node.readInputRegisters(30000, 13);
+  if (result == node.ku8MBSuccess) {
+    for (int i = 0; i < 12; i++) {
+      Serial.println(node.getResponseBuffer(i));
+    }
+  } else {
+    Serial.println("Cannot Fetch Data");
+  }
+  delay(1000);
 }

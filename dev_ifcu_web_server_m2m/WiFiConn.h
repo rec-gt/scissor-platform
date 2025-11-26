@@ -14,6 +14,9 @@ IPAddress Gateway(10, 236, 208, 1);
 IPAddress SubNet(255, 255, 254, 0);
 
 class WiFiConn {
+public:
+  WiFiConn() {}
+
   void init() {
 
     // if (!WiFi.config(LocalIP, Gateway, SubNet)) {
@@ -31,6 +34,8 @@ class WiFiConn {
     Serial.print("IP Address: ");
     Serial.println(WiFi.localIP());
   }
+
+  ~WiFiConn() {}
 };
 
 

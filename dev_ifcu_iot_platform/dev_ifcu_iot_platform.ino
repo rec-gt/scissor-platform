@@ -4,7 +4,7 @@
 #include "./core/Utils.h"
 #include "./core/AsyncTimer.h"
 #include "./edition/SubSystem.h"
-#include <avr/wdt.h>
+// #include <avr/wdt.h>
 
 MainSystem mainSystem;
 

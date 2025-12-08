@@ -28,7 +28,7 @@ public:
 
       result = node.readInputRegisters(30000, IR_SIZE);
       if (result == node.ku8MBSuccess) {
-        for (int i = 0; i < IR_SIZE; i++) {
+        for (size_t i = 0; i < IR_SIZE; i++) {
           IR_DATABASE[i] = node.getResponseBuffer(i);
           Serial.println(IR_DATABASE[i]);
         }

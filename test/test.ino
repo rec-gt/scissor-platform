@@ -51,21 +51,17 @@ void handle_OnConnect() {
 
 void handleSetTarget() {
   int id;
-  int currTemp;
-  int setTemp;
 
   if (server.hasArg("id")) {
     id = server.arg("id").toInt();
   }
 
-  if (server.hasArg("t2")) {
-    String t2 = server.arg("t2");
-    Serial.println("Received t2: " + t2);
+  if (server.hasArg("setTempIncrease")) {
+    hrDatabase[id][0] += 50;
   }
 
-  if (server.hasArg("t3")) {
-    String t3 = server.arg("t3");
-    Serial.println("Received t3: " + t3);
+  if (server.hasArg("setTempIncrease")) {
+    hrDatabase[id][0] -= 50;
   }
 }
 

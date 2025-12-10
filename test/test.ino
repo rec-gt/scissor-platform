@@ -8,15 +8,18 @@ const char* password = "guest@@2022";  // Enter Password here
 
 WebServer server(80);
 
-uint16_t hrDatabase[32][8];
-uint16_t irDatabase[32][8];
+constexpr DEVICE_COUNT = 32;
+constexpr HR_FIELD_SIZE = 4;
+constexpr IR_FIELD_SIZE = 5;
+uint16_t hrDatabase[DEVICE_COUNT][HR_FIELD_SIZE];
+uint16_t irDatabase[DEVICE_COUNT][IR_FIELD_SIZE];
 
 void writeEEPROM() {
   EEPROM.begin(EEPROM_SIZE);
   int address = 0;
 
-  for (int i = 0; i < 32; i++) {
-    for (int j = 0; j < 8; j++) {
+  for (int i = 0; i < DEVICE_COUNT; i++) {
+    for (int j = 0; j < HR_FIELD_SIZE; j++) {
       EEPROM.put(address, hrDatabase[i][j]);
       address += sizeof(uint16_t);
     }
@@ -25,11 +28,11 @@ void writeEEPROM() {
 }
 
 void initDB() {
-  for (size_t i = 0; i < 32; i++) {
-    hrDatabase[i][0] = 2500;
+  for (size_t i = 0; i < DEVICE_COUNT; i++) {
+    hrDatabase[i][1] = 2500;
   }
-  for (size_t i = 0; i < 32; i++) {
-    irDatabase[i][0] = 2500;
+  for (size_t i = 0; i < DEVICE_COUNT; i++) {
+    irDatabase[i][1] = 2500;
   }
 }
 
@@ -127,9 +130,9 @@ void handleFetchAll() {
 
   str += "{";
   str += "HR:[";
-  for (size_t i = 0; i < 32; i++) {
+  for (size_t i = 0; i < DEVICE_COUNT; i++) {
     str += "[";
-    for (size_t j = 0; j < 8; j++) {
+    for (size_t j = 0; j < HR_FIELD_SIZE; j++) {
       str += hrDatabase[i][j];
       str += ",";
     }
@@ -137,9 +140,9 @@ void handleFetchAll() {
   }
   str += "],";
   str += "IR:[";
-  for (size_t i = 0; i < 32; i++) {
+  for (size_t i = 0; i < DEVICE_COUNT; i++) {
     str += "[";
-    for (size_t j = 0; j < 8; j++) {
+    for (size_t j = 0; j < IR_FIELD_SIZE; j++) {
       str += irDatabase[i][j];
       str += ",";
     }

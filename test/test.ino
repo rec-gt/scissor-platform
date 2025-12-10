@@ -8,14 +8,14 @@ const char* password = "guest@@2022";  // Enter Password here
 
 WebServer server(80);
 
-constexpr DEVICE_COUNT = 32;
-constexpr HR_FIELD_SIZE = 4;
-constexpr IR_FIELD_SIZE = 5;
+constexpr size_t DEVICE_COUNT = 32;
+constexpr size_t HR_FIELD_SIZE = 4;
+constexpr size_t IR_FIELD_SIZE = 5;
 uint16_t hrDatabase[DEVICE_COUNT][HR_FIELD_SIZE];
 uint16_t irDatabase[DEVICE_COUNT][IR_FIELD_SIZE];
 
 void writeEEPROM() {
-  EEPROM.begin(EEPROM_SIZE);
+
   int address = 0;
 
   for (int i = 0; i < DEVICE_COUNT; i++) {
@@ -24,21 +24,34 @@ void writeEEPROM() {
       address += sizeof(uint16_t);
     }
   }
+
   EEPROM.commit();
 }
 
 void initDB() {
-  for (size_t i = 0; i < DEVICE_COUNT; i++) {
-    hrDatabase[i][1] = 2500;
+  int address = 0;
+
+  for (int i = 0; i < DEVICE_COUNT; i++) {
+    for (int j = 0; j < HR_FIELD_SIZE; j++) {
+      Serial.println(EEPROM.read(address));
+      hrDatabase[i][j] = EEPROM.read(address);
+      address += sizeof(uint16_t);
+    }
   }
-  for (size_t i = 0; i < DEVICE_COUNT; i++) {
-    irDatabase[i][1] = 2500;
-  }
+
+  // for (size_t i = 0; i < DEVICE_COUNT; i++) {
+  //   hrDatabase[i][1] = 2500;
+  // }
+  // for (size_t i = 0; i < DEVICE_COUNT; i++) {
+  //   irDatabase[i][1] = 2500;
+  // }
 }
 
 int counter = 0;
 
 void setup() {
+  EEPROM.begin(EEPROM_SIZE);
+
   Serial.begin(115200);
 
   Serial.println("Connecting to ");
@@ -61,7 +74,7 @@ void setup() {
   server.on("/fetch_all", handleFetchAll);
   server.on("/set_target", HTTP_POST, handleSetTarget);
 
-  server.onNotFound(handle_NotFound);
+  server.onNotFound(handleNotFound);
 
   server.begin();
   Serial.println("HTTP server started");
@@ -85,6 +98,10 @@ void handleSetTarget() {
     id = server.arg("id").toInt();
   }
 
+  if (server.hasArg("power")) {
+    hrDatabase[id][0] = server.arg("power").toInt();
+  }
+
   if (server.hasArg("setTempIncrease")) {
     hrDatabase[id][1] += 50;
   }
@@ -93,34 +110,13 @@ void handleSetTarget() {
     hrDatabase[id][1] -= 50;
   }
 
-  if (server.hasArg("mode=0")) {
-    hrDatabase[id][2] = 0;
+  if (server.hasArg("mode")) {
+    hrDatabase[id][2] = server.arg("mode").toInt();
   }
 
-  if (server.hasArg("mode=1")) {
-    hrDatabase[id][2] = 1;
+  if (server.hasArg("speed")) {
+    hrDatabase[id][3] = server.arg("speed").toInt();
   }
-
-  if (server.hasArg("mode=2")) {
-    hrDatabase[id][2] = 2;
-  }
-
-  if (server.hasArg("speed=0")) {
-    hrDatabase[id][3] = 0;
-  }
-
-  if (server.hasArg("speed=1")) {
-    hrDatabase[id][3] = 1;
-  }
-
-  if (server.hasArg("speed=2")) {
-    hrDatabase[id][3] = 2;
-  }
-
-  Serial.print(id);
-  Serial.print(", ");
-  Serial.print(hrDatabase[id][0]);
-  Serial.println();
 
   writeEEPROM();
 }
@@ -156,7 +152,7 @@ void handleFetchAll() {
   Serial.println(str);
 }
 
-void handle_NotFound() {
+void handleNotFound() {
   server.send(404, "text/plain", "Not found");
 }
 

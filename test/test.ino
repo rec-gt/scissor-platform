@@ -10,6 +10,15 @@ WebServer server(80);
 uint16_t hrDatabase[32][8];
 uint16_t irDatabase[32][8];
 
+void initDB() {
+  for (size_t i = 0; i < 32; i++) {
+    hrDatabase[i][0] = 2500;
+  }
+  for (size_t i = 0; i < 32; i++) {
+    irDatabase[i][0] = 2500;
+  }
+}
+
 int counter = 0;
 
 void setup() {
@@ -38,6 +47,8 @@ void setup() {
 
   server.begin();
   Serial.println("HTTP server started");
+
+  initDB();
 }
 
 void loop() {
@@ -60,9 +71,14 @@ void handleSetTarget() {
     hrDatabase[id][0] += 50;
   }
 
-  if (server.hasArg("setTempIncrease")) {
+  if (server.hasArg("setTempDecrease")) {
     hrDatabase[id][0] -= 50;
   }
+
+  Serial.print(id);
+  Serial.print(", ");
+  Serial.print(hrDatabase[id][0]);
+  Serial.println();
 }
 
 void handle_NotFound() {

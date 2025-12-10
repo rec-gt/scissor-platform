@@ -83,17 +83,42 @@ void handleSetTarget() {
   }
 
   if (server.hasArg("setTempIncrease")) {
-    hrDatabase[id][0] += 50;
+    hrDatabase[id][1] += 50;
   }
 
   if (server.hasArg("setTempDecrease")) {
-    hrDatabase[id][0] -= 50;
+    hrDatabase[id][1] -= 50;
+  }
+
+  if (server.hasArg("mode=0")) {
+    hrDatabase[id][2] = 0;
+  }
+
+  if (server.hasArg("mode=1")) {
+    hrDatabase[id][2] = 1;
+  }
+
+  if (server.hasArg("mode=2")) {
+    hrDatabase[id][2] = 2;
+  }
+
+  if (server.hasArg("speed=0")) {
+    hrDatabase[id][3] = 0;
+  }
+
+  if (server.hasArg("speed=1")) {
+    hrDatabase[id][3] = 1;
+  }
+
+  if (server.hasArg("speed=2")) {
+    hrDatabase[id][3] = 2;
   }
 
   Serial.print(id);
   Serial.print(", ");
   Serial.print(hrDatabase[id][0]);
   Serial.println();
+
   writeEEPROM();
 }
 

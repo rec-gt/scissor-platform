@@ -1,7 +1,8 @@
 #include <WiFi.h>
 #include <WebServer.h>
+#include <EEPROM.h>
+#define EEPROM_SIZE 1024
 
-/*Put your SSID & Password*/
 const char* ssid = "REC Guest";        // Enter SSID here
 const char* password = "guest@@2022";  // Enter Password here
 
@@ -9,6 +10,19 @@ WebServer server(80);
 
 uint16_t hrDatabase[32][8];
 uint16_t irDatabase[32][8];
+
+void writeEEPROM() {
+  EEPROM.begin(EEPROM_SIZE);
+  int address = 0;
+
+  for (int i = 0; i < 32; i++) {
+    for (int j = 0; j < 8; j++) {
+      EEPROM.put(address, hrDatabase[i][j]);
+      address += sizeof(uint16_t);
+    }
+  }
+  EEPROM.commit();
+}
 
 void initDB() {
   for (size_t i = 0; i < 32; i++) {
@@ -41,6 +55,7 @@ void setup() {
   Serial.println(WiFi.localIP());
 
   server.on("/", handle_OnConnect);
+  server.on("/fetch_all", handleFetchAll);
   server.on("/set_target", HTTP_POST, handleSetTarget);
 
   server.onNotFound(handle_NotFound);
@@ -79,6 +94,38 @@ void handleSetTarget() {
   Serial.print(", ");
   Serial.print(hrDatabase[id][0]);
   Serial.println();
+  writeEEPROM();
+}
+
+void handleFetchAll() {
+  String str = "";
+
+  str += "{";
+  str += "HR:[";
+  for (size_t i = 0; i < 32; i++) {
+    str += "[";
+    for (size_t j = 0; j < 8; j++) {
+      str += hrDatabase[i][j];
+      str += ",";
+    }
+    str += "],";
+  }
+  str += "],";
+  str += "IR:[";
+  for (size_t i = 0; i < 32; i++) {
+    str += "[";
+    for (size_t j = 0; j < 8; j++) {
+      str += irDatabase[i][j];
+      str += ",";
+    }
+    str += "],";
+  }
+  str += "],";
+  str += "}";
+
+
+  server.send(200, "text/plain", str);
+  Serial.println(str);
 }
 
 void handle_NotFound() {

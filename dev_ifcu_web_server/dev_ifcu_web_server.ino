@@ -25,6 +25,8 @@ uint16_t jsArray[arrayLength];
 
 iFCUModbus ifcuModbus;
 
+bool hasPass = false;
+
 void setup() {
   EEPROM.begin(EEPROM_SIZE);
 
@@ -116,6 +118,7 @@ void handleGetAndSetHR() {
           Serial.print(" ");
         }
 
+        hasPass = true;
         node.setTransmitBuffer(0, jsArray[1]);
         node.setTransmitBuffer(1, 0);
         node.setTransmitBuffer(2, jsArray[3]);
@@ -168,6 +171,10 @@ void handleSendHR() {
   String speedParam = "speed=" + String(IR_DATABASE[4]);
 
   String getReqSetHR = baseURL + "?" + idParam + "&" + powerParam + "&" + setTempParam + "&" + modeParam + "&" + speedParam;
+  if (hasPass) {
+    hasPass = false;
+    getReqSetHR += "&pass=1";
+  }
 
   http.begin(getReqSetHR);
   Serial.println(getReqSetHR);

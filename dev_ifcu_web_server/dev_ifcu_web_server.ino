@@ -158,6 +158,14 @@ void handleSendHR() {
   // } else {
   //   Serial.println("Cannot Fetch Data");
   // }
+  String getReqSetHR = "http://10.236.207.100:3000/broker/set-hr-device";
+  getReqSetHR += "?power=" + HR_DATABASE[0];
+  getReqSetHR += "&setTemp=" + HR_DATABASE[4];
+  getReqSetHR += "&mode=" + HR_DATABASE[2];
+  getReqSetHR += "&speed=" + HR_DATABASE[3];
 
-  // getReqSetHR += "?power=1&setTemp=2660&speed=1&mode=1";
+  http.begin(getReqSetHR);
+  http.addHeader("Content-Type", "application/x-www-form-urlencoded");
+  int httpResponseCode = http.GET();
+  http.end();
 }

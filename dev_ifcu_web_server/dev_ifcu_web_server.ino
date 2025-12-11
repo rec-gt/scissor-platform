@@ -160,12 +160,13 @@ void handleSendHR() {
   // }
   String baseURL = "http://10.236.207.100:3000/broker/set-hr-device";
 
+  String idParam = "id=1";
   String powerParam = "power=" + String(HR_DATABASE[0]);
   String setTempParam = "setTemp=" + String(HR_DATABASE[4]);
   String modeParam = "mode=" + String(HR_DATABASE[2]);
   String speedParam = "speed=" + String(HR_DATABASE[3]);
 
-  String getReqSetHR = baseURL + "?" + powerParam + "&" + setTempParam + "&" + modeParam + "&" + speedParam;
+  String getReqSetHR = baseURL + "?" + idParam + "&" + powerParam + "&" + setTempParam + "&" + modeParam + "&" + speedParam;
 
   http.begin(getReqSetHR);
   Serial.println(getReqSetHR);

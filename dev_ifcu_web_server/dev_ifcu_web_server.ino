@@ -50,8 +50,10 @@ void setup() {
 }
 
 void loop() {
-  handleGetHR();
-  delay(2000);
+  handleGetAndSetHR();
+  delay(1000);
+  handleSendHR();
+  delay(1000);
 }
 
 void handleFetchAll() {
@@ -85,7 +87,7 @@ void handleFetchAll() {
 }
 
 
-void handleGetHR() {
+void handleGetAndSetHR() {
   http.begin(getReqGetHR);
   http.addHeader("Content-Type", "application/x-www-form-urlencoded");
 
@@ -136,6 +138,16 @@ void handleGetHR() {
   http.end();
 }
 
-void handleSetHR() {
-  getReqSetHR += "?power=1&setTemp=2660&speed=1&mode=1";
+void handleSendHR() {
+  result = node.readInputRegisters(30000, IR_SIZE);
+  if (result == node.ku8MBSuccess) {
+    for (size_t i = 0; i < IR_SIZE; i++) {
+      IR_DATABASE[i] = node.getResponseBuffer(i);
+      Serial.println(IR_DATABASE[i]);
+    }
+  } else {
+    Serial.println("Cannot Fetch Data");
+  }
+
+  // getReqSetHR += "?power=1&setTemp=2660&speed=1&mode=1";
 }

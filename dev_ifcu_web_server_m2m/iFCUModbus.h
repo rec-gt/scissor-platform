@@ -11,7 +11,7 @@ uint8_t result;
 
 class iFCUModbus {
 private:
-  byte slaveId = 0;
+  byte slaveId = 31;
   uint16_t prevMillis = millis();
 
 public:

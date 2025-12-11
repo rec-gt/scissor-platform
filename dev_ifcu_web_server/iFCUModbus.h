@@ -11,7 +11,7 @@ uint8_t result;
 
 class iFCUModbus {
 private:
-  byte slaveId = 0;
+  byte slaveId = 31;
   uint16_t prevMillis = millis();
 
 public:
@@ -26,15 +26,14 @@ public:
     if (currMillis - this->prevMillis >= 1000) {
       this->prevMillis = currMillis;
 
-      node.setTransmitBuffer(0, 0);
-      node.setTransmitBuffer(2, 0);
-      node.setTransmitBuffer(3, 0);
-
-      result = node.writeMultipleRegisters(40000, 3);
+      result = node.readInputRegisters(30000, IR_SIZE);
       if (result == node.ku8MBSuccess) {
-        Serial.println("Success");
+        for (size_t i = 0; i < IR_SIZE; i++) {
+          IR_DATABASE[i] = node.getResponseBuffer(i);
+          Serial.println(IR_DATABASE[i]);
+        }
       } else {
-        Serial.println("Fail to fetch data");
+        Serial.println("Cannot Fetch Data");
       }
     }
   }

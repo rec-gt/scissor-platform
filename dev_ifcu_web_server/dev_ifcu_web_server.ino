@@ -162,7 +162,7 @@ void handleSendHR() {
   String baseURL = "http://10.236.207.100:3000/broker/set-hr-device";
 
   String idParam = "id=1";
-  String powerParam = "power=" + String(IR_DATABASE[1]);
+  String powerParam = "power=" + String((IR_DATABASE[1] & 0b01000000) != 0);
   String setTempParam = "setTemp=" + String(IR_DATABASE[6]);
   String modeParam = "mode=" + String(IR_DATABASE[3]);
   String speedParam = "speed=" + String(IR_DATABASE[4]);

@@ -17,7 +17,7 @@ uint16_t hrDatabase[DEVICE_COUNT][HR_FIELD_SIZE];
 uint16_t irDatabase[DEVICE_COUNT][IR_FIELD_SIZE];
 
 String getReqGetHR = "http://10.236.207.100:3000/broker/get-hr/1";
-String getReqSetHR = "http://10.236.207.100:3000/broker/set-hr-device";
+// String getReqSetHR = "http://10.236….207.100:3000/broker/set-hr-device";
 String postReqSetIR = "http://10.236.207.100:3000/broker/set-ir";
 
 constexpr size_t arrayLength = 4 + 1;
@@ -158,14 +158,19 @@ void handleSendHR() {
   // } else {
   //   Serial.println("Cannot Fetch Data");
   // }
-  String getReqSetHR = "http://10.236.207.100:3000/broker/set-hr-device";
-  getReqSetHR += "?power=" + HR_DATABASE[0];
-  getReqSetHR += "&setTemp=" + HR_DATABASE[4];
-  getReqSetHR += "&mode=" + HR_DATABASE[2];
-  getReqSetHR += "&speed=" + HR_DATABASE[3];
+  String baseURL = "http://10.236.207.100:3000/broker/set-hr-device";
+
+  String powerParam = "power=" + String(HR_DATABASE[0]);
+  String setTempParam = "setTemp=" + String(HR_DATABASE[4]);
+  String modeParam = "mode=" + String(HR_DATABASE[2]);
+  String speedParam = "speed=" + String(HR_DATABASE[3]);
+
+  String getReqSetHR = baseURL + "?" + powerParam + "&" + setTempParam + "&" + modeParam + "&" + speedParam;
 
   http.begin(getReqSetHR);
+  Serial.println(getReqSetHR);
   http.addHeader("Content-Type", "application/x-www-form-urlencoded");
   int httpResponseCode = http.GET();
+  Serial.println(httpResponseCode);
   http.end();
 }

@@ -139,15 +139,25 @@ void handleGetAndSetHR() {
 }
 
 void handleSendHR() {
-  result = node.readInputRegisters(30000, IR_SIZE);
+  result = node.readHoldingRegisters(40000, 5);
   if (result == node.ku8MBSuccess) {
-    for (size_t i = 0; i < IR_SIZE; i++) {
-      IR_DATABASE[i] = node.getResponseBuffer(i);
-      Serial.println(IR_DATABASE[i]);
+    for (size_t i = 0; i < 5; i++) {
+      HR_DATABASE[i] = node.getResponseBuffer(i);
+      Serial.println(HR_DATABASE[i]);
     }
   } else {
     Serial.println("Cannot Fetch Data");
   }
+
+  // result = node.readInputRegisters(30000, IR_SIZE);
+  // if (result == node.ku8MBSuccess) {
+  //   for (size_t i = 0; i < IR_SIZE; i++) {
+  //     IR_DATABASE[i] = node.getResponseBuffer(i);
+  //     Serial.println(IR_DATABASE[i]);
+  //   }
+  // } else {
+  //   Serial.println("Cannot Fetch Data");
+  // }
 
   // getReqSetHR += "?power=1&setTemp=2660&speed=1&mode=1";
 }

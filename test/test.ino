@@ -1,5 +1,6 @@
 #include <WiFi.h>
 #include <WebServer.h>
+#include <HTTPClient.h>
 #include <EEPROM.h>
 #define EEPROM_SIZE 1024
 
@@ -7,6 +8,7 @@ const char* ssid = "REC Guest";        // Enter SSID here
 const char* password = "guest@@2022";  // Enter Password here
 
 WebServer server(80);
+HTTPClient http;
 
 constexpr size_t DEVICE_COUNT = 32;
 constexpr size_t HR_FIELD_SIZE = 4;
@@ -14,42 +16,34 @@ constexpr size_t IR_FIELD_SIZE = 5;
 uint16_t hrDatabase[DEVICE_COUNT][HR_FIELD_SIZE];
 uint16_t irDatabase[DEVICE_COUNT][IR_FIELD_SIZE];
 
-void writeEEPROM() {
+String getReqGetHR = "http://localhost:3000/broker/get-hr";
+String postReqSetIR = "http://localhost:3000/broker/set-ir";
 
-  int address = 0;
+// void initDB() {
+//   int address = 0;
 
-  for (int i = 0; i < DEVICE_COUNT; i++) {
-    for (int j = 0; j < HR_FIELD_SIZE; j++) {
-      EEPROM.put(address, hrDatabase[i][j]);
-      address += sizeof(uint16_t);
-    }
-  }
+//   for (int i = 0; i < DEVICE_COUNT; i++) {
+//     for (int j = 0; j < HR_FIELD_SIZE; j++) {
+//       Serial.println(EEPROM.read(address));
+//       hrDatabase[i][j] = EEPROM.read(address);
+//       address += sizeof(uint16_t);
+//     }
+//   }
 
-  EEPROM.commit();
-}
-
-void initDB() {
-  int address = 0;
-
-  for (int i = 0; i < DEVICE_COUNT; i++) {
-    for (int j = 0; j < HR_FIELD_SIZE; j++) {
-      Serial.println(EEPROM.read(address));
-      hrDatabase[i][j] = EEPROM.read(address);
-      address += sizeof(uint16_t);
-    }
-  }
-
-  // for (size_t i = 0; i < DEVICE_COUNT; i++) {
-  //   hrDatabase[i][1] = 2500;
-  // }
-  // for (size_t i = 0; i < DEVICE_COUNT; i++) {
-  //   irDatabase[i][1] = 2500;
-  // }
-}
+//   // for (size_t i = 0; i < DEVICE_COUNT; i++) {
+//   //   hrDatabase[i][1] = 2500;
+//   // }
+//   // for (size_t i = 0; i < DEVICE_COUNT; i++) {
+//   //   irDatabase[i][1] = 2500;
+//   // }
+// }
 
 int counter = 0;
 
 void setup() {
+  http.begin(getReqGetHR);
+  http.addHeader("Content-Type", "application/x-www-form-urlencoded");
+
   EEPROM.begin(EEPROM_SIZE);
 
   Serial.begin(115200);
@@ -70,24 +64,23 @@ void setup() {
   Serial.print("Got IP: ");
   Serial.println(WiFi.localIP());
 
-  server.on("/", handle_OnConnect);
+  server.enableCORS();
+  server.on("/", handleOnConnect);
   server.on("/fetch_all", handleFetchAll);
   server.on("/set_target", HTTP_POST, handleSetTarget);
-
   server.onNotFound(handleNotFound);
-
   server.begin();
-  Serial.println("HTTP server started");
 
-  initDB();
+  Serial.println("HTTP server started");
 }
 
 void loop() {
   server.handleClient();
+  handleGetHR();
+  delay(1000);
 }
 
-void handle_OnConnect() {
-  counter++;
+void handleOnConnect() {
   server.send(200, "text/html", createHTML());
 }
 
@@ -154,6 +147,20 @@ void handleFetchAll() {
 
 void handleNotFound() {
   server.send(404, "text/plain", "Not found");
+}
+
+void handleGetHR() {
+  int httpResponseCode = http.GET();
+  if (httpResponseCode > 0) {
+    Serial.print("HTTP Response Code: ");
+    Serial.println(httpResponseCode);
+    String payload = http.getString();
+    Serial.println(payload);
+  } else {
+    Serial.print("Error code: ");
+    Serial.println(httpResponseCode);
+  }
+  http.end();
 }
 
 String createHTML() {

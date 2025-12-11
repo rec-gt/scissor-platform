@@ -51,9 +51,9 @@ void setup() {
 
 void loop() {
   handleGetAndSetHR();
-  delay(1000);
+  delay(500);
   handleSendHR();
-  delay(1000);
+  delay(500);
 }
 
 void handleFetchAll() {

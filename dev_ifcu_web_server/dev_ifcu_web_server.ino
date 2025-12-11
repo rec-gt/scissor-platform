@@ -139,32 +139,33 @@ void handleGetAndSetHR() {
 }
 
 void handleSendHR() {
-  result = node.readHoldingRegisters(40000, 5);
+  // result = node.readHoldingRegisters(40000, 5);
+  // if (result == node.ku8MBSuccess) {
+  //   for (size_t i = 0; i < 5; i++) {
+  //     HR_DATABASE[i] = node.getResponseBuffer(i);
+  //     Serial.println(HR_DATABASE[i]);
+  //   }
+  // } else {
+  //   Serial.println("Cannot Fetch Data");
+  // }
+
+  result = node.readInputRegisters(30000, IR_SIZE);
   if (result == node.ku8MBSuccess) {
-    for (size_t i = 0; i < 5; i++) {
-      HR_DATABASE[i] = node.getResponseBuffer(i);
-      Serial.println(HR_DATABASE[i]);
+    for (size_t i = 0; i < IR_SIZE; i++) {
+      IR_DATABASE[i] = node.getResponseBuffer(i);
+      Serial.println(IR_DATABASE[i]);
     }
   } else {
     Serial.println("Cannot Fetch Data");
   }
 
-  // result = node.readInputRegisters(30000, IR_SIZE);
-  // if (result == node.ku8MBSuccess) {
-  //   for (size_t i = 0; i < IR_SIZE; i++) {
-  //     IR_DATABASE[i] = node.getResponseBuffer(i);
-  //     Serial.println(IR_DATABASE[i]);
-  //   }
-  // } else {
-  //   Serial.println("Cannot Fetch Data");
-  // }
   String baseURL = "http://10.236.207.100:3000/broker/set-hr-device";
 
   String idParam = "id=1";
-  String powerParam = "power=" + String(HR_DATABASE[0]);
-  String setTempParam = "setTemp=" + String(HR_DATABASE[4]);
-  String modeParam = "mode=" + String(HR_DATABASE[2]);
-  String speedParam = "speed=" + String(HR_DATABASE[3]);
+  String powerParam = "power=" + String(IR_DATABASE[1]);
+  String setTempParam = "setTemp=" + String(IR_DATABASE[6]);
+  String modeParam = "mode=" + String(IR_DATABASE[3]);
+  String speedParam = "speed=" + String(IR_DATABASE[4]);
 
   String getReqSetHR = baseURL + "?" + idParam + "&" + powerParam + "&" + setTempParam + "&" + modeParam + "&" + speedParam;
 

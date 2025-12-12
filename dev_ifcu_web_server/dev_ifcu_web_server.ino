@@ -1,9 +1,7 @@
 #include <WiFi.h>
 #include <HTTPClient.h>
-#include <EEPROM.h>
 #include <ArduinoJson.h>
 #include "iFCUModbus.h"
-#define EEPROM_SIZE 1024
 
 const char* ssid = "REC Guest";        // Enter SSID here
 const char* password = "guest@@2022";  // Enter Password here
@@ -17,7 +15,6 @@ uint16_t hrDatabase[DEVICE_COUNT][HR_FIELD_SIZE];
 uint16_t irDatabase[DEVICE_COUNT][IR_FIELD_SIZE];
 
 String getReqGetHR = "http://10.236.207.100:3000/broker/get-hr/1";
-// String getReqSetHR = "http://10.236….207.100:3000/broker/set-hr-device";
 String postReqSetIR = "http://10.236.207.100:3000/broker/set-ir";
 
 constexpr size_t arrayLength = 4 + 1;
@@ -25,11 +22,7 @@ uint16_t jsArray[arrayLength];
 
 iFCUModbus ifcuModbus;
 
-bool hasPass = false;
-
 void setup() {
-  EEPROM.begin(EEPROM_SIZE);
-
   Serial.begin(115200);
 
   Serial.println("Connecting to ");
@@ -54,38 +47,8 @@ void setup() {
 void loop() {
   handleGetAndSetHR();
   delay(500);
-  handleSendHR();
+  handleSendIR();
   delay(500);
-}
-
-void handleFetchAll() {
-  String str = "";
-
-  str += "{";
-  str += "HR:[";
-  for (size_t i = 0; i < DEVICE_COUNT; i++) {
-    str += "[";
-    for (size_t j = 0; j < HR_FIELD_SIZE; j++) {
-      str += hrDatabase[i][j];
-      str += ",";
-    }
-    str += "],";
-  }
-  str += "],";
-  str += "IR:[";
-  for (size_t i = 0; i < DEVICE_COUNT; i++) {
-    str += "[";
-    for (size_t j = 0; j < IR_FIELD_SIZE; j++) {
-      str += irDatabase[i][j];
-      str += ",";
-    }
-    str += "],";
-  }
-  str += "],";
-  str += "}";
-
-
-  Serial.println(str);
 }
 
 
@@ -118,7 +81,6 @@ void handleGetAndSetHR() {
           Serial.print(" ");
         }
 
-        hasPass = true;
         node.setTransmitBuffer(0, jsArray[1]);
         node.setTransmitBuffer(1, 0);
         node.setTransmitBuffer(2, jsArray[3]);
@@ -141,22 +103,11 @@ void handleGetAndSetHR() {
   http.end();
 }
 
-void handleSendHR() {
-  // result = node.readHoldingRegisters(40000, 5);
-  // if (result == node.ku8MBSuccess) {
-  //   for (size_t i = 0; i < 5; i++) {
-  //     HR_DATABASE[i] = node.getResponseBuffer(i);
-  //     Serial.println(HR_DATABASE[i]);
-  //   }
-  // } else {
-  //   Serial.println("Cannot Fetch Data");
-  // }
-
+void handleSendIR() {
   result = node.readInputRegisters(30000, IR_SIZE);
   if (result == node.ku8MBSuccess) {
     for (size_t i = 0; i < IR_SIZE; i++) {
       IR_DATABASE[i] = node.getResponseBuffer(i);
-      Serial.println(IR_DATABASE[i]);
     }
   } else {
     Serial.println("Cannot Fetch Data");
@@ -166,15 +117,11 @@ void handleSendHR() {
 
   String idParam = "id=1";
   String powerParam = "power=" + String((IR_DATABASE[1] & 0b01000000) != 0);
+  String roomTempParam = "roomTemp=" + String(IR_DATABASE[5]);
   String setTempParam = "setTemp=" + String(IR_DATABASE[6]);
   String modeParam = "mode=" + String(IR_DATABASE[3]);
   String speedParam = "speed=" + String(IR_DATABASE[4]);
-
-  String getReqSetHR = baseURL + "?" + idParam + "&" + powerParam + "&" + setTempParam + "&" + modeParam + "&" + speedParam;
-  if (hasPass) {
-    hasPass = false;
-    getReqSetHR += "&pass=1";
-  }
+  String getReqSetHR = baseURL + "?" + idParam + "&" + powerParam + "&" + roomTempParam + "&" + setTempParam + "&" + modeParam + "&" + speedParam;
 
   http.begin(getReqSetHR);
   Serial.println(getReqSetHR);

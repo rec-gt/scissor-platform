@@ -2,6 +2,7 @@
 #include <HTTPClient.h>
 #include <ArduinoJson.h>
 #include "iFCUModbus.h"
+#include "ESPmDNS.h"
 
 const char* ssid = "REC Guest";        // Enter SSID here
 const char* password = "guest@@2022";  // Enter Password here
@@ -14,8 +15,9 @@ constexpr size_t IR_FIELD_SIZE = 5;
 uint16_t hrDatabase[DEVICE_COUNT][HR_FIELD_SIZE];
 uint16_t irDatabase[DEVICE_COUNT][IR_FIELD_SIZE];
 
-String getReqGetHR = "http://10.236.207.100:3000/broker/get-hr/1";
-String postReqSetIR = "http://10.236.207.100:3000/broker/set-ir";
+String device_id = "1";
+String getReqGetHR = "http://ifcu-web.local:3000/broker/get-hr/" + device_id;
+String postReqSetIR = "http://ifcu-web.local:3000/broker/set-ir";
 
 constexpr size_t arrayLength = 4 + 1;
 uint16_t jsArray[arrayLength];
@@ -40,6 +42,30 @@ void setup() {
   Serial.println("WiFi connected..!");
   Serial.print("Got IP: ");
   Serial.println(WiFi.localIP());
+
+  if (!MDNS.begin("esp32")) {
+    MDNS.addService("http", "tcp", 80);
+    Serial.println("Error starting mDNS");
+    return;
+  }
+
+  Serial.println("Searching for web servers...");
+  MDNS.queryService("http", "tcp");  // Find all devices offering HTTP
+  delay(2000);                       // Wait for responses
+
+  Serial.println("Found services:");
+  int n = MDNS.queryService("http", "tcp");
+
+  for (int i = 0; i < n; i++) {
+    IPAddress ip = MDNS.address(i);
+    String ip_string = ip.toString();
+    Serial.println(i);
+    Serial.println(MDNS.hostname(i));
+    Serial.println(MDNS.port(i));
+    Serial.println(ip_string);
+  }
+
+  Serial.println("mDNS responder started");
 
   ifcuModbus.init();
 }
@@ -113,9 +139,9 @@ void handleSendIR() {
     Serial.println("Cannot Fetch Data");
   }
 
-  String baseURL = "http://10.236.207.100:3000/broker/set-hr-device";
+  String baseURL = "http://ifcu-web.local:3000/broker/set-hr-device";
 
-  String idParam = "id=1";
+  String idParam = "id=" + device_id;
   String powerParam = "power=" + String((IR_DATABASE[1] & 0b01000000) != 0);
   String roomTempParam = "roomTemp=" + String(IR_DATABASE[5]);
   String setTempParam = "setTemp=" + String(IR_DATABASE[6]);

@@ -1,183 +1,83 @@
-#include <WiFi.h>
-#include <WebServer.h>
-#include <HTTPClient.h>
-#include <EEPROM.h>
-#define EEPROM_SIZE 1024
+#include "WiFi.h"                   /* should be installed together with ESP32 Arduino install */
+#include <ESPmDNS.h>               /* should be installed together with ESP32 Arduino install */
 
-const char* ssid = "REC Guest";        // Enter SSID here
-const char* password = "guest@@2022";  // Enter Password here
+//https://github.com/espressif/esp-idf/blob/v2.0/examples/protocols/mdns/main/mdns_example_main.c
 
-WebServer server(80);
-HTTPClient http;
+//https://github.com/espressif/esp-idf/blob/master/docs/api-reference/protocols/mdns.rst
 
-constexpr size_t DEVICE_COUNT = 32;
-constexpr size_t HR_FIELD_SIZE = 4;
-constexpr size_t IR_FIELD_SIZE = 5;
-uint16_t hrDatabase[DEVICE_COUNT][HR_FIELD_SIZE];
-uint16_t irDatabase[DEVICE_COUNT][IR_FIELD_SIZE];
+// use: avahi-discover (linux) to check avahi services
 
-String getReqGetHR = "http://localhost:3000/broker/get-hr";
-String postReqSetIR = "http://localhost:3000/broker/set-ir";
-
-// void initDB() {
-//   int address = 0;
-
-//   for (int i = 0; i < DEVICE_COUNT; i++) {
-//     for (int j = 0; j < HR_FIELD_SIZE; j++) {
-//       Serial.println(EEPROM.read(address));
-//       hrDatabase[i][j] = EEPROM.read(address);
-//       address += sizeof(uint16_t);
-//     }
-//   }
-
-//   // for (size_t i = 0; i < DEVICE_COUNT; i++) {
-//   //   hrDatabase[i][1] = 2500;
-//   // }
-//   // for (size_t i = 0; i < DEVICE_COUNT; i++) {
-//   //   irDatabase[i][1] = 2500;
-//   // }
-// }
-
-int counter = 0;
+mdns_server_t * mdns = NULL;
 
 void setup() {
-  http.begin(getReqGetHR);
-  http.addHeader("Content-Type", "application/x-www-form-urlencoded");
 
-  EEPROM.begin(EEPROM_SIZE);
+  const time_t endTime = millis() +  15 * 1000; /* 15 sec */
+
+  const char * hostname = "broekie";
 
   Serial.begin(115200);
-
-  Serial.println("Connecting to ");
-  Serial.println(ssid);
-
-  //connect to your local wi-fi network
-  WiFi.begin(ssid, password);
-
-  //check wi-fi is connected to wi-fi network
-  while (WiFi.status() != WL_CONNECTED) {
-    delay(1000);
-    Serial.print(".");
+  WiFi.begin();
+  while ( WiFi.status() != WL_CONNECTED && millis() < endTime )
+  {
+    Serial.print( "." );
+    vTaskDelay( 500 / portTICK_PERIOD_MS );
   }
-  Serial.println("");
-  Serial.println("WiFi connected..!");
-  Serial.print("Got IP: ");
-  Serial.println(WiFi.localIP());
 
-  server.enableCORS();
-  server.on("/", handleOnConnect);
-  server.on("/fetch_all", handleFetchAll);
-  server.on("/set_target", HTTP_POST, handleSetTarget);
-  server.onNotFound(handleNotFound);
-  server.begin();
-
-  Serial.println("HTTP server started");
+  const char * arduTxtData[4] = 
+  {
+      "board=esp32",
+      "tcp_check=no",
+      "ssh_upload=no",
+      "auth_upload=no"
+  };
+  esp_err_t err = mdns_init(TCPIP_ADAPTER_IF_STA, &mdns);
+  if (err) {
+      ESP_LOGE(TAG, "Failed starting MDNS: %u", err);
+  }
+/*
+  //first set name and start MDNS
+  ESP_ERROR_CHECK( mdns_set_hostname(mdns, hostname) );
+  ESP_ERROR_CHECK( mdns_set_instance(mdns, hostname) );
+  
+  //add a service - watch the correct order!
+  ESP_ERROR_CHECK( mdns_service_add(mdns, "_arduino", "_tcp", 3232) );
+  ESP_ERROR_CHECK( mdns_service_txt_set(mdns, "_arduino", "_tcp", 4, arduTxtData) );
+  //add another service 
+  ESP_ERROR_CHECK( mdns_service_add(mdns, "_http", "_tcp", 80) );
+  ESP_ERROR_CHECK( mdns_service_txt_set(mdns, "_http", "_tcp", 4, arduTxtData) );
+  ESP_ERROR_CHECK( mdns_service_instance_set(mdns, "_http", "_tcp", "Aquacontrol32 WebServer") );
+  
+  */
+  
+  // put your setup code here, to run once:
+  Serial.printf( "Check if %s is already present...\n", hostname );
+  resolve_mdns_host( "vissen" );
 }
 
 void loop() {
-  server.handleClient();
-  handleGetHR();
-  delay(1000);
+  // put your main code here, to run repeatedly:
+
 }
 
-void handleOnConnect() {
-  server.send(200, "text/html", createHTML());
-}
-
-void handleSetTarget() {
-  int id;
-
-  if (server.hasArg("id")) {
-    id = server.arg("id").toInt();
-  }
-
-  if (server.hasArg("power")) {
-    hrDatabase[id][0] = server.arg("power").toInt();
-  }
-
-  if (server.hasArg("setTempIncrease")) {
-    hrDatabase[id][1] += 50;
-  }
-
-  if (server.hasArg("setTempDecrease")) {
-    hrDatabase[id][1] -= 50;
-  }
-
-  if (server.hasArg("mode")) {
-    hrDatabase[id][2] = server.arg("mode").toInt();
-  }
-
-  if (server.hasArg("speed")) {
-    hrDatabase[id][3] = server.arg("speed").toInt();
-  }
-
-  writeEEPROM();
-}
-
-void handleFetchAll() {
-  String str = "";
-
-  str += "{";
-  str += "HR:[";
-  for (size_t i = 0; i < DEVICE_COUNT; i++) {
-    str += "[";
-    for (size_t j = 0; j < HR_FIELD_SIZE; j++) {
-      str += hrDatabase[i][j];
-      str += ",";
+void resolve_mdns_host(const char * hostname)
+{
+    printf("mDNS Host Lookup: %s.local\n", hostname);
+    //run search for 1000 ms
+    if (mdns_query(mdns, hostname, NULL, 1000)) {
+        //results were found
+        const mdns_result_t * results = mdns_result_get(mdns, 0);
+        //itterate through all results
+        size_t i = 1;
+        while(results) {
+            //print result information
+            printf("  %u: IP:" IPSTR ", IPv6:" IPV6STR "\n", i++, IP2STR(&results->addr), IPV62STR(results->addrv6));
+            //load next result. Will be NULL if this was the last one
+            results = results->next;
+        }
+        //free the results from memory
+        mdns_result_free(mdns);
+    } else {
+        //host was not found
+        printf("  Host Not Found\n");
     }
-    str += "],";
-  }
-  str += "],";
-  str += "IR:[";
-  for (size_t i = 0; i < DEVICE_COUNT; i++) {
-    str += "[";
-    for (size_t j = 0; j < IR_FIELD_SIZE; j++) {
-      str += irDatabase[i][j];
-      str += ",";
-    }
-    str += "],";
-  }
-  str += "],";
-  str += "}";
-
-
-  server.send(200, "text/plain", str);
-  Serial.println(str);
-}
-
-void handleNotFound() {
-  server.send(404, "text/plain", "Not found");
-}
-
-void handleGetHR() {
-  int httpResponseCode = http.GET();
-  if (httpResponseCode > 0) {
-    Serial.print("HTTP Response Code: ");
-    Serial.println(httpResponseCode);
-    String payload = http.getString();
-    Serial.println(payload);
-  } else {
-    Serial.print("Error code: ");
-    Serial.println(httpResponseCode);
-  }
-  http.end();
-}
-
-String createHTML() {
-  String str = "<!DOCTYPE html> <html>";
-  str += "<head><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0, user-scalable=no\">";
-  str += "<style>";
-  str += "body {font-family: Arial, sans-serif; color: #444; text-align: center;}";
-  str += ".title {font-size: 30px; font-weight: bold; letter-spacing: 2px; margin: 80px 0 55px;}";
-  str += ".counter {font-size: 80px; font-weight: 300; line-height: 1; margin: 0px; color: #4285f4;}";
-  str += "</style>";
-  str += "</head>";
-  str += "<body>";
-  str += "<h1 class=\"title\">VISITOR COUNTER</h1>";
-  str += "<div class=\"counter\">";
-  str += counter;
-  str += "</div>";
-  str += "</body>";
-  str += "</html>";
-  return str;
 }

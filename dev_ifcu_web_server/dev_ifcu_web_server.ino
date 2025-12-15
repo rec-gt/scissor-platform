@@ -55,7 +55,8 @@ void setup() {
 
   Serial.println("Found services:");
   int n = MDNS.queryService("http", "tcp");
-
+  Serial.print("Num: ");
+  Serial.println(n);
   for (int i = 0; i < n; i++) {
     IPAddress ip = MDNS.address(i);
     String ip_string = ip.toString();

@@ -53,6 +53,16 @@ void setup() {
   MDNS.queryService("http", "tcp");  // Find all devices offering HTTP
   delay(2000);                       // Wait for responses
 
+
+  IPAddress serverIp = MDNS.queryHost("ifcuweb");  // Returns 0.0.0.0 if not found
+
+  while (serverIp.toString() == "0.0.0.0") {
+    Serial.println("Still looking for server IP...");
+    delay(250);
+    serverIp = MDNS.queryHost(targetHost);
+  }
+
+
   Serial.println("Found services:");
   int n = MDNS.queryService("http", "tcp");
   Serial.print("Num: ");

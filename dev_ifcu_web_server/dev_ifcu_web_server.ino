@@ -22,6 +22,7 @@ String postReqSetIR = "http://ifcu-web.local:3000/broker/set-ir";
 constexpr size_t arrayLength = 4 + 1;
 uint16_t jsArray[arrayLength];
 
+String webServerIPAddress = "";
 iFCUModbus ifcuModbus;
 
 void setup() {
@@ -61,9 +62,10 @@ void setup() {
     Serial.println("Still looking for server IP...");
     delay(250);
     serverIp = MDNS.queryHost(targetHost);
-    Serial.println(serverIp);
   }
 
+  webServerIPAddress = serverIp.toString();
+  Serial.println(webServerIPAddress);
 
   Serial.println("Found services:");
   int n = MDNS.queryService("http", "tcp");
@@ -92,6 +94,9 @@ void loop() {
 
 
 void handleGetAndSetHR() {
+  getReqGetHR = "http://" + webServerIPAddress + ":3000/broker/get-hr/" + device_id;
+  String baseURL = "http://" + webServerIPAddress + ":3000/broker/set-hr-device";
+
   http.begin(getReqGetHR);
   http.addHeader("Content-Type", "application/x-www-form-urlencoded");
 
@@ -152,7 +157,6 @@ void handleSendIR() {
     Serial.println("Cannot Fetch Data");
   }
 
-  String baseURL = "http://ifcu-web.local:3000/broker/set-hr-device";
 
   String idParam = "id=" + device_id;
   String powerParam = "power=" + String((IR_DATABASE[1] & 0b01000000) != 0);

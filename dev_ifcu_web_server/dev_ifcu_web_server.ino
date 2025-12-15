@@ -54,12 +54,14 @@ void setup() {
   delay(2000);                       // Wait for responses
 
 
-  IPAddress serverIp = MDNS.queryHost("ifcuweb");  // Returns 0.0.0.0 if not found
+  char* targetHost = "ifcuweb";
+  IPAddress serverIp = MDNS.queryHost(targetHost);  // Returns 0.0.0.0 if not found
 
   while (serverIp.toString() == "0.0.0.0") {
     Serial.println("Still looking for server IP...");
     delay(250);
     serverIp = MDNS.queryHost(targetHost);
+    Serial.println(serverIp);
   }
 
 

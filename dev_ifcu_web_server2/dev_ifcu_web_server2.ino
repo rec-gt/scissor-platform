@@ -1,12 +1,11 @@
+#include <WiFi.h>
 #include <HTTPClient.h>
-#include "Globals.h"
-#include "ESPmDNS.h"
+#include <ArduinoJson.h>
 #include "iFCUModbus.h"
-#include "WiFiService.h"
-#include "MDNSService.h"
+#include "ESPmDNS.h"
 
-WiFiService wifiService;
-MDNSService mDNSService;
+const char* ssid = "REC Guest";        // Enter SSID here
+const char* password = "guest@@2022";  // Enter Password here
 
 HTTPClient http;
 
@@ -29,58 +28,68 @@ iFCUModbus ifcuModbus;
 void setup() {
   Serial.begin(115200);
 
-  // if (!MDNS.begin("esp321")) {
-  //   MDNS.addService("http", "tcp", 80);
-  //   Serial.println("Error starting mDNS");
-  //   return;
-  // }
+  Serial.println("Connecting to ");
+  Serial.println(ssid);
 
-  // Serial.println("Searching for web servers...");
-  // MDNS.queryService("http", "tcp");  // Find all devices offering HTTP
-  // delay(2000);                       // Wait for responses
+  //connect to your local wi-fi network
+  WiFi.begin(ssid, password);
+
+  //check wi-fi is connected to wi-fi network
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(1000);
+    Serial.print(".");
+  }
+  Serial.println("");
+  Serial.println("WiFi connected..!");
+  Serial.print("Got IP: ");
+  Serial.println(WiFi.localIP());
+
+  if (!MDNS.begin("esp32")) {
+    MDNS.addService("http", "tcp", 80);
+    Serial.println("Error starting mDNS");
+    return;
+  }
+
+  Serial.println("Searching for web servers...");
+  MDNS.queryService("http", "tcp");  // Find all devices offering HTTP
+  delay(2000);                       // Wait for responses
 
 
-  // char* targetHost = "ifcuweb";
-  // IPAddress serverIp = MDNS.queryHost(targetHost);  // Returns 0.0.0.0 if not found
+  char* targetHost = "ifcuweb";
+  IPAddress serverIp = MDNS.queryHost(targetHost);  // Returns 0.0.0.0 if not found
 
-  // while (serverIp.toString() == "0.0.0.0") {
-  //   Serial.println("Still looking for server IP...");
-  //   delay(250);
-  //   serverIp = MDNS.queryHost(targetHost);
-  // }
+  while (serverIp.toString() == "0.0.0.0") {
+    Serial.println("Still looking for server IP...");
+    delay(250);
+    serverIp = MDNS.queryHost(targetHost);
+  }
 
-  // webServerIPAddress = serverIp.toString();
-  // Serial.println(webServerIPAddress);
+  webServerIPAddress = serverIp.toString();
+  Serial.println(webServerIPAddress);
 
-  // Serial.println("Found services:");
-  // int n = MDNS.queryService("http", "tcp");
-  // Serial.print("Num: ");
-  // Serial.println(n);
-  // for (int i = 0; i < n; i++) {
-  //   IPAddress ip = MDNS.address(i);
-  //   String ip_string = ip.toString();
-  //   Serial.println(i);
-  //   Serial.println(MDNS.hostname(i));
-  //   Serial.println(MDNS.port(i));
-  //   Serial.println(ip_string);
-  // }
+  Serial.println("Found services:");
+  int n = MDNS.queryService("http", "tcp");
+  Serial.print("Num: ");
+  Serial.println(n);
+  for (int i = 0; i < n; i++) {
+    IPAddress ip = MDNS.address(i);
+    String ip_string = ip.toString();
+    Serial.println(i);
+    Serial.println(MDNS.hostname(i));
+    Serial.println(MDNS.port(i));
+    Serial.println(ip_string);
+  }
 
-  // Serial.println("mDNS responder started");
+  Serial.println("mDNS responder started");
 
   ifcuModbus.init();
 }
 
 void loop() {
-  wifiService.loop();
-
-  if (wifiService.isConnected()) {
-    mDNSService.loop();
-
-    // handleGetAndSetHR();
-    // delay(500);
-    // handleSendIR();
-    // delay(500);
-  }
+  handleGetAndSetHR();
+  delay(500);
+  handleSendIR();
+  delay(500);
 }
 
 

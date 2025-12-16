@@ -4,6 +4,9 @@
 #include <ModbusMaster.h>
 #include <HTTPClient.h>
 
+/* === System Config === */
+byte DEVICE_ID = 1;
+
 
 /* === WiFi Service === */
 const char* WIFI_SSID = "REC Guest";        // Enter SSID here

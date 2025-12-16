@@ -6,7 +6,7 @@
 #define RXD2 16
 #define TXD2 17
 
-String getReqGetHR = "http://ifcu-web.local:3000/broker/get-hr/" + IFCU_SLAVE_ID;
+String getReqGetHR = "http://ifcu-web.local:3000/broker/get-hr/" + DEVICE_ID;
 
 constexpr size_t arrayLength = 4 + 1;
 uint16_t jsArray[arrayLength];
@@ -24,7 +24,7 @@ public:
   }
 
   void handleGetAndSetHR() {
-    getReqGetHR = "http://" + gatewayIPAddress + ":3000/broker/get-hr/" + IFCU_SLAVE_ID;
+    getReqGetHR = "http://" + gatewayIPAddress + ":3000/broker/get-hr/" + DEVICE_ID;
 
     http.begin(getReqGetHR);
     http.addHeader("Content-Type", "application/x-www-form-urlencoded");
@@ -88,7 +88,7 @@ public:
 
     String baseURL = "http://" + gatewayIPAddress + ":3000/broker/set-hr-device";
 
-    String idParam = "id=" + String(IFCU_SLAVE_ID);
+    String idParam = "id=" + String(DEVICE_ID);
     String powerParam = "power=" + String((IR_DATABASE[1] & 0b01000000) != 0);
     String roomTempParam = "roomTemp=" + String(IR_DATABASE[5]);
     String setTempParam = "setTemp=" + String(IR_DATABASE[6]);

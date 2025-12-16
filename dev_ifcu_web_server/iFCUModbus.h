@@ -1,8 +1,8 @@
 #ifndef IFCU_MODBUS_H
 #define IFCU_MODBUS_H
 
-#include <ModbusMaster.h>
 #include "Globals.h"
+
 #define RXD2 16
 #define TXD2 17
 
@@ -10,7 +10,6 @@ String getReqGetHR = "http://ifcu-web.local:3000/broker/get-hr/" + IFCU_SLAVE_ID
 
 constexpr size_t arrayLength = 4 + 1;
 uint16_t jsArray[arrayLength];
-
 
 uint8_t result;
 
@@ -89,7 +88,7 @@ public:
 
     String baseURL = "http://" + gatewayIPAddress + ":3000/broker/set-hr-device";
 
-    String idParam = "id=" + IFCU_SLAVE_ID;
+    String idParam = "id=" + String(IFCU_SLAVE_ID);
     String powerParam = "power=" + String((IR_DATABASE[1] & 0b01000000) != 0);
     String roomTempParam = "roomTemp=" + String(IR_DATABASE[5]);
     String setTempParam = "setTemp=" + String(IR_DATABASE[6]);

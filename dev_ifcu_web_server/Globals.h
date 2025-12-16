@@ -15,7 +15,7 @@ enum WIFI_CONN_STATUS {
 byte wifiConnStatus = WIFI_DISCONNECTED;
 
 /* === mDNS Service === */
-const char* mDNSHostname = "ifcu-mdns-1";
+const char* mDNSHostname = "esp32";
 
 enum MDNS_CONN_STATUS {
   MDNS_EMPTY,

@@ -9,7 +9,9 @@ private:
   void start() {
     if (mDNSStatus == MDNS_EMPTY) {
       if (MDNS.begin(mDNSHostname)) {
+        MDNS.addService("http", "tcp", 80);
         mDNSStatus = MDNS_STARTED;
+        Serial.println("Started mDNS");
       } else {
         Serial.println("Error starting mDNS");
       }
@@ -22,15 +24,19 @@ private:
     }
 
     if (mDNSStatus == MDNS_PROBE) {
+      int n = MDNS.queryService("http", "tcp");
       IPAddress serverIp = MDNS.queryHost(gatewayHostname);  // Returns 0.0.0.0 if not found
 
-      while (serverIp.toString() == "0.0.0.0") {
+      if (serverIp.toString() == "0.0.0.0") {
+        uint16_t currMillis = millis();
         Serial.println("Still looking for server IP...");
-        delay(250);
         serverIp = MDNS.queryHost(gatewayHostname);
+        mDNSStatus = MDNS_PROBE;
+      } else {
+        gatewayIPAddress = serverIp.toString();
+        Serial.println(gatewayIPAddress);
+        mDNSStatus = MDNS_PROBE_FINISH;
       }
-      gatewayIPAddress = serverIp.toString();
-      Serial.println(gatewayIPAddress);
     }
   }
 

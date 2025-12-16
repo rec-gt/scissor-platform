@@ -1,6 +1,7 @@
 
 #ifndef GLOBALS_H
 #define GLOBALS_H
+#include <ModbusMaster.h>
 
 /* === WiFi Service === */
 const char* WIFI_SSID = "REC Guest";        // Enter SSID here
@@ -31,6 +32,9 @@ const char* gatewayHostname = "ifcuweb";
 String gatewayIPAddress = "";
 
 /* === Modbus Service === */
+byte IFCU_SLAVE_ID = 31;
+ModbusMaster mbNode;
+
 constexpr byte IR_SIZE = 17;
 constexpr byte HR_SIZE = 17;
 uint16_t IR_DATABASE[IR_SIZE] = {};

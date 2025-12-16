@@ -16,56 +16,17 @@ constexpr size_t IR_FIELD_SIZE = 5;
 uint16_t hrDatabase[DEVICE_COUNT][HR_FIELD_SIZE];
 uint16_t irDatabase[DEVICE_COUNT][IR_FIELD_SIZE];
 
-String device_id = "1";
-String getReqGetHR = "http://ifcu-web.local:3000/broker/get-hr/" + device_id;
+String deviceId = "1";
+String getReqGetHR = "http://ifcu-web.local:3000/broker/get-hr/" + deviceId;
 String postReqSetIR = "http://ifcu-web.local:3000/broker/set-ir";
 
 constexpr size_t arrayLength = 4 + 1;
 uint16_t jsArray[arrayLength];
 
-String webServerIPAddress = "";
 iFCUModbus ifcuModbus;
 
 void setup() {
   Serial.begin(115200);
-
-  // if (!MDNS.begin("esp321")) {
-  //   MDNS.addService("http", "tcp", 80);
-  //   Serial.println("Error starting mDNS");
-  //   return;
-  // }
-
-  // Serial.println("Searching for web servers...");
-  // MDNS.queryService("http", "tcp");  // Find all devices offering HTTP
-  // delay(2000);                       // Wait for responses
-
-
-  // char* targetHost = "ifcuweb";
-  // IPAddress serverIp = MDNS.queryHost(targetHost);  // Returns 0.0.0.0 if not found
-
-  // while (serverIp.toString() == "0.0.0.0") {
-  //   Serial.println("Still looking for server IP...");
-  //   delay(250);
-  //   serverIp = MDNS.queryHost(targetHost);
-  // }
-
-  // webServerIPAddress = serverIp.toString();
-  // Serial.println(webServerIPAddress);
-
-  // Serial.println("Found services:");
-  // int n = MDNS.queryService("http", "tcp");
-  // Serial.print("Num: ");
-  // Serial.println(n);
-  // for (int i = 0; i < n; i++) {
-  //   IPAddress ip = MDNS.address(i);
-  //   String ip_string = ip.toString();
-  //   Serial.println(i);
-  //   Serial.println(MDNS.hostname(i));
-  //   Serial.println(MDNS.port(i));
-  //   Serial.println(ip_string);
-  // }
-
-  // Serial.println("mDNS responder started");
 
   ifcuModbus.init();
 }
@@ -76,16 +37,18 @@ void loop() {
   if (wifiService.isConnected()) {
     mDNSService.loop();
 
-    // handleGetAndSetHR();
-    // delay(500);
-    // handleSendIR();
-    // delay(500);
+    if (mDNSService.isConnected()) {
+      handleGetAndSetHR();
+      delay(500);
+      handleSendIR();
+      delay(500);
+    }
   }
 }
 
 
 void handleGetAndSetHR() {
-  getReqGetHR = "http://" + webServerIPAddress + ":3000/broker/get-hr/" + device_id;
+  getReqGetHR = "http://" + gatewayIPAddress + ":3000/broker/get-hr/" + deviceId;
 
   http.begin(getReqGetHR);
   http.addHeader("Content-Type", "application/x-www-form-urlencoded");
@@ -115,13 +78,13 @@ void handleGetAndSetHR() {
           Serial.print(" ");
         }
 
-        node.setTransmitBuffer(0, jsArray[1]);
-        node.setTransmitBuffer(1, 0);
-        node.setTransmitBuffer(2, jsArray[3]);
-        node.setTransmitBuffer(3, jsArray[4]);
-        node.setTransmitBuffer(4, jsArray[2]);
-        result = node.writeMultipleRegisters(40000, 5);
-        if (result == node.ku8MBSuccess) {
+        mbNode.setTransmitBuffer(0, jsArray[1]);
+        mbNode.setTransmitBuffer(1, 0);
+        mbNode.setTransmitBuffer(2, jsArray[3]);
+        mbNode.setTransmitBuffer(3, jsArray[4]);
+        mbNode.setTransmitBuffer(4, jsArray[2]);
+        result = mbNode.writeMultipleRegisters(40000, 5);
+        if (result == mbNode.ku8MBSuccess) {
           Serial.println("Success");
         } else {
           Serial.println("Fail to update data");
@@ -138,18 +101,18 @@ void handleGetAndSetHR() {
 }
 
 void handleSendIR() {
-  result = node.readInputRegisters(30000, IR_SIZE);
-  if (result == node.ku8MBSuccess) {
+  result = mbNode.readInputRegisters(30000, IR_SIZE);
+  if (result == mbNode.ku8MBSuccess) {
     for (size_t i = 0; i < IR_SIZE; i++) {
-      IR_DATABASE[i] = node.getResponseBuffer(i);
+      IR_DATABASE[i] = mbNode.getResponseBuffer(i);
     }
   } else {
     Serial.println("Cannot Fetch Data");
   }
 
-  String baseURL = "http://" + webServerIPAddress + ":3000/broker/set-hr-device";
+  String baseURL = "http://" + gatewayIPAddress + ":3000/broker/set-hr-device";
 
-  String idParam = "id=" + device_id;
+  String idParam = "id=" + deviceId;
   String powerParam = "power=" + String((IR_DATABASE[1] & 0b01000000) != 0);
   String roomTempParam = "roomTemp=" + String(IR_DATABASE[5]);
   String setTempParam = "setTemp=" + String(IR_DATABASE[6]);

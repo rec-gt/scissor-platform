@@ -95,7 +95,6 @@ void loop() {
 
 void handleGetAndSetHR() {
   getReqGetHR = "http://" + webServerIPAddress + ":3000/broker/get-hr/" + device_id;
-  String baseURL = "http://" + webServerIPAddress + ":3000/broker/set-hr-device";
 
   http.begin(getReqGetHR);
   http.addHeader("Content-Type", "application/x-www-form-urlencoded");
@@ -157,6 +156,7 @@ void handleSendIR() {
     Serial.println("Cannot Fetch Data");
   }
 
+  String baseURL = "http://" + webServerIPAddress + ":3000/broker/set-hr-device";
 
   String idParam = "id=" + device_id;
   String powerParam = "power=" + String((IR_DATABASE[1] & 0b01000000) != 0);

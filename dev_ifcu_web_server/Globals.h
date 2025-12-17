@@ -39,6 +39,9 @@ String gatewayIPAddress = "";
 /* === HTTP Service === */
 HTTPClient http;
 
+String httpReqGetHR = "";
+String httpReqSetHR = "";
+
 /* === Modbus Service === */
 byte IFCU_SLAVE_ID = 31;
 ModbusMaster mbNode;

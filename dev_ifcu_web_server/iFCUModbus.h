@@ -6,8 +6,6 @@
 #define RXD2 16
 #define TXD2 17
 
-String getReqGetHR = "http://ifcu-web.local:3000/broker/get-hr/" + DEVICE_ID;
-
 constexpr size_t arrayLength = 4 + 1;
 uint16_t jsArray[arrayLength];
 
@@ -24,26 +22,28 @@ public:
   }
 
   void handleGetAndSetHR() {
-    getReqGetHR = "http://" + gatewayIPAddress + ":3000/broker/get-hr/" + DEVICE_ID;
+    httpReqGetHR = F("http://");
+    httpReqGetHR += gatewayIPAddress;
+    httpReqGetHR += F(":3000/broker/get-hr/");
+    httpReqGetHR += DEVICE_ID;
 
-    http.begin(getReqGetHR);
-    http.addHeader("Content-Type", "application/x-www-form-urlencoded");
+    http.begin(httpReqGetHR);
+    http.addHeader(F("Content-Type"), F("application/x-www-form-urlencoded"));
+    Serial.println(httpReqGetHR);
 
     int httpResponseCode = http.GET();
     if (httpResponseCode > 0) {
-      Serial.print("HTTP Response Code: ");
       Serial.println(httpResponseCode);
       String payload = http.getString();
       if (payload) {
-
-        int startIndex = 1;  // Skip the opening bracket '['
+        int startIndex = 1;
         int endIndex = payload.indexOf(',', startIndex);
         for (int i = 0; i < arrayLength; i++) {
           if (endIndex == -1) {
             endIndex = payload.indexOf(']', startIndex);
           }
           jsArray[i] = payload.substring(startIndex, endIndex).toInt();
-          startIndex = endIndex + 1;  // Skip the comma and space
+          startIndex = endIndex + 1;
           endIndex = payload.indexOf(',', startIndex);
         }
 
@@ -67,7 +67,6 @@ public:
           }
         }
       }
-
     } else {
       Serial.print("Error code: ");
       Serial.println(httpResponseCode);
@@ -86,7 +85,9 @@ public:
       Serial.println("Cannot Fetch Data");
     }
 
-    String baseURL = "http://" + gatewayIPAddress + ":3000/broker/set-hr-device";
+    httpReqSetHR = F("http://");
+    httpReqSetHR += gatewayIPAddress;
+    httpReqSetHR += F(":3000/broker/set-hr-device");
 
     String idParam = "id=" + String(DEVICE_ID);
     String powerParam = "power=" + String((IR_DATABASE[1] & 0b01000000) != 0);
@@ -94,13 +95,28 @@ public:
     String setTempParam = "setTemp=" + String(IR_DATABASE[6]);
     String modeParam = "mode=" + String(IR_DATABASE[3]);
     String speedParam = "speed=" + String(IR_DATABASE[4]);
-    String getReqSetHR = baseURL + "?" + idParam + "&" + powerParam + "&" + roomTempParam + "&" + setTempParam + "&" + modeParam + "&" + speedParam;
 
-    http.begin(getReqSetHR);
-    Serial.println(getReqSetHR);
-    http.addHeader("Content-Type", "application/x-www-form-urlencoded");
+    httpReqSetHR += F("?");
+    httpReqSetHR += idParam;
+    httpReqSetHR += F("&");
+    httpReqSetHR += powerParam;
+    httpReqSetHR += F("&");
+    httpReqSetHR += roomTempParam;
+    httpReqSetHR += F("&");
+    httpReqSetHR += setTempParam;
+    httpReqSetHR += F("&");
+    httpReqSetHR += modeParam;
+    httpReqSetHR += F("&");
+    httpReqSetHR += speedParam;
+    httpReqSetHR += F("&");
+
+    http.begin(httpReqSetHR);
+    http.addHeader(F("Content-Type"), F("application/x-www-form-urlencoded"));
+    Serial.println(httpReqSetHR);
+
     int httpResponseCode = http.GET();
     Serial.println(httpResponseCode);
+
     http.end();
   }
 };

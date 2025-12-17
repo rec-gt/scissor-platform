@@ -12,21 +12,22 @@ iFCUModbus ifcuModbus;
 
 void setup() {
   Serial.begin(115200);
-
   ifcuModbus.init();
 }
 
 void loop() {
   wifiService.loop();
-
-  if (wifiService.isConnected()) {
-    mDNSService.loop();
-
-    if (mDNSService.isConnected()) {
-      ifcuModbus.handleGetAndSetHR();
-      delay(500);
-      ifcuModbus.handleSendIR();
-      delay(500);
-    }
+  if (!wifiService.isConnected()) {
+    return;
   }
+
+  mDNSService.loop();
+  if (!mDNSService.isConnected()) {
+    return;
+  }
+
+  ifcuModbus.handleGetAndSetHR();
+  delay(500);
+  ifcuModbus.handleSendIR();
+  delay(500);
 }

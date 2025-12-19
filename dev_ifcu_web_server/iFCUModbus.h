@@ -14,6 +14,7 @@ uint8_t result;
 class iFCUModbus {
 private:
   uint16_t prevMillis = millis();
+  byte errMsg = 0;
 
 public:
   void init() {
@@ -77,11 +78,14 @@ public:
 
   void handleSendIR() {
     result = mbNode.readInputRegisters(30000, IR_SIZE);
+
     if (result == mbNode.ku8MBSuccess) {
       for (size_t i = 0; i < IR_SIZE; i++) {
         IR_DATABASE[i] = mbNode.getResponseBuffer(i);
       }
+      this->errMsg = 0;
     } else {
+      this->errMsg = 1;
       Serial.println("Cannot Fetch Data");
     }
 
@@ -109,6 +113,8 @@ public:
     httpReqSetHR += F("&");
     httpReqSetHR += speedParam;
     httpReqSetHR += F("&");
+    httpReqSetHR += F("err=");
+    httpReqSetHR += this->errMsg;
 
     http.begin(httpReqSetHR);
     http.addHeader(F("Content-Type"), F("application/x-www-form-urlencoded"));

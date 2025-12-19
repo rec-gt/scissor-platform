@@ -5,7 +5,7 @@
 #include <HTTPClient.h>
 
 /* === System Config === */
-byte DEVICE_ID = 1;
+byte DEVICE_ID = 0;
 
 
 /* === WiFi Service === */

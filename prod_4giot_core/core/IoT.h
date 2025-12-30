@@ -3,10 +3,10 @@
 #include "./Watchdog.h"
 #include "./Globals.h"
 
-#ifndef IoTService_h
-#define IoTService_h
+#ifndef IoT_h
+#define IoT_h
 
-#define IoTServiceSerial Serial1
+#define IoTSerial Serial1
 
 Watchdog iotWatchdog(30000UL);
 
@@ -14,11 +14,11 @@ AsyncTimer iotTimer(10000UL);
 
 bool iotSoftReset = false;
 
-class IoTService {
+class IoT {
 private:
   enum IOT_STATE {
     IOT_STATE_WAITING_INIT,
-    
+
     IOT_STATE_WAITING_RESET,
     IOT_STATE_FINISH_RESET,
     IOT_STATE_WAITING_RDY,
@@ -64,7 +64,7 @@ private:
   bool debugMode = false;
 
   void clearSerialBuffer() {
-    while (IoTServiceSerial.read() > 0) { delay(1); };
+    while (IoTSerial.read() > 0) { delay(1); };
   }
 
   void clearResBuffer() {
@@ -72,20 +72,20 @@ private:
   }
 
   void printlnFlush(const String& cmd, unsigned int delayTime = 2) {
-    IoTServiceSerial.println(cmd);
-    IoTServiceSerial.flush();
+    IoTSerial.println(cmd);
+    IoTSerial.flush();
     delay(delayTime);
   }
 
 public:
-  IOT_STATE connState = STATE_WAITING_RESET;
+  IOT_STATE connState = IOT_STATE_WAITING_RESET;
   PUBSUB_PIPELINE pipelineState = PIPELINE_DEFAULT;
 
   // important, do not remove
   bool pubMsgPayloadLock = false;
 
-  IoTService() {
-    IoTServiceSerial.begin(115200);
+  IoT() {
+    IoTSerial.begin(115200);
     pinMode(this->resetPin, OUTPUT);
     digitalWrite(this->resetPin, HIGH);
   }
@@ -137,7 +137,7 @@ public:
   }
 
   void ask() {
-    if (this->connState == STATE_WAITING_RESET) {
+    if (this->connState == IOT_STATE_WAITING_RESET) {
       iotSerialRecv = F("");
       iotConnCmd = F("");
       iotSubsCmd = F("");
@@ -156,96 +156,96 @@ public:
       digitalWrite(this->resetPin, LOW);
       if (iotTimer.autoExpired(1000)) {
         digitalWrite(this->resetPin, HIGH);
-        this->connState = STATE_FINISH_RESET;
+        this->connState = IOT_STATE_FINISH_RESET;
         Serial.println(F("\r\nWaiting IP"));
       }
     }
 
-    if (this->connState == STATE_FINISH_RESET) {
+    if (this->connState == IOT_STATE_FINISH_RESET) {
       if (iotTimer.autoExpired(500)) {
         this->printlnFlush(F("AT+CGSN=1"));
         this->printlnFlush(F("AT+QSCLK=0"));
         // this->printlnFlush(F("AT+QIDNSCFG=0,223.5.5.5,8.8.8.8"));
-        this->connState = STATE_WAITING_IP;
+        this->connState = IOT_STATE_WAITING_IP;
       }
     }
 
-    if (this->connState == STATE_FINISH_IP) {
+    if (this->connState == IOT_STATE_FINISH_IP) {
       Serial.println(F("\r\nSETTING UP IOT"));
       this->printlnFlush(F("AT+CFUN=1"));
       this->printlnFlush(F("AT+QSCLK=0"));
-      // this->printlnFlush(F("AT+CPSMS=0"));
-      // this->printlnFlush(F("AT+CSCON=0"));
-      // this->printlnFlush(F("AT+CEDRXS=0,5"));
+      this->printlnFlush(F("AT+CPSMS=0"));
+      this->printlnFlush(F("AT+CSCON=0"));
+      this->printlnFlush(F("AT+CEDRXS=0,5"));
       this->printlnFlush(F("AT+QMTCLOSE=0"));
       this->printlnFlush(F("AT+QMTDISC=0"));
-      this->connState = STATE_WAITING_SETUP;
+      this->connState = IOT_STATE_WAITING_CONFIG;
     }
 
-    if (this->connState == STATE_FINISH_SETUP) {
+    if (this->connState == IOT_STATE_FINISH_CONFIG) {
       if (iotTimer.autoExpired(1000UL)) {
         Serial.println(F("\r\nGETTING CSQ"));
 
         this->printlnFlush(F("AT+CSQ"));
 
-        this->connState = STATE_WAITING_CSQ;
+        this->connState = IOT_STATE_WAITING_CSQ;
       }
     }
 
-    if (this->connState == STATE_FINISH_CSQ) {
+    if (this->connState == IOT_STATE_FINISH_CSQ) {
       if (iotTimer.autoExpired(1000UL)) {
         Serial.println(F("\r\nGETTING CGATT"));
 
         this->printlnFlush(F("AT+CGATT?"));
 
-        this->connState = STATE_WAITING_CGATT;
+        this->connState = IOT_STATE_WAITING_CGATT;
       }
     }
 
-    if (this->connState == STATE_FINISH_CGATT) {
+    if (this->connState == IOT_STATE_FINISH_CGATT) {
       if (iotTimer.autoExpired(1000UL)) {
         Serial.println(F("\r\nGETTING CEREG"));
 
         this->printlnFlush(F("AT+CEREG?"));
 
-        this->connState = STATE_WAITING_CEREG;
+        this->connState = IOT_STATE_WAITING_CEREG;
       }
     }
 
-    if (this->connState == STATE_FINISH_CEREG) {
+    if (this->connState == IOT_STATE_FINISH_CEREG) {
       if (iotTimer.autoExpired(1000UL)) {
         Serial.println(F("\r\nOPENING MQTT..."));
         // this->printlnFlush(F("AT+QMTOPEN=0,8.210.84.24,1880"));
         this->printlnFlush(F("AT+QMTOPEN=0,iot.rec-gt.com,1880"));
 
-        this->connState = STATE_WAITING_OPEN;
+        this->connState = IOT_STATE_WAITING_OPEN;
       }
     }
 
-    if (this->connState == STATE_FINISH_OPEN) {
+    if (this->connState == IOT_STATE_FINISH_OPEN) {
       if (iotTimer.autoExpired(1000UL)) {
         Serial.println(F("\r\nCONNECTING MQTT..."));
 
         this->printlnFlush(iotConnCmd);
-        this->connState = STATE_WAITING_CONN;
+        this->connState = IOT_STATE_WAITING_CONN;
       }
     }
 
-    if (this->connState == STATE_FINISH_CONN) {
+    if (this->connState == IOT_STATE_FINISH_CONN) {
       Serial.println(F("\r\nSUBSCRBING TOPIC..."));
 
       this->printlnFlush(iotSubsCmd);
-      this->connState = STATE_WAITING_SUB;
+      this->connState = IOT_STATE_WAITING_SUB;
     }
 
-    if (this->connState == STATE_FINISH_SUB) {
+    if (this->connState == IOT_STATE_FINISH_SUB) {
       this->finishInit = true;
-      this->connState = STATE_FINISH_IOT_INIT;
+      this->connState = IOT_STATE_FINISH_INIT;
       Serial.println(F("\r\nFINISH INIT IOT"));
     }
 
 
-    if (this->connState == STATE_FINISH_IOT_INIT) {
+    if (this->connState == IOT_STATE_FINISH_INIT) {
       if (this->pipelineState == PIPELINE_DEFAULT) {
         if (iotTimer.autoExpired(5000)) {
           Serial.println(F("\r\n[CONNECTED] QUERYING CSQ"));
@@ -294,9 +294,9 @@ public:
   }
 
   void listen() {
-    if (IoTServiceSerial.available() > 0) {
-      while (IoTServiceSerial.available() > 0) {
-        char c = IoTServiceSerial.read();
+    if (IoTSerial.available() > 0) {
+      while (IoTSerial.available() > 0) {
+        char c = IoTSerial.read();
 
         if (this->debugMode) {
           Serial.print(c);
@@ -317,7 +317,7 @@ public:
     if (iotSoftReset) {
       this->resetBuffers();
       iotSoftReset = false;
-      this->connState = STATE_WAITING_RESET;
+      this->connState = IOT_STATE_WAITING_RESET;
       this->pipelineState = PIPELINE_DEFAULT;
       Serial.println(F("[SOFT_RESET]"));
     }
@@ -326,98 +326,98 @@ public:
   void answer() {
     int idx = -1;
 
-    if (this->connState == STATE_WAITING_IP) {
+    if (this->connState == IOT_STATE_WAITING_IP) {
       cmpStr = F("+IP:");
       idx = iotSerialRecv.indexOf(cmpStr);
       if (idx > -1) {
         Serial.println(F("\r\nFINISH WAITING IP"));
 
-        this->connState = STATE_FINISH_IP;
+        this->connState = IOT_STATE_FINISH_IP;
         iotWatchdog.pet();
       } else {
         if (iotTimer.autoExpired(1000)) {
-          this->connState = STATE_FINISH_IP;  // by- pass
+          this->connState = IOT_STATE_FINISH_IP;  // by- pass
         }
       }
     }
 
-    if (this->connState == STATE_WAITING_SETUP) {
+    if (this->connState == IOT_STATE_WAITING_CONFIG) {
       {
         Serial.println(F("\r\nFINISH SETUP"));
 
-        this->connState = STATE_FINISH_SETUP;
+        this->connState = IOT_STATE_FINISH_CONFIG;
         iotWatchdog.pet();
       }
     }
 
-    if (this->connState == STATE_WAITING_CSQ) {
+    if (this->connState == IOT_STATE_WAITING_CSQ) {
       cmpStr = F("+CSQ:");
       idx = iotSerialRecv.indexOf(cmpStr);
       if (idx > -1) {
         Serial.println(F("\r\nFINISH GETTING CSQ"));
 
-        this->connState = STATE_FINISH_CSQ;
+        this->connState = IOT_STATE_FINISH_CSQ;
         iotWatchdog.pet();
       }
     }
 
-    if (this->connState == STATE_WAITING_CGATT) {
+    if (this->connState == IOT_STATE_WAITING_CGATT) {
       cmpStr = F("+CGATT:");
       idx = iotSerialRecv.indexOf(cmpStr);
       if (idx > -1) {
         Serial.println(F("\r\nFINISH GETTING CGATT"));
 
-        this->connState = STATE_FINISH_CGATT;
+        this->connState = IOT_STATE_FINISH_CGATT;
         iotWatchdog.pet();
       }
     }
 
-    if (this->connState == STATE_WAITING_CEREG) {
+    if (this->connState == IOT_STATE_WAITING_CEREG) {
       cmpStr = F("+CEREG:");
       idx = iotSerialRecv.indexOf(cmpStr);
       if (idx > -1) {
         Serial.println(F("\r\nFINISH GETTING CEREG"));
 
-        this->connState = STATE_FINISH_CEREG;
+        this->connState = IOT_STATE_FINISH_CEREG;
         iotWatchdog.pet();
       }
     }
 
-    if (this->connState == STATE_WAITING_OPEN) {
+    if (this->connState == IOT_STATE_WAITING_OPEN) {
       cmpStr = F("+QMTOPEN: 0,0");
       idx = iotSerialRecv.indexOf(cmpStr);
       if (idx > -1) {
         Serial.println(F("\r\nOPENED MQTT"));
 
-        this->connState = STATE_FINISH_OPEN;
+        this->connState = IOT_STATE_FINISH_OPEN;
         iotWatchdog.pet();
       }
     }
 
-    if (this->connState == STATE_WAITING_CONN) {
+    if (this->connState == IOT_STATE_WAITING_CONN) {
       cmpStr = F("+QMTCONN: 0,0,0");
       idx = iotSerialRecv.indexOf(cmpStr);
       if (idx > -1) {
         Serial.println(F("\r\nCONNECTED MQTT"));
 
-        this->connState = STATE_FINISH_CONN;
+        this->connState = IOT_STATE_FINISH_CONN;
         iotWatchdog.pet();
       }
     }
 
-    if (this->connState == STATE_WAITING_SUB) {
+    if (this->connState == IOT_STATE_WAITING_SUB) {
       cmpStr = F("+QMTSUB:");
       idx = iotSerialRecv.indexOf(cmpStr);
 
       if (idx > -1) {
         Serial.println(F("\r\nSUB TOPIC OK"));
 
-        this->connState = STATE_FINISH_SUB;
+        this->connState = IOT_STATE_FINISH_SUB;
         iotWatchdog.pet();
       }
     }
 
-    if (this->connState == STATE_FINISH_IOT_INIT) {
+    if (this->connState == IOT_STATE_FINISH_INIT) {
       int idx = -1;
       if (this->pipelineState == PIPELINE_WAITING_CSQ) {
 
@@ -619,7 +619,7 @@ public:
   }
 
   void forcePublish() {
-    if (this->connState == STATE_FINISH_IOT_INIT) {
+    if (this->connState == IOT_STATE_FINISH_INIT) {
       if (this->pipelineState == PIPELINE_WAITING_PREPARE_PUBMSG
           || this->pipelineState == PIPELINE_FINISH_PREPARE_PUBMSG
           || this->pipelineState == PIPELINE_WAITING_PUBLISH
@@ -633,9 +633,9 @@ public:
     }
   }
 
-  ~IoTService() {}
+  ~IoT() {}
 };
 
-extern IoTService iotService;
+extern IoT iot;
 
 #endif

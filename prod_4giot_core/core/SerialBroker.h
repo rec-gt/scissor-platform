@@ -1,95 +1,32 @@
-#include "./AsyncTimer.h"
-#include "./Utils.h"
-#include "./Watchdog.h"
-#include "./Globals.h"
+#ifndef SerialBroker_h
+#define SerialBroker_h
 
-#ifndef NBIoT_h
-#define NBIoT_h
-
-#define NBIoTSerial Serial1
-
-Watchdog nbiotWatchdog(30000UL);
-
-AsyncTimer nbiotTimer(10000UL);
-
-bool nbiotSoftReset = false;
-
-class NBIoT {
+class SerialBroker {
 private:
-  enum NBIOT_STATE {
-    STATE_DEFAULT,
-    STATE_WAITING_RESET,
-    STATE_FINISH_RESET,
-    STATE_WAITING_IP,
-    STATE_FINISH_IP,
-    STATE_WAITING_SETUP,
-    STATE_FINISH_SETUP,
-    STATE_WAITING_CSQ,
-    STATE_FINISH_CSQ,
-    STATE_WAITING_CGATT,
-    STATE_FINISH_CGATT,
-    STATE_WAITING_CEREG,
-    STATE_FINISH_CEREG,
-    STATE_WAITING_OPEN,
-    STATE_FINISH_OPEN,
-    STATE_WAITING_CONN,
-    STATE_FINISH_CONN,
-    STATE_WAITING_SUB,
-    STATE_FINISH_SUB,
-    STATE_FINISH_NBIOT_INIT,
-  };
-
-  enum PUBSUB_PIPELINE {
-    PIPELINE_DEFAULT,
-    PIPELINE_WAITING_CSQ,
-    PIPELINE_FINISH_CSQ,
-    PIPELINE_WAITING_CGATT,
-    PIPELINE_FINISH_CGATT,
-    PIPELINE_WAITING_CEREG,
-    PIPELINE_FINISH_CEREG,
-    PIPELINE_WAITING_PREPARE_PUBMSG,
-    PIPELINE_FINISH_PREPARE_PUBMSG,
-    PIPELINE_WAITING_PUBLISH,
-    PIPELINE_FINISH_PUBLISH,
-  };
-
-  bool finishInit = false;
-
-  byte resetPin = 24;  // to be assign
-
-  bool debugMode = false;
-
   void clearSerialBuffer() {
-    while (NBIoTSerial.read() > 0) { delay(1); };
+    while (SerialBrokerSerial.read() > 0) { delay(1); };
   }
 
   void clearResBuffer() {
     nbiotSerialRecv = F("");
   }
 
-  void printlnFlush(const String& cmd, unsigned int delayTime = 2) {
-    NBIoTSerial.println(cmd);
-    NBIoTSerial.flush();
-    delay(delayTime);
-  }
-
-public:
-  NBIOT_STATE connState = STATE_WAITING_RESET;
-  PUBSUB_PIPELINE pipelineState = PIPELINE_DEFAULT;
-
-  // important, do not remove
-  bool pubMsgPayloadLock = false;
-
-  NBIoT() {
-    NBIoTSerial.begin(115200);
-    pinMode(this->resetPin, OUTPUT);
-    digitalWrite(this->resetPin, HIGH);
-  }
-
   void resetBuffers() {
     this->clearSerialBuffer();
     this->clearResBuffer();
     delay(10);
+  }
+
+  void printlnFlush(const String& cmd, unsigned int delayTime = 2) {
+    SerialBrokerSerial.println(cmd);
+    SerialBrokerSerial.flush();
+    delay(delayTime);
+  }
+
+public:
+
+  SerialBroker(&serial) {
+    serial.begin(115200)
   }
 
   void debug() {
@@ -129,7 +66,7 @@ public:
     }
 
     // update global variable
-    nbiotConnState = this->connState;
+    iotConnState = this->connState;
   }
 
   void ask() {
@@ -290,9 +227,9 @@ public:
   }
 
   void listen() {
-    if (NBIoTSerial.available() > 0) {
-      while (NBIoTSerial.available() > 0) {
-        char c = NBIoTSerial.read();
+    if (SerialBrokerSerial.available() > 0) {
+      while (SerialBrokerSerial.available() > 0) {
+        char c = SerialBrokerSerial.read();
 
         if (this->debugMode) {
           Serial.print(c);
@@ -629,9 +566,9 @@ public:
     }
   }
 
-  ~NBIoT() {}
+  ~SerialBroker() {}
 };
 
-extern NBIoT nbiot;
+extern SerialBroker iotService;
 
 #endif

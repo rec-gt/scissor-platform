@@ -3,7 +3,7 @@
 #include "./DigitalOutput.h"
 #include "./AnalogInput.h"
 #include "./AnalogOutput.h"
-#include "./NBIoT.h"
+#include "./IoT.h"
 #include "./DisplayClient.h"
 #include "./Utils.h"
 
@@ -22,10 +22,10 @@ public:
     /*=== Build Payloads ===*/
     this->buildPayloads();
 
-    /*=== NBIoT Publish ===*/
+    /*=== IoT Publish ===*/
     this->handlePublishContent();
 
-    /*=== NBIoT Subscribe ===*/
+    /*=== IoT Subscribe ===*/
     this->handleSubscribeContent();
   }
 
@@ -74,48 +74,48 @@ public:
   }
 
   void handlePublishContent() {
-    if (!nbiot.pubMsgPayloadLock) {
-      nbiotPubMsgPayload = F("{\"csq\":");
-      nbiotPubMsgPayload.concat(nbiotCSQ);
-      nbiotPubMsgPayload.concat(F(","));
-      nbiotPubMsgPayload.concat(F("\"din\":"));
-      nbiotPubMsgPayload.concat(DIPayload);
-      nbiotPubMsgPayload.concat(F(","));
-      nbiotPubMsgPayload.concat(F("\"dout\":"));
-      nbiotPubMsgPayload.concat(DOPayload);
-      nbiotPubMsgPayload.concat(F(","));
-      nbiotPubMsgPayload.concat(F("\"ain\":"));
-      nbiotPubMsgPayload.concat(AIPayload);
-      nbiotPubMsgPayload.concat(F(","));
-      nbiotPubMsgPayload.concat(F("\"aout\":"));
-      nbiotPubMsgPayload.concat(AOPayload);
-      nbiotPubMsgPayload.concat(F("}"));
+    if (!iot.pubMsgPayloadLock) {
+      iotPubMsgPayload = F("{\"csq\":");
+      iotPubMsgPayload.concat(iotCSQ);
+      iotPubMsgPayload.concat(F(","));
+      iotPubMsgPayload.concat(F("\"din\":"));
+      iotPubMsgPayload.concat(DIPayload);
+      iotPubMsgPayload.concat(F(","));
+      iotPubMsgPayload.concat(F("\"dout\":"));
+      iotPubMsgPayload.concat(DOPayload);
+      iotPubMsgPayload.concat(F(","));
+      iotPubMsgPayload.concat(F("\"ain\":"));
+      iotPubMsgPayload.concat(AIPayload);
+      iotPubMsgPayload.concat(F(","));
+      iotPubMsgPayload.concat(F("\"aout\":"));
+      iotPubMsgPayload.concat(AOPayload);
+      iotPubMsgPayload.concat(F("}"));
     }
 
-    nbiotPubMsgPrepare = F("AT+QMTPUB=0,0,0,0,rgt/");
-    nbiotPubMsgPrepare.concat(nbiotIMEI);
-    nbiotPubMsgPrepare.concat(F("/in,"));
-    nbiotPubMsgPrepare.concat(nbiotPubMsgPayload.length());
+    iotPubMsgPrepare = F("AT+QMTPUB=0,0,0,0,rgt/");
+    iotPubMsgPrepare.concat(iotIMEI);
+    iotPubMsgPrepare.concat(F("/in,"));
+    iotPubMsgPrepare.concat(iotPubMsgPayload.length());
 
-    nbiotPubMsgCommand = nbiotPubMsgPrepare;
-    nbiotPubMsgCommand.concat(F(","));
-    nbiotPubMsgCommand.concat(nbiotPubMsgPayload);
+    iotPubMsgCommand = iotPubMsgPrepare;
+    iotPubMsgCommand.concat(F(","));
+    iotPubMsgCommand.concat(iotPubMsgPayload);
 
-    // Serial.println(nbiotPubMsgPrepare);
-    // Serial.println(nbiotPubMsgPayload);
-    // Serial.println(nbiotPubMsgCommand);
+    // Serial.println(iotPubMsgPrepare);
+    // Serial.println(iotPubMsgPayload);
+    // Serial.println(iotPubMsgCommand);
   }
 
   void handleSubscribeContent() {
-    if (nbiotSubMsgContent.length() <= 0) {
+    if (iotSubMsgContent.length() <= 0) {
       return;
     }
 
-    byte b0 = nbiotSubMsgContent.charAt(0);
-    byte b1 = nbiotSubMsgContent.charAt(1);
-    // byte b2 = nbiotSubMsgContent.charAt(2); // b2 is useless
-    byte b3 = nbiotSubMsgContent.charAt(3);
-    byte b4 = nbiotSubMsgContent.charAt(4);
+    byte b0 = iotSubMsgContent.charAt(0);
+    byte b1 = iotSubMsgContent.charAt(1);
+    // byte b2 = iotSubMsgContent.charAt(2); // b2 is useless
+    byte b3 = iotSubMsgContent.charAt(3);
+    byte b4 = iotSubMsgContent.charAt(4);
 
     if (b0 == 68) {                                                                   // D
       if (b1 == 58) {                                                                 // :
@@ -142,7 +142,7 @@ public:
       }
     }
 
-    nbiotSubMsgContent = F("");
+    iotSubMsgContent = F("");
   }
 
   ~MainSystem() {}

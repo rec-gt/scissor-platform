@@ -135,7 +135,7 @@ public:
   void ask() {
     if (this->connState == STATE_WAITING_RESET) {
       nbiotSerialRecv = F("");
-      nbIotConnCmd = F("");
+      iotConnCmd = F("");
       nbiotSubsCmd = F("");
 
       nbiotCSQ = F("");
@@ -222,7 +222,7 @@ public:
       if (nbiotTimer.autoExpired(1000UL)) {
         Serial.println(F("\r\nCONNECTING MQTT..."));
 
-        this->printlnFlush(nbIotConnCmd);
+        this->printlnFlush(iotConnCmd);
         this->connState = STATE_WAITING_CONN;
       }
     }
@@ -500,9 +500,9 @@ public:
           nbiotSoftReset = true;
         }
 
-        nbIotConnCmd = F("AT+QMTCONN=0,dev_");
-        nbIotConnCmd.concat(nbiotIMEI);
-        nbIotConnCmd.concat(F(",tswh,1Wo=[6vA0m"));
+        iotConnCmd = F("AT+QMTCONN=0,dev_");
+        iotConnCmd.concat(nbiotIMEI);
+        iotConnCmd.concat(F(",tswh,1Wo=[6vA0m"));
 
         nbiotSubsCmd = F("AT+QMTSUB=0,1,rgt/");
         nbiotSubsCmd.concat(nbiotIMEI);

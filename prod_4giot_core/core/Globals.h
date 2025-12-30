@@ -152,25 +152,25 @@ String AOPayload = "";
 
 String cmpStr = "";
 
-/*=== NBIoT ===*/
-byte nbiotConnState = 0;
-String nbiotSerialRecv = "";
-String nbIotConnCmd = "";
-String nbiotSubsCmd = "";
+/*=== IoT ===*/
+byte iotConnState = 0;
+String iotSerialRecv = "";
+String iotConnCmd = "";
+String iotSubsCmd = "";
 
-String nbiotCSQ = "";
-String nbiotIMEI = "";
-String nbiotCGATT = "";
-String nbiotCEREG = "";
+String iotCSQ = "";
+String iotIMEI = "";
+String iotCGATT = "";
+String iotCEREG = "";
 
-String nbiotPubMsgPayload = "";
-String nbiotPubMsgPrepare = "";
-String nbiotPubMsgCommand = "";
+String iotPubMsgPayload = "";
+String iotPubMsgPrepare = "";
+String iotPubMsgCommand = "";
 
-String nbiotSubMsgContent = "";
+String iotSubMsgContent = "";
 
-String nbiotPubAck = "";
-String nbiotSubAck = "";
+String iotPubAck = "";
+String iotSubAck = "";
 
 /*=== rs485 ===*/
 String rs485SerialRecv = "";

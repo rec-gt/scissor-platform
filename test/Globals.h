@@ -2,6 +2,8 @@
 #define GLOBALS_H
 
 /*=== IoT ===*/
+#define SerialIoT Serial1
+
 byte iotConnState = 0;
 String iotSerialRecv = "";
 
@@ -14,7 +16,7 @@ String iotCEREG = "";
 String mqttConnCmd = "";
 String mqttSubsCmd = "";
 
-bool mqttPublMsgLock = false;
+bool mqttPublMsgPayloadLock = false;
 String mqttPublMsgPrepare = "";
 String mqttPublMsgPayload = "";
 String mqttPublMsgCommand = "";
@@ -22,5 +24,8 @@ String mqttSubsMsgContent = "";
 
 String mqttPubAck = "";
 String mqttSubAck = "";
+
+bool iotSoftReset = false;
+bool iotDebugMode = false;
 
 #endif

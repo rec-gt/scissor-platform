@@ -165,7 +165,7 @@ public:
       if (iotTimer.autoExpired(500)) {
         this->printlnFlush(F("AT+CGSN=1"));
         this->printlnFlush(F("AT+QSCLK=0"));
-        // this->printlnFlush(F("AT+QIDNSCFG=0,223.5.5.5,8.8.8.8"));
+        this->printlnFlush(F("AT+QIDNSCFG=0,223.5.5.5,8.8.8.8"));
         this->connState = IOT_STATE_WAITING_IP;
       }
     }

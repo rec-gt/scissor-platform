@@ -7,6 +7,7 @@
 byte iotConnState = 0;
 String iotSerialRecv = "";
 
+String iotCmpStr = "";
 String iotCSQ = "";
 String iotIMEI = "";
 String iotCGATT = "";

@@ -25,7 +25,7 @@ public:
     bool isTimeout = (millis() - this->prevMillis) > timeout;
 
     if (isTimeout) {
-      this->state = 0
+      this->state = 0;
     }
 
     return isTimeout;
@@ -33,6 +33,8 @@ public:
 };
 
 IoTTimer iotTimer;
+
+Watchdog iotWatchdog(3000UL);
 
 class IoT {
 private:
@@ -85,12 +87,6 @@ private:
     iotSerialRecv = F("");
   }
 
-  void resetBuffers() {
-    this->clearSerialBuffer();
-    this->clearRecvBuffer();
-    delay(1);
-  }
-
   void resetConfigs() {
     iotSerialRecv = F("");
 
@@ -111,16 +107,21 @@ private:
     digitalWrite(IOT_MODULE_RESET_PIN, LOW);
     if (iotTimer.delay(1000)) {
       digitalWrite(IOT_MODULE_RESET_PIN, HIGH);
+      Serial.println(F("MODULE FINISH POWER RESET"));
       this->connState = IOT_STATE_FINISH_RESET;
-      Serial.println(F("\r\nWaiting IP"));
     }
+  }
+
+  void resetBuffers() {
+    this->clearSerialBuffer();
+    this->clearRecvBuffer();
+    delay(1);
   }
 
   void resetModule() {
     this->resetConfigs();
     this->resetBuffers();
   }
-
 
   void printlnFlush(const String& cmd, unsigned int delayTime = 2) {
     SerialIoT.println(cmd);
@@ -129,36 +130,17 @@ private:
   }
 
   void query() {
-    if (this->connState == IOT_STATE_WAITING_RESET) {
 
-      // iotSerialRecv = F("");
-      // iotConnCmd = F("");
-      // iotSubsCmd = F("");
-
-      // iotCSQ = F("");
-      // iotIMEI = F("");
-      // iotCGATT = F("");
-      // iotCEREG = F("");
-
-      // iotPubMsgPayload = F("");
-      // iotPubMsgPrepare = F("");
-      // iotPubMsgCommand = F("");
-
-      // mqttPublMsgPayloadLock = false;
-
-      // digitalWrite(IOT_MODULE_RESET_PIN, LOW);
-      // if (iotTimer.delay(1000)) {
-      //   digitalWrite(IOT_MODULE_RESET_PIN, HIGH);
-      //   this->connState = IOT_STATE_FINISH_RESET;
-      //   Serial.println(F("\r\nWaiting IP"));
-      // }
-    }
 
     if (this->connState == IOT_STATE_FINISH_RESET) {
+      this->connState == IOT_STATE_WAITING_RDY;
+    }
+
+    if (this->connState == IOT_STATE_FINISH_RDY) {
       if (iotTimer.delay(500)) {
         this->printlnFlush(F("AT+CGSN=1"));
         this->printlnFlush(F("AT+QSCLK=0"));
-        // this->printlnFlush(F("AT+QIDNSCFG=0,223.5.5.5,8.8.8.8"));
+        this->printlnFlush(F("AT+QIDNSCFG=0,223.5.5.5,8.8.8.8"));
         this->connState = IOT_STATE_WAITING_IP;
       }
     }
@@ -167,9 +149,13 @@ private:
       Serial.println(F("\r\nSETTING UP IOT"));
       this->printlnFlush(F("AT+CFUN=1"));
       this->printlnFlush(F("AT+QSCLK=0"));
-      this->printlnFlush(F("AT+CPSMS=0"));
-      this->printlnFlush(F("AT+CSCON=0"));
-      this->printlnFlush(F("AT+CEDRXS=0,5"));
+
+      if (false) {  // TODO: only applicable to NB-IoT
+        this->printlnFlush(F("AT+CPSMS=0"));
+        this->printlnFlush(F("AT+CSCON=0"));
+        this->printlnFlush(F("AT+CEDRXS=0,5"));
+      }
+
       this->printlnFlush(F("AT+QMTCLOSE=0"));
       this->printlnFlush(F("AT+QMTDISC=0"));
       this->connState = IOT_STATE_WAITING_CONFIG;
@@ -219,7 +205,7 @@ private:
       if (iotTimer.delay(1000UL)) {
         Serial.println(F("\r\nCONNECTING MQTT..."));
 
-        this->printlnFlush(iotConnCmd);
+        this->printlnFlush(mqttConnCmd);
         this->connState = IOT_STATE_WAITING_CONN;
       }
     }
@@ -227,7 +213,7 @@ private:
     if (this->connState == IOT_STATE_FINISH_CONN) {
       Serial.println(F("\r\nSUBSCRBING TOPIC..."));
 
-      this->printlnFlush(iotSubsCmd);
+      this->printlnFlush(mqttSubsCmd);
       this->connState = IOT_STATE_WAITING_SUB;
     }
 
@@ -236,7 +222,6 @@ private:
       this->connState = IOT_STATE_FINISH_INIT;
       Serial.println(F("\r\nFINISH INIT IOT"));
     }
-
 
     if (this->connState == IOT_STATE_FINISH_INIT) {
       if (this->pipelineState == PIPELINE_DEFAULT) {
@@ -270,7 +255,7 @@ private:
         if (iotTimer.delay(13000)) {
           Serial.println(F("\r\nEXECUTE REGULAR PUBLISH"));
 
-          this->printlnFlush(iotPubMsgPrepare);
+          this->printlnFlush(mqttPublMsgPrepare);
           mqttPublMsgPayloadLock = true;  // disable the preparation of payload
           this->pipelineState = PIPELINE_WAITING_PREPARE_PUBMSG;
         }
@@ -278,7 +263,7 @@ private:
 
       if (this->pipelineState == PIPELINE_FINISH_PREPARE_PUBMSG) {
         if (iotTimer.delay(2000)) {
-          this->printlnFlush(iotPubMsgPayload);
+          this->printlnFlush(mqttPublMsgPayload);
           mqttPublMsgPayloadLock = false;  // release the lock
           this->pipelineState = PIPELINE_WAITING_PUBLISH;
         }
@@ -286,20 +271,64 @@ private:
     }
   }
 
+  void listen() {
+    while (SerialIoT.available() > 0) {
+      char c = SerialIoT.read();
+
+      if (iotDebugMode) {
+        Serial.print(c);
+      }
+
+      if (c != '\r' && c != '\n') {
+        iotSerialRecv += c;
+      }
+
+      if (c == '\r') {
+        this->answer();
+        this->extractData();
+        this->clearRecvBuffer();
+      }
+    }
+
+    if (iotSoftReset) {
+      iotSoftReset = false;
+      Serial.println(F("[SOFT_RESET]"));
+      this->connState = IOT_STATE_WAITING_RESET;
+    }
+  }
+
   void answer() {
     int idx = -1;
 
-    if (this->connState == IOT_STATE_WAITING_IP) {
-      cmpStr = F("+IP:");
-      idx = iotSerialRecv.indexOf(cmpStr);
-      if (idx > -1) {
-        Serial.println(F("\r\nFINISH WAITING IP"));
+    if (this->connState == IOT_STATE_WAITING_RESET) {
+      this->resetModule();
+    }
 
-        this->connState = IOT_STATE_FINISH_IP;
+    if (this->connState == IOT_STATE_WAITING_RDY) {
+      iotCmpStr = F("RDY");
+      idx = iotSerialRecv.indexOf(iotCmpStr);
+      if (idx > -1) {
+        Serial.println(F("\r\nIOT READY"));
+        this->connState = IOT_STATE_FINISH_RDY;
         iotWatchdog.pet();
+      }
+    }
+
+    if (this->connState == IOT_STATE_WAITING_IP) {
+      if (true) {  // TODO: sudo 4g
+        this->connState = IOT_STATE_FINISH_IP;
       } else {
-        if (iotTimer.delay(1000)) {
-          this->connState = IOT_STATE_FINISH_IP;  // by- pass
+        iotCmpStr = F("+IP:");
+        idx = iotSerialRecv.indexOf(iotCmpStr);
+        if (idx > -1) {
+          Serial.println(F("\r\nFINISH WAITING IP"));
+
+          this->connState = IOT_STATE_FINISH_IP;
+          iotWatchdog.pet();
+        } else {
+          if (iotTimer.delay(1000)) {
+            this->connState = IOT_STATE_FINISH_IP;  // by-pass
+          }
         }
       }
     }
@@ -314,8 +343,8 @@ private:
     }
 
     if (this->connState == IOT_STATE_WAITING_CSQ) {
-      cmpStr = F("+CSQ:");
-      idx = iotSerialRecv.indexOf(cmpStr);
+      iotCmpStr = F("+CSQ:");
+      idx = iotSerialRecv.indexOf(iotCmpStr);
       if (idx > -1) {
         Serial.println(F("\r\nFINISH GETTING CSQ"));
 
@@ -325,8 +354,8 @@ private:
     }
 
     if (this->connState == IOT_STATE_WAITING_CGATT) {
-      cmpStr = F("+CGATT:");
-      idx = iotSerialRecv.indexOf(cmpStr);
+      iotCmpStr = F("+CGATT:");
+      idx = iotSerialRecv.indexOf(iotCmpStr);
       if (idx > -1) {
         Serial.println(F("\r\nFINISH GETTING CGATT"));
 
@@ -336,8 +365,8 @@ private:
     }
 
     if (this->connState == IOT_STATE_WAITING_CEREG) {
-      cmpStr = F("+CEREG:");
-      idx = iotSerialRecv.indexOf(cmpStr);
+      iotCmpStr = F("+CEREG:");
+      idx = iotSerialRecv.indexOf(iotCmpStr);
       if (idx > -1) {
         Serial.println(F("\r\nFINISH GETTING CEREG"));
 
@@ -347,8 +376,8 @@ private:
     }
 
     if (this->connState == IOT_STATE_WAITING_OPEN) {
-      cmpStr = F("+QMTOPEN: 0,0");
-      idx = iotSerialRecv.indexOf(cmpStr);
+      iotCmpStr = F("+QMTOPEN: 0,0");
+      idx = iotSerialRecv.indexOf(iotCmpStr);
       if (idx > -1) {
         Serial.println(F("\r\nOPENED MQTT"));
 
@@ -358,8 +387,8 @@ private:
     }
 
     if (this->connState == IOT_STATE_WAITING_CONN) {
-      cmpStr = F("+QMTCONN: 0,0,0");
-      idx = iotSerialRecv.indexOf(cmpStr);
+      iotCmpStr = F("+QMTCONN: 0,0,0");
+      idx = iotSerialRecv.indexOf(iotCmpStr);
       if (idx > -1) {
         Serial.println(F("\r\nCONNECTED MQTT"));
 
@@ -369,8 +398,8 @@ private:
     }
 
     if (this->connState == IOT_STATE_WAITING_SUB) {
-      cmpStr = F("+QMTSUB:");
-      idx = iotSerialRecv.indexOf(cmpStr);
+      iotCmpStr = F("+QMTSUB:");
+      idx = iotSerialRecv.indexOf(iotCmpStr);
 
       if (idx > -1) {
         Serial.println(F("\r\nSUB TOPIC OK"));
@@ -384,8 +413,8 @@ private:
       int idx = -1;
       if (this->pipelineState == PIPELINE_WAITING_CSQ) {
 
-        cmpStr = F("+CSQ:");
-        idx = iotSerialRecv.indexOf(cmpStr);
+        iotCmpStr = F("+CSQ:");
+        idx = iotSerialRecv.indexOf(iotCmpStr);
 
         if (idx > -1) {
           Serial.println(F("\r\nFINISH GETTING CSQ"));
@@ -397,8 +426,8 @@ private:
 
       if (this->pipelineState == PIPELINE_WAITING_CGATT) {
 
-        cmpStr = F("+CGATT:");
-        idx = iotSerialRecv.indexOf(cmpStr);
+        iotCmpStr = F("+CGATT:");
+        idx = iotSerialRecv.indexOf(iotCmpStr);
 
         if (idx > -1) {
           Serial.println(F("\r\nFINISH GETTING CGATT"));
@@ -410,8 +439,8 @@ private:
 
       if (this->pipelineState == PIPELINE_WAITING_CEREG) {
 
-        cmpStr = F("+CEREG:");
-        idx = iotSerialRecv.indexOf(cmpStr);
+        iotCmpStr = F("+CEREG:");
+        idx = iotSerialRecv.indexOf(iotCmpStr);
 
         if (idx > -1) {
           Serial.println(F("\r\nFINISH GETTING CEREG"));
@@ -423,8 +452,8 @@ private:
 
       if (this->pipelineState == PIPELINE_WAITING_PREPARE_PUBMSG) {
 
-        cmpStr = F(">");
-        idx = iotSerialRecv.indexOf(cmpStr);
+        iotCmpStr = F(">");
+        idx = iotSerialRecv.indexOf(iotCmpStr);
 
         if (idx > -1) {
           this->pipelineState = PIPELINE_FINISH_PREPARE_PUBMSG;
@@ -434,8 +463,8 @@ private:
 
       if (this->pipelineState == PIPELINE_WAITING_PUBLISH) {
 
-        cmpStr = F("+QMTPUB: 0,0,0");
-        idx = iotSerialRecv.indexOf(cmpStr);
+        iotCmpStr = F("+QMTPUB: 0,0,0");
+        idx = iotSerialRecv.indexOf(iotCmpStr);
 
         if (idx > -1) {
           this->pipelineState = PIPELINE_DEFAULT;
@@ -447,97 +476,42 @@ private:
     }
   }
 
-public:
-  IOT_STATE connState = IOT_STATE_WAITING_RESET;
-  PUBSUB_PIPELINE pipelineState = PIPELINE_DEFAULT;
-
-  // important, do not remove
-  bool pubMsgPayloadLock = false;
-
-  IoT() {
-    SerialIoT.begin(115200);
-    pinMode(IOT_MODULE_RESET_PIN, OUTPUT);
-    digitalWrite(IOT_MODULE_RESET_PIN, HIGH);
-  }
-
-  void debug() {
-    iotDebugMode = true;
-  }
-
-  void init() {
-    Serial.println(F("\r\n=== IOT START ==="));
-    this->resetModule();
-  }
-
-  void loop() {
-    this->query();
-    this->listen();
-    iotConnState = this->connState;  // update global variable for display
-  }
-
-  void listen() {
-    if (SerialIoT.available() > 0) {
-      while (SerialIoT.available() > 0) {
-        char c = SerialIoT.read();
-
-        if (this->iotDebugMode) {
-          Serial.print(c);
-        }
-
-        if (c != '\r' && c != '\n') {
-          iotSerialRecv += c;
-        }
-
-        if (c == '\r') {
-          this->answer();
-          this->handleReportMsg();
-          this->clearRecvBuffer();
-        }
-      }
-    }
-
-    if (iotSoftReset) {
-      this->resetBuffers();
-      iotSoftReset = false;
-      this->connState = IOT_STATE_WAITING_RESET;
-      this->pipelineState = PIPELINE_DEFAULT;
-      Serial.println(F("[SOFT_RESET]"));
-    }
-  }
-
-  void handleReportMsg() {
+  void extractData() {
     int idx = -1;
 
     // === handle IMEI ===
 
-    cmpStr = F("+CGSN:");
-    idx = iotSerialRecv.indexOf(cmpStr);
+    iotCmpStr = F("+CGSN:");
+    idx = iotSerialRecv.indexOf(iotCmpStr);
 
     if (idx > -1) {
       {
-        iotIMEI = iotSerialRecv.substring(7, 7 + 15);
+        iotIMEI = iotSerialRecv.substring(8, 8 + 15);
+        Serial.print(iotIMEI);
 
         if (!utils.isNumeric(iotIMEI)) {
+          Serial.print(F("Not Numeric"));
           iotSoftReset = true;
         }
 
         if (iotIMEI.length() != 15) {
+          Serial.print(F("Not Numeric"));
           iotSoftReset = true;
         }
 
-        iotConnCmd = F("AT+QMTCONN=0,dev_");
-        iotConnCmd.concat(iotIMEI);
-        iotConnCmd.concat(F(",tswh,1Wo=[6vA0m"));
+        mqttConnCmd = F("AT+QMTCONN=0,dev_");
+        mqttConnCmd.concat(iotIMEI);
+        mqttConnCmd.concat(F(",tswh,1Wo=[6vA0m"));
 
-        iotSubsCmd = F("AT+QMTSUB=0,1,rgt/");
-        iotSubsCmd.concat(iotIMEI);
-        iotSubsCmd.concat(F("/out,0"));
+        mqttSubsCmd = F("AT+QMTSUB=0,1,rgt/");
+        mqttSubsCmd.concat(iotIMEI);
+        mqttSubsCmd.concat(F("/out,0"));
       }
     }
 
     // === handle CGATT ===
-    cmpStr = F("+CGATT:");
-    idx = iotSerialRecv.indexOf(cmpStr);
+    iotCmpStr = F("+CGATT:");
+    idx = iotSerialRecv.indexOf(iotCmpStr);
 
     if (idx > -1) {
       {
@@ -551,8 +525,8 @@ public:
 
     // === handle CEREG ===
 
-    cmpStr = F("+CEREG:");
-    idx = iotSerialRecv.indexOf(cmpStr);
+    iotCmpStr = F("+CEREG:");
+    idx = iotSerialRecv.indexOf(iotCmpStr);
 
     if (idx > -1) {
       {
@@ -566,14 +540,14 @@ public:
 
     // === handle CSQ ===
 
-    cmpStr = F("+CSQ:");
-    idx = iotSerialRecv.indexOf(cmpStr);
+    iotCmpStr = F("+CSQ:");
+    idx = iotSerialRecv.indexOf(iotCmpStr);
 
     if (idx > -1) {
-      cmpStr = F(": ");
-      int winStart = iotSerialRecv.indexOf(cmpStr);
-      cmpStr = F(",");
-      int winEnd = iotSerialRecv.indexOf(cmpStr);
+      iotCmpStr = F(": ");
+      int winStart = iotSerialRecv.indexOf(iotCmpStr);
+      iotCmpStr = F(",");
+      int winEnd = iotSerialRecv.indexOf(iotCmpStr);
 
       {
         iotCSQ = iotSerialRecv.substring(winStart + 2, winEnd);
@@ -598,23 +572,23 @@ public:
     }
 
     // === handle publish ACK ===
-    cmpStr = F("+QMTPUB:");
-    idx = iotSerialRecv.indexOf(cmpStr);
+    iotCmpStr = F("+QMTPUB:");
+    idx = iotSerialRecv.indexOf(iotCmpStr);
 
     if (idx > -1) {
 
       {
-        iotPubAck = iotSerialRecv.substring(9, 9 + 5);
+        mqttPubAck = iotSerialRecv.substring(9, 9 + 5);
       }
 
-      if (iotPubAck != F("0,0,0")) {
+      if (mqttPubAck != F("0,0,0")) {
         iotSoftReset = true;
       }
     }
 
     // === handle SUB ACK ===
-    cmpStr = F("+QMTSUB:");
-    idx = iotSerialRecv.indexOf(cmpStr);
+    iotCmpStr = F("+QMTSUB:");
+    idx = iotSerialRecv.indexOf(iotCmpStr);
 
     if (idx > -1) {
 
@@ -628,8 +602,8 @@ public:
     }
 
     // === handle SUB received msg and parse it's content ===
-    cmpStr = F("+QMTRECV:");
-    idx = iotSerialRecv.indexOf(cmpStr);
+    iotCmpStr = F("+QMTRECV:");
+    idx = iotSerialRecv.indexOf(iotCmpStr);
 
     if (idx > -1) {
       {
@@ -637,6 +611,36 @@ public:
         Serial.println(mqttSubsMsgContent);
       }
     }
+  }
+
+public:
+  IOT_STATE connState = IOT_STATE_WAITING_RESET;
+  PUBSUB_PIPELINE pipelineState = PIPELINE_DEFAULT;
+
+  IoT() {
+    pinMode(IOT_MODULE_RESET_PIN, OUTPUT);
+    digitalWrite(IOT_MODULE_RESET_PIN, HIGH);
+  }
+
+  void debug() {
+    iotDebugMode = true;
+  }
+
+  void init() {
+    Serial.println(F("\r\n=== IOT START ==="));
+    SerialIoT.begin(115200);
+    this->resetModule();
+
+    iotWatchdog.enable();
+    iotWatchdog.setCallback([]() {
+      iotSoftReset = true;
+    });
+  }
+
+  void loop() {
+    this->query();
+    this->listen();
+    iotConnState = this->connState;  // update global variable for display
   }
 
   void forcePublish() {
@@ -649,7 +653,7 @@ public:
       } else {
         Serial.println(F("\r\nFORCE PUBLISH STOPPED"));
 
-        this->printlnFlush(iotPubMsgCommand);
+        this->printlnFlush(mqttPublMsgCommand);
       }
     }
   }

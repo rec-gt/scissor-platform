@@ -206,6 +206,22 @@ private:
         iotConnState = IOT_STATE_FINISH_OPEN_MQTT;
       }
     }
+
+    if (iotConnState == IOT_STATE_FINISH_OPEN_MQTT) {
+      iotConnState = IOT_STATE_WAITING_CONN_MQTT;
+    }
+
+    if (iotConnState == IOT_STATE_WAITING_CONN_MQTT) {
+      if (iotTimer.asyncDelay(1000)) {
+        this->printlnFlush(mqttConnCmd);
+      }
+
+      iotCmpStr = F("+QMTCONN: 0,0,0");
+      iotCmpStrIdx = iotExtractedRecv.indexOf(iotCmpStr);
+      if (iotCmpStrIdx > -1) {
+        iotConnState = IOT_STATE_FINISH_OPEN_MQTT;
+      }
+    }
   }
 
 public:

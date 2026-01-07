@@ -255,7 +255,7 @@ private:
         
         // 2. build prepare msg
         mqttPublMsgPrepare = F("AT+QMTPUB=0,0,0,0,rgt/");
-        mqttPublMsgPrepare.concat(nbiotIMEI);
+        mqttPublMsgPrepare.concat(iotIMEI);
         mqttPublMsgPrepare.concat(F("/in,"));
         mqttPublMsgPrepare.concat(mqttPublMsgPayload.length());
 

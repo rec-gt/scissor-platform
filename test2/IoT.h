@@ -18,27 +18,62 @@ private:
     iotSerialRecv = F("");
   }
 
-  void listenSerial() {
+  void listen() {
     while (SerialIoT.available() > 0) {
       char c = SerialIoT.read();
+      iotSerialRecv += c;
       // Serial.print(c);
 
-      if (c != '\r' && c != '\n' && c != ' ') {
-        iotSerialRecv += c;
-      }
+      // if (c != '\r' && c != '\n' && c != ' ') {
+      //   iotSerialRecv += c;
+      // }
+
+      // if (c == '\r') {
+      //   this->handleResponse();
+      //   this->clearRecvBuffer();
+      // }
     }
   }
 
+  void consume() {
+    int delimiterIndex = 0;
+    {
+      delimiterIndex = iotSerialRecv.indexOf("\r\n");
+    }
+    if (delimiterIndex != -1) {
+      {
+        iotExtractedRecv = iotSerialRecv.substring(0, delimiterIndex);
+      }
+      {
+        iotSerialRecv = iotSerialRecv.substring(delimiterIndex + 2);
+      }
+    } else {
+      iotExtractedRecv = F("");
+    }
+
+    Serial.print(iotExtractedRecv);
+    Serial.println(iotSerialRecv);
+  }
+
   void handleResponse() {
-    this->printRecv();
-    this->clearRecvBuffer();
+    if (iotResetState == IOT_STATE_WAITING_RESET_SOFTWARE) {
+      iotCmpStr = F("RDY");
+      iotCmpStrIdx = iotSerialRecv.indexOf(iotCmpStr);
+      if (iotCmpStrIdx > -1) {
+        Serial.println(F("\r\n>>> IOT READY"));
+        iotResetState = IOT_STATE_FINISH_RESET_SOFTWARE;
+        iotConnState = IOT_STATE_FINISH_RESET;
+        Serial.println("Send ATI");
+        this->printlnFlush(F("ATI"));
+      }
+    }
   }
 
   void handleReset() {
     // 1. 斷電，重新上電
     if (iotResetState == IOT_STATE_WAITING_RESET_HARDWARE) {
       digitalWrite(24, LOW);
-      if (iotTimer.autoExpired(3000)) {
+      if (iotTimer.autoExpired(1000)) {
         digitalWrite(24, HIGH);
         iotResetState = IOT_STATE_FINISH_RESET_HARDWARE;
       }
@@ -46,17 +81,9 @@ private:
 
     // 2. software reboot
     if (iotResetState == IOT_STATE_FINISH_RESET_HARDWARE) {
-      if (iotTimer.autoExpired(3000)) {
+      if (iotTimer.autoExpired(1000)) {
         iotResetState = IOT_STATE_WAITING_RESET_SOFTWARE;
         this->printlnFlush(F("AT+CFUN=1,1"));
-      }
-    }
-
-    if (iotResetState == IOT_STATE_WAITING_RESET_SOFTWARE) {
-      if (iotTimer.autoExpired(3000)) {
-        iotResetState = IOT_STATE_FINISH_RESET_SOFTWARE;
-        iotConnState = IOT_STATE_FINISH_RESET;
-        this->printlnFlush(F("ATI"));
       }
     }
   }
@@ -72,18 +99,19 @@ public:
 
   void loop() {
     // state management
-    Serial.println(iotResetState);
     if (iotConnState == IOT_STATE_WAITING_INIT) {
+      Serial.println(">>> RESET");
       iotConnState = IOT_STATE_WAITING_RESET;
+      iotResetState = IOT_STATE_WAITING_RESET_HARDWARE;
     }
 
     // =================
     if (iotConnState == IOT_STATE_WAITING_RESET) {
       this->handleReset();
     }
-    
-    this->listenSerial();
-    this->handleResponse();
+
+    this->listen();
+    this->consume();
   }
 
   void printlnFlush(const String& cmd) {
@@ -95,6 +123,10 @@ public:
   void printRecv() {
     Serial.print("Recv Buffer: ");
     Serial.println(iotSerialRecv);
+    Serial.print("Conn State: ");
+    Serial.println(iotConnState);
+    Serial.print("Reset State: ");
+    Serial.println(iotResetState);
     Serial.print("Serial Buffer: ");
     Serial.println(SerialIoT.available());
 

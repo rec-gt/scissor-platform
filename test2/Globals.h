@@ -41,8 +41,11 @@ enum IOT_RESET_STATE {
 byte iotConnState = 0;
 byte iotResetState = 0;
 String iotSerialRecv = "";
+String iotExtractedRecv = "";
 
 String iotCmpStr = "";
+int iotCmpStrIdx = 0;
+
 String iotCSQ = "";
 byte iotCSQTrial = 0;
 String iotIMEI = "";

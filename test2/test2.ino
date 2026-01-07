@@ -20,17 +20,26 @@ void serialInput() {
   }
 
   if (cmd != "") {
-    iot.printlnFlush(cmd);
-    cmd = "";
+    if (cmd == "RESET") {
+      iotConnState = IOT_STATE_WAITING_INIT;
+      cmd = "";
+    }
+    if (cmd == "AT+CSQ") {
+      iot.printlnFlush(cmd);
+      cmd = "";
+    }
   }
 }
 
 void loop() {
   serialInput();
 
-  // if (millis() - prevMillis1 > 1000) {
+  // if (millis() - prevMillis1 > 300) {
   //   prevMillis1 = millis();
-  //   iot.printlnFlush("AT+CSQ");
+  //   Serial.print("iotConnState: ");
+  //   Serial.println(iotConnState);
+  //   Serial.print("iotResetState: ");
+  //   Serial.println(iotResetState);
   // }
 
   iot.loop();

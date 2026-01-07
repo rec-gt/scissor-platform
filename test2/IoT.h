@@ -22,23 +22,14 @@ private:
     while (SerialIoT.available() > 0) {
       char c = SerialIoT.read();
       iotSerialRecv += c;
-      // Serial.print(c);
-
-      // if (c != '\r' && c != '\n' && c != ' ') {
-      //   iotSerialRecv += c;
-      // }
-
-      // if (c == '\r') {
-      //   this->handleResponse();
-      //   this->clearRecvBuffer();
-      // }
+      Serial.print(c);
     }
   }
 
   void consume() {
     int delimiterIndex = 0;
     {
-      delimiterIndex = iotSerialRecv.indexOf("\r\n");
+      delimiterIndex = iotSerialRecv.indexOf(F("\r\n"));
     }
     if (delimiterIndex != -1) {
       {
@@ -50,9 +41,6 @@ private:
     } else {
       iotExtractedRecv = F("");
     }
-
-    Serial.print(iotExtractedRecv);
-    Serial.println(iotSerialRecv);
   }
 
   void handleResponse() {
@@ -112,6 +100,7 @@ public:
 
     this->listen();
     this->consume();
+    this->handleResponse();
   }
 
   void printlnFlush(const String& cmd) {

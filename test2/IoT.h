@@ -219,7 +219,23 @@ private:
       iotCmpStr = F("+QMTCONN: 0,0,0");
       iotCmpStrIdx = iotExtractedRecv.indexOf(iotCmpStr);
       if (iotCmpStrIdx > -1) {
-        iotConnState = IOT_STATE_FINISH_OPEN_MQTT;
+        iotConnState = IOT_STATE_FINISH_CONN_MQTT;
+      }
+    }
+
+    if (iotConnState == IOT_STATE_FINISH_CONN_MQTT) {
+      iotConnState = IOT_STATE_WAITING_SUBS_MQTT_TOPIC;
+    }
+
+    if (iotConnState == IOT_STATE_WAITING_SUBS_MQTT_TOPIC) {
+      if (iotTimer.asyncDelay(1000)) {
+        this->printlnFlush(mqttSubsCmd);
+      }
+
+      iotCmpStr = F("+QMTSUB: ");
+      iotCmpStrIdx = iotExtractedRecv.indexOf(iotCmpStr);
+      if (iotCmpStrIdx > -1) {
+        iotConnState = IOT_STATE_FINISH_SUBS_MQTT_TOPIC;
       }
     }
   }

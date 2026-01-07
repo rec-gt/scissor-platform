@@ -20,14 +20,17 @@ private:
   void consume() {
     int delimiterIndex = 0;
     {
-      delimiterIndex = iotSerialRecv.indexOf(F("\r\n"));
+      delimiterIndex = iotSerialRecv.indexOf(F("\r"));
+      if (delimiterIndex > -1) {
+        delimiterIndex = iotSerialRecv.indexOf(F("\n"));
+      }
     }
     if (delimiterIndex != -1) {
       {
         iotExtractedRecv = iotSerialRecv.substring(0, delimiterIndex);
       }
       {
-        iotSerialRecv = iotSerialRecv.substring(delimiterIndex + 2);
+        iotSerialRecv = iotSerialRecv.substring(delimiterIndex + 1);
       }
     } else {
       iotExtractedRecv = F("");
@@ -67,8 +70,8 @@ private:
       }
     }
 
-    if (iotConnState == IOT_STATE_FINISH_RESET) {
-    }
+    // if (iotConnState == IOT_STATE_FINISH_RESET) {
+    // }
   }
 
 public:
@@ -84,7 +87,8 @@ public:
     this->consume();
 
     this->printExtractedRecv();
-
+    this->printSerialRecv();
+    
     this->stateManagement();
   }
 
@@ -96,33 +100,15 @@ public:
     }
   }
 
+  void printSerialRecv() {
+    Serial.print(iotSerialRecv);
+  }
+
   void printlnFlush(const String& cmd) {
+    // Serial.println(cmd);
     SerialIoT.println(cmd);
     SerialIoT.flush();
     delay(1);
-  }
-
-  void printRecv() {
-    Serial.print("Recv Buffer: ");
-    Serial.println(iotSerialRecv);
-    Serial.print("Conn State: ");
-    Serial.println(iotConnState);
-    Serial.print("Reset State: ");
-    Serial.println(iotConnState);
-    Serial.print("Serial Buffer: ");
-    Serial.println(SerialIoT.available());
-
-    String myString = iotSerialRecv;
-    byte buffer[myString.length() + 1];
-
-    myString.getBytes(buffer, sizeof(buffer));
-
-    for (int i = 0; i < sizeof(buffer); i++) {
-      Serial.print(buffer[i], HEX);
-      Serial.print(" ");
-    }
-
-    Serial.println();
   }
 };
 

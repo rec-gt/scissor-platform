@@ -147,17 +147,20 @@ private:
     }
 
     if (iotConnState == IOT_STATE_FINISH_CSQ) {
-      if (iotTimer.asyncDelay(500)) {
-        this->printlnFlush(F("AT+CGATT?"));
-      }
       iotConnState = IOT_STATE_WAITING_CGATT;
     }
 
     if (iotConnState == IOT_STATE_WAITING_CGATT) {
-      iotConnState = IOT_STATE_WAITING_CGATT;
-
-      this->printlnFlush(F("AT+CEREG?"));
+      if (iotTimer.asyncDelay(500)) {
+        this->printlnFlush(F("AT+CGATT?"));
+      }
     }
+
+    // if (iotConnState == IOT_STATE_WAITING_CGATT) {
+    //   iotConnState = IOT_STATE_WAITING_CGATT;
+
+    //   this->printlnFlush(F("AT+CEREG?"));
+    // }
 
     // this->printParameterState();
   }

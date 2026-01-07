@@ -101,6 +101,10 @@ public:
     this->listen();
     this->consume();
     this->handleResponse();
+    this->printExtractedRecv();
+  }
+
+  void printExtractedRecv() {
     Serial.print("[[");
     Serial.print(iotExtractedRecv);
     Serial.println("]]");

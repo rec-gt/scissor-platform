@@ -237,6 +237,42 @@ private:
       iotCmpStrIdx = iotExtractedRecv.indexOf(iotCmpStr);
       if (iotCmpStrIdx > -1) {
         iotConnState = IOT_STATE_FINISH_SUBS_MQTT_TOPIC;
+        iotConnState = IOT_STATE_FINISH_INIT;
+      }
+    }
+
+    if (iotConnState == IOT_STATE_FINISH_INIT) {
+      iotConnState = IOT_PIPELINE_QUERY_PARAMS;
+    }
+
+    if (iotConnState == IOT_PIPELINE_QUERY_PARAMS) {
+      if (iotTimer.asyncDelay(3000)) {
+        iotQueryCnt++;
+        this->printlnFlush(F("AT+CSQ"));
+        this->printlnFlush(F("AT+GCATT?"));
+        this->printlnFlush(F("AT+CEREG?"));
+
+        if (iotQueryCnt >= 10) {
+          iotQueryCnt = 0;
+          mqttPublMsgPayloadLock = true;
+          iotConnState = IOT_PIPELINE_WAITING_PREPARE_PUBMSG;
+        }
+      }
+    }
+
+    if (iotConnState == IOT_PIPELINE_WAITING_PREPARE_PUBMSG) {
+      iotCmpStr = F(">");
+      iotCmpStrIdx = nbiotSerialRecv.indexOf(iotCmpStr);
+      if (iotCmpStrIdx > -1) {
+        iotConnState = IOT_PIPELINE_FINISH_PREPARE_PUBMSG;
+      }
+    }
+
+    if (iotConnState == IOT_PIPELINE_FINISH_PREPARE_PUBMSG) {
+      if (nbiotTimer.autoExpired(1000)) {
+        this->printlnFlush(mqttPublMsgPayload);
+        mqttPublMsgPayloadLock = false;
+        iotConnState = IOT_PIPELINE_WAITING_PUBLISH;
       }
     }
   }

@@ -32,6 +32,12 @@ enum IOT_STATE {
   IOT_STATE_FINISH_SUBS_MQTT_TOPIC,
 
   IOT_STATE_FINISH_INIT,
+
+  IOT_PIPELINE_QUERY_PARAMS,
+  IOT_PIPELINE_WAITING_PREPARE_PUBMSG,
+  IOT_PIPELINE_FINISH_PREPARE_PUBMSG,
+  IOT_PIPELINE_WAITING_PUBLISH,
+  IOT_PIPELINE_FINISH_PUBLISH,
 };
 
 byte iotConnState = 0;
@@ -47,6 +53,7 @@ byte iotCSQTrial = 0;
 String iotIMEI = "";
 String iotCGATT = "";
 String iotCEREG = "";
+byte iotQueryCnt = 0;
 
 /*=== IoT MQTT ===*/
 String mqttConnCmd = "";

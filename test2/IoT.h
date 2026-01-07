@@ -85,11 +85,10 @@ public:
   void loop() {
     this->listen();
     this->consume();
+    this->stateManagement();
 
     this->printExtractedRecv();
-    // this->printSerialRecv();
 
-    this->stateManagement();
   }
 
   void printExtractedRecv() {

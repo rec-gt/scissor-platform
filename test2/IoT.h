@@ -37,6 +37,22 @@ private:
     }
   }
 
+  void monitorParameters() {
+    {
+      iotCmpStr = F("+CSQ: ");
+      iotCmpStrIdx = iotExtractedRecv.indexOf(iotCmpStr);
+      if (iotCmpStrIdx > -1) {
+        Serial.println(F("\r\n>>> CSQ RECEIVED"));
+        int ws = iotExtractedRecv.indexOf(F(": "));
+        int we = iotExtractedRecv.indexOf(F(","));
+        {
+          iotCSQ = iotExtractedRecv.substring(ws + 2, we);
+        }
+        Serial.println(iotCSQ);
+      }
+    }
+  }
+
   void stateManagement() {
     if (iotConnState == IOT_STATE_WAITING_INIT) {
       Serial.println(">>> INIT, RESET");
@@ -86,11 +102,12 @@ private:
     if (iotConnState == IOT_STATE_FINISH_CONFIG) {
       if (iotTimer.autoExpired(500)) {
         this->printlnFlush(F("AT+CSQ"));
+        iotConnState = IOT_STATE_WAITING_CSQ;
       }
-      iotConnState = IOT_STATE_WAITING_CSQ;
     }
 
     if (iotConnState == IOT_STATE_WAITING_CSQ) {
+      this->printParameterState();
     }
   }
 
@@ -108,8 +125,6 @@ public:
     this->stateManagement();
 
     this->printExtractedRecv();
-
-    this->printParameterState();
   }
 
   void printlnFlush(const String& cmd) {

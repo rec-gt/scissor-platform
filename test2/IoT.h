@@ -39,6 +39,24 @@ private:
 
   void monitorParameters() {
     {
+      iotCmpStr = F("+CGSN: ");
+      iotCmpStrIdx = iotExtractedRecv.indexOf(iotCmpStr);
+
+      if (iotCmpStrIdx > -1) {
+        iotIMEI = iotExtractedRecv.substring(8, 8 + 15);
+
+        mqttConnCmd = F("AT+QMTCONN=0,dev_");
+        mqttConnCmd.concat(iotIMEI);
+        mqttConnCmd.concat(F(",tswh,1Wo=[6vA0m"));
+
+        mqttSubsCmd = F("AT+QMTSUB=0,1,rgt/");
+        mqttSubsCmd.concat(iotIMEI);
+        mqttSubsCmd.concat(F("/out,0"));
+      }
+    }
+
+
+    {
       iotCmpStr = F("+CSQ: ");
       iotCmpStrIdx = iotExtractedRecv.indexOf(iotCmpStr);
       if (iotCmpStrIdx > -1) {
@@ -95,13 +113,23 @@ private:
         this->printlnFlush(F("AT+CGSN=1"));
         this->printlnFlush(F("AT+QSCLK=0"));
         this->printlnFlush(F("AT+QIDNSCFG=0,223.5.5.5,8.8.8.8"));
+        this->printlnFlush(F("AT+CFUN=1"));
+        this->printlnFlush(F("AT+QSCLK=0"));
+        // this->printlnFlush(F("AT+CPSMS=0")); // for nbiot
+        // this->printlnFlush(F("AT+CSCON=0")); // for nbiot
+        // this->printlnFlush(F("AT+CEDRXS=0,5")); // for nbiot
+        this->printlnFlush(F("AT+QMTCLOSE=0"));
+        this->printlnFlush(F("AT+QMTDISC=0"));
+        this->printlnFlush(F("AT+CSQ"));
+
         iotConnState = IOT_STATE_FINISH_CONFIG;
       }
     }
 
     if (iotConnState == IOT_STATE_FINISH_CONFIG) {
       if (iotTimer.autoExpired(500)) {
-        this->printlnFlush(F("AT+CSQ"));
+        this->printlnFlush(F("AT+CGATT?"));
+        this->printlnFlush(F("AT+CEREG?"));
         iotConnState = IOT_STATE_WAITING_CSQ;
       }
     }
@@ -123,7 +151,7 @@ public:
     this->listen();
     this->consume();
     this->stateManagement();
-
+    this->monitorParameters();
     this->printExtractedRecv();
   }
 

@@ -37,6 +37,8 @@ private:
     }
   }
 
+  void paramsHandler() {}
+
   void monitorParameters() {
     // === IMEI ===
     {
@@ -262,14 +264,14 @@ private:
 
     if (iotConnState == IOT_PIPELINE_WAITING_PREPARE_PUBMSG) {
       iotCmpStr = F(">");
-      iotCmpStrIdx = nbiotSerialRecv.indexOf(iotCmpStr);
+      iotCmpStrIdx = iotExtractedRecv.indexOf(iotCmpStr);
       if (iotCmpStrIdx > -1) {
         iotConnState = IOT_PIPELINE_FINISH_PREPARE_PUBMSG;
       }
     }
 
     if (iotConnState == IOT_PIPELINE_FINISH_PREPARE_PUBMSG) {
-      if (nbiotTimer.autoExpired(1000)) {
+      if (iotTimer.autoExpired(1000)) {
         this->printlnFlush(mqttPublMsgPayload);
         mqttPublMsgPayloadLock = false;
         iotConnState = IOT_PIPELINE_WAITING_PUBLISH;
@@ -289,6 +291,7 @@ public:
     this->listen();
     this->consume();
     this->stateManagement();
+    this->paramsHandler();
     this->monitorParameters();
     this->printExtractedRecv();
   }

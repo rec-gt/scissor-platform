@@ -145,6 +145,7 @@ private:
 
     if (iotConnState == IOT_STATE_WAITING_CONFIG) {
       if (iotTimer.asyncDelay(500)) {
+        this->printlnFlush(F("ATE0"));
         this->printlnFlush(F("AT+CGSN=1"));
         this->printlnFlush(F("AT+QSCLK=0"));
         this->printlnFlush(F("AT+QIDNSCFG=0,223.5.5.5,8.8.8.8"));
@@ -232,7 +233,7 @@ private:
         this->printlnFlush(mqttSubsCmd);
       }
 
-      iotCmpStr = F("+QMTSUB: ");
+      iotCmpStr = F("+QMTSUB: 0,1,0,0");
       iotCmpStrIdx = iotExtractedRecv.indexOf(iotCmpStr);
       if (iotCmpStrIdx > -1) {
         iotConnState = IOT_STATE_FINISH_SUBS_MQTT_TOPIC;

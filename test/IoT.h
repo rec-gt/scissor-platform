@@ -553,10 +553,6 @@ private:
         iotCSQ = iotSerialRecv.substring(winStart + 2, winEnd);
       }
 
-      if (iotCSQ == F("99")) {
-        iotSoftReset = true;
-      }
-
       if (!utils.isNumeric(iotCSQ)) {
         iotSoftReset = true;
         iotCSQ = F("0");

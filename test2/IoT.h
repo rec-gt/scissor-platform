@@ -44,7 +44,9 @@ private:
       iotCmpStrIdx = iotExtractedRecv.indexOf(iotCmpStr);
 
       if (iotCmpStrIdx > -1) {
-        iotIMEI = iotExtractedRecv.substring(8, 8 + 15);
+        {
+          iotIMEI = iotExtractedRecv.substring(8, 8 + 15);
+        }
 
         mqttConnCmd = F("AT+QMTCONN=0,dev_");
         mqttConnCmd.concat(iotIMEI);
@@ -67,7 +69,6 @@ private:
         {
           iotCSQ = iotExtractedRecv.substring(ws + 2, we);
         }
-        Serial.println(iotCSQ);
       }
     }
 
@@ -76,7 +77,13 @@ private:
       iotCmpStr = F("+CGATT: ");
       iotCmpStrIdx = iotExtractedRecv.indexOf(iotCmpStr);
       if (iotCmpStrIdx > -1) {
-        Serial.print(iotExtractedRecv);
+        {
+          iotCGATT = iotExtractedRecv.substring(8, 9);
+        }
+        Serial.print(iotCGATT);
+        if (iotCGATT == F("1")) {
+          iotConnState = IOT_STATE_FINISH_CGATT;
+        }
       }
     }
   }
@@ -151,18 +158,20 @@ private:
     }
 
     if (iotConnState == IOT_STATE_WAITING_CGATT) {
-      if (iotTimer.asyncDelay(500)) {
+      if (iotTimer.asyncDelay(1000)) {
         this->printlnFlush(F("AT+CGATT?"));
       }
     }
 
-    // if (iotConnState == IOT_STATE_WAITING_CGATT) {
-    //   iotConnState = IOT_STATE_WAITING_CGATT;
+    if (iotConnState == IOT_STATE_FINISH_CGATT) {
+      iotConnState = IOT_STATE_WAITING_CEREG;
+    }
 
-    //   this->printlnFlush(F("AT+CEREG?"));
-    // }
-
-    // this->printParameterState();
+    if (iotConnState == IOT_STATE_WAITING_CEREG) {
+      if (iotTimer.asyncDelay(1000)) {
+        this->printlnFlush(F("AT+CEREG?"));
+      }
+    }
   }
 
 public:

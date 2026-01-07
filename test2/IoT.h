@@ -1,10 +1,15 @@
+#include "Globals.h"
+#include "AsyncTimer.h"
+
 #ifndef IOT_H
 #define IOT_H
 
-#include "Globals.h"
+AsyncTimer iotTimer(1000);
 
 class IoT {
 private:
+  uint16_t prevMillis1 = millis();
+
   void clearSerialBuffer() {
     while (SerialIoT.read() > 0) { delay(1); };
   }
@@ -29,21 +34,59 @@ private:
     this->clearRecvBuffer();
   }
 
+  void handleReset() {
+    // 1. 斷電，重新上電
+    if (iotResetState == IOT_STATE_WAITING_RESET_HARDWARE) {
+      digitalWrite(24, LOW);
+      if (iotTimer.autoExpired(3000)) {
+        digitalWrite(24, HIGH);
+        iotResetState = IOT_STATE_FINISH_RESET_HARDWARE;
+      }
+    }
+
+    // 2. software reboot
+    if (iotResetState == IOT_STATE_FINISH_RESET_HARDWARE) {
+      if (iotTimer.autoExpired(3000)) {
+        iotResetState = IOT_STATE_WAITING_RESET_SOFTWARE;
+        this->printlnFlush(F("AT+CFUN=1,1"));
+      }
+    }
+
+    if (iotResetState == IOT_STATE_WAITING_RESET_SOFTWARE) {
+      if (iotTimer.autoExpired(3000)) {
+        iotResetState = IOT_STATE_FINISH_RESET_SOFTWARE;
+        iotConnState = IOT_STATE_FINISH_RESET;
+        this->printlnFlush(F("ATI"));
+      }
+    }
+  }
+
 
 public:
   void init() {
     SerialIoT.begin(115200);
     pinMode(24, OUTPUT);
     digitalWrite(24, HIGH);
+    iotConnState = IOT_STATE_WAITING_INIT;
   }
 
   void loop() {
+    // state management
+    Serial.println(iotResetState);
+    if (iotConnState == IOT_STATE_WAITING_INIT) {
+      iotConnState = IOT_STATE_WAITING_RESET;
+    }
+
+    // =================
+    if (iotConnState == IOT_STATE_WAITING_RESET) {
+      this->handleReset();
+    }
+    
     this->listenSerial();
     this->handleResponse();
   }
 
   void printlnFlush(const String& cmd) {
-    this->clearSerialBuffer();  // 清空Serial
     SerialIoT.println(cmd);
     SerialIoT.flush();
     delay(1);

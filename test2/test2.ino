@@ -8,8 +8,30 @@ void setup() {
   iot.init();
 }
 
-void loop() {
+String cmd = "";
 
-  iot.printlnFlush("AT+CSQ");
+uint16_t prevMillis1 = 0;
+uint16_t prevMillis2 = 0;
+
+void serialInput() {
+  while (Serial.available() > 0) {
+    char c = Serial.read();
+    cmd += c;
+  }
+
+  if (cmd != "") {
+    iot.printlnFlush(cmd);
+    cmd = "";
+  }
+}
+
+void loop() {
+  serialInput();
+
+  // if (millis() - prevMillis1 > 1000) {
+  //   prevMillis1 = millis();
+  //   iot.printlnFlush("AT+CSQ");
+  // }
+
   iot.loop();
 }

@@ -70,8 +70,28 @@ private:
       }
     }
 
-    // if (iotConnState == IOT_STATE_FINISH_RESET) {
-    // }
+    if (iotConnState == IOT_STATE_FINISH_RESET) {
+      iotConnState = IOT_STATE_WAITING_CONFIG;
+    }
+
+    if (iotConnState == IOT_STATE_WAITING_CONFIG) {
+      if (iotTimer.autoExpired(500)) {
+        this->printlnFlush(F("AT+CGSN=1"));
+        this->printlnFlush(F("AT+QSCLK=0"));
+        this->printlnFlush(F("AT+QIDNSCFG=0,223.5.5.5,8.8.8.8"));
+        iotConnState = IOT_STATE_FINISH_CONFIG;
+      }
+    }
+
+    if (iotConnState == IOT_STATE_FINISH_CONFIG) {
+      if (iotTimer.autoExpired(500)) {
+        this->printlnFlush(F("AT+CSQ"));
+      }
+      iotConnState = IOT_STATE_WAITING_CSQ;
+    }
+
+    if (iotConnState == IOT_STATE_WAITING_CSQ) {
+    }
   }
 
 public:
@@ -89,6 +109,13 @@ public:
 
     this->printExtractedRecv();
 
+    this->printParameterState();
+  }
+
+  void printlnFlush(const String& cmd) {
+    SerialIoT.println(cmd);
+    SerialIoT.flush();
+    delay(1);
   }
 
   void printExtractedRecv() {
@@ -105,11 +132,13 @@ public:
     Serial.println("]]");
   }
 
-  void printlnFlush(const String& cmd) {
-    // Serial.println(cmd);
-    SerialIoT.println(cmd);
-    SerialIoT.flush();
-    delay(1);
+  void printParameterState() {
+    if (iotTimer.asyncDelay(1000)) {
+      Serial.println("iotCSQ: " + iotCSQ);
+      Serial.println("iotIMEI: " + iotIMEI);
+      Serial.println("iotCGATT: " + iotCGATT);
+      Serial.println("iotCEREG: " + iotCEREG);
+    }
   }
 };
 

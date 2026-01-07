@@ -32,11 +32,11 @@ void serialInput() {
 void loop() {
   serialInput();
 
-  if (millis() - prevMillis1 > 1000) {
-    prevMillis1 = millis();
-    Serial.print("cmd: ");
-    Serial.println(cmd);
-  }
+  // if (millis() - prevMillis1 > 1000) {
+  //   prevMillis1 = millis();
+  //   Serial.print("cmd: ");
+  //   Serial.println(cmd);
+  // }
 
   iot.loop();
 }

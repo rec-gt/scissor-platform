@@ -11,22 +11,19 @@ void setup() {
 String cmd = "";
 
 uint16_t prevMillis1 = 0;
-uint16_t prevMillis2 = 0;
 
 void serialInput() {
   while (Serial.available() > 0) {
     char c = Serial.read();
-    cmd += c;
-  }
-
-
-  if (cmd != "") {
-    if (cmd == "RESET") {
-      iotConnState = IOT_STATE_WAITING_INIT;
-      cmd = "";
+    if (c != '\r' && c != '\n') {
+      cmd += c;
     }
-    if (cmd == "AT+CSQ") {
-      iot.printlnFlush(cmd);
+    if (c == '\r') {
+      if (cmd == "RESET") {
+        iotConnState = IOT_STATE_WAITING_INIT;
+      } else {
+        iot.printlnFlush(cmd);
+      }
       cmd = "";
     }
   }
@@ -35,13 +32,11 @@ void serialInput() {
 void loop() {
   serialInput();
 
-  // if (millis() - prevMillis1 > 300) {
-  //   prevMillis1 = millis();
-  //   Serial.print("iotConnState: ");
-  //   Serial.println(iotConnState);
-  //   Serial.print("iotResetState: ");
-  //   Serial.println(iotResetState);
-  // }
+  if (millis() - prevMillis1 > 1000) {
+    prevMillis1 = millis();
+    Serial.print("cmd: ");
+    Serial.println(cmd);
+  }
 
   iot.loop();
 }

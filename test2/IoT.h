@@ -87,8 +87,8 @@ public:
     this->consume();
 
     this->printExtractedRecv();
-    this->printSerialRecv();
-    
+    // this->printSerialRecv();
+
     this->stateManagement();
   }
 
@@ -101,7 +101,9 @@ public:
   }
 
   void printSerialRecv() {
+    Serial.print("[[");
     Serial.print(iotSerialRecv);
+    Serial.println("]]");
   }
 
   void printlnFlush(const String& cmd) {

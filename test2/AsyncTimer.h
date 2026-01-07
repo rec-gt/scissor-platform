@@ -38,6 +38,23 @@ public:
     return isTimeout;
   }
 
+  bool asyncDelay(unsigned long autoTimeout) {
+    bool isTimeout = millis() - this->prevMillis > autoTimeout;
+
+    if (this->_lock == false) {
+      this->prevMillis = millis();
+      this->_lock = true;
+    }
+
+    if (isTimeout) {
+      this->_lock = false;
+    }
+
+    isTimeout = millis() - this->prevMillis > autoTimeout;
+
+    return isTimeout;
+  }
+
   ~AsyncTimer() {}
 };
 

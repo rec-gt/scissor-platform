@@ -34,38 +34,42 @@ private:
     }
   }
 
-  void handleResponse() {
-    if (iotResetState == IOT_STATE_WAITING_RESET_SOFTWARE) {
+  void stateManagement() {
+    if (iotConnState == IOT_STATE_WAITING_INIT) {
+      Serial.println(">>> INIT, RESET");
+      iotConnState = IOT_STATE_WAITING_RESET;
+      iotConnState = IOT_STATE_WAITING_RESET_HARDWARE;
+    }
+
+    if (iotConnState == IOT_STATE_WAITING_RESET_HARDWARE) {
+      digitalWrite(24, LOW);
+      if (iotTimer.asyncDelay(1000)) {
+        digitalWrite(24, HIGH);
+        iotConnState = IOT_STATE_FINISH_RESET_HARDWARE;
+      }
+    }
+
+    if (iotConnState == IOT_STATE_FINISH_RESET_HARDWARE) {
+      if (iotTimer.asyncDelay(1000)) {
+        this->printlnFlush(F("AT+CFUN=1,1"));
+        iotConnState = IOT_STATE_WAITING_RESET_SOFTWARE;
+      }
+    }
+
+    if (iotConnState == IOT_STATE_WAITING_RESET_SOFTWARE) {
       iotCmpStr = F("RDY");
       iotCmpStrIdx = iotExtractedRecv.indexOf(iotCmpStr);
       if (iotCmpStrIdx > -1) {
         Serial.println(F("\r\n>>> IOT READY"));
-        iotResetState = IOT_STATE_FINISH_RESET_SOFTWARE;
+        iotConnState = IOT_STATE_FINISH_RESET_SOFTWARE;
         iotConnState = IOT_STATE_FINISH_RESET;
         this->printlnFlush(F("ATI"));
       }
     }
-  }
 
-  void handleReset() {
-    // 1. 斷電，重新上電
-    if (iotResetState == IOT_STATE_WAITING_RESET_HARDWARE) {
-      digitalWrite(24, LOW);
-      if (iotTimer.autoExpired(1000)) {
-        digitalWrite(24, HIGH);
-        iotResetState = IOT_STATE_FINISH_RESET_HARDWARE;
-      }
-    }
-
-    // 2. software reboot
-    if (iotResetState == IOT_STATE_FINISH_RESET_HARDWARE) {
-      if (iotTimer.autoExpired(1000)) {
-        iotResetState = IOT_STATE_WAITING_RESET_SOFTWARE;
-        this->printlnFlush(F("AT+CFUN=1,1"));
-      }
+    if (iotConnState == IOT_STATE_FINISH_RESET) {
     }
   }
-
 
 public:
   void init() {
@@ -76,22 +80,12 @@ public:
   }
 
   void loop() {
-    // state management
-    if (iotConnState == IOT_STATE_WAITING_INIT) {
-      Serial.println(">>> RESET");
-      iotConnState = IOT_STATE_WAITING_RESET;
-      iotResetState = IOT_STATE_WAITING_RESET_HARDWARE;
-    }
-
-    // =================
-    if (iotConnState == IOT_STATE_WAITING_RESET) {
-      this->handleReset();
-    }
-
     this->listen();
     this->consume();
-    this->handleResponse();
+
     this->printExtractedRecv();
+
+    this->stateManagement();
   }
 
   void printExtractedRecv() {
@@ -114,7 +108,7 @@ public:
     Serial.print("Conn State: ");
     Serial.println(iotConnState);
     Serial.print("Reset State: ");
-    Serial.println(iotResetState);
+    Serial.println(iotConnState);
     Serial.print("Serial Buffer: ");
     Serial.println(SerialIoT.available());
 

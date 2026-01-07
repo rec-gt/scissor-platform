@@ -80,9 +80,27 @@ private:
         {
           iotCGATT = iotExtractedRecv.substring(8, 9);
         }
-        Serial.print(iotCGATT);
         if (iotCGATT == F("1")) {
-          iotConnState = IOT_STATE_FINISH_CGATT;
+          if (iotConnState == IOT_STATE_WAITING_CGATT) {
+            iotConnState = IOT_STATE_FINISH_CGATT;
+          }
+        }
+      }
+    }
+
+    // === CEREG ===
+    {
+      iotCmpStr = F("+CEREG: ");
+      iotCmpStrIdx = iotExtractedRecv.indexOf(iotCmpStr);
+      if (iotCmpStrIdx > -1) {
+        {
+          iotCEREG = iotExtractedRecv.substring(8, 11);
+        }
+
+        if (iotCEREG == F("0,1")) {
+          if (iotConnState == IOT_STATE_WAITING_CEREG) {
+            iotConnState = IOT_STATE_FINISH_CEREG;
+          }
         }
       }
     }
@@ -170,6 +188,22 @@ private:
     if (iotConnState == IOT_STATE_WAITING_CEREG) {
       if (iotTimer.asyncDelay(1000)) {
         this->printlnFlush(F("AT+CEREG?"));
+      }
+    }
+
+    if (iotConnState == IOT_STATE_FINISH_CEREG) {
+      iotConnState = IOT_STATE_WAITING_OPEN_MQTT;
+    }
+
+    if (iotConnState == IOT_STATE_WAITING_OPEN_MQTT) {
+      if (iotTimer.asyncDelay(1000)) {
+        this->printlnFlush(F("AT+QMTOPEN=0,iot.rec-gt.com,1880"));
+      }
+
+      iotCmpStr = F("+QMTOPEN: 0,0");
+      iotCmpStrIdx = iotExtractedRecv.indexOf(iotCmpStr);
+      if (iotCmpStrIdx > -1) {
+        iotConnState = IOT_STATE_FINISH_OPEN_MQTT;
       }
     }
   }

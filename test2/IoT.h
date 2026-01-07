@@ -38,6 +38,7 @@ private:
   }
 
   void monitorParameters() {
+    // === IMEI ===
     {
       iotCmpStr = F("+CGSN: ");
       iotCmpStrIdx = iotExtractedRecv.indexOf(iotCmpStr);
@@ -55,7 +56,7 @@ private:
       }
     }
 
-
+    // === CSQ ===
     {
       iotCmpStr = F("+CSQ: ");
       iotCmpStrIdx = iotExtractedRecv.indexOf(iotCmpStr);
@@ -67,6 +68,15 @@ private:
           iotCSQ = iotExtractedRecv.substring(ws + 2, we);
         }
         Serial.println(iotCSQ);
+      }
+    }
+
+    // === CGATT ===
+    {
+      iotCmpStr = F("+CGATT: ");
+      iotCmpStrIdx = iotExtractedRecv.indexOf(iotCmpStr);
+      if (iotCmpStrIdx > -1) {
+        Serial.print(iotExtractedRecv);
       }
     }
   }
@@ -109,7 +119,7 @@ private:
     }
 
     if (iotConnState == IOT_STATE_WAITING_CONFIG) {
-      if (iotTimer.autoExpired(500)) {
+      if (iotTimer.asyncDelay(500)) {
         this->printlnFlush(F("AT+CGSN=1"));
         this->printlnFlush(F("AT+QSCLK=0"));
         this->printlnFlush(F("AT+QIDNSCFG=0,223.5.5.5,8.8.8.8"));
@@ -120,23 +130,36 @@ private:
         // this->printlnFlush(F("AT+CEDRXS=0,5")); // for nbiot
         this->printlnFlush(F("AT+QMTCLOSE=0"));
         this->printlnFlush(F("AT+QMTDISC=0"));
-        this->printlnFlush(F("AT+CSQ"));
 
         iotConnState = IOT_STATE_FINISH_CONFIG;
       }
     }
 
     if (iotConnState == IOT_STATE_FINISH_CONFIG) {
-      if (iotTimer.autoExpired(500)) {
-        this->printlnFlush(F("AT+CGATT?"));
-        this->printlnFlush(F("AT+CEREG?"));
+      if (iotTimer.asyncDelay(500)) {
+        this->printlnFlush(F("AT+CSQ"));
         iotConnState = IOT_STATE_WAITING_CSQ;
       }
     }
 
     if (iotConnState == IOT_STATE_WAITING_CSQ) {
-      this->printParameterState();
+      iotConnState = IOT_STATE_FINISH_CSQ;
     }
+
+    if (iotConnState == IOT_STATE_FINISH_CSQ) {
+      if (iotTimer.asyncDelay(500)) {
+        this->printlnFlush(F("AT+CGATT?"));
+      }
+      iotConnState = IOT_STATE_WAITING_CGATT;
+    }
+
+    if (iotConnState == IOT_STATE_WAITING_CGATT) {
+      iotConnState = IOT_STATE_WAITING_CGATT;
+
+      this->printlnFlush(F("AT+CEREG?"));
+    }
+
+    // this->printParameterState();
   }
 
 public:

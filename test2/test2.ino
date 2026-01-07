@@ -17,6 +17,7 @@ void serialInput() {
   while (Serial.available() > 0) {
     char c = Serial.read();
     cmd += c;
+    Serial.print(c);
   }
 
   if (cmd != "") {

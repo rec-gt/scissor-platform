@@ -10,19 +10,10 @@ class IoT {
 private:
   uint16_t prevMillis1 = millis();
 
-  void clearSerialBuffer() {
-    while (SerialIoT.read() > 0) { delay(1); };
-  }
-
-  void clearRecvBuffer() {
-    iotSerialRecv = F("");
-  }
-
   void listen() {
     while (SerialIoT.available() > 0) {
       char c = SerialIoT.read();
       iotSerialRecv += c;
-      Serial.print(c);
     }
   }
 
@@ -46,12 +37,11 @@ private:
   void handleResponse() {
     if (iotResetState == IOT_STATE_WAITING_RESET_SOFTWARE) {
       iotCmpStr = F("RDY");
-      iotCmpStrIdx = iotSerialRecv.indexOf(iotCmpStr);
+      iotCmpStrIdx = iotExtractedRecv.indexOf(iotCmpStr);
       if (iotCmpStrIdx > -1) {
         Serial.println(F("\r\n>>> IOT READY"));
         iotResetState = IOT_STATE_FINISH_RESET_SOFTWARE;
         iotConnState = IOT_STATE_FINISH_RESET;
-        Serial.println("Send ATI");
         this->printlnFlush(F("ATI"));
       }
     }
@@ -105,9 +95,11 @@ public:
   }
 
   void printExtractedRecv() {
-    Serial.print("[[");
-    Serial.print(iotExtractedRecv);
-    Serial.println("]]");
+    if (iotExtractedRecv != F("")) {
+      Serial.print("[[");
+      Serial.print(iotExtractedRecv);
+      Serial.println("]]");
+    }
   }
 
   void printlnFlush(const String& cmd) {

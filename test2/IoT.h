@@ -101,6 +101,9 @@ public:
     this->listen();
     this->consume();
     this->handleResponse();
+    Serial.print("[[");
+    Serial.print(iotExtractedRecv);
+    Serial.println("]]");
   }
 
   void printlnFlush(const String& cmd) {

@@ -292,7 +292,8 @@ private:
       iotCmpStr = F(">");
       iotCmpStrIdx = iotSerialRecv.indexOf(iotCmpStr);  // === special case for ">" ===
       if (iotCmpStrIdx > -1) {
-        iotConnState == IOT_PIPELINE_FINISH_PREPARE_PUBMSG;
+        Serial.print("> detected");
+        iotConnState = IOT_PIPELINE_FINISH_PREPARE_PUBMSG;
       }
     }
 

@@ -266,7 +266,7 @@ private:
 
     if (!mqttForcePublishLock) {
       if (iotConnState == IOT_PIPELINE_INIT) {
-        if (iotStateTimer.asyncDelay(9000UL)) {
+        if (iotStateTimer.asyncDelay(30000UL)) {
           // 1. build payload
           mqttPublMsgPayload = F("{\"data\":1}");
 

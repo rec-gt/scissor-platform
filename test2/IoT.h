@@ -261,6 +261,10 @@ private:
     }
 
     if (iotConnState == IOT_STATE_FINISH_INIT) {
+      iotConnState = IOT_PIPELINE_INIT;
+    }
+
+    if (iotConnState == IOT_PIPELINE_INIT) {
       if (iotStateTimer.asyncDelay(9000UL)) {
         // 1. build payload
         mqttPublMsgPayload = F("{\"data\":1}");
@@ -324,8 +328,11 @@ private:
         mqttPublMsgCommand.concat(F(","));
         mqttPublMsgCommand.concat(mqttPublMsgPayload);
 
+        this->printlnFlush(mqttPublMsgCommand);
+        Serial.println(mqttPublMsgCommand);
+
         // 3. cmd
-        this->printlnFlush(mqttPublMsgPrepare);
+        // this->printlnFlush(mqttPublMsgPrepare);
         mqttPublishLock = true;
         Serial.println(mqttPublMsgPrepare);
         iotConnState = IOT_PIPELINE_WAITING_PREPARE_PUBMSG;
@@ -336,7 +343,6 @@ private:
       iotCmpStr = F("> ");
       iotCmpStrIdx = iotSerialRecv.indexOf(iotCmpStr);  // === special case for ">" ===
       if (iotCmpStrIdx > -1) {
-        Serial.print("> detected");
         iotConnState = IOT_PIPELINE_FINISH_PREPARE_PUBMSG;
       }
     }
@@ -372,6 +378,11 @@ public:
     SerialIoT.println(cmd);
     SerialIoT.flush();
     delay(1);
+  }
+
+  void forcePublush() {
+    if (IOT_PIPELINE_INIT <= iotConnState && iotConnState <= IOT_PIPELINE_FINISH_PUBLISH) {
+    }
   }
 
   void printExtractedRecv() {

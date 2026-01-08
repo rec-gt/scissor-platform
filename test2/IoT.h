@@ -37,14 +37,16 @@ private:
   }
 
   void paramsQueryHandler() {
-    if (iotParamTimer.asyncDelay(3000)) {
-      this->printlnFlush(F("AT+CSQ"));
-      this->printlnFlush(F("AT+CGATT?"));
-      this->printlnFlush(F("AT+CEREG?"));
+    if (!mqttPublishLock) {
+      if (iotParamTimer.asyncDelay(3000)) {
+        this->printlnFlush(F("AT+CSQ"));
+        this->printlnFlush(F("AT+CGATT?"));
+        this->printlnFlush(F("AT+CEREG?"));
+      }
     }
   }
 
-  void monitorParameters() {
+  void monitorParams() {
     // === IMEI ===
     {
       iotCmpStr = F("+CGSN: ");
@@ -70,7 +72,6 @@ private:
       iotCmpStr = F("+CSQ: ");
       iotCmpStrIdx = iotExtractedRecv.indexOf(iotCmpStr);
       if (iotCmpStrIdx > -1) {
-        Serial.println(F("\r\n>>> CSQ RECEIVED"));
         int ws = iotExtractedRecv.indexOf(F(": "));
         int we = iotExtractedRecv.indexOf(F(","));
         {
@@ -249,22 +250,30 @@ private:
     }
 
     if (iotConnState == IOT_STATE_FINISH_INIT) {
-      if (iotStateTimer.asyncDelay(30000UL)) {
+      if (iotStateTimer.asyncDelay(9000UL)) {
         // 1. build payload
-        mqttPublMsgPayload = F("{data:1}");
-        
+        mqttPublMsgPayload = F("{\"data\":1}");
+
         // 2. build prepare msg
-        mqttPublMsgPrepare = F("AT+QMTPUB=0,0,0,0,rgt/");
+
+        mqttPublMsgPrepare = F("AT+QMTPUBEX=0,0,0,0,rgt/");
         mqttPublMsgPrepare.concat(iotIMEI);
         mqttPublMsgPrepare.concat(F("/in,"));
         mqttPublMsgPrepare.concat(mqttPublMsgPayload.length());
 
+        mqttPublMsgCommand = mqttPublMsgPrepare;
+        mqttPublMsgCommand.concat(F(","));
+        mqttPublMsgCommand.concat(mqttPublMsgPayload);
+
+        // 3. cmd
+        this->printlnFlush(mqttPublMsgPrepare);
+        mqttPublishLock = true;
         iotConnState = IOT_PIPELINE_WAITING_PREPARE_PUBMSG;
       }
     }
 
     if (iotConnState == IOT_PIPELINE_WAITING_PREPARE_PUBMSG) {
-      iotCmpStr = F(">");
+      iotCmpStr = F("> ");
       iotCmpStrIdx = iotExtractedRecv.indexOf(iotCmpStr);
       if (iotCmpStrIdx > -1) {
         iotConnState = IOT_PIPELINE_FINISH_PREPARE_PUBMSG;
@@ -274,8 +283,9 @@ private:
     if (iotConnState == IOT_PIPELINE_FINISH_PREPARE_PUBMSG) {
       if (iotStateTimer.autoExpired(1000)) {
         this->printlnFlush(mqttPublMsgPayload);
-        mqttPublMsgPayloadLock = false;
+        mqttPublishLock = false;
         iotConnState = IOT_PIPELINE_WAITING_PUBLISH;
+        iotConnState = IOT_STATE_FINISH_INIT;
       }
     }
   }
@@ -293,7 +303,7 @@ public:
     this->consume();
     this->stateManagement();
     this->paramsQueryHandler();
-    this->monitorParameters();
+    this->monitorParams();
     this->printExtractedRecv();
   }
 

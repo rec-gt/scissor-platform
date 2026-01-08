@@ -59,7 +59,7 @@ byte iotQueryCnt = 0;
 String mqttConnCmd = "";
 String mqttSubsCmd = "";
 
-bool mqttPublMsgPayloadLock = false;
+bool mqttPublishLock = false;
 String mqttPublMsgPrepare = "";
 String mqttPublMsgPayload = "";
 String mqttPublMsgCommand = "";

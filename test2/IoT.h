@@ -17,16 +17,18 @@ private:
   }
 
   void consume() {
-    int delimiterIndex = 0;
+    int delimiterIndex = -1;
+
     {
       delimiterIndex = iotSerialRecv.indexOf(F("\r"));
       if (delimiterIndex > -1) {
         delimiterIndex = iotSerialRecv.indexOf(F("\n"));
       }
     }
+
     if (delimiterIndex != -1) {
       {
-        iotExtractedRecv = iotSerialRecv.substring(0, delimiterIndex);
+        iotExtractedRecv = iotSerialRecv.substring(0, delimiterIndex - 1);
       }
       {
         iotSerialRecv = iotSerialRecv.substring(delimiterIndex + 1);
@@ -262,10 +264,10 @@ private:
         mqttPublMsgPayload.concat(255);
         mqttPublMsgPayload.concat(F(","));
         mqttPublMsgPayload.concat(F("\"ain\":"));
-        mqttPublMsgPayload.concat(F("[4096,4096,4096,4096,4096,4096,4096,4096,4096,4096,4096,4096]"));
+        mqttPublMsgPayload.concat(F("[4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096]"));
         mqttPublMsgPayload.concat(F(","));
         mqttPublMsgPayload.concat(F("\"aout\":"));
-        mqttPublMsgPayload.concat(F("[255,255,255,255]"));
+        mqttPublMsgPayload.concat(F("[255, 255, 255, 255]"));
         mqttPublMsgPayload.concat(F("}"));
 
         // 2. build prepare msg
@@ -273,8 +275,7 @@ private:
         mqttPublMsgPrepare = F("AT+QMTPUBEX=0,0,0,0,rgt/");
         mqttPublMsgPrepare.concat(iotIMEI);
         mqttPublMsgPrepare.concat(F("/in,"));
-        // mqttPublMsgPrepare.concat(mqttPublMsgPayload);
-        mqttPublMsgPrepare.concat(mqttPublMsgPayload.length());
+        mqttPublMsgPrepare.concat(1024);
 
         mqttPublMsgCommand = mqttPublMsgPrepare;
         mqttPublMsgCommand.concat(F(","));
@@ -283,37 +284,25 @@ private:
         // 3. cmd
         this->printlnFlush(mqttPublMsgPrepare);
         Serial.println(mqttPublMsgPrepare);
-        this->printlnFlush(mqttPublMsgPayload);
-        Serial.println(mqttPublMsgPayload);
-
-        // this->printlnFlush(F(""));
-        // // mqttPublishLock = true;
-
-        // iotCmpStr = F("");
-        // iotCmpStrIdx = iotExtractedRecv.indexOf(iotCmpStr);
-        // if (iotCmpStrIdx > -1) {
-        //   Serial.println(mqttPublMsgPayload);
-        //   this->printlnFlush(mqttPublMsgPayload);
-        //   iotConnState = IOT_PIPELINE_WAITING_PREPARE_PUBMSG;
-        // }
+        iotConnState = IOT_PIPELINE_WAITING_PREPARE_PUBMSG;
       }
     }
 
-    // if (iotConnState == IOT_PIPELINE_WAITING_PREPARE_PUBMSG) {
-    //   iotCmpStr = F("> ");
-    //   iotCmpStrIdx = iotExtractedRecv.indexOf(iotCmpStr);
-    //   if (iotCmpStrIdx > -1) {
-    //     iotConnState = IOT_PIPELINE_FINISH_PREPARE_PUBMSG;
-    //   }
-    // }
+    if (iotConnState == IOT_PIPELINE_WAITING_PREPARE_PUBMSG) {
+      iotCmpStr = F(">");
+      iotCmpStrIdx = iotSerialRecv.indexOf(iotCmpStr);  // === special case for ">" ===
+      if (iotCmpStrIdx > -1) {
+        iotConnState == IOT_PIPELINE_FINISH_PREPARE_PUBMSG;
+      }
+    }
 
-    // if (iotConnState == IOT_PIPELINE_FINISH_PREPARE_PUBMSG) {
-    //   Serial.println(mqttPublMsgPayload);
-    //   this->printlnFlush(mqttPublMsgPayload);
-    //   // mqttPublishLock = false;
-    //   iotConnState = IOT_PIPELINE_WAITING_PUBLISH;
-    //   iotConnState = IOT_STATE_FINISH_INIT;
-    // }
+    if (iotConnState == IOT_PIPELINE_FINISH_PREPARE_PUBMSG) {
+      Serial.println(mqttPublMsgPayload);
+      this->printlnFlush(mqttPublMsgPayload);
+      // mqttPublishLock = false;
+      iotConnState = IOT_PIPELINE_WAITING_PUBLISH;
+      iotConnState = IOT_STATE_FINISH_INIT;
+    }
   }
 
 public:

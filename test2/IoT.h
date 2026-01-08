@@ -299,7 +299,6 @@ private:
     if (iotConnState == IOT_PIPELINE_FINISH_PREPARE_PUBMSG) {
       Serial.println(mqttPublMsgPayload);
       this->printlnFlush(mqttPublMsgPayload);
-      // mqttPublishLock = false;
       iotConnState = IOT_PIPELINE_WAITING_PUBLISH;
       iotConnState = IOT_STATE_FINISH_INIT;
     }
@@ -324,11 +323,9 @@ public:
   }
 
   void printlnFlush(const String& cmd) {
-    if (!mqttPublishLock) {
-      SerialIoT.println(cmd);
-      SerialIoT.flush();
-      delay(1);
-    }
+    SerialIoT.println(cmd);
+    SerialIoT.flush();
+    delay(1);
   }
 
   void printExtractedRecv() {

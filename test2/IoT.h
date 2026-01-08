@@ -16,9 +16,37 @@ private:
     }
   }
 
+  // void consume() {
+  //   int delimiterIndex = -1;
+
+  //   {
+  //     delimiterIndex = iotSerialRecv.indexOf(F("\r"));
+  //     if (delimiterIndex > -1) {
+  //       delimiterIndex = iotSerialRecv.indexOf(F("\n"));
+  //     }
+  //   }
+
+  //   if (delimiterIndex != -1) {
+  //     {
+  //       iotExtractedRecv = iotSerialRecv.substring(0, delimiterIndex);
+  //     }
+  //     {
+  //       iotSerialRecv = iotSerialRecv.substring(delimiterIndex + 1);
+  //     }
+  //   } else {
+  //     iotExtractedRecv = F("");
+  //   }
+  // }
+
   void consume() {
     int delimiterIndex = -1;
 
+    // boundary protection
+    {
+      delimiterIndex = iotSerialRecv.length();
+    }
+
+    // boundary protection
     {
       delimiterIndex = iotSerialRecv.indexOf(F("\r"));
       if (delimiterIndex > -1) {
@@ -26,9 +54,12 @@ private:
       }
     }
 
-    if (delimiterIndex != -1) {
+    if (delimiterIndex > -1) {
       {
-        iotExtractedRecv = iotSerialRecv.substring(0, delimiterIndex - 1);
+        iotExtractedRecv = iotSerialRecv.substring(0, delimiterIndex);
+        if (iotExtractedRecv == F("\r") || iotExtractedRecv == F("\n") || iotExtractedRecv == F("\r\n") || iotExtractedRecv == F("\n\r")) {
+          iotExtractedRecv = F("");
+        }
       }
       {
         iotSerialRecv = iotSerialRecv.substring(delimiterIndex + 1);
@@ -277,7 +308,7 @@ private:
         mqttPublMsgPrepare = F("AT+QMTPUBEX=0,0,0,0,rgt/");
         mqttPublMsgPrepare.concat(iotIMEI);
         mqttPublMsgPrepare.concat(F("/in,"));
-        mqttPublMsgPrepare.concat(1024);
+        mqttPublMsgPrepare.concat(mqttPublMsgPayload.length());
 
         mqttPublMsgCommand = mqttPublMsgPrepare;
         mqttPublMsgCommand.concat(F(","));
@@ -292,7 +323,7 @@ private:
     }
 
     if (iotConnState == IOT_PIPELINE_WAITING_PREPARE_PUBMSG) {
-      iotCmpStr = F(">");
+      iotCmpStr = F("> ");
       iotCmpStrIdx = iotSerialRecv.indexOf(iotCmpStr);  // === special case for ">" ===
       if (iotCmpStrIdx > -1) {
         Serial.print("> detected");

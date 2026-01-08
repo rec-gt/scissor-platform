@@ -112,17 +112,6 @@ private:
         }
       }
     }
-
-    // === > ===
-    {
-      iotCmpStr = F(">");
-      iotCmpStrIdx = iotExtractedRecv.indexOf(iotCmpStr);
-      if (iotCmpStrIdx > -1) {
-        if (iotConnState == IOT_PIPELINE_WAITING_PREPARE_PUBMSG) {
-          iotConnState = IOT_PIPELINE_FINISH_PREPARE_PUBMSG;
-        }
-      }
-    }
   }
 
   void stateManagement() {
@@ -267,10 +256,11 @@ private:
 
         // 2. build prepare msg
 
-        mqttPublMsgPrepare = F("AT+QMTPUBEX=0,0,0,0,rgt/");
+        mqttPublMsgPrepare = F("AT+QMTPUB=0,0,0,0,rgt/");
         mqttPublMsgPrepare.concat(iotIMEI);
         mqttPublMsgPrepare.concat(F("/in,"));
-        mqttPublMsgPrepare.concat(mqttPublMsgPayload.length());
+        mqttPublMsgPrepare.concat(mqttPublMsgPayload);
+        // mqttPublMsgPrepare.concat(mqttPublMsgPayload.length());
 
         mqttPublMsgCommand = mqttPublMsgPrepare;
         mqttPublMsgCommand.concat(F(","));
@@ -279,16 +269,16 @@ private:
         // 3. cmd
         Serial.println(mqttPublMsgPrepare);
         this->printlnFlush(mqttPublMsgPrepare);
-        this->printlnFlush(mqttPublMsgPayload);
+        this->printlnFlush(F(""));
         // mqttPublishLock = true;
 
-        // iotCmpStr = F(">");
-        // iotCmpStrIdx = iotExtractedRecv.indexOf(iotCmpStr);
-        // if (iotCmpStrIdx > -1) {
-        //   Serial.println(mqttPublMsgPayload);
-        //   this->printlnFlush(mqttPublMsgPayload);
-        //   iotConnState = IOT_PIPELINE_WAITING_PREPARE_PUBMSG;
-        // }
+        iotCmpStr = F("");
+        iotCmpStrIdx = iotExtractedRecv.indexOf(iotCmpStr);
+        if (iotCmpStrIdx > -1) {
+          Serial.println(mqttPublMsgPayload);
+          this->printlnFlush(mqttPublMsgPayload);
+          iotConnState = IOT_PIPELINE_WAITING_PREPARE_PUBMSG;
+        }
       }
     }
 
@@ -323,6 +313,7 @@ public:
     this->stateManagement();
     this->paramsQueryHandler();
     this->monitorParams();
+
     this->printExtractedRecv();
   }
 

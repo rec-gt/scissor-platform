@@ -16,28 +16,6 @@ private:
     }
   }
 
-  // void consume() {
-  //   int delimiterIndex = -1;
-
-  //   {
-  //     delimiterIndex = iotSerialRecv.indexOf(F("\r"));
-  //     if (delimiterIndex > -1) {
-  //       delimiterIndex = iotSerialRecv.indexOf(F("\n"));
-  //     }
-  //   }
-
-  //   if (delimiterIndex != -1) {
-  //     {
-  //       iotExtractedRecv = iotSerialRecv.substring(0, delimiterIndex);
-  //     }
-  //     {
-  //       iotSerialRecv = iotSerialRecv.substring(delimiterIndex + 1);
-  //     }
-  //   } else {
-  //     iotExtractedRecv = F("");
-  //   }
-  // }
-
   void consume() {
     int delimiterIndex = -1;
 
@@ -46,7 +24,7 @@ private:
       delimiterIndex = iotSerialRecv.length();
     }
 
-    // boundary protection
+    // delimiter check
     {
       delimiterIndex = iotSerialRecv.indexOf(F("\r"));
       if (delimiterIndex > -1) {
@@ -297,10 +275,42 @@ private:
         mqttPublMsgPayload.concat(255);
         mqttPublMsgPayload.concat(F(","));
         mqttPublMsgPayload.concat(F("\"ain\":"));
-        mqttPublMsgPayload.concat(F("[4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096]"));
+        mqttPublMsgPayload.concat(F("["));
+        mqttPublMsgPayload.concat(random(0, 4096));
+        mqttPublMsgPayload.concat(F(","));
+        mqttPublMsgPayload.concat(random(0, 4096));
+        mqttPublMsgPayload.concat(F(","));
+        mqttPublMsgPayload.concat(random(0, 4096));
+        mqttPublMsgPayload.concat(F(","));
+        mqttPublMsgPayload.concat(random(0, 4096));
+        mqttPublMsgPayload.concat(F(","));
+        mqttPublMsgPayload.concat(random(0, 4096));
+        mqttPublMsgPayload.concat(F(","));
+        mqttPublMsgPayload.concat(random(0, 4096));
+        mqttPublMsgPayload.concat(F(","));
+        mqttPublMsgPayload.concat(random(0, 4096));
+        mqttPublMsgPayload.concat(F(","));
+        mqttPublMsgPayload.concat(random(0, 4096));
+        mqttPublMsgPayload.concat(F(","));
+        mqttPublMsgPayload.concat(random(0, 4096));
+        mqttPublMsgPayload.concat(F(","));
+        mqttPublMsgPayload.concat(random(0, 4096));
+        mqttPublMsgPayload.concat(F(","));
+        mqttPublMsgPayload.concat(random(0, 4096));
+        mqttPublMsgPayload.concat(F(","));
+        mqttPublMsgPayload.concat(random(0, 4096));
+        mqttPublMsgPayload.concat(F("]"));
         mqttPublMsgPayload.concat(F(","));
         mqttPublMsgPayload.concat(F("\"aout\":"));
-        mqttPublMsgPayload.concat(F("[255, 255, 255, 255]"));
+        mqttPublMsgPayload.concat(F("["));
+        mqttPublMsgPayload.concat(random(0, 255));
+        mqttPublMsgPayload.concat(F(","));
+        mqttPublMsgPayload.concat(random(0, 255));
+        mqttPublMsgPayload.concat(F(","));
+        mqttPublMsgPayload.concat(random(0, 255));
+        mqttPublMsgPayload.concat(F(","));
+        mqttPublMsgPayload.concat(random(0, 255));
+        mqttPublMsgPayload.concat(F("]"));
         mqttPublMsgPayload.concat(F("}"));
 
         // 2. build prepare msg

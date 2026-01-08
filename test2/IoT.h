@@ -39,10 +39,12 @@ private:
   }
 
   void paramsQueryHandler() {
-    if (iotParamTimer.asyncDelay(3000)) {
-      this->printlnFlush(F("AT+CSQ"));
-      this->printlnFlush(F("AT+CGATT?"));
-      this->printlnFlush(F("AT+CEREG?"));
+    if (!mqttPublishLock) {
+      if (iotParamTimer.asyncDelay(3000)) {
+        this->printlnFlush(F("AT+CSQ"));
+        this->printlnFlush(F("AT+CGATT?"));
+        this->printlnFlush(F("AT+CEREG?"));
+      }
     }
   }
 
@@ -283,6 +285,7 @@ private:
 
         // 3. cmd
         this->printlnFlush(mqttPublMsgPrepare);
+        mqttPublishLock = true;
         Serial.println(mqttPublMsgPrepare);
         iotConnState = IOT_PIPELINE_WAITING_PREPARE_PUBMSG;
       }
@@ -300,6 +303,7 @@ private:
     if (iotConnState == IOT_PIPELINE_FINISH_PREPARE_PUBMSG) {
       Serial.println(mqttPublMsgPayload);
       this->printlnFlush(mqttPublMsgPayload);
+      mqttPublishLock = true;
       iotConnState = IOT_PIPELINE_WAITING_PUBLISH;
       iotConnState = IOT_STATE_FINISH_INIT;
     }

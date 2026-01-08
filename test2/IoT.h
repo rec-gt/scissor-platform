@@ -37,12 +37,10 @@ private:
   }
 
   void paramsQueryHandler() {
-    if (!mqttPublishLock) {
-      // if (iotParamTimer.asyncDelay(3000)) {
-      //   this->printlnFlush(F("AT+CSQ"));
-      //   this->printlnFlush(F("AT+CGATT?"));
-      //   this->printlnFlush(F("AT+CEREG?"));
-      // }
+    if (iotParamTimer.asyncDelay(3000)) {
+      this->printlnFlush(F("AT+CSQ"));
+      this->printlnFlush(F("AT+CGATT?"));
+      this->printlnFlush(F("AT+CEREG?"));
     }
   }
 
@@ -283,10 +281,11 @@ private:
         mqttPublMsgCommand.concat(mqttPublMsgPayload);
 
         // 3. cmd
-        Serial.println(mqttPublMsgPrepare);
         this->printlnFlush(mqttPublMsgPrepare);
+        Serial.println(mqttPublMsgPrepare);
         this->printlnFlush(mqttPublMsgPayload);
-        
+        Serial.println(mqttPublMsgPayload);
+
         // this->printlnFlush(F(""));
         // // mqttPublishLock = true;
 
@@ -336,9 +335,11 @@ public:
   }
 
   void printlnFlush(const String& cmd) {
-    SerialIoT.println(cmd);
-    SerialIoT.flush();
-    delay(1);
+    if (!mqttPublishLock) {
+      SerialIoT.println(cmd);
+      SerialIoT.flush();
+      delay(1);
+    }
   }
 
   void printExtractedRecv() {

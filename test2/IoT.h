@@ -112,6 +112,17 @@ private:
         }
       }
     }
+
+    // === > ===
+    {
+      iotCmpStr = F("> ");
+      iotCmpStrIdx = iotExtractedRecv.indexOf(iotCmpStr);
+      if (iotCmpStrIdx > -1) {
+        if (iotConnState == IOT_PIPELINE_WAITING_PREPARE_PUBMSG) {
+          iotConnState = IOT_PIPELINE_FINISH_PREPARE_PUBMSG;
+        }
+      }
+    }
   }
 
   void stateManagement() {
@@ -266,27 +277,27 @@ private:
         mqttPublMsgCommand.concat(mqttPublMsgPayload);
 
         // 3. cmd
+        Serial.println(mqttPublMsgPrepare);
         this->printlnFlush(mqttPublMsgPrepare);
         mqttPublishLock = true;
         iotConnState = IOT_PIPELINE_WAITING_PREPARE_PUBMSG;
       }
     }
 
-    if (iotConnState == IOT_PIPELINE_WAITING_PREPARE_PUBMSG) {
-      iotCmpStr = F("> ");
-      iotCmpStrIdx = iotExtractedRecv.indexOf(iotCmpStr);
-      if (iotCmpStrIdx > -1) {
-        iotConnState = IOT_PIPELINE_FINISH_PREPARE_PUBMSG;
-      }
-    }
+    // if (iotConnState == IOT_PIPELINE_WAITING_PREPARE_PUBMSG) {
+    //   iotCmpStr = F("> ");
+    //   iotCmpStrIdx = iotExtractedRecv.indexOf(iotCmpStr);
+    //   if (iotCmpStrIdx > -1) {
+    //     iotConnState = IOT_PIPELINE_FINISH_PREPARE_PUBMSG;
+    //   }
+    // }
 
     if (iotConnState == IOT_PIPELINE_FINISH_PREPARE_PUBMSG) {
-      if (iotStateTimer.autoExpired(1000)) {
-        this->printlnFlush(mqttPublMsgPayload);
-        mqttPublishLock = false;
-        iotConnState = IOT_PIPELINE_WAITING_PUBLISH;
-        iotConnState = IOT_STATE_FINISH_INIT;
-      }
+      Serial.println(mqttPublMsgPayload);
+      this->printlnFlush(mqttPublMsgPayload);
+      mqttPublishLock = false;
+      iotConnState = IOT_PIPELINE_WAITING_PUBLISH;
+      iotConnState = IOT_STATE_FINISH_INIT;
     }
   }
 

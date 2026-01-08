@@ -60,6 +60,7 @@ String mqttConnCmd = "";
 String mqttSubsCmd = "";
 
 bool mqttPublishLock = false;
+bool mqttForcePublishLock = false;
 String mqttPublMsgPrepare = "";
 String mqttPublMsgPayload = "";
 String mqttPublMsgCommand = "";

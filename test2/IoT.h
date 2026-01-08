@@ -48,7 +48,7 @@ private:
   }
 
   void paramsQueryHandler() {
-    if (!mqttPublishLock) {
+    if (!mqttPublishLock && !mqttForcePublishLock) {
       if (iotParamTimer.asyncDelay(3000)) {
         this->printlnFlush(F("AT+CSQ"));
         this->printlnFlush(F("AT+CGATT?"));
@@ -264,95 +264,94 @@ private:
       iotConnState = IOT_PIPELINE_INIT;
     }
 
-    if (iotConnState == IOT_PIPELINE_INIT) {
-      if (iotStateTimer.asyncDelay(9000UL)) {
-        // 1. build payload
-        mqttPublMsgPayload = F("{\"data\":1}");
+    if (!mqttForcePublishLock) {
+      if (iotConnState == IOT_PIPELINE_INIT) {
+        if (iotStateTimer.asyncDelay(9000UL)) {
+          // 1. build payload
+          mqttPublMsgPayload = F("{\"data\":1}");
 
-        mqttPublMsgPayload = F("{\"csq\":");
-        mqttPublMsgPayload.concat(iotCSQ);
-        mqttPublMsgPayload.concat(F(","));
-        mqttPublMsgPayload.concat(F("\"din\":"));
-        mqttPublMsgPayload.concat(255);
-        mqttPublMsgPayload.concat(F(","));
-        mqttPublMsgPayload.concat(F("\"dout\":"));
-        mqttPublMsgPayload.concat(255);
-        mqttPublMsgPayload.concat(F(","));
-        mqttPublMsgPayload.concat(F("\"ain\":"));
-        mqttPublMsgPayload.concat(F("["));
-        mqttPublMsgPayload.concat(random(0, 4096));
-        mqttPublMsgPayload.concat(F(","));
-        mqttPublMsgPayload.concat(random(0, 4096));
-        mqttPublMsgPayload.concat(F(","));
-        mqttPublMsgPayload.concat(random(0, 4096));
-        mqttPublMsgPayload.concat(F(","));
-        mqttPublMsgPayload.concat(random(0, 4096));
-        mqttPublMsgPayload.concat(F(","));
-        mqttPublMsgPayload.concat(random(0, 4096));
-        mqttPublMsgPayload.concat(F(","));
-        mqttPublMsgPayload.concat(random(0, 4096));
-        mqttPublMsgPayload.concat(F(","));
-        mqttPublMsgPayload.concat(random(0, 4096));
-        mqttPublMsgPayload.concat(F(","));
-        mqttPublMsgPayload.concat(random(0, 4096));
-        mqttPublMsgPayload.concat(F(","));
-        mqttPublMsgPayload.concat(random(0, 4096));
-        mqttPublMsgPayload.concat(F(","));
-        mqttPublMsgPayload.concat(random(0, 4096));
-        mqttPublMsgPayload.concat(F(","));
-        mqttPublMsgPayload.concat(random(0, 4096));
-        mqttPublMsgPayload.concat(F(","));
-        mqttPublMsgPayload.concat(random(0, 4096));
-        mqttPublMsgPayload.concat(F("]"));
-        mqttPublMsgPayload.concat(F(","));
-        mqttPublMsgPayload.concat(F("\"aout\":"));
-        mqttPublMsgPayload.concat(F("["));
-        mqttPublMsgPayload.concat(random(0, 255));
-        mqttPublMsgPayload.concat(F(","));
-        mqttPublMsgPayload.concat(random(0, 255));
-        mqttPublMsgPayload.concat(F(","));
-        mqttPublMsgPayload.concat(random(0, 255));
-        mqttPublMsgPayload.concat(F(","));
-        mqttPublMsgPayload.concat(random(0, 255));
-        mqttPublMsgPayload.concat(F("]"));
-        mqttPublMsgPayload.concat(F("}"));
+          mqttPublMsgPayload = F("{\"csq\":");
+          mqttPublMsgPayload.concat(iotCSQ);
+          mqttPublMsgPayload.concat(F(","));
+          mqttPublMsgPayload.concat(F("\"din\":"));
+          mqttPublMsgPayload.concat(255);
+          mqttPublMsgPayload.concat(F(","));
+          mqttPublMsgPayload.concat(F("\"dout\":"));
+          mqttPublMsgPayload.concat(255);
+          mqttPublMsgPayload.concat(F(","));
+          mqttPublMsgPayload.concat(F("\"ain\":"));
+          mqttPublMsgPayload.concat(F("["));
+          mqttPublMsgPayload.concat(random(0, 4096));
+          mqttPublMsgPayload.concat(F(","));
+          mqttPublMsgPayload.concat(random(0, 4096));
+          mqttPublMsgPayload.concat(F(","));
+          mqttPublMsgPayload.concat(random(0, 4096));
+          mqttPublMsgPayload.concat(F(","));
+          mqttPublMsgPayload.concat(random(0, 4096));
+          mqttPublMsgPayload.concat(F(","));
+          mqttPublMsgPayload.concat(random(0, 4096));
+          mqttPublMsgPayload.concat(F(","));
+          mqttPublMsgPayload.concat(random(0, 4096));
+          mqttPublMsgPayload.concat(F(","));
+          mqttPublMsgPayload.concat(random(0, 4096));
+          mqttPublMsgPayload.concat(F(","));
+          mqttPublMsgPayload.concat(random(0, 4096));
+          mqttPublMsgPayload.concat(F(","));
+          mqttPublMsgPayload.concat(random(0, 4096));
+          mqttPublMsgPayload.concat(F(","));
+          mqttPublMsgPayload.concat(random(0, 4096));
+          mqttPublMsgPayload.concat(F(","));
+          mqttPublMsgPayload.concat(random(0, 4096));
+          mqttPublMsgPayload.concat(F(","));
+          mqttPublMsgPayload.concat(random(0, 4096));
+          mqttPublMsgPayload.concat(F("]"));
+          mqttPublMsgPayload.concat(F(","));
+          mqttPublMsgPayload.concat(F("\"aout\":"));
+          mqttPublMsgPayload.concat(F("["));
+          mqttPublMsgPayload.concat(random(0, 255));
+          mqttPublMsgPayload.concat(F(","));
+          mqttPublMsgPayload.concat(random(0, 255));
+          mqttPublMsgPayload.concat(F(","));
+          mqttPublMsgPayload.concat(random(0, 255));
+          mqttPublMsgPayload.concat(F(","));
+          mqttPublMsgPayload.concat(random(0, 255));
+          mqttPublMsgPayload.concat(F("]"));
+          mqttPublMsgPayload.concat(F("}"));
 
-        // 2. build prepare msg
+          // 2. build prepare msg
 
-        mqttPublMsgPrepare = F("AT+QMTPUBEX=0,0,0,0,rgt/");
-        mqttPublMsgPrepare.concat(iotIMEI);
-        mqttPublMsgPrepare.concat(F("/in,"));
-        mqttPublMsgPrepare.concat(mqttPublMsgPayload.length());
+          mqttPublMsgPrepare = F("AT+QMTPUBEX=0,0,0,0,rgt/");
+          mqttPublMsgPrepare.concat(iotIMEI);
+          mqttPublMsgPrepare.concat(F("/in,"));
+          mqttPublMsgPrepare.concat(mqttPublMsgPayload.length());
 
-        mqttPublMsgCommand = mqttPublMsgPrepare;
-        mqttPublMsgCommand.concat(F(","));
-        mqttPublMsgCommand.concat(mqttPublMsgPayload);
+          mqttPublMsgCommand = mqttPublMsgPrepare;
+          mqttPublMsgCommand.concat(F(","));
+          mqttPublMsgCommand.concat(mqttPublMsgPayload);
 
-        this->printlnFlush(mqttPublMsgCommand);
-        Serial.println(mqttPublMsgCommand);
-
-        // 3. cmd
-        // this->printlnFlush(mqttPublMsgPrepare);
-        mqttPublishLock = true;
-        Serial.println(mqttPublMsgPrepare);
-        iotConnState = IOT_PIPELINE_WAITING_PREPARE_PUBMSG;
+          // 3. cmd
+          mqttPublishLock = true;
+          this->printlnFlush(mqttPublMsgPrepare);
+          Serial.println(mqttPublMsgPrepare);
+          iotConnState = IOT_PIPELINE_WAITING_PREPARE_PUBMSG;
+        }
       }
-    }
 
-    if (iotConnState == IOT_PIPELINE_WAITING_PREPARE_PUBMSG) {
-      iotCmpStr = F("> ");
-      iotCmpStrIdx = iotSerialRecv.indexOf(iotCmpStr);  // === special case for ">" ===
-      if (iotCmpStrIdx > -1) {
-        iotConnState = IOT_PIPELINE_FINISH_PREPARE_PUBMSG;
+      if (iotConnState == IOT_PIPELINE_WAITING_PREPARE_PUBMSG) {
+        iotCmpStr = F("> ");
+        iotCmpStrIdx = iotSerialRecv.indexOf(iotCmpStr);  // === special case for ">" ===
+        if (iotCmpStrIdx > -1) {
+          iotConnState = IOT_PIPELINE_FINISH_PREPARE_PUBMSG;
+        }
       }
-    }
 
-    if (iotConnState == IOT_PIPELINE_FINISH_PREPARE_PUBMSG) {
-      Serial.println(mqttPublMsgPayload);
-      this->printlnFlush(mqttPublMsgPayload);
-      mqttPublishLock = true;
-      iotConnState = IOT_PIPELINE_WAITING_PUBLISH;
-      iotConnState = IOT_STATE_FINISH_INIT;
+      if (iotConnState == IOT_PIPELINE_FINISH_PREPARE_PUBMSG) {
+        Serial.println(mqttPublMsgPayload);
+        this->printlnFlush(mqttPublMsgPayload);
+        mqttPublishLock = false;
+        iotConnState = IOT_PIPELINE_WAITING_PUBLISH;
+        iotConnState = IOT_STATE_FINISH_INIT;
+      }
     }
   }
 
@@ -380,8 +379,15 @@ public:
     delay(1);
   }
 
-  void forcePublush() {
+  void forcePublish() {
     if (IOT_PIPELINE_INIT <= iotConnState && iotConnState <= IOT_PIPELINE_FINISH_PUBLISH) {
+      if (!mqttPublishLock) {
+        mqttForcePublishLock = true;
+        this->printlnFlush(mqttPublMsgPrepare);
+        this->printlnFlush(mqttPublMsgPayload);
+        Serial.println("force published");
+        mqttForcePublishLock = false;
+      }
     }
   }
 

@@ -21,6 +21,9 @@ void serialInput() {
     if (c == '\r') {
       if (cmd == "RESET") {
         iotConnState = IOT_STATE_WAITING_INIT;
+      } else if (cmd == "FORCE") {
+        Serial.print("force publish");
+        iot.forcePublish();
       } else {
         iot.printlnFlush(cmd);
       }

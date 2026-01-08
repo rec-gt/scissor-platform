@@ -38,11 +38,11 @@ private:
 
   void paramsQueryHandler() {
     if (!mqttPublishLock) {
-      if (iotParamTimer.asyncDelay(3000)) {
-        this->printlnFlush(F("AT+CSQ"));
-        this->printlnFlush(F("AT+CGATT?"));
-        this->printlnFlush(F("AT+CEREG?"));
-      }
+      // if (iotParamTimer.asyncDelay(3000)) {
+      //   this->printlnFlush(F("AT+CSQ"));
+      //   this->printlnFlush(F("AT+CGATT?"));
+      //   this->printlnFlush(F("AT+CEREG?"));
+      // }
     }
   }
 
@@ -115,7 +115,7 @@ private:
 
     // === > ===
     {
-      iotCmpStr = F("> ");
+      iotCmpStr = F(">");
       iotCmpStrIdx = iotExtractedRecv.indexOf(iotCmpStr);
       if (iotCmpStrIdx > -1) {
         if (iotConnState == IOT_PIPELINE_WAITING_PREPARE_PUBMSG) {
@@ -279,8 +279,16 @@ private:
         // 3. cmd
         Serial.println(mqttPublMsgPrepare);
         this->printlnFlush(mqttPublMsgPrepare);
-        mqttPublishLock = true;
-        iotConnState = IOT_PIPELINE_WAITING_PREPARE_PUBMSG;
+        this->printlnFlush(mqttPublMsgPayload);
+        // mqttPublishLock = true;
+
+        // iotCmpStr = F(">");
+        // iotCmpStrIdx = iotExtractedRecv.indexOf(iotCmpStr);
+        // if (iotCmpStrIdx > -1) {
+        //   Serial.println(mqttPublMsgPayload);
+        //   this->printlnFlush(mqttPublMsgPayload);
+        //   iotConnState = IOT_PIPELINE_WAITING_PREPARE_PUBMSG;
+        // }
       }
     }
 
@@ -292,13 +300,13 @@ private:
     //   }
     // }
 
-    if (iotConnState == IOT_PIPELINE_FINISH_PREPARE_PUBMSG) {
-      Serial.println(mqttPublMsgPayload);
-      this->printlnFlush(mqttPublMsgPayload);
-      mqttPublishLock = false;
-      iotConnState = IOT_PIPELINE_WAITING_PUBLISH;
-      iotConnState = IOT_STATE_FINISH_INIT;
-    }
+    // if (iotConnState == IOT_PIPELINE_FINISH_PREPARE_PUBMSG) {
+    //   Serial.println(mqttPublMsgPayload);
+    //   this->printlnFlush(mqttPublMsgPayload);
+    //   // mqttPublishLock = false;
+    //   iotConnState = IOT_PIPELINE_WAITING_PUBLISH;
+    //   iotConnState = IOT_STATE_FINISH_INIT;
+    // }
   }
 
 public:

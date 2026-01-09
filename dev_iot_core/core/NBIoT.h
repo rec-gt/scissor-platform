@@ -1,4 +1,4 @@
-#include "./AsyncTimer.h"
+#include "./Timer.h"
 #include "./Utils.h"
 #include "./Watchdog.h"
 #include "./Globals.h"
@@ -10,7 +10,7 @@
 
 Watchdog nbiotWatchdog(30000UL);
 
-AsyncTimer nbiotTimer(10000UL);
+Timer nbiotTimer(10000UL);
 
 bool nbiotSoftReset = false;
 

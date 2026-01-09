@@ -2,7 +2,7 @@
 #include "./core/NBIoT.h"
 #include "./core/DisplayClient.h"
 #include "./core/Utils.h"
-#include "./core/AsyncTimer.h"
+#include "./core/Timer.h"
 #include "./edition/SubSystem.h"
 #include <avr/wdt.h>
 
@@ -16,7 +16,7 @@ Utils utils;
 
 SubSystem subSystem;
 
-AsyncTimer systemTimer(86400000UL);
+Timer systemTimer(86400000UL);
 
 void setup() {
   Serial.begin(9600);

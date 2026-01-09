@@ -143,6 +143,14 @@ private:
   void stateManagement() {
     if (iotConnState == IOT_STATE_WAITING_INIT) {
       Serial.println(">>> INIT, RESET");
+
+      iotCSQErrCnt.reset();
+      iotCGATTErrCnt.reset();
+      iotCEREGErrCnt.reset();
+      iotPublishErrCnt.reset();
+      mqttPublishLock.release();
+      forcePublishMode = false;
+
       iotConnState = IOT_STATE_WAITING_RESET;
       iotConnState = IOT_STATE_WAITING_RESET_HARDWARE;
     }

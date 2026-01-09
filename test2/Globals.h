@@ -45,7 +45,6 @@ enum IOT_STATE {
 };
 
 byte iotConnState = 0;
-byte iotResetState = 0;
 String iotSerialRecv = "";
 String iotExtractedRecv = "";
 
@@ -63,19 +62,11 @@ byte iotQueryCnt = 0;
 String mqttConnCmd = "";
 String mqttSubsCmd = "";
 
-// bool mqttPublishLock = false;
-// bool mqttForcePublishLock = false;
 Lock mqttPublishLock;
-Lock forcePublishLock;
 String mqttPublMsgPrepare = "";
 String mqttPublMsgPayload = "";
-String mqttPublMsgCommand = "";
 String mqttSubsMsgContent = "";
 
-String mqttPubAck = "";
-String mqttSubAck = "";
-
-bool iotSoftReset = false;
 bool iotDebugMode = false;
 bool forcePublishMode = false;
 

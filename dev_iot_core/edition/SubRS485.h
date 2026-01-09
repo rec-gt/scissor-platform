@@ -57,8 +57,7 @@ public:
   }
 
   void answer() {
-    cmpStr = F("AT");
-    int idx = rs485SerialRecv.indexOf(cmpStr);
+    int idx = rs485SerialRecv.indexOf(F("AT"));
 
     if (idx > -1) {
       this->printlnFlush(F("[Hello from REC-GT]"));

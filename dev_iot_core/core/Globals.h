@@ -152,8 +152,6 @@ byte DOPayload = 0;
 String AIPayload = "";
 String AOPayload = "";
 
-String cmpStr = "";
-
 /*=== IoT (4G & NB-IoT) ===*/
 #define SerialIoT Serial1
 #define IOT_MODULE_RESET_PIN 24
@@ -201,7 +199,6 @@ byte iotConnState = 0;
 String iotSerialRecv = "";
 String iotExtractedRecv = "";
 
-String iotCmpStr = "";
 int iotCmpStrIdx = 0;
 
 String iotCSQ = "";

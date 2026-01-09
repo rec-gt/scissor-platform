@@ -26,25 +26,26 @@ public:
     }
   }
 
-  void serialInput() {
-    while (Serial.available() > 0) {
-      char c = Serial.read();
-      if (c != '\r' && c != '\n') {
-        cmd += c;
-      }
-      if (c == '\r') {
-        if (cmd == F("RESET")) {
-          iotConnState = IOT_STATE_WAITING_INIT;
-        } else if (cmd == F("FORCE")) {
-          Serial.print(F("Force Publish"));
-          iot.forcePublish();
-        } else {
-          iot.printlnFlush(cmd);
-        }
-        cmd = "";
-      }
-    }
-  }
+  // String cmd = "";
+  // void serialInput() {
+  //   while (Serial.available() > 0) {
+  //     char c = Serial.read();
+  //     if (c != '\r' && c != '\n') {
+  //       cmd += c;
+  //     }
+  //     if (c == '\r') {
+  //       if (cmd == F("RESET")) {
+  //         iotConnState = IOT_STATE_WAITING_INIT;
+  //       } else if (cmd == F("FORCE")) {
+  //         Serial.print(F("Force Publish"));
+  //         iot.forcePublish();
+  //       } else {
+  //         iot.printlnFlush(cmd);
+  //       }
+  //       cmd = "";
+  //     }
+  //   }
+  // }
 
   ~Utils(){};
 };

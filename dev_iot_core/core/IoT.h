@@ -59,8 +59,7 @@ private:
   void monitorParams() {
     // === IMEI ===
     {
-      iotCmpStr = F("+CGSN: ");
-      iotCmpStrIdx = iotExtractedRecv.indexOf(iotCmpStr);
+      iotCmpStrIdx = iotExtractedRecv.indexOf(F("+CGSN: "));
 
       if (iotCmpStrIdx > -1) {
         {
@@ -79,8 +78,7 @@ private:
 
     // === CSQ ===
     {
-      iotCmpStr = F("+CSQ: ");
-      iotCmpStrIdx = iotExtractedRecv.indexOf(iotCmpStr);
+      iotCmpStrIdx = iotExtractedRecv.indexOf(F("+CSQ: "));
       if (iotCmpStrIdx > -1) {
         int ws = iotExtractedRecv.indexOf(F(": "));
         int we = iotExtractedRecv.indexOf(F(","));
@@ -102,8 +100,7 @@ private:
 
     // === CGATT ===
     {
-      iotCmpStr = F("+CGATT: ");
-      iotCmpStrIdx = iotExtractedRecv.indexOf(iotCmpStr);
+      iotCmpStrIdx = iotExtractedRecv.indexOf(F("+CGATT: "));
       if (iotCmpStrIdx > -1) {
         {
           iotCGATT = iotExtractedRecv.substring(8, 9);
@@ -121,8 +118,7 @@ private:
 
     // === CEREG ===
     {
-      iotCmpStr = F("+CEREG: ");
-      iotCmpStrIdx = iotExtractedRecv.indexOf(iotCmpStr);
+      iotCmpStrIdx = iotExtractedRecv.indexOf(F("+CEREG: "));
       if (iotCmpStrIdx > -1) {
         {
           iotCEREG = iotExtractedRecv.substring(8, 11);
@@ -147,7 +143,7 @@ private:
       iotCSQErrCnt.reset();
       iotCGATTErrCnt.reset();
       iotCEREGErrCnt.reset();
-      iotPublishErrCnt.reset();
+      mqttPublishErrCnt.reset();
       mqttPublishLock.release();
       forcePublishMode = false;
 
@@ -171,8 +167,7 @@ private:
     }
 
     if (iotConnState == IOT_STATE_WAITING_RESET_SOFTWARE) {
-      iotCmpStr = F("RDY");
-      iotCmpStrIdx = iotExtractedRecv.indexOf(iotCmpStr);
+      iotCmpStrIdx = iotExtractedRecv.indexOf(F("RDY"));
       if (iotCmpStrIdx > -1) {
         Serial.println(F("\r\n>>> IOT READY"));
         iotConnState = IOT_STATE_FINISH_RESET_SOFTWARE;
@@ -243,8 +238,7 @@ private:
         this->printlnFlush(F("AT+QMTOPEN=0,iot.rec-gt.com,1880"));
       }
 
-      iotCmpStr = F("+QMTOPEN: 0,0");
-      iotCmpStrIdx = iotExtractedRecv.indexOf(iotCmpStr);
+      iotCmpStrIdx = iotExtractedRecv.indexOf(F("+QMTOPEN: 0,0"));
       if (iotCmpStrIdx > -1) {
         iotConnState = IOT_STATE_FINISH_OPEN_MQTT;
       }
@@ -259,8 +253,7 @@ private:
         this->printlnFlush(mqttConnCmd);
       }
 
-      iotCmpStr = F("+QMTCONN: 0,0,0");
-      iotCmpStrIdx = iotExtractedRecv.indexOf(iotCmpStr);
+      iotCmpStrIdx = iotExtractedRecv.indexOf(F("+QMTCONN: 0,0,0"));
       if (iotCmpStrIdx > -1) {
         iotConnState = IOT_STATE_FINISH_CONN_MQTT;
       }
@@ -275,8 +268,7 @@ private:
         this->printlnFlush(mqttSubsCmd);
       }
 
-      iotCmpStr = F("+QMTSUB: 0,1,0,0");
-      iotCmpStrIdx = iotExtractedRecv.indexOf(iotCmpStr);
+      iotCmpStrIdx = iotExtractedRecv.indexOf(F("+QMTSUB: 0,1,0,0"));
       if (iotCmpStrIdx > -1) {
         iotConnState = IOT_STATE_FINISH_SUBS_MQTT_TOPIC;
         iotConnState = IOT_STATE_FINISH_INIT;
@@ -305,14 +297,13 @@ private:
     }
 
     if (iotConnState == IOT_PIPELINE_WAITING_PREPARE_PUBMSG) {
-      iotCmpStr = F("> ");
-      iotCmpStrIdx = iotSerialRecv.indexOf(iotCmpStr);  // === special case for ">" ===
+      iotCmpStrIdx = iotSerialRecv.indexOf(F("> "));  // === special case for ">" ===
       if (iotCmpStrIdx > -1) {
         iotConnState = IOT_PIPELINE_FINISH_PREPARE_PUBMSG;
-        iotPublishErrCnt.reset();
+        mqttPublishErrCnt.reset();
       } else {
         if (iotStateTimer.autoTimeout(1000)) {
-          iotPublishErrCnt.accu();
+          mqttPublishErrCnt.accu();
         }
       }
     }
@@ -335,7 +326,7 @@ private:
       iotConnState = IOT_STATE_WAITING_INIT;
     }
 
-    if (iotPublishErrCnt.over(5)) {
+    if (mqttPublishErrCnt.over(5)) {
       iotConnState = IOT_STATE_WAITING_INIT;
     }
 
@@ -352,62 +343,7 @@ private:
     }
   }
 
-  void mqttMsgBuilder() {
-    // 1. build payload
-    mqttPublMsgPayload = F("{\"csq\":");
-    mqttPublMsgPayload.concat(iotCSQ);
-    mqttPublMsgPayload.concat(F(","));
-    mqttPublMsgPayload.concat(F("\"din\":"));
-    mqttPublMsgPayload.concat(255);
-    mqttPublMsgPayload.concat(F(","));
-    mqttPublMsgPayload.concat(F("\"dout\":"));
-    mqttPublMsgPayload.concat(255);
-    mqttPublMsgPayload.concat(F(","));
-    mqttPublMsgPayload.concat(F("\"ain\":"));
-    mqttPublMsgPayload.concat(F("["));
-    mqttPublMsgPayload.concat(random(0, 4096));
-    mqttPublMsgPayload.concat(F(","));
-    mqttPublMsgPayload.concat(random(0, 4096));
-    mqttPublMsgPayload.concat(F(","));
-    mqttPublMsgPayload.concat(random(0, 4096));
-    mqttPublMsgPayload.concat(F(","));
-    mqttPublMsgPayload.concat(random(0, 4096));
-    mqttPublMsgPayload.concat(F(","));
-    mqttPublMsgPayload.concat(random(0, 4096));
-    mqttPublMsgPayload.concat(F(","));
-    mqttPublMsgPayload.concat(random(0, 4096));
-    mqttPublMsgPayload.concat(F(","));
-    mqttPublMsgPayload.concat(random(0, 4096));
-    mqttPublMsgPayload.concat(F(","));
-    mqttPublMsgPayload.concat(random(0, 4096));
-    mqttPublMsgPayload.concat(F(","));
-    mqttPublMsgPayload.concat(random(0, 4096));
-    mqttPublMsgPayload.concat(F(","));
-    mqttPublMsgPayload.concat(random(0, 4096));
-    mqttPublMsgPayload.concat(F(","));
-    mqttPublMsgPayload.concat(random(0, 4096));
-    mqttPublMsgPayload.concat(F(","));
-    mqttPublMsgPayload.concat(random(0, 4096));
-    mqttPublMsgPayload.concat(F("]"));
-    mqttPublMsgPayload.concat(F(","));
-    mqttPublMsgPayload.concat(F("\"aout\":"));
-    mqttPublMsgPayload.concat(F("["));
-    mqttPublMsgPayload.concat(random(0, 255));
-    mqttPublMsgPayload.concat(F(","));
-    mqttPublMsgPayload.concat(random(0, 255));
-    mqttPublMsgPayload.concat(F(","));
-    mqttPublMsgPayload.concat(random(0, 255));
-    mqttPublMsgPayload.concat(F(","));
-    mqttPublMsgPayload.concat(random(0, 255));
-    mqttPublMsgPayload.concat(F("]"));
-    mqttPublMsgPayload.concat(F("}"));
 
-    // 2. build prepare msg
-    mqttPublMsgPrepare = F("AT+QMTPUBEX=0,0,0,0,rgt/");
-    mqttPublMsgPrepare.concat(iotIMEI);
-    mqttPublMsgPrepare.concat(F("/in,"));
-    mqttPublMsgPrepare.concat(mqttPublMsgPayload.length());
-  }
 
 public:
   void init() {
@@ -427,14 +363,35 @@ public:
     this->printExtractedRecv();
   }
 
-  void buildMsg() {
-    this->mqttMsgBuilder();
-  }
-
   void printlnFlush(const String& cmd) {
     SerialIoT.println(cmd);
     SerialIoT.flush();
     delay(1);
+  }
+
+  void buildMsg(byte _DIPayload, byte _DOPayload, const String& _AIPayload, const String& _AOPayload) {
+    // 1. build payload
+    mqttPublMsgPayload = F("{\"csq\":");
+    mqttPublMsgPayload.concat(iotCSQ);
+    mqttPublMsgPayload.concat(F(","));
+    mqttPublMsgPayload.concat(F("\"din\":"));
+    mqttPublMsgPayload.concat(_DIPayload);
+    mqttPublMsgPayload.concat(F(","));
+    mqttPublMsgPayload.concat(F("\"dout\":"));
+    mqttPublMsgPayload.concat(_DOPayload);
+    mqttPublMsgPayload.concat(F(","));
+    mqttPublMsgPayload.concat(F("\"ain\":"));
+    mqttPublMsgPayload.concat(_AIPayload);
+    mqttPublMsgPayload.concat(F(","));
+    mqttPublMsgPayload.concat(F("\"aout\":"));
+    mqttPublMsgPayload.concat(_AOPayload);
+    mqttPublMsgPayload.concat(F("}"));
+
+    // 2. build prepare msg
+    mqttPublMsgPrepare = F("AT+QMTPUBEX=0,0,0,0,rgt/");
+    mqttPublMsgPrepare.concat(iotIMEI);
+    mqttPublMsgPrepare.concat(F("/in,"));
+    mqttPublMsgPrepare.concat(mqttPublMsgPayload.length());
   }
 
   void forcePublish() {

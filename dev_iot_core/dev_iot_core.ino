@@ -16,7 +16,7 @@ Utils utils;
 
 SubSystem subSystem;
 
-Timer systemTimer(86400000UL);
+Timer systemTimer(86400000);
 
 void setup() {
   Serial.begin(9600);
@@ -28,7 +28,7 @@ void setup() {
   iotCEREG.reserve(8);
   mqttSubsMsgContent.reserve(8);
   iotIMEI.reserve(32);
-  cmpStr.reserve(32);
+  iotExtractedRecv.reserve(32);
   AOPayload.reserve(64);
   mqttConnCmd.reserve(64);
   mqttSubsCmd.reserve(64);

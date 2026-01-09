@@ -74,32 +74,7 @@ public:
   }
 
   void handlePublishContent() {
-    if (!iot.pubMsgPayloadLock) {
-      mqttPublMsgPayload = F("{\"csq\":");
-      mqttPublMsgPayload.concat(iotCSQ);
-      mqttPublMsgPayload.concat(F(","));
-      mqttPublMsgPayload.concat(F("\"din\":"));
-      mqttPublMsgPayload.concat(DIPayload);
-      mqttPublMsgPayload.concat(F(","));
-      mqttPublMsgPayload.concat(F("\"dout\":"));
-      mqttPublMsgPayload.concat(DOPayload);
-      mqttPublMsgPayload.concat(F(","));
-      mqttPublMsgPayload.concat(F("\"ain\":"));
-      mqttPublMsgPayload.concat(AIPayload);
-      mqttPublMsgPayload.concat(F(","));
-      mqttPublMsgPayload.concat(F("\"aout\":"));
-      mqttPublMsgPayload.concat(AOPayload);
-      mqttPublMsgPayload.concat(F("}"));
-    }
-
-    iotPubMsgPrepare = F("AT+QMTPUB=0,0,0,0,rgt/");
-    iotPubMsgPrepare.concat(iotIMEI);
-    iotPubMsgPrepare.concat(F("/in,"));
-    iotPubMsgPrepare.concat(mqttPublMsgPayload.length());
-
-    iotPubMsgCommand = iotPubMsgPrepare;
-    iotPubMsgCommand.concat(F(","));
-    iotPubMsgCommand.concat(mqttPublMsgPayload);
+    iot.buildMsg(DIPayload, DOPayload, AIPayload, AOPayload);
   }
 
   void handleSubscribeContent() {

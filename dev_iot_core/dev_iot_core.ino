@@ -1,5 +1,5 @@
 #include "./core/MainSystem.h"
-#include "./core/NBIoT.h"
+#include "./core/IoT.h"
 #include "./core/DisplayClient.h"
 #include "./core/Utils.h"
 #include "./core/Timer.h"
@@ -8,7 +8,7 @@
 
 MainSystem mainSystem;
 
-NBIoT nbiot;
+IoT iot;
 
 DisplayClient displayClient;
 
@@ -23,27 +23,25 @@ void setup() {
   analogReference(EXTERNAL);
 
   /*=== String / Heap Memory Management ===*/
-  nbiotCSQ.reserve(8);
-  nbiotCGATT.reserve(8);
-  nbiotCEREG.reserve(8);
-  nbiotPubAck.reserve(8);
-  nbiotSubAck.reserve(8);
-  nbiotSubMsgContent.reserve(8);
-  nbiotIMEI.reserve(32);
+  iotCSQ.reserve(8);
+  iotCGATT.reserve(8);
+  iotCEREG.reserve(8);
+  mqttSubsMsgContent.reserve(8);
+  iotIMEI.reserve(32);
   cmpStr.reserve(32);
   AOPayload.reserve(64);
-  nbIotConnCmd.reserve(64);
-  nbiotSubsCmd.reserve(64);
-  nbiotPubMsgPrepare.reserve(64);
+  mqttConnCmd.reserve(64);
+  mqttSubsCmd.reserve(64);
+  mqttPublMsgPrepare.reserve(64);
   AIPayload.reserve(128);
   rs485SerialRecv.reserve(128);
-  nbiotSerialRecv.reserve(128);
-  nbiotPubMsgPayload.reserve(256);
-  bool remainStrRes = nbiotPubMsgCommand.reserve(512);
+  iotSerialRecv.reserve(128);
+  mqttPublMsgPayload.reserve(256);
+  bool remainStrRes = debugStr.reserve(512);
   Serial.print(remainStrRes ? F("[Str Space OK]") : F("[String Space NOT OK]"));
 
-  /*=== NBIoT ===*/
-  nbiot.init(true);
+  /*=== IoT ===*/
+  iot.init();
 
   /*=== Display ===*/
   displayClient.setup();
@@ -56,8 +54,8 @@ void setup() {
 }
 
 void loop() {
-  /*=== Register NBIoT ===*/
-  nbiot.loop();
+  /*=== Register IoT ===*/
+  iot.loop();
 
   /*=== Register MainSystem ===*/
   mainSystem.loop();

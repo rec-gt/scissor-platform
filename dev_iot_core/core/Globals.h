@@ -211,8 +211,6 @@ String iotCGATT = "";
 String iotCEREG = "";
 byte iotQueryCnt = 0;
 
-bool iotDebugMode = false;
-
 /*=== IoT MQTT ===*/
 String mqttConnCmd = "";
 String mqttSubsCmd = "";
@@ -227,7 +225,7 @@ bool forcePublishMode = false;
 Counter iotCSQErrCnt;
 Counter iotCGATTErrCnt;
 Counter iotCEREGErrCnt;
-Counter iotPublishErrCnt;
+Counter mqttPublishErrCnt;
 
 /*=== rs485 ===*/
 String rs485SerialRecv = "";

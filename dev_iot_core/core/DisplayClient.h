@@ -41,13 +41,13 @@ public:
 
   void prepareBuffer() {
     {
-      int csq = nbiotCSQ.toInt();
+      int csq = iotCSQ.toInt();
 
       uint8_t idx = 0;
 
       this->buffer[idx++] = 0x5B;  // '['
 
-      this->buffer[idx++] = nbiotConnState;
+      this->buffer[idx++] = iotConnState;
       this->buffer[idx++] = csq;
       this->buffer[idx++] = DIPayload;
       this->buffer[idx++] = DOPayload;
@@ -63,7 +63,7 @@ public:
       }
 
       for (int i = 0; i < 16; i++) {
-        this->buffer[idx++] = nbiotIMEI.charAt(i);
+        this->buffer[idx++] = iotIMEI.charAt(i);
       }
 
       uint8_t currIdx = idx;

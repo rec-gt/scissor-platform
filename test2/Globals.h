@@ -79,6 +79,9 @@ bool iotSoftReset = false;
 bool iotDebugMode = false;
 bool forcePublishMode = false;
 
+Counter iotCSQErrCnt;
+Counter iotCGATTErrCnt;
+Counter iotCEREGErrCnt;
 Counter iotPublishErrCnt;
 
 #endif

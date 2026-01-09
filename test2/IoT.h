@@ -101,6 +101,9 @@ private:
           if (iotConnState == IOT_STATE_WAITING_CGATT) {
             iotConnState = IOT_STATE_FINISH_CGATT;
           }
+          iotCGATTErrCnt.reset();
+        } else {
+          iotCGATTErrCnt.accu();
         }
       }
     }
@@ -118,6 +121,9 @@ private:
           if (iotConnState == IOT_STATE_WAITING_CEREG) {
             iotConnState = IOT_STATE_FINISH_CEREG;
           }
+          iotCEREGErrCnt.reset();
+        }else{
+          iotCEREGErrCnt.accu();
         }
       }
     }
@@ -303,6 +309,15 @@ private:
 
   void errHook() {
     if (iotPublishErrCnt.over(3)) {
+      iotConnState = IOT_STATE_WAITING_INIT;
+    }
+    if (iotCSQErrCnt.over(10)) {
+      iotConnState = IOT_STATE_WAITING_INIT;
+    }
+    if (iotCGATTErrCnt.over(10)) {
+      iotConnState = IOT_STATE_WAITING_INIT;
+    }
+    if (iotCEREGErrCnt.over(10)) {
       iotConnState = IOT_STATE_WAITING_INIT;
     }
   }

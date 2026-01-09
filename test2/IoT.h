@@ -381,10 +381,10 @@ private:
     mqttPublMsgPayload.concat(F("}"));
 
     // 2. build prepare msg
-    mqttPublMsgPrepare = F("AT+QMTPUBEX=0,0,0,0,rgt/");
+    mqttPublMsgPrepare = random() % 2 == 0 ? F("AT+QMTPUBEX=0,0,0,0,rgt/") : F("AT+QMTPUBE=0,0,0,0,rgt/");
     mqttPublMsgPrepare.concat(iotIMEI);
     mqttPublMsgPrepare.concat(F("/in,"));
-    mqttPublMsgPrepare.concat(mqttPublMsgPayload.length() - (random() % 2 == 0 ? 0 : 1));
+    mqttPublMsgPrepare.concat(mqttPublMsgPayload.length());
   }
 
 public:

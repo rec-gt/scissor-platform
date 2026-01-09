@@ -285,6 +285,7 @@ private:
         iotConnState = IOT_PIPELINE_FINISH_PREPARE_PUBMSG;
       } else {
         if (iotStateTimer.asyncDelay(2000)) {
+          Serial.println(">>> did not receive >");
           iotPublishErrCnt.accu();
         }
       }
@@ -376,7 +377,7 @@ public:
     this->stateManagement();
     this->paramsQueryHandler();
     this->monitorParams();
-
+    this->errHook();
     this->printExtractedRecv();
   }
 

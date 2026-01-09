@@ -13,7 +13,7 @@ public:
   }
 
   bool over(byte b = 10) {
-    return this->count <= b;
+    return this->count >= b;
   }
 
   ~Counter() {}

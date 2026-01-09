@@ -335,7 +335,7 @@ private:
       iotConnState = IOT_STATE_WAITING_INIT;
     }
 
-    if (iotPublishErrCnt.over(3)) {
+    if (iotPublishErrCnt.over(5)) {
       iotConnState = IOT_STATE_WAITING_INIT;
     }
 

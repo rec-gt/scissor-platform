@@ -77,6 +77,7 @@ String mqttSubAck = "";
 
 bool iotSoftReset = false;
 bool iotDebugMode = false;
+bool forcePublishMode = false;
 
 Counter iotPublishErrCnt;
 

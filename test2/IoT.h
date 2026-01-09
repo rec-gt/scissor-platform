@@ -263,11 +263,12 @@ private:
     }
 
     if (iotConnState == IOT_PIPELINE_INIT) {
-      if (true) {
+      if (forcePublishMode) {
         mqttPublishLock.lock();
         this->printlnFlush(mqttPublMsgPrepare);
         Serial.println(mqttPublMsgPrepare);
         iotConnState = IOT_PIPELINE_WAITING_PREPARE_PUBMSG;
+        forcePublishMode = false;
       } else {
         if (iotStateTimer.asyncDelay(30000UL)) {
           mqttPublishLock.lock();
@@ -279,13 +280,13 @@ private:
     }
 
     if (iotConnState == IOT_PIPELINE_WAITING_PREPARE_PUBMSG) {
-      iotCmpStr = F(">> ");
+      iotCmpStr = F("> ");
       iotCmpStrIdx = iotSerialRecv.indexOf(iotCmpStr);  // === special case for ">" ===
       if (iotCmpStrIdx > -1) {
         iotConnState = IOT_PIPELINE_FINISH_PREPARE_PUBMSG;
+        iotPublishErrCnt.reset();
       } else {
-        if (iotStateTimer.asyncDelay(2000)) {
-          Serial.println(">>> did not receive >");
+        if (iotStateTimer.asyncDelay(1000)) {
           iotPublishErrCnt.accu();
         }
       }
@@ -393,11 +394,7 @@ public:
 
   void forcePublish() {
     if (IOT_PIPELINE_INIT <= iotConnState && iotConnState <= IOT_PIPELINE_FINISH_PUBLISH) {
-      if (mqttPublishLock.isReleased()) {
-        this->printlnFlush(mqttPublMsgPrepare);
-        this->printlnFlush(mqttPublMsgPayload);
-        Serial.println("force published successfully");
-      }
+      forcePublishMode = true;
     }
   }
 

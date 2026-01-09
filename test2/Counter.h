@@ -12,11 +12,15 @@ public:
     this->count += i;
   }
 
+  void reset() {
+    this->count = 0;
+  }
+
   bool over(byte b = 10) {
     bool res = (this->count >= b);
 
     if (res) {
-      this->count = 0;
+      this->reset();
     }
 
     return res;

@@ -295,7 +295,7 @@ private:
         iotConnState = IOT_PIPELINE_WAITING_PREPARE_PUBMSG;
         forcePublishMode = false;
       } else {
-        if (iotStateTimer.asyncDelay(30000UL)) {
+        if (iotStateTimer.asyncDelay(10000UL)) {
           mqttPublishLock.lock();
           this->printlnFlush(mqttPublMsgPrepare);
           Serial.println(mqttPublMsgPrepare);
@@ -327,13 +327,27 @@ private:
   }
 
   void errHook() {
-    if (
-      iotExtractedRecv.indexOf(F("+QIURC: \"pdpdeact\",1")) > -1
-      || iotExtractedRecv.indexOf(F("+CME ERROR")) > -1
-      || iotPublishErrCnt.over(3)
-      || iotCSQErrCnt.over(10)
-      || iotCGATTErrCnt.over(10)
-      || iotCEREGErrCnt.over(10)) {
+    if (iotExtractedRecv.indexOf(F("+QIURC: \"pdpdeact\",1")) > -1) {
+      iotConnState = IOT_STATE_WAITING_INIT;
+    }
+
+    if (iotExtractedRecv.indexOf(F("+CME ERROR")) > -1) {
+      iotConnState = IOT_STATE_WAITING_INIT;
+    }
+
+    if (iotPublishErrCnt.over(3) > -1) {
+      iotConnState = IOT_STATE_WAITING_INIT;
+    }
+
+    if (iotCSQErrCnt.over(10) > -1) {
+      iotConnState = IOT_STATE_WAITING_INIT;
+    }
+
+    if (iotCGATTErrCnt.over(10) > -1) {
+      iotConnState = IOT_STATE_WAITING_INIT;
+    }
+
+    if (iotCEREGErrCnt.over(10) > -1) {
       iotConnState = IOT_STATE_WAITING_INIT;
     }
   }

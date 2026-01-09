@@ -3,14 +3,14 @@
 
 IoT iot;
 
+AsyncTimer timer(1000);
+
 void setup() {
   Serial.begin(9600);
   iot.init();
 }
 
 String cmd = "";
-
-uint16_t prevMillis1 = 0;
 
 void serialInput() {
   while (Serial.available() > 0) {
@@ -34,5 +34,10 @@ void serialInput() {
 
 void loop() {
   serialInput();
+
   iot.loop();
+
+  if (timer.asyncDelay(1000)) {
+    iot.buildMsg();
+  }
 }

@@ -1,8 +1,12 @@
+#include "Lock.h"
+#include "Counter.h"
+
 #ifndef GLOBALS_H
 #define GLOBALS_H
 
 /*=== IoT ===*/
 #define SerialIoT Serial1
+#define IOT_MODULE_RESET_PIN 24
 
 enum IOT_STATE {
   IOT_STATE_WAITING_INIT,
@@ -59,8 +63,10 @@ byte iotQueryCnt = 0;
 String mqttConnCmd = "";
 String mqttSubsCmd = "";
 
-bool mqttPublishLock = false;
-bool mqttForcePublishLock = false;
+// bool mqttPublishLock = false;
+// bool mqttForcePublishLock = false;
+Lock mqttPublishLock;
+Lock forcePublishLock;
 String mqttPublMsgPrepare = "";
 String mqttPublMsgPayload = "";
 String mqttPublMsgCommand = "";
@@ -71,5 +77,7 @@ String mqttSubAck = "";
 
 bool iotSoftReset = false;
 bool iotDebugMode = false;
+
+Counter iotPublishErrCnt;
 
 #endif

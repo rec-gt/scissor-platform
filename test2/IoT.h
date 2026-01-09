@@ -335,19 +335,19 @@ private:
       iotConnState = IOT_STATE_WAITING_INIT;
     }
 
-    if (iotPublishErrCnt.over(3) > -1) {
+    if (iotPublishErrCnt.over(3)) {
       iotConnState = IOT_STATE_WAITING_INIT;
     }
 
-    if (iotCSQErrCnt.over(10) > -1) {
+    if (iotCSQErrCnt.over(10)) {
       iotConnState = IOT_STATE_WAITING_INIT;
     }
 
-    if (iotCGATTErrCnt.over(10) > -1) {
+    if (iotCGATTErrCnt.over(10)) {
       iotConnState = IOT_STATE_WAITING_INIT;
     }
 
-    if (iotCEREGErrCnt.over(10) > -1) {
+    if (iotCEREGErrCnt.over(10)) {
       iotConnState = IOT_STATE_WAITING_INIT;
     }
   }

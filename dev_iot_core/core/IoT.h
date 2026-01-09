@@ -327,18 +327,22 @@ private:
     }
 
     if (mqttPublishErrCnt.over(5)) {
+      Serial.print("mqttPublishErrCnt.over(5)");
       iotConnState = IOT_STATE_WAITING_INIT;
     }
 
     if (iotCSQErrCnt.over(10)) {
+      Serial.print("iotCSQErrCnt.over(10)");
       iotConnState = IOT_STATE_WAITING_INIT;
     }
 
     if (iotCGATTErrCnt.over(10)) {
+      Serial.print("iotCGATTErrCnt.over(10)");
       iotConnState = IOT_STATE_WAITING_INIT;
     }
 
     if (iotCEREGErrCnt.over(10)) {
+      Serial.print("iotCEREGErrCnt.over(10)");
       iotConnState = IOT_STATE_WAITING_INIT;
     }
   }

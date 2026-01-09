@@ -54,6 +54,8 @@ void setup() {
 }
 
 void loop() {
+  utils.serialInput();
+  
   /*=== Register IoT ===*/
   iot.loop();
 

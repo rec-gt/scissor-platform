@@ -347,8 +347,6 @@ private:
     }
   }
 
-
-
 public:
   void init() {
     SerialIoT.begin(115200);

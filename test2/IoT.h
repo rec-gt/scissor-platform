@@ -45,9 +45,10 @@ private:
     }
   }
 
-  void paramsQueryHandler() {
+  void queryParams() {
     if (mqttPublishLock.isReleased()) {
       if (iotParamTimer.asyncDelay(5000)) {
+        this->printlnFlush(F("AT+CPIN?"));
         this->printlnFlush(F("AT+CSQ"));
         this->printlnFlush(F("AT+CGATT?"));
         this->printlnFlush(F("AT+CEREG?"));
@@ -86,6 +87,16 @@ private:
         {
           iotCSQ = iotExtractedRecv.substring(ws + 2, we);
         }
+
+        byte CSQIdx = 0;
+        {
+          CSQIdx = iotCSQ.toInt();
+        }
+        if (CSQIdx == 99 || CSQIdx <= 3) {
+          iotCSQErrCnt.accu();
+        } else {
+          iotCSQErrCnt.reset();
+        }
       }
     }
 
@@ -122,7 +133,7 @@ private:
             iotConnState = IOT_STATE_FINISH_CEREG;
           }
           iotCEREGErrCnt.reset();
-        }else{
+        } else {
           iotCEREGErrCnt.accu();
         }
       }
@@ -308,16 +319,13 @@ private:
   }
 
   void errHook() {
-    if (iotPublishErrCnt.over(3)) {
-      iotConnState = IOT_STATE_WAITING_INIT;
-    }
-    if (iotCSQErrCnt.over(10)) {
-      iotConnState = IOT_STATE_WAITING_INIT;
-    }
-    if (iotCGATTErrCnt.over(10)) {
-      iotConnState = IOT_STATE_WAITING_INIT;
-    }
-    if (iotCEREGErrCnt.over(10)) {
+    if (
+      iotExtractedRecv.indexOf(F("+QIURC: \"pdpdeact\",1")) > -1
+      || iotExtractedRecv.indexOf(F("+CME ERROR")) > -1
+      || iotPublishErrCnt.over(3)
+      || iotCSQErrCnt.over(10)
+      || iotCGATTErrCnt.over(10)
+      || iotCEREGErrCnt.over(10)) {
       iotConnState = IOT_STATE_WAITING_INIT;
     }
   }
@@ -376,7 +384,7 @@ private:
     mqttPublMsgPrepare = F("AT+QMTPUBEX=0,0,0,0,rgt/");
     mqttPublMsgPrepare.concat(iotIMEI);
     mqttPublMsgPrepare.concat(F("/in,"));
-    mqttPublMsgPrepare.concat(mqttPublMsgPayload.length());
+    mqttPublMsgPrepare.concat(mqttPublMsgPayload.length() - (random() % 2 == 0 ? 0 : 1));
   }
 
 public:
@@ -391,7 +399,7 @@ public:
     this->listen();
     this->consume();
     this->stateManagement();
-    this->paramsQueryHandler();
+    this->queryParams();
     this->monitorParams();
     this->errHook();
     this->printExtractedRecv();

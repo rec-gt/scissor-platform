@@ -48,7 +48,7 @@ private:
   void queryParams() {
     if (mqttPublishLock.isReleased()) {
       if (iotParamTimer.autoTimeout(5000)) {
-        Serial.print("Query?");
+        Serial.println(F("Query?"));
         this->printlnFlush(F("AT+CPIN?"));
         this->printlnFlush(F("AT+CSQ"));
         this->printlnFlush(F("AT+CGATT?"));

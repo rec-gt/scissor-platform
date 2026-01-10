@@ -58,7 +58,7 @@ private:
   }
 
   void monitorParams() {
-    // === IMEI ===
+    /* === IMEI === */
     {
       iotCmpStrIdx = iotExtractedRecv.indexOf(F("+CGSN: "));
 
@@ -77,7 +77,7 @@ private:
       }
     }
 
-    // === CSQ ===
+    /* === CSQ === */
     {
       iotCmpStrIdx = iotExtractedRecv.indexOf(F("+CSQ: "));
       if (iotCmpStrIdx > -1) {
@@ -99,7 +99,7 @@ private:
       }
     }
 
-    // === CGATT ===
+    /* === CGATT === */
     {
       iotCmpStrIdx = iotExtractedRecv.indexOf(F("+CGATT: "));
       if (iotCmpStrIdx > -1) {
@@ -117,7 +117,7 @@ private:
       }
     }
 
-    // === CEREG ===
+    /* === CEREG === */
     {
       iotCmpStrIdx = iotExtractedRecv.indexOf(F("+CEREG: "));
       if (iotCmpStrIdx > -1) {
@@ -315,6 +315,18 @@ private:
       mqttPublishLock.release();
       iotConnState = IOT_PIPELINE_WAITING_PUBLISH;
       iotConnState = IOT_STATE_FINISH_INIT;
+    }
+  }
+
+  void handleSubs() {
+    {
+      iotCmpStrIdx = iotExtractedRecv.indexOf(F("+QMTRECV: "));
+      if (iotCmpStrIdx > -1) {
+        {
+          mqttSubsMsgContent = iotExtractedRecv.substring(41, 46);
+          Serial.println(mqttSubsMsgContent);
+        }
+      }
     }
   }
 

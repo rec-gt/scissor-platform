@@ -229,5 +229,6 @@ String rs485SerialRecv = "";
 
 /*=== Debug ===*/
 String debugStr = "";
+String serialInputCmd = "";
 
 #endif

@@ -247,7 +247,7 @@ private:
 
     if (iotConnState == IOT_STATE_FINISH_CEREG) {
       if (iotStateTimer.autoTimeout(1000)) {
-        this->printlnFlush(F("AT+QMTOPEN=0,ioxxxt.rec-gt.com,1880"));
+        this->printlnFlush(F("AT+QMTOPEN=0,iot.rec-gt.com,1880"));
       }
       iotConnState = IOT_STATE_WAITING_OPEN_MQTT;
     }

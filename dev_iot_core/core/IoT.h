@@ -47,7 +47,7 @@ private:
 
   void queryParams() {
     if (mqttPublishLock.isReleased()) {
-      if (iotParamTimer.autoTimeout(2500)) {
+      if (iotParamTimer.autoTimeout(5000)) {
         this->printlnFlush(F("AT+CPIN?"));
         this->printlnFlush(F("AT+CSQ"));
         this->printlnFlush(F("AT+CGATT?"));
@@ -287,7 +287,7 @@ private:
         iotConnState = IOT_PIPELINE_WAITING_PREPARE_PUBMSG;
         forcePublishMode = false;
       } else {
-        if (iotStateTimer.autoTimeout(5000)) {
+        if (iotStateTimer.autoTimeout(10000)) {
           mqttPublishLock.lock();
           this->printlnFlush(mqttPublMsgPrepare);
           Serial.println(mqttPublMsgPrepare);

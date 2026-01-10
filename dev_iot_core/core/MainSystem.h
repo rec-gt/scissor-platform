@@ -40,19 +40,19 @@ public:
   }
 
   void buildPayloads() {
-    /*=== DI ===*/
+    /*=== DI Payload ===*/
     DIPayload = 0;
     for (size_t i = 0; i < DI_NUMS; i++) {
       DIPayload |= digitalInputs[i].getState() << i;
     }
 
-    /*=== DO ===*/
+    /*=== DO Payload ===*/
     DOPayload = 0;
     for (size_t i = 0; i < DO_NUMS; i++) {
       DOPayload |= digitalOutputs[i].getState() << i;
     }
 
-    /*=== AI ===*/
+    /*=== AI Payload ===*/
     AIPayload = F("[");
     for (size_t i = 0; i < AI_NUMS; i++) {
       AIPayload += analogInputs[i].getValue();
@@ -62,7 +62,7 @@ public:
     }
     AIPayload += F("]");
 
-    /*=== AO ===*/
+    /*=== AO Payload ===*/
     AOPayload = F("[");
     for (size_t i = 0; i < AO_NUMS; i++) {
       AOPayload += analogOutputs[i].getValue();

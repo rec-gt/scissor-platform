@@ -263,6 +263,7 @@ private:
       }
     }
 
+    // TODO: add ErrCnt to catch err and reboot
     if (iotConnState == IOT_STATE_FINISH_OPEN_MQTT) {
       iotConnState = IOT_STATE_WAITING_CONN_MQTT;
     }

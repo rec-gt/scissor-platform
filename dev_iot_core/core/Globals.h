@@ -222,6 +222,7 @@ bool forcePublishMode = false;
 Counter iotCSQErrCnt;
 Counter iotCGATTErrCnt;
 Counter iotCEREGErrCnt;
+Counter mqttOpenErrCnt;
 Counter mqttPublishErrCnt;
 
 /*=== rs485 ===*/

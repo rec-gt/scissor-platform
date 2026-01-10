@@ -20,7 +20,7 @@ private:
     return checksum;
   }
 
-  unsigned long prevMillis;
+  uint32_t prevMillis;
 
 public:
   DisplayClient(){};
@@ -30,7 +30,7 @@ public:
   };
 
   void loop() {
-    unsigned long currMillis = millis();
+    uint32_t currMillis = millis();
 
     if (currMillis - this->prevMillis > 2000) {
       this->prepareBuffer();

@@ -47,7 +47,7 @@ private:
 
   void queryParams() {
     if (mqttPublishLock.isReleased()) {
-      if (iotParamTimer.autoTimeout(5000)) {
+      if (iotParamTimer.autoTimeout(2500)) {
         this->printlnFlush(F("AT+CPIN?"));
         this->printlnFlush(F("AT+CSQ"));
         this->printlnFlush(F("AT+CGATT?"));
@@ -138,7 +138,7 @@ private:
 
   void stateManagement() {
     if (iotConnState == IOT_STATE_WAITING_INIT) {
-      Serial.println(">>> INIT, RESET");
+      Serial.println(F(">>> INIT, RESET"));
 
       iotCSQErrCnt.reset();
       iotCGATTErrCnt.reset();
@@ -287,7 +287,7 @@ private:
         iotConnState = IOT_PIPELINE_WAITING_PREPARE_PUBMSG;
         forcePublishMode = false;
       } else {
-        if (iotStateTimer.autoTimeout(10000UL)) {
+        if (iotStateTimer.autoTimeout(5000)) {
           mqttPublishLock.lock();
           this->printlnFlush(mqttPublMsgPrepare);
           Serial.println(mqttPublMsgPrepare);
@@ -327,22 +327,22 @@ private:
     }
 
     if (mqttPublishErrCnt.over(5)) {
-      Serial.print("mqttPublishErrCnt.over(5)");
+      Serial.print(F("mqttPublishErrCnt.over(5)"));
       iotConnState = IOT_STATE_WAITING_INIT;
     }
 
     if (iotCSQErrCnt.over(10)) {
-      Serial.print("iotCSQErrCnt.over(10)");
+      Serial.print(F("iotCSQErrCnt.over(10)"));
       iotConnState = IOT_STATE_WAITING_INIT;
     }
 
     if (iotCGATTErrCnt.over(10)) {
-      Serial.print("iotCGATTErrCnt.over(10)");
+      Serial.print(F("iotCGATTErrCnt.over(10)"));
       iotConnState = IOT_STATE_WAITING_INIT;
     }
 
     if (iotCEREGErrCnt.over(10)) {
-      Serial.print("iotCEREGErrCnt.over(10)");
+      Serial.print(F("iotCEREGErrCnt.over(10)"));
       iotConnState = IOT_STATE_WAITING_INIT;
     }
   }
@@ -404,25 +404,16 @@ public:
 
   void printExtractedRecv() {
     if (iotExtractedRecv != F("")) {
-      Serial.print("[[");
+      Serial.print(F("[["));
       Serial.print(iotExtractedRecv);
-      Serial.println("]]");
+      Serial.println(F("]]"));
     }
   }
 
   void printSerialRecv() {
-    Serial.print("[[");
+    Serial.print(F("[["));
     Serial.print(iotSerialRecv);
-    Serial.println("]]");
-  }
-
-  void printParameterState() {
-    if (iotStateTimer.autoTimeout(1000)) {
-      Serial.println("iotCSQ: " + iotCSQ);
-      Serial.println("iotIMEI: " + iotIMEI);
-      Serial.println("iotCGATT: " + iotCGATT);
-      Serial.println("iotCEREG: " + iotCEREG);
-    }
+    Serial.println(F("]]"));
   }
 };
 

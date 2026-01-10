@@ -32,7 +32,7 @@ void setup() {
   AOPayload.reserve(64);
   mqttConnCmd.reserve(64);
   mqttSubsCmd.reserve(64);
-  mqttPublMsgPrepare.reserve(64);
+  mqttPublMsgPrepare.reserve(128);
   AIPayload.reserve(128);
   rs485SerialRecv.reserve(128);
   iotSerialRecv.reserve(128);
@@ -50,11 +50,11 @@ void setup() {
   subSystem.init();
 
   /*=== Watchdog ===*/
-  wdt_enable(WDTO_8S);
+  // wdt_enable(WDTO_8S);
 }
 
 void loop() {
-  utils.serialInput();
+  // utils.serialInput();
   
   /*=== Register IoT ===*/
   iot.loop();
@@ -69,9 +69,9 @@ void loop() {
   subSystem.loop();
 
   /*=== Pet the dog ===*/
-  if (!systemTimer.isExpired()) {
-    wdt_reset();
-  }
+  // if (!systemTimer.isExpired()) {
+  //   wdt_reset();
+  // }
 
   delay(10);
 }

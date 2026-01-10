@@ -5,7 +5,7 @@ class DigitalInput {
 private:
   byte pin;
   byte state = LOW;
-  unsigned long prevMillis;
+  uint32_t prevMillis;
 
 public:
   DigitalInput() {}

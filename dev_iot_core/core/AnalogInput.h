@@ -11,10 +11,10 @@ protected:
   byte resolution = 0;  // 0=1024, 1=4096
 
 public:
-  uint16_t reading;
-  uint16_t readingHistory[AI_SMOOTHING_SAMPLE_SIZE];
-  uint16_t smoothedReading;
-  uint16_t value;
+  uint32_t reading;
+  uint32_t readingHistory[AI_SMOOTHING_SAMPLE_SIZE];
+  uint32_t smoothedReading;
+  uint32_t value;
 
   AnalogInput() {}
 
@@ -64,7 +64,7 @@ public:
     }
   }
 
-  uint16_t getValue() {
+  uint32_t getValue() {
     /* === For 4096 Resolution === */
     if (this->resolution == 1) {
       this->value = map(constrain((int32_t)this->smoothedReading, 0, 16063), 0, 16063, 0, 4095);

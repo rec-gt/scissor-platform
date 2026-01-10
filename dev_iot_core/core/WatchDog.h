@@ -7,13 +7,13 @@ class Watchdog {
 private:
   typedef void (*CallbackFunction)(void);
 
-  unsigned long timeout = 1UL * 60UL * 1000UL;
-  unsigned long prevMillis = 0;
+  uint32_t timeout = 1UL * 60UL * 1000UL;
+  uint32_t prevMillis = 0;
   bool _enable = false;
   CallbackFunction callback;
 
 public:
-  Watchdog(unsigned long timeout) {
+  Watchdog(uint32_t timeout) {
     this->timeout = timeout;
     this->callback = nullptr;
   }

@@ -82,11 +82,18 @@ public:
       return;
     }
 
-    byte b0 = mqttSubsMsgContent.charAt(0);
-    byte b1 = mqttSubsMsgContent.charAt(1);
-    // byte b2 = mqttSubsMsgContent.charAt(2); // b2 is useless
-    byte b3 = mqttSubsMsgContent.charAt(3);
-    byte b4 = mqttSubsMsgContent.charAt(4);
+    byte b0 = 0;
+    byte b1 = 0;
+    // byte b2 = 0; // b2 is useless
+    byte b3 = 0;
+    byte b4 = 0;
+
+    {
+      b0 = mqttSubsMsgContent.charAt(0);
+      b1 = mqttSubsMsgContent.charAt(1);
+      b3 = mqttSubsMsgContent.charAt(3);
+      b4 = mqttSubsMsgContent.charAt(4);
+    }
 
     if (b0 == 68) {                                                                   // D
       if (b1 == 58) {                                                                 // :

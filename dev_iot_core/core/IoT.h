@@ -374,6 +374,7 @@ public:
     this->stateManagement();
     this->queryParams();
     this->monitorParams();
+    this->handleSubs();
     this->errHook();
     this->printExtractedRecv();
   }

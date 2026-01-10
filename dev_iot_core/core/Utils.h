@@ -41,7 +41,7 @@ public:
         } else {
           iot.printlnFlush(serialInputCmd);
         }
-        serialInputCmd = "";
+        serialInputCmd = F("");
       }
     }
   }

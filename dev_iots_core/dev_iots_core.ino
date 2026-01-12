@@ -23,25 +23,24 @@ void setup() {
   analogReference(EXTERNAL);
 
   /*=== String / Heap Memory Management ===*/
-  iotCSQ.reserve(8);
-  iotCGATT.reserve(8);
+  iotCSQ.reserve(2);
+  iotCGATT.reserve(2);
   iotCEREG.reserve(8);
   mqttSubsMsgContent.reserve(8);
   iotModel.reserve(16);
   iotIP.reserve(16);
-  mqttPublACK.reserve(16);
-  iotIMEI.reserve(32);
-  AOPayload.reserve(64);
+  iotIMEI.reserve(16);
+  AOPayload.reserve(32);
   mqttConnCmd.reserve(64);
   mqttSubsCmd.reserve(64);
+  mqttPublMsgPrepare.reserve(64);
+  AIPayload.reserve(64);
   iotExtractedRecv.reserve(64);
-  mqttPublMsgPrepare.reserve(128);
-  AIPayload.reserve(128);
   rs485SerialRecv.reserve(128);
   serialInputCmd.reserve(128);
   iotSerialRecv.reserve(128);
-  mqttPublMsgPayload.reserve(256);
-  bool remainStrRes = debugStr.reserve(257);
+  mqttPublMsgPayload.reserve(128);
+  bool remainStrRes = debugStr.reserve(129);
   Serial.println(remainStrRes ? F("[Str Space OK]") : F("[String Space NOT OK]"));
 
   /*=== IoT ===*/

@@ -234,7 +234,6 @@ Toggle mqttForcePublMode;
 String mqttPublMsgPrepare = "";
 String mqttPublMsgPayload = "";
 String mqttSubsMsgContent = "";
-String mqttPublACK = "";
 
 Counter iotCSQErrCnt;
 Counter iotCGATTErrCnt;

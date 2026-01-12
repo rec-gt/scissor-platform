@@ -66,7 +66,6 @@ private:
       mqttPublMsgPrepare = F("");
       mqttPublMsgPayload = F("");
       mqttSubsMsgContent = F("");
-      mqttPublACK = F("");
 
       iotCSQErrCnt.reset();
       iotCGATTErrCnt.reset();

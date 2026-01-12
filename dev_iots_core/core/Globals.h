@@ -156,6 +156,8 @@ String AOPayload = "";
 /*=== IoT (4G & NB-IoT) ===*/
 #define SerialIoT Serial1
 #define IOT_MODULE_RESET_PIN 24
+#define IOT_MODEL_EC800K "EC800K"
+#define IOT_MODEL_BC260Y_CN "BC260Y-CN"
 
 enum IOT_MODULE_STATE
 {
@@ -212,9 +214,6 @@ byte iotConnState = 0;
 String iotSerialRecv = "";
 String iotExtractedRecv = "";
 
-#define IOT_MODEL_EC800K "EC800K"
-#define IOT_MODEL_BC260Y_CN "BC260Y-CN"
-
 String iotModel = "";
 String iotIMEI = "";
 String iotIP = "";
@@ -236,6 +235,7 @@ String mqttPublACK = "";
 Timer iotParamTimer;
 Timer iotModuleStateTimer;
 Timer iotConnStateTimer;
+Timer iotRetryTimer;
 Timer mqttStateTimer;
 
 Counter iotCSQErrCnt;

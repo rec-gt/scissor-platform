@@ -48,6 +48,27 @@ private:
       iotModuleState = IOT_MODULE_WAITING_RESET_HARDWARE;
       iotConnState = IOT_CONN_WAITING_INIT;
 
+      iotSerialRecv = F("");
+      iotExtractedRecv = F("");
+
+      iotModel = F("");
+      iotIMEI = F("");
+      iotIP = F("");
+      iotCSQ = F("");
+      iotCGATT = F("");
+      iotCEREG = F("");
+
+      mqttConnCmd = F("");
+      mqttSubsCmd = F("");
+
+      mqttPublLock.release();
+      mqttForcePublMode.off();
+
+      mqttPublMsgPrepare = F("");
+      mqttPublMsgPayload = F("");
+      mqttSubsMsgContent = F("");
+      mqttPublACK = F("");
+
       iotCSQErrCnt.reset();
       iotCGATTErrCnt.reset();
       iotCEREGErrCnt.reset();
@@ -55,9 +76,6 @@ private:
       mqttConnErrCnt.reset();
       mqttSubsErrCnt.reset();
       mqttPublErrCnt.reset();
-
-      mqttPublLock.release();
-      mqttForcePublMode.off();
     }
 
     if (iotModuleState == IOT_MODULE_WAITING_RESET_HARDWARE) {
@@ -170,7 +188,7 @@ protected:
           iotCGATTErrCnt.reset();
           iotSoftWatchdog.pet();
         } else {
-          if (iotConnStateTimer.autoTimeout(1000)) {
+          if (iotRetryTimer.autoTimeout(1000)) {
             iotCGATTErrCnt.accu();
           }
         }
@@ -191,7 +209,7 @@ protected:
           iotSoftWatchdog.pet();
           iotCEREGErrCnt.reset();
         } else {
-          if (iotConnStateTimer.autoTimeout(1000)) {
+          if (iotRetryTimer.autoTimeout(1000)) {
             iotCEREGErrCnt.accu();
           }
         }

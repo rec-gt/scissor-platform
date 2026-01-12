@@ -78,9 +78,11 @@ private:
 
     if (iotModuleState == IOT_MODULE_FINISH_RESET) {
       if (iotExtractedRecv.indexOf(F("RDY")) > -1) {
-        this->printlnFlush(F("ATI"));
-        iotModuleState = IOT_MODULE_WAITING_GET_MODEL;
-        iotSoftWatchdog.pet();
+        if (iotStateTimer.autoTimeout(1000)) {
+          this->printlnFlush(F("ATI"));
+          iotModuleState = IOT_MODULE_WAITING_GET_MODEL;
+          iotSoftWatchdog.pet();
+        }
       }
     }
 

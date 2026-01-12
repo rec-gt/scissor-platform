@@ -115,6 +115,8 @@ private:
     if (iotModuleState == IOT_MODULE_FINISH_RESET) {
       if (iotModuleStateTimer.autoTimeout(1000)) {
         this->printlnFlush(F("ATI"));
+        this->printlnFlush(F("ATI"));
+        this->printlnFlush(F("AT+QSCLK=0"));
         iotModuleState = IOT_MODULE_WAITING_GET_MODEL;
         iotSoftWatchdog.pet();
       }
@@ -269,7 +271,7 @@ protected:
         mqttConnErrCnt.reset();
         iotSoftWatchdog.pet();
       } else {
-        if (mqttStateTimer.autoTimeout(1000)) {
+        if (iotRetryTimer.autoTimeout(1000)) {
           mqttConnErrCnt.accu();
         }
       }
@@ -289,7 +291,7 @@ protected:
         mqttSubsErrCnt.reset();
         iotSoftWatchdog.pet();
       } else {
-        if (mqttStateTimer.autoTimeout(1000)) {
+        if (iotRetryTimer.autoTimeout(1000)) {
           mqttSubsErrCnt.accu();
         }
       }

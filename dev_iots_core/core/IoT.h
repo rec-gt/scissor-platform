@@ -251,7 +251,7 @@ private:
         iotConnState = IOT_CONN_FINISH_OPEN_MQTT;
         mqttOpenErrCnt.reset();
       } else {
-        if (mqttStateTimer.autoTimeout(1000)) {
+        if (iotRetryTimer.autoTimeout(1000)) {
           mqttOpenErrCnt.accu();
         }
       }
@@ -269,7 +269,7 @@ private:
         iotConnState = IOT_CONN_FINISH_CONN_MQTT;
         mqttConnErrCnt.reset();
       } else {
-        if (mqttStateTimer.autoTimeout(1000)) {
+        if (iotRetryTimer.autoTimeout(1000)) {
           mqttConnErrCnt.accu();
         }
       }
@@ -289,7 +289,7 @@ private:
         iotConnState = IOT_CONN_FINISH_INIT;
         mqttSubsErrCnt.reset();
       } else {
-        if (mqttStateTimer.autoTimeout(1000)) {
+        if (iotRetryTimer.autoTimeout(1000)) {
           mqttSubsErrCnt.accu();
         }
       }

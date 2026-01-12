@@ -248,7 +248,6 @@ Timer iotParamTimer;
 Timer iotModuleStateTimer;
 Timer iotConnStateTimer;
 Timer iotRetryTimer;
-Timer mqttStateTimer;
 
 Watchdog iotSoftWatchdog(30000UL);
 

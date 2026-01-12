@@ -168,8 +168,11 @@ enum IOT_MODULE_STATE
   IOT_MODULE_FINISH_RESET_HARDWARE,
   IOT_MODULE_WAITING_RESET_SOFTWARE,
   IOT_MODULE_FINISH_RESET_SOFTWARE,
+  
   IOT_MODULE_FINISH_RESET,
 
+  IOT_MODULE_WAITING_GET_INFO,
+  IOT_MODULE_FINISH_GET_INFO,
   IOT_MODULE_WAITING_GET_MODEL,
   IOT_MODULE_FINISH_GET_MODEL,
 
@@ -227,16 +230,11 @@ String mqttSubsCmd = "";
 
 Toggle mqttPublLock;
 Toggle mqttForcePublMode;
+
 String mqttPublMsgPrepare = "";
 String mqttPublMsgPayload = "";
 String mqttSubsMsgContent = "";
 String mqttPublACK = "";
-
-Timer iotParamTimer;
-Timer iotModuleStateTimer;
-Timer iotConnStateTimer;
-Timer iotRetryTimer;
-Timer mqttStateTimer;
 
 Counter iotCSQErrCnt;
 Counter iotCGATTErrCnt;
@@ -245,6 +243,12 @@ Counter mqttOpenErrCnt;
 Counter mqttConnErrCnt;
 Counter mqttSubsErrCnt;
 Counter mqttPublErrCnt;
+
+Timer iotParamTimer;
+Timer iotModuleStateTimer;
+Timer iotConnStateTimer;
+Timer iotRetryTimer;
+Timer mqttStateTimer;
 
 Watchdog iotSoftWatchdog(60000UL);
 

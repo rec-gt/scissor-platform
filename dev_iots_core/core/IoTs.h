@@ -45,7 +45,6 @@ private:
     if (iotModuleState == IOT_MODULE_WAITING_INIT) {
       Serial.println(F(">>> IOT MODULE INIT, RESET"));
       iotModuleState = IOT_MODULE_WAITING_RESET;
-      iotModuleState = IOT_MODULE_WAITING_RESET_HARDWARE;
       iotConnState = IOT_CONN_WAITING_INIT;
 
       iotSerialRecv = F("");
@@ -78,11 +77,18 @@ private:
       mqttPublErrCnt.reset();
     }
 
-    if (iotModuleState == IOT_MODULE_WAITING_RESET_HARDWARE) {
+    if (iotModuleState == IOT_MODULE_WAITING_RESET) {
       digitalWrite(IOT_MODULE_RESET_PIN, LOW);
       if (iotModuleStateTimer.autoTimeout(2000)) {
         digitalWrite(IOT_MODULE_RESET_PIN, HIGH);
+        iotModuleState = IOT_MODULE_WAITING_RESET_HARDWARE;
+      }
+    }
+
+    if (iotModuleState == IOT_MODULE_WAITING_RESET_HARDWARE) {
+      if (iotExtractedRecv.indexOf(F("RDY")) > -1) {
         iotModuleState = IOT_MODULE_FINISH_RESET_HARDWARE;
+        iotSoftWatchdog.pet();
       }
     }
 
@@ -90,13 +96,29 @@ private:
       if (iotModuleStateTimer.autoTimeout(1000)) {
         this->printlnFlush(F("AT+CFUN=1,1"));
         iotModuleState = IOT_MODULE_WAITING_RESET_SOFTWARE;
-        iotModuleState = IOT_MODULE_FINISH_RESET;
       }
+    }
+
+    if (iotModuleState == IOT_MODULE_WAITING_RESET_SOFTWARE) {
+      if (iotExtractedRecv.indexOf(F("RDY")) > -1) {
+        iotModuleState = IOT_MODULE_FINISH_RESET_SOFTWARE;
+        iotSoftWatchdog.pet();
+      }
+    }
+
+    if (iotModuleState == IOT_MODULE_FINISH_RESET_SOFTWARE) {
+      iotModuleState = IOT_MODULE_FINISH_RESET;
     }
 
     if (iotModuleState == IOT_MODULE_FINISH_RESET) {
       if (iotExtractedRecv.indexOf(F("RDY")) > -1) {
-        Serial.print(F("ATI3"));
+        iotModuleState = IOT_MODULE_WAITING_GET_INFO;
+        iotSoftWatchdog.pet();
+      }
+    }
+
+    if (iotModuleState == IOT_MODULE_WAITING_GET_INFO) {
+      if (iotModuleStateTimer.autoTimeout(3000)) {
         this->printlnFlush(F("ATI"));
         iotModuleState = IOT_MODULE_WAITING_GET_MODEL;
         iotSoftWatchdog.pet();

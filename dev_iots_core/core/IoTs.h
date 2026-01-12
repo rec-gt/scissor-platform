@@ -176,6 +176,7 @@ protected:
       if (iotExtractedRecv.indexOf(F("+QMTOPEN: 0,0")) > -1) {
         iotConnState = IOT_CONN_FINISH_OPEN_MQTT;
         mqttOpenErrCnt.reset();
+        iotSoftWatchdog.pet();
       } else {
         if (mqttStateTimer.autoTimeout(1000)) {
           mqttOpenErrCnt.accu();
@@ -194,6 +195,7 @@ protected:
       if (iotExtractedRecv.indexOf(F("+QMTCONN: 0,0,0")) > -1) {
         iotConnState = IOT_CONN_FINISH_CONN_MQTT;
         mqttConnErrCnt.reset();
+        iotSoftWatchdog.pet();
       } else {
         if (mqttStateTimer.autoTimeout(1000)) {
           mqttConnErrCnt.accu();
@@ -209,11 +211,11 @@ protected:
     }
 
     if (iotConnState == IOT_CONN_WAITING_SUBS_MQTT_TOPIC) {
-      iotCmpStrIdx = iotExtractedRecv.indexOf(F("+QMTSUB: 0,1,0,0"));
-      if (iotCmpStrIdx > -1) {
+      if (iotExtractedRecv.indexOf(F("+QMTSUB: 0,1,0,0")) > -1) {
         iotConnState = IOT_CONN_FINISH_SUBS_MQTT_TOPIC;
         iotConnState = IOT_CONN_FINISH_INIT;
         mqttSubsErrCnt.reset();
+        iotSoftWatchdog.pet();
       } else {
         if (mqttStateTimer.autoTimeout(1000)) {
           mqttSubsErrCnt.accu();
@@ -259,7 +261,8 @@ protected:
       this->printlnFlush(mqttPublMsgPayload);
       mqttPublLock.release();
       iotConnState = MQTT_STATE_WAITING_PUBLISH;
-      iotConnState = IOT_CONN_FINISH_INIT;
+      iotConnState = MQTT_STATE_INIT;  // loop-back
+      iotSoftWatchdog.pet();
     }
   }
 

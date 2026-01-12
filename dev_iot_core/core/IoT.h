@@ -1,12 +1,7 @@
 #include "Globals.h"
-#include "Timer.h"
 
 #ifndef IOT_H
 #define IOT_H
-
-Timer iotParamTimer;
-Timer iotStateTimer;
-Timer mqttStateTimer;
 
 class IoT {
 private:

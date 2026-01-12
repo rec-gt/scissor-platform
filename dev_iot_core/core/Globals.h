@@ -7,6 +7,7 @@
 #include "./AnalogOutput.h"
 #include "./DryContact.h"
 #include "./Lock.h"
+#include "./Timer.h"
 #include "./Counter.h"
 
 /*=== Main System ===*/
@@ -218,6 +219,10 @@ String mqttPublMsgPayload = "";
 String mqttSubsMsgContent = "";
 
 bool forcePublishMode = false;
+
+Timer iotParamTimer;
+Timer iotStateTimer;
+Timer mqttStateTimer;
 
 Counter iotCSQErrCnt;
 Counter iotCGATTErrCnt;

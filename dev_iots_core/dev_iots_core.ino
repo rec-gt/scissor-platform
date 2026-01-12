@@ -34,7 +34,7 @@ void setup() {
   AOPayload.reserve(64);
   mqttConnCmd.reserve(64);
   mqttSubsCmd.reserve(64);
-  iotExtractedRecv.reserve(128);
+  iotExtractedRecv.reserve(64);
   mqttPublMsgPrepare.reserve(128);
   AIPayload.reserve(128);
   rs485SerialRecv.reserve(128);

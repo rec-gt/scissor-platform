@@ -21,7 +21,7 @@ public:
     this->prevMillis = millis();
   }
 
-  bool autoTimeout(uint32_t _to) {
+  bool autoTimeout(uint16_t _to) {
     bool isTimeout = millis() - this->prevMillis > _to;
 
     if (this->_lock == false) {

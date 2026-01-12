@@ -139,7 +139,6 @@ private:
     }
 
     if (iotModuleState == IOT_MODULE_FINISH_INIT) {
-      Serial.print("HERE");
       iotModuleState = IOT_MODULE_END_OF_STATE;
       iotConnState = IOT_CONN_WAITING_INIT;
     }

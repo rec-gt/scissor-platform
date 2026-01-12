@@ -249,7 +249,7 @@ Timer iotModuleStateTimer;
 Timer iotConnStateTimer;
 Timer iotRetryTimer;
 
-Watchdog iotSoftWatchdog(30000UL);
+Watchdog iotSoftWatchdog(60000UL);
 
 /*=== rs485 ===*/
 String rs485SerialRecv = "";

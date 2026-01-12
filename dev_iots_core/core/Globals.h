@@ -232,7 +232,6 @@ String mqttPublMsgPrepare = "";
 String mqttPublMsgPayload = "";
 String mqttSubsMsgContent = "";
 String mqttPublACK = "";
-String mqttSubsACK = "";
 
 Timer iotParamTimer;
 Timer iotStateTimer;

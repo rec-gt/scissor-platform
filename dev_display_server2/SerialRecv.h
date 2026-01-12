@@ -23,6 +23,7 @@ private:
 public:
   uint8_t iotConn;
   uint8_t iotCsq;
+  uint8_t iotApp;
   uint8_t dis;
   uint8_t dos;
   uint16_t ais[12];
@@ -62,6 +63,7 @@ public:
 
     this->iotConn = buffer[idx++];
     this->iotCsq = buffer[idx++];
+    this->iotApp = buffer[idx++];
     this->dis = buffer[idx++];
     this->dos = buffer[idx++];
 
@@ -81,6 +83,7 @@ public:
   // void debug() {
   //   Serial.println(this->iotConn);
   //   Serial.println(this->iotCsq);
+  //   Serial.println(this->iotApp);
   //   Serial.println(this->dis);
   //   Serial.println(this->dos);
 

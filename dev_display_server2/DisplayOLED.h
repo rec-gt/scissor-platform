@@ -25,6 +25,7 @@ public:
   void draw(
     byte iotConn,
     byte iotCsq,
+    byte iotApp,
     byte diValue,
     byte doValue,
     uint16_t ai1,
@@ -176,7 +177,7 @@ public:
 
       y = 63;
       u8g2.setCursor(0, y);
-      u8g2.print(F("NBIoT"));
+      u8g2.print(iotApp == 1 ? F("Cat.1") : F("NB"));
       u8g2.setCursor(32, y);
       u8g2.print(F("Csq:"));
       u8g2.setCursor(52, y);

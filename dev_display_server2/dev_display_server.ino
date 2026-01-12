@@ -28,6 +28,7 @@ void loop() {
   displayOLED.draw(
     serialRecv.iotConn,
     serialRecv.iotCsq,
+    serialRecv.iotApp,
     serialRecv.dis,
     serialRecv.dos,
     serialRecv.ais[0],

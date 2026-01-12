@@ -212,6 +212,9 @@ String iotExtractedRecv = "";
 
 int iotCmpStrIdx = 0;
 
+#define IOT_MODEL_EC800K "EC800K"
+#define IOT_MODEL_BC260Y_CN "BC260Y-CN"
+
 String iotModel = "";
 String iotIMEI = "";
 String iotCSQ = "";

@@ -342,9 +342,9 @@ protected:
     }
 
     if (CSQReading == 99 || CSQReading <= 3) {
-      iotCSQErrCnt.accu();
+      // iotCSQErrCnt.accu();
     } else {
-      iotCSQErrCnt.reset();
+      // iotCSQErrCnt.reset();
     }
   }
 
@@ -354,9 +354,9 @@ protected:
         iotConnState = IOT_CONN_FINISH_CGATT;
         iotSoftWatchdog.pet();
       }
-      iotCGATTErrCnt.reset();
+      // iotCGATTErrCnt.reset();
     } else {
-      iotCGATTErrCnt.accu();
+      // iotCGATTErrCnt.accu();
     }
   }
 
@@ -366,9 +366,9 @@ protected:
         iotConnState = IOT_CONN_FINISH_CEREG;
         iotSoftWatchdog.pet();
       }
-      iotCEREGErrCnt.reset();
+      // iotCEREGErrCnt.reset();
     } else {
-      iotCEREGErrCnt.accu();
+      // iotCEREGErrCnt.accu();
     }
   }
 
@@ -454,17 +454,18 @@ public:
 
     this->queryParams();
 
+    // TODO: Fix these
     this->captureIMEI();
     this->captureIP();
     this->captureCSQ();
     this->captureCGATT();
     this->captureCEREG();
 
-    // this->inspectIMEI();
-    // this->inspectIP();
-    // this->inspectCSQ();
-    // this->inspectCGATT();
-    // this->inspectCEREG();
+    this->inspectIMEI();
+    this->inspectIP();
+    this->inspectCSQ();
+    this->inspectCGATT();
+    this->inspectCEREG();
 
     this->handleMQTTSubs();
     this->errHook();

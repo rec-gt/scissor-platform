@@ -460,11 +460,11 @@ public:
     this->captureCGATT();
     this->captureCEREG();
 
-    this->inspectIMEI();
-    this->inspectIP();
-    this->inspectCSQ();
-    this->inspectCGATT();
-    this->inspectCEREG();
+    // this->inspectIMEI();
+    // this->inspectIP();
+    // this->inspectCSQ();
+    // this->inspectCGATT();
+    // this->inspectCEREG();
 
     this->handleMQTTSubs();
     this->errHook();

@@ -65,7 +65,7 @@ private:
 
         mqttConnCmd = F("AT+QMTCONN=0,dev_");
         mqttConnCmd.concat(iotIMEI);
-        mqttConnCmd.concat(F(",tswh,1Wo=[6vA0m"));
+        mqttConnCmd.concat(F(",tswhxxx,1Wo=[6vA0m"));
 
         mqttSubsCmd = F("AT+QMTSUB=0,1,rgt/");
         mqttSubsCmd.concat(iotIMEI);

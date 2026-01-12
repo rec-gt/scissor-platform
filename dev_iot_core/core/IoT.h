@@ -142,6 +142,7 @@ private:
       iotCEREGErrCnt.reset();
       mqttOpenErrCnt.reset();
       mqttConnErrCnt.reset();
+      mqttSubsErrCnt.reset();
       mqttPublErrCnt.reset();
 
       mqttPublishLock.release();
@@ -247,7 +248,6 @@ private:
       }
     }
 
-    // TODO: add ErrCnt to catch err and reboot
     if (iotConnState == IOT_STATE_FINISH_OPEN_MQTT) {
       if (iotStateTimer.autoTimeout(1000)) {
         this->printlnFlush(mqttConnCmd);
@@ -371,6 +371,11 @@ private:
 
     if (mqttConnErrCnt.over(5)) {
       Serial.print(F("mqttConnErrCnt.over(5)"));
+      iotConnState = IOT_STATE_WAITING_INIT;
+    }
+
+    if (mqttSubsErrCnt.over(5)) {
+      Serial.print(F("mqttSubsErrCnt.over(5)"));
       iotConnState = IOT_STATE_WAITING_INIT;
     }
 

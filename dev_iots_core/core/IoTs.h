@@ -454,7 +454,6 @@ public:
 
     this->queryParams();
 
-    // TODO: Fix these
     this->captureIMEI();
     this->captureIP();
     this->captureCSQ();

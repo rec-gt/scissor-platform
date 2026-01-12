@@ -188,7 +188,9 @@ protected:
         iotSoftWatchdog.pet();
         iotCEREGErrCnt.reset();
       } else {
-        iotCEREGErrCnt.accu();
+        if (iotStateTimer.autoTimeout(1000)) {
+          iotCEREGErrCnt.accu();
+        }
       }
     }
 

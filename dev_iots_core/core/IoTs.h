@@ -122,11 +122,13 @@ private:
 
     if (iotModuleState == IOT_MODULE_WAITING_GET_MODEL) {
       bool res = false;
+      Serial.println(iotSerialRecv);
+      Serial.println(iotExtractedRecv);
 
-      if (iotSerialRecv.indexOf(IOT_MODEL_EC800K) > -1) {
+      if (iotExtractedRecv.indexOf(IOT_MODEL_EC800K) > -1) {
         iotModel = IOT_MODEL_EC800K;
         res = true;
-      } else if (iotSerialRecv.indexOf(IOT_MODEL_BC260Y_CN) > -1) {
+      } else if (iotExtractedRecv.indexOf(IOT_MODEL_BC260Y_CN) > -1) {
         iotModel = IOT_MODEL_BC260Y_CN;
         res = true;
       }

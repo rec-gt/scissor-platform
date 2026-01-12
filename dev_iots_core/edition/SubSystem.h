@@ -11,7 +11,7 @@ public:
   SubSystem(void) {}
 
   void init() {
-    configAnalogInputResolution(0);
+    configAnalogInputResolution(1);
     subRS485.init();
   }
 

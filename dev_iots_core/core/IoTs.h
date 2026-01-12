@@ -451,10 +451,23 @@ public:
     this->consume();
     this->manageModuleState();
     this->manageConnectionState();
-    // this->monitorParams();
-    // this->queryParams();
-    // this->handleMQTTSubs();
-    // this->errHook();
+    this->monitorParams();
+    this->queryParams();
+
+    this->captureIMEI();
+    this->captureIP();
+    this->captureCSQ();
+    this->captureCGATT();
+    this->captureCEREG();
+
+    this->inspectIMEI();
+    this->inspectIP();
+    this->inspectCSQ();
+    this->inspectCGATT();
+    this->inspectCEREG();
+
+    this->handleMQTTSubs();
+    this->errHook();
 
     this->printExtractedRecv();
   }

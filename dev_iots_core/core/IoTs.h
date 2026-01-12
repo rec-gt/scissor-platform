@@ -179,14 +179,24 @@ protected:
     }
 
     if (iotConnState == IOT_CONN_FINISH_CONFIG) {
-      if (iotConnStateTimer.autoTimeout(500)) {
-        this->printlnFlush(F("AT+CSQ"));
-        iotConnState = IOT_CONN_WAITING_CSQ;
-      }
+      iotConnState = IOT_CONN_WAITING_CSQ;
     }
 
     if (iotConnState == IOT_CONN_WAITING_CSQ) {
-      iotConnState = IOT_CONN_FINISH_CSQ;
+      if (iotConnStateTimer.autoTimeout(1000)) {
+        this->printlnFlush(F("AT+CSQ"));
+      } else {
+        if (this->inspectCSQ()) {
+          iotConnState = IOT_CONN_FINISH_CSQ;
+
+          iotCSQErrCnt.reset();
+          iotSoftWatchdog.pet();
+        } else {
+          if (iotRetryTimer.autoTimeout(1000)) {
+            iotCSQErrCnt.accu();
+          }
+        }
+      }
     }
 
     if (iotConnState == IOT_CONN_FINISH_CSQ) {
@@ -402,18 +412,14 @@ protected:
     }
   }
 
-  void inspectCSQ() {
+  bool inspectCSQ() {
     byte CSQReading = 0;
 
     {
       CSQReading = iotCSQ.toInt();
     }
 
-    if (CSQReading == 99 || CSQReading <= 3) {
-      // iotCSQErrCnt.accu();
-    } else {
-      // iotCSQErrCnt.reset();
-    }
+    return (CSQReading != 99 && CSQReading <= 3);
   }
 
   bool inspectCGATT() {

@@ -452,14 +452,6 @@ protected:
     this->captureCEREG();
   }
 
-  void inspectParams() {
-    // this->inspectIMEI();
-    // this->inspectIP();
-    // this->inspectCSQ();
-    // this->inspectCGATT();
-    // this->inspectCEREG();
-  }
-
   void errHook() {
     if (iotExtractedRecv.indexOf(F("+QIURC: \"pdpdeact\",1")) > -1) {
       iotModuleState = IOT_MODULE_WAITING_INIT;
@@ -534,7 +526,6 @@ public:
 
     this->queryParams();
     this->captureParams();
-    // this->inspectParams();
 
     this->handleMQTTSubs();
     this->errHook();

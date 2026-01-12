@@ -56,7 +56,7 @@ protected:
       mqttPublErrCnt.reset();
 
       mqttPublLock.release();
-      forcePublishMode = false;
+      mqttForcePublMode.off();
     }
 
     if (iotConnState == IOT_MODULE_WAITING_RESET_HARDWARE) {
@@ -207,7 +207,7 @@ private:
       mqttPublErrCnt.reset();
 
       mqttPublLock.release();
-      forcePublishMode = false;
+      mqttForcePublMode.off();
 
       iotConnState = IOT_CONN_WAITING_RESET;
       iotConnState = IOT_CONN_WAITING_RESET_HARDWARE;
@@ -351,12 +351,12 @@ private:
     }
 
     if (iotConnState == MQTT_STATE_INIT) {
-      if (forcePublishMode) {
+      if (mqttForcePublMode.isOn()) {
         mqttPublLock.lock();
         this->printlnFlush(mqttPublMsgPrepare);
         Serial.println(mqttPublMsgPrepare);
         iotConnState = MQTT_STATE_WAITING_PREPARE_PUBMSG;
-        forcePublishMode = false;
+        mqttForcePublMode.off();
       } else {
         if (iotStateTimer.autoTimeout(30000)) {
           mqttPublLock.lock();
@@ -499,7 +499,7 @@ public:
 
   void forcePublish() {
     if (MQTT_STATE_INIT <= iotConnState && iotConnState <= MQTT_STATE_FINISH_PUBLISH) {
-      forcePublishMode = true;
+      mqttForcePublMode.on();
     }
   }
 

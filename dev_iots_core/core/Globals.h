@@ -234,11 +234,10 @@ String mqttConnCmd = "";
 String mqttSubsCmd = "";
 
 Toggle mqttPublLock;
+Toggle mqttForcePublMode;
 String mqttPublMsgPrepare = "";
 String mqttPublMsgPayload = "";
 String mqttSubsMsgContent = "";
-
-bool forcePublishMode = false;
 
 Timer iotParamTimer;
 Timer iotStateTimer;

@@ -300,8 +300,6 @@ protected:
         mqttSubsCmd = F("AT+QMTSUB=0,1,rgt/");
         mqttSubsCmd.concat(iotIMEI);
         mqttSubsCmd.concat(F("/out,0"));
-
-        iotSoftWatchdog.pet();
       }
     }
 
@@ -324,7 +322,6 @@ protected:
           iotCSQErrCnt.accu();
         } else {
           iotCSQErrCnt.reset();
-          iotSoftWatchdog.pet();
         }
       }
     }
@@ -338,9 +335,9 @@ protected:
         if (iotCGATT == F("1")) {
           if (iotConnState == IOT_CONN_WAITING_CGATT) {
             iotConnState = IOT_CONN_FINISH_CGATT;
+            iotSoftWatchdog.pet();
           }
           iotCGATTErrCnt.reset();
-          iotSoftWatchdog.pet();
         } else {
           iotCGATTErrCnt.accu();
         }
@@ -357,6 +354,7 @@ protected:
         if (iotCEREG == F("0,1")) {
           if (iotConnState == IOT_CONN_WAITING_CEREG) {
             iotConnState = IOT_CONN_FINISH_CEREG;
+            iotSoftWatchdog.pet();
           }
           iotCEREGErrCnt.reset();
         } else {

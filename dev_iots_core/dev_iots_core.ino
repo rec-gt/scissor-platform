@@ -31,13 +31,13 @@ void setup() {
   iotIP.reserve(16);
   iotIMEI.reserve(16);
   AOPayload.reserve(32);
+  serialInputCmd.reserve(32);
   mqttConnCmd.reserve(64);
   mqttSubsCmd.reserve(64);
   mqttPublMsgPrepare.reserve(64);
   AIPayload.reserve(64);
-  iotExtractedRecv.reserve(64);
+  iotExtractedRecv.reserve(128);
   rs485SerialRecv.reserve(128);
-  serialInputCmd.reserve(128);
   iotSerialRecv.reserve(128);
   mqttPublMsgPayload.reserve(128);
   bool remainStrRes = debugStr.reserve(129);

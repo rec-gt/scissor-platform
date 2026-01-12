@@ -177,7 +177,13 @@ public:
 
       y = 63;
       u8g2.setCursor(0, y);
-      u8g2.print(iotApp == 1 ? F("Cat.1") : F("NB"));
+      if (iotApp == 0) {
+        u8g2.print(F("-----"));
+      } else if (iotApp == 1) {
+        u8g2.print(F("Cat.1"));
+      } else if (iotApp == 2) {
+        u8g2.print(F("NBIoT"));
+      }
       u8g2.setCursor(32, y);
       u8g2.print(F("Csq:"));
       u8g2.setCursor(52, y);

@@ -155,41 +155,43 @@ protected:
     }
 
     if (iotConnState == IOT_CONN_FINISH_CSQ) {
-      if (iotStateTimer.autoTimeout(1000)) {
-        this->printlnFlush(F("AT+CGATT?"));
-        iotConnState = IOT_CONN_WAITING_CGATT;
-      }
+      iotConnState = IOT_CONN_WAITING_CGATT;
     }
 
     if (iotConnState == IOT_CONN_WAITING_CGATT) {
-      if (this->inspectCGATT()) {
-        iotConnState = IOT_CONN_FINISH_CGATT;
-
-        iotCGATTErrCnt.reset();
-        iotSoftWatchdog.pet();
+      if (iotStateTimer.autoTimeout(1000)) {
+        this->printlnFlush(F("AT+CGATT?"));
       } else {
-        if (iotStateTimer.autoTimeout(1000)) {
-          iotCGATTErrCnt.accu()
+        if (this->inspectCGATT()) {
+          iotConnState = IOT_CONN_FINISH_CGATT;
+
+          iotCGATTErrCnt.reset();
+          iotSoftWatchdog.pet();
+        } else {
+          if (iotStateTimer.autoTimeout(1000)) {
+            iotCGATTErrCnt.accu();
+          }
         }
       }
     }
 
     if (iotConnState == IOT_CONN_FINISH_CGATT) {
-      if (iotStateTimer.autoTimeout(1000)) {
-        this->printlnFlush(F("AT+CEREG?"));
-        iotConnState = IOT_CONN_WAITING_CEREG;
-      }
+      iotConnState = IOT_CONN_WAITING_CEREG;
     }
 
     if (iotConnState == IOT_CONN_WAITING_CEREG) {
-      if (this->inspectCEREG()) {
-        iotConnState = IOT_CONN_FINISH_CEREG;
-
-        iotSoftWatchdog.pet();
-        iotCEREGErrCnt.reset();
+      if (iotStateTimer.autoTimeout(1000)) {
+        this->printlnFlush(F("AT+CEREG?"));
       } else {
-        if (iotStateTimer.autoTimeout(1000)) {
-          iotCEREGErrCnt.accu();
+        if (this->inspectCEREG()) {
+          iotConnState = IOT_CONN_FINISH_CEREG;
+
+          iotSoftWatchdog.pet();
+          iotCEREGErrCnt.reset();
+        } else {
+          if (iotStateTimer.autoTimeout(1000)) {
+            iotCEREGErrCnt.accu();
+          }
         }
       }
     }
@@ -377,7 +379,7 @@ protected:
     }
   }
 
-  void inspectCGATT() {
+  bool inspectCGATT() {
     return iotCGATT == F("1");
 
     // if (iotCGATT == F("1")) {
@@ -391,7 +393,7 @@ protected:
     // }
   }
 
-  void inspectCEREG() {
+  bool inspectCEREG() {
     return iotCEREG == F("0,1");
     // if (iotCEREG == F("0,1")) {
     //   if (iotConnState == IOT_CONN_WAITING_CEREG) {

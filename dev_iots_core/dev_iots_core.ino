@@ -23,19 +23,19 @@ void setup() {
   analogReference(EXTERNAL);
 
   /*=== String / Heap Memory Management ===*/
-  iotModel.reserve(8);
   iotCSQ.reserve(8);
   iotCGATT.reserve(8);
   iotCEREG.reserve(8);
   mqttSubsMsgContent.reserve(8);
+  iotModel.reserve(16);
   iotIP.reserve(16);
   mqttPublACK.reserve(16);
   iotIMEI.reserve(32);
   AOPayload.reserve(64);
   mqttConnCmd.reserve(64);
   mqttSubsCmd.reserve(64);
-  mqttPublMsgPrepare.reserve(64);
-  iotExtractedRecv.reserve(128);
+  iotExtractedRecv.reserve(64);
+  mqttPublMsgPrepare.reserve(128);
   AIPayload.reserve(128);
   rs485SerialRecv.reserve(128);
   serialInputCmd.reserve(128);

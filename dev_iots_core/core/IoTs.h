@@ -115,8 +115,6 @@ private:
     if (iotModuleState == IOT_MODULE_FINISH_RESET) {
       if (iotModuleStateTimer.autoTimeout(1000)) {
         this->printlnFlush(F("ATI"));
-        this->printlnFlush(F("ATI"));
-        this->printlnFlush(F("AT+QSCLK=0"));
         iotModuleState = IOT_MODULE_WAITING_GET_MODEL;
         iotSoftWatchdog.pet();
       }
@@ -124,8 +122,6 @@ private:
 
     if (iotModuleState == IOT_MODULE_WAITING_GET_MODEL) {
       bool res = false;
-      Serial.println(iotSerialRecv);
-      Serial.println(iotExtractedRecv);
 
       if (iotExtractedRecv.indexOf(IOT_MODEL_EC800K) > -1) {
         iotModel = IOT_MODEL_EC800K;

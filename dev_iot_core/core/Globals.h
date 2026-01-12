@@ -223,7 +223,9 @@ Counter iotCSQErrCnt;
 Counter iotCGATTErrCnt;
 Counter iotCEREGErrCnt;
 Counter mqttOpenErrCnt;
-Counter mqttPublishErrCnt;
+Counter mqttConnErrCnt;
+Counter mqttSubsErrCnt;
+Counter mqttPublErrCnt;
 
 /*=== rs485 ===*/
 String rs485SerialRecv = "";

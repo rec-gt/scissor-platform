@@ -136,18 +136,6 @@ private:
         }
       }
     }
-
-    /* === Open MQTT connection === */
-    // if (iotConnState == IOT_STATE_WAITING_OPEN_MQTT) {
-    //   if (iotExtractedRecv.indexOf(F("+QMTOPEN: 0,0")) > -1) {
-    //     iotConnState = IOT_STATE_FINISH_OPEN_MQTT;
-    //     mqttOpenErrCnt.reset();
-    //   } else {
-    //     if (mqttStateTimer.autoTimeout(1000)) {
-    //       mqttOpenErrCnt.accu();
-    //     }
-    //   }
-    // }
   }
 
   void stateManagement() {
@@ -158,7 +146,8 @@ private:
       iotCGATTErrCnt.reset();
       iotCEREGErrCnt.reset();
       mqttOpenErrCnt.reset();
-      mqttPublishErrCnt.reset();
+      mqttConnErrCnt.reset();
+      mqttPublErrCnt.reset();
 
       mqttPublishLock.release();
       forcePublishMode = false;
@@ -248,8 +237,8 @@ private:
     if (iotConnState == IOT_STATE_FINISH_CEREG) {
       if (iotStateTimer.autoTimeout(1000)) {
         this->printlnFlush(F("AT+QMTOPEN=0,iot.rec-gt.com,1880"));
+        iotConnState = IOT_STATE_WAITING_OPEN_MQTT;
       }
-      iotConnState = IOT_STATE_WAITING_OPEN_MQTT;
     }
 
     if (iotConnState == IOT_STATE_WAITING_OPEN_MQTT) {
@@ -265,32 +254,40 @@ private:
 
     // TODO: add ErrCnt to catch err and reboot
     if (iotConnState == IOT_STATE_FINISH_OPEN_MQTT) {
-      iotConnState = IOT_STATE_WAITING_CONN_MQTT;
+      if (iotStateTimer.autoTimeout(1000)) {
+        this->printlnFlush(mqttConnCmd);
+        iotConnState = IOT_STATE_WAITING_CONN_MQTT;
+      }
     }
 
     if (iotConnState == IOT_STATE_WAITING_CONN_MQTT) {
-      if (iotStateTimer.autoTimeout(1000)) {
-        this->printlnFlush(mqttConnCmd);
-      }
-
       if (iotExtractedRecv.indexOf(F("+QMTCONN: 0,0,0")) > -1) {
         iotConnState = IOT_STATE_FINISH_CONN_MQTT;
+        mqttConnErrCnt.reset();
+      } else {
+        if (mqttStateTimer.autoTimeout(1000)) {
+          mqttConnErrCnt.accu();
+        }
       }
     }
 
     if (iotConnState == IOT_STATE_FINISH_CONN_MQTT) {
-      iotConnState = IOT_STATE_WAITING_SUBS_MQTT_TOPIC;
+      if (iotStateTimer.autoTimeout(1000)) {
+        this->printlnFlush(mqttSubsCmd);
+        iotConnState = IOT_STATE_WAITING_SUBS_MQTT_TOPIC;
+      }
     }
 
     if (iotConnState == IOT_STATE_WAITING_SUBS_MQTT_TOPIC) {
-      if (iotStateTimer.autoTimeout(1000)) {
-        this->printlnFlush(mqttSubsCmd);
-      }
-
       iotCmpStrIdx = iotExtractedRecv.indexOf(F("+QMTSUB: 0,1,0,0"));
       if (iotCmpStrIdx > -1) {
         iotConnState = IOT_STATE_FINISH_SUBS_MQTT_TOPIC;
         iotConnState = IOT_STATE_FINISH_INIT;
+        mqttSubsErrCnt.reset();
+      } else {
+        if (mqttStateTimer.autoTimeout(1000)) {
+          mqttSubsErrCnt.accu();
+        }
       }
     }
 
@@ -319,10 +316,10 @@ private:
       iotCmpStrIdx = iotSerialRecv.indexOf(F("> "));  // === special case for ">" ===
       if (iotCmpStrIdx > -1) {
         iotConnState = IOT_PIPELINE_FINISH_PREPARE_PUBMSG;
-        mqttPublishErrCnt.reset();
+        mqttPublErrCnt.reset();
       } else {
         if (iotStateTimer.autoTimeout(1000)) {
-          mqttPublishErrCnt.accu();
+          mqttPublErrCnt.accu();
         }
       }
     }
@@ -377,8 +374,13 @@ private:
       iotConnState = IOT_STATE_WAITING_INIT;
     }
 
-    if (mqttPublishErrCnt.over(5)) {
-      Serial.print(F("mqttPublishErrCnt.over(5)"));
+    if (mqttConnErrCnt.over(5)) {
+      Serial.print(F("mqttConnErrCnt.over(5)"));
+      iotConnState = IOT_STATE_WAITING_INIT;
+    }
+
+    if (mqttPublErrCnt.over(5)) {
+      Serial.print(F("mqttPublErrCnt.over(5)"));
       iotConnState = IOT_STATE_WAITING_INIT;
     }
   }

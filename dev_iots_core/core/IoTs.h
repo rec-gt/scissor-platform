@@ -120,21 +120,13 @@ private:
       }
     }
 
-    // if (iotModuleState == IOT_MODULE_WAITING_GET_INFO) {
-    //   if (iotModuleStateTimer.autoTimeout(3000)) {
-    //     this->printlnFlush(F("ATI"));
-    //     iotModuleState = IOT_MODULE_WAITING_GET_MODEL;
-    //     iotSoftWatchdog.pet();
-    //   }
-    // }
-
     if (iotModuleState == IOT_MODULE_WAITING_GET_MODEL) {
       bool res = false;
 
-      if (iotExtractedRecv.indexOf(IOT_MODEL_EC800K) > -1) {
+      if (iotSerialRecv.indexOf(IOT_MODEL_EC800K) > -1) {
         iotModel = IOT_MODEL_EC800K;
         res = true;
-      } else if (iotExtractedRecv.indexOf(IOT_MODEL_BC260Y_CN) > -1) {
+      } else if (iotSerialRecv.indexOf(IOT_MODEL_BC260Y_CN) > -1) {
         iotModel = IOT_MODEL_BC260Y_CN;
         res = true;
       }

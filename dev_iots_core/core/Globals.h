@@ -212,8 +212,6 @@ byte iotConnState = 0;
 String iotSerialRecv = "";
 String iotExtractedRecv = "";
 
-int iotCmpStrIdx = 0;
-
 #define IOT_MODEL_EC800K "EC800K"
 #define IOT_MODEL_BC260Y_CN "BC260Y-CN"
 
@@ -234,6 +232,8 @@ Toggle mqttForcePublMode;
 String mqttPublMsgPrepare = "";
 String mqttPublMsgPayload = "";
 String mqttSubsMsgContent = "";
+String mqttPublACK = "";
+String mqttSubsACK = "";
 
 Timer iotParamTimer;
 Timer iotStateTimer;

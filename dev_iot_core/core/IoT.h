@@ -42,7 +42,7 @@ private:
   }
 
   void queryParams() {
-    if (mqttPublishLock.isReleased()) {
+    if (mqttPublLock.isReleased()) {
       if (iotParamTimer.autoTimeout(5000)) {
         Serial.println(F("Query?"));
         this->printlnFlush(F("AT+CPIN?"));
@@ -145,7 +145,7 @@ private:
       mqttSubsErrCnt.reset();
       mqttPublErrCnt.reset();
 
-      mqttPublishLock.release();
+      mqttPublLock.release();
       forcePublishMode = false;
 
       iotConnState = IOT_STATE_WAITING_RESET;
@@ -292,14 +292,14 @@ private:
 
     if (iotConnState == IOT_PIPELINE_INIT) {
       if (forcePublishMode) {
-        mqttPublishLock.lock();
+        mqttPublLock.lock();
         this->printlnFlush(mqttPublMsgPrepare);
         Serial.println(mqttPublMsgPrepare);
         iotConnState = IOT_PIPELINE_WAITING_PREPARE_PUBMSG;
         forcePublishMode = false;
       } else {
         if (iotStateTimer.autoTimeout(30000)) {
-          mqttPublishLock.lock();
+          mqttPublLock.lock();
           this->printlnFlush(mqttPublMsgPrepare);
           Serial.println(mqttPublMsgPrepare);
           iotConnState = IOT_PIPELINE_WAITING_PREPARE_PUBMSG;
@@ -322,7 +322,7 @@ private:
     if (iotConnState == IOT_PIPELINE_FINISH_PREPARE_PUBMSG) {
       Serial.println(mqttPublMsgPayload);
       this->printlnFlush(mqttPublMsgPayload);
-      mqttPublishLock.release();
+      mqttPublLock.release();
       iotConnState = IOT_PIPELINE_WAITING_PUBLISH;
       iotConnState = IOT_STATE_FINISH_INIT;
     }

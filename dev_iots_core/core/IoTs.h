@@ -430,18 +430,18 @@ protected:
       iotModuleState = IOT_MODULE_WAITING_INIT;
     }
 
-    if (iotCSQErrCnt.over(10)) {
-      Serial.print(F("iotCSQErrCnt.over(10)"));
+    if (iotCSQErrCnt.over(5)) {
+      Serial.print(F("iotCSQErrCnt.over(5)"));
       iotModuleState = IOT_MODULE_WAITING_INIT;
     }
 
-    if (iotCGATTErrCnt.over(10)) {
-      Serial.print(F("iotCGATTErrCnt.over(10)"));
+    if (iotCGATTErrCnt.over(5)) {
+      Serial.print(F("iotCGATTErrCnt.over(5)"));
       iotModuleState = IOT_MODULE_WAITING_INIT;
     }
 
-    if (iotCEREGErrCnt.over(10)) {
-      Serial.print(F("iotCEREGErrCnt.over(10)"));
+    if (iotCEREGErrCnt.over(5)) {
+      Serial.print(F("iotCEREGErrCnt.over(5)"));
       iotModuleState = IOT_MODULE_WAITING_INIT;
     }
 

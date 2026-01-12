@@ -269,7 +269,16 @@ protected:
       this->printlnFlush(mqttPublMsgPayload);
       mqttPublLock.release();
       iotConnState = MQTT_STATE_WAITING_PUBLISH;
-      iotConnState = MQTT_STATE_INIT;  // loop-back
+    }
+
+    if (iotConnState == MQTT_STATE_WAITING_PUBLISH) {
+      if (iotExtractedRecv.indexOf(F("+QMTPUBEX: 0,0,0")) > -1) {
+        iotConnState = MQTT_STATE_FINISH_PUBLISH;
+      }
+    }
+
+    if (iotConnState == MQTT_STATE_FINISH_PUBLISH) {
+      iotConnState = MQTT_STATE_INIT;  // finish one publish loop, loop-back
       iotSoftWatchdog.pet();
     }
   }

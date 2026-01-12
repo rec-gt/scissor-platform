@@ -221,7 +221,6 @@ String iotIP = "";
 String iotCSQ = "";
 String iotCGATT = "";
 String iotCEREG = "";
-byte iotQueryCnt = 0;
 
 /*=== IoT MQTT ===*/
 String mqttConnCmd = "";

@@ -197,20 +197,22 @@ protected:
     }
 
     if (iotConnState == IOT_CONN_FINISH_CEREG) {
-      if (iotStateTimer.autoTimeout(1000)) {
-        this->printlnFlush(F("AT+QMTOPEN=0,iot.rec-gt.com,1880"));
-        iotConnState = IOT_CONN_WAITING_OPEN_MQTT;
-      }
+      iotConnState = IOT_CONN_WAITING_OPEN_MQTT;
     }
 
     if (iotConnState == IOT_CONN_WAITING_OPEN_MQTT) {
-      if (iotExtractedRecv.indexOf(F("+QMTOPEN: 0,0")) > -1) {
-        iotConnState = IOT_CONN_FINISH_OPEN_MQTT;
-        mqttOpenErrCnt.reset();
-        iotSoftWatchdog.pet();
+      if (iotStateTimer.autoTimeout(1000)) {
+        this->printlnFlush(F("AT+QMTOPEN=0,iot.rec-gt.com,1880"));
       } else {
-        if (mqttStateTimer.autoTimeout(1000)) {
-          mqttOpenErrCnt.accu();
+        if (iotExtractedRecv.indexOf(F("+QMTOPEN: 0,0")) > -1) {
+          iotConnState = IOT_CONN_FINISH_OPEN_MQTT;
+          
+          mqttOpenErrCnt.reset();
+          iotSoftWatchdog.pet();
+        } else {
+          if (mqttStateTimer.autoTimeout(1000)) {
+            mqttOpenErrCnt.accu();
+          }
         }
       }
     }

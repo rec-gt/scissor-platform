@@ -521,6 +521,7 @@ public:
 
     this->listen();
     this->consume();
+    this->printExtractedRecv();
 
     this->manageModuleState();
     if (iotModuleState == IOT_MODULE_END_OF_STATE) {
@@ -533,8 +534,6 @@ public:
 
     this->handleMQTTSubs();
     this->errHook();
-
-    this->printExtractedRecv();
   }
 
   void printlnFlush(const String& cmd) {

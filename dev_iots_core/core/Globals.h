@@ -168,7 +168,7 @@ enum IOT_MODULE_STATE
   IOT_MODULE_FINISH_RESET_HARDWARE,
   IOT_MODULE_WAITING_RESET_SOFTWARE,
   IOT_MODULE_FINISH_RESET_SOFTWARE,
-  
+
   IOT_MODULE_FINISH_RESET,
 
   IOT_MODULE_WAITING_GET_INFO,
@@ -212,8 +212,8 @@ enum IOT_CONN_STATE
   MQTT_STATE_FINISH_PUBLISH,
 };
 
-byte iotModuleState = 0;
-byte iotConnState = 0;
+byte iotModuleState = IOT_MODULE_WAITING_INIT;
+byte iotConnState = IOT_CONN_WAITING_INIT;
 String iotSerialRecv = "";
 String iotExtractedRecv = "";
 
@@ -250,7 +250,7 @@ Timer iotConnStateTimer;
 Timer iotRetryTimer;
 Timer mqttStateTimer;
 
-Watchdog iotSoftWatchdog(60000UL);
+Watchdog iotSoftWatchdog(30000UL);
 
 /*=== rs485 ===*/
 String rs485SerialRecv = "";

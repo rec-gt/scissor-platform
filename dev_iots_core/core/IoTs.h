@@ -419,7 +419,7 @@ protected:
       CSQReading = iotCSQ.toInt();
     }
 
-    return (CSQReading != 99 && CSQReading > 20);
+    return (CSQReading != 99 && CSQReading > 2);
   }
 
   bool inspectCGATT() {

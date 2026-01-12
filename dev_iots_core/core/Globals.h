@@ -234,7 +234,6 @@ String mqttSubsMsgContent = "";
 String mqttPublACK = "";
 
 Timer iotParamTimer;
-Timer iotStateTimer;
 Timer iotModuleStateTimer;
 Timer iotConnStateTimer;
 Timer mqttStateTimer;

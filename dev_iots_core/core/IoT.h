@@ -164,14 +164,14 @@ private:
 
     if (iotConnState == IOT_CONN_WAITING_RESET_HARDWARE) {
       digitalWrite(IOT_MODULE_RESET_PIN, LOW);
-      if (iotStateTimer.autoTimeout(1000)) {
+      if (iotConnStateTimer.autoTimeout(1000)) {
         digitalWrite(IOT_MODULE_RESET_PIN, HIGH);
         iotConnState = IOT_CONN_FINISH_RESET_HARDWARE;
       }
     }
 
     if (iotConnState == IOT_CONN_FINISH_RESET_HARDWARE) {
-      if (iotStateTimer.autoTimeout(1000)) {
+      if (iotConnStateTimer.autoTimeout(1000)) {
         this->printlnFlush(F("AT+CFUN=1,1"));
         iotConnState = IOT_CONN_WAITING_RESET_SOFTWARE;
       }
@@ -192,7 +192,7 @@ private:
     }
 
     if (iotConnState == IOT_CONN_WAITING_CONFIG) {
-      if (iotStateTimer.autoTimeout(500)) {
+      if (iotConnStateTimer.autoTimeout(500)) {
         this->printlnFlush(F("ATE0"));
         this->printlnFlush(F("AT+CGSN=1"));
         this->printlnFlush(F("AT+QSCLK=0"));
@@ -209,7 +209,7 @@ private:
     }
 
     if (iotConnState == IOT_CONN_FINISH_CONFIG) {
-      if (iotStateTimer.autoTimeout(500)) {
+      if (iotConnStateTimer.autoTimeout(500)) {
         this->printlnFlush(F("AT+CSQ"));
         iotConnState = IOT_CONN_WAITING_CSQ;
       }
@@ -224,7 +224,7 @@ private:
     }
 
     if (iotConnState == IOT_CONN_WAITING_CGATT) {
-      if (iotStateTimer.autoTimeout(1000)) {
+      if (iotConnStateTimer.autoTimeout(1000)) {
         this->printlnFlush(F("AT+CGATT?"));
       }
     }
@@ -234,13 +234,13 @@ private:
     }
 
     if (iotConnState == IOT_CONN_WAITING_CEREG) {
-      if (iotStateTimer.autoTimeout(1000)) {
+      if (iotConnStateTimer.autoTimeout(1000)) {
         this->printlnFlush(F("AT+CEREG?"));
       }
     }
 
     if (iotConnState == IOT_CONN_FINISH_CEREG) {
-      if (iotStateTimer.autoTimeout(1000)) {
+      if (iotConnStateTimer.autoTimeout(1000)) {
         this->printlnFlush(F("AT+QMTOPEN=0,iot.rec-gt.com,1880"));
         iotConnState = IOT_CONN_WAITING_OPEN_MQTT;
       }
@@ -258,7 +258,7 @@ private:
     }
 
     if (iotConnState == IOT_CONN_FINISH_OPEN_MQTT) {
-      if (iotStateTimer.autoTimeout(1000)) {
+      if (iotConnStateTimer.autoTimeout(1000)) {
         this->printlnFlush(mqttConnCmd);
         iotConnState = IOT_CONN_WAITING_CONN_MQTT;
       }
@@ -276,7 +276,7 @@ private:
     }
 
     if (iotConnState == IOT_CONN_FINISH_CONN_MQTT) {
-      if (iotStateTimer.autoTimeout(1000)) {
+      if (iotConnStateTimer.autoTimeout(1000)) {
         this->printlnFlush(mqttSubsCmd);
         iotConnState = IOT_CONN_WAITING_SUBS_MQTT_TOPIC;
       }
@@ -307,7 +307,7 @@ private:
         iotConnState = MQTT_STATE_WAITING_PREPARE_PUBMSG;
         mqttForcePublMode.off();
       } else {
-        if (iotStateTimer.autoTimeout(30000)) {
+        if (iotConnStateTimer.autoTimeout(30000)) {
           mqttPublLock.lock();
           this->printlnFlush(mqttPublMsgPrepare);
           Serial.println(mqttPublMsgPrepare);
@@ -322,7 +322,7 @@ private:
         iotConnState = MQTT_STATE_FINISH_PREPARE_PUBMSG;
         mqttPublErrCnt.reset();
       } else {
-        if (iotStateTimer.autoTimeout(1000)) {
+        if (iotConnStateTimer.autoTimeout(1000)) {
           mqttPublErrCnt.accu();
         }
       }

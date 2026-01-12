@@ -219,6 +219,7 @@ int iotCmpStrIdx = 0;
 
 String iotModel = "";
 String iotIMEI = "";
+String iotIP = "";
 String iotCSQ = "";
 String iotCGATT = "";
 String iotCEREG = "";

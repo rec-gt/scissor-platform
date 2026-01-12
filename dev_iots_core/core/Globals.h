@@ -9,6 +9,7 @@
 #include "./Toggle.h"
 #include "./Timer.h"
 #include "./Counter.h"
+#include "./Watchdog.h"
 
 /*=== Main System ===*/
 #define DI_PIN_1 32
@@ -97,55 +98,54 @@
 #define AO_4 3
 
 DigitalInput digitalInputs[DI_NUMS] = {
-  DigitalInput(DI_PIN_1),
-  DigitalInput(DI_PIN_2),
-  DigitalInput(DI_PIN_3),
-  DigitalInput(DI_PIN_4),
-  DigitalInput(DI_PIN_5),
-  DigitalInput(DI_PIN_6),
-  DigitalInput(DI_PIN_7),
-  DigitalInput(DI_PIN_8),
+    DigitalInput(DI_PIN_1),
+    DigitalInput(DI_PIN_2),
+    DigitalInput(DI_PIN_3),
+    DigitalInput(DI_PIN_4),
+    DigitalInput(DI_PIN_5),
+    DigitalInput(DI_PIN_6),
+    DigitalInput(DI_PIN_7),
+    DigitalInput(DI_PIN_8),
 };
 
 DigitalOutput digitalOutputs[DO_NUMS]{
-  DigitalOutput(DO_PIN_1),
-  DigitalOutput(DO_PIN_2),
-  DigitalOutput(DO_PIN_3),
-  DigitalOutput(DO_PIN_4),
-  DigitalOutput(DO_PIN_5),
-  DigitalOutput(DO_PIN_6),
-  DigitalOutput(DO_PIN_7),
-  DigitalOutput(DO_PIN_8),
+    DigitalOutput(DO_PIN_1),
+    DigitalOutput(DO_PIN_2),
+    DigitalOutput(DO_PIN_3),
+    DigitalOutput(DO_PIN_4),
+    DigitalOutput(DO_PIN_5),
+    DigitalOutput(DO_PIN_6),
+    DigitalOutput(DO_PIN_7),
+    DigitalOutput(DO_PIN_8),
 };
 
 AnalogOutput analogOutputs[AO_NUMS]{
-  AnalogOutput(AO_PIN_1),
-  AnalogOutput(AO_PIN_2),
-  AnalogOutput(AO_PIN_3),
-  AnalogOutput(AO_PIN_4),
+    AnalogOutput(AO_PIN_1),
+    AnalogOutput(AO_PIN_2),
+    AnalogOutput(AO_PIN_3),
+    AnalogOutput(AO_PIN_4),
 };
 
 AnalogInput analogInputs[AI_NUMS] = {
-  AnalogInput(AI_PIN_1, 1),
-  AnalogInput(AI_PIN_2, 1),
-  AnalogInput(AI_PIN_3, 1),
-  AnalogInput(AI_PIN_4, 1),
-  AnalogInput(AI_PIN_5, 1),
-  AnalogInput(AI_PIN_6, 1),
-  AnalogInput(AI_PIN_7, 1),
-  AnalogInput(AI_PIN_8, 1),
-  AnalogInput(AI_PIN_9, 1),
-  AnalogInput(AI_PIN_10, 1),
-  AnalogInput(AI_PIN_11, 1),
-  AnalogInput(AI_PIN_12, 1)
-};
+    AnalogInput(AI_PIN_1, 1),
+    AnalogInput(AI_PIN_2, 1),
+    AnalogInput(AI_PIN_3, 1),
+    AnalogInput(AI_PIN_4, 1),
+    AnalogInput(AI_PIN_5, 1),
+    AnalogInput(AI_PIN_6, 1),
+    AnalogInput(AI_PIN_7, 1),
+    AnalogInput(AI_PIN_8, 1),
+    AnalogInput(AI_PIN_9, 1),
+    AnalogInput(AI_PIN_10, 1),
+    AnalogInput(AI_PIN_11, 1),
+    AnalogInput(AI_PIN_12, 1)};
 
 DryContact dryContacts[DRY_CONTACT_NUMS] = {
-  DryContact(DRY_CONTACT_PIN_1),
-  DryContact(DRY_CONTACT_PIN_2),
-  DryContact(DRY_CONTACT_PIN_3),
-  DryContact(DRY_CONTACT_PIN_4),
-  DryContact(DRY_CONTACT_PIN_5),
+    DryContact(DRY_CONTACT_PIN_1),
+    DryContact(DRY_CONTACT_PIN_2),
+    DryContact(DRY_CONTACT_PIN_3),
+    DryContact(DRY_CONTACT_PIN_4),
+    DryContact(DRY_CONTACT_PIN_5),
 };
 
 byte DIPayload = 0;
@@ -157,7 +157,8 @@ String AOPayload = "";
 #define SerialIoT Serial1
 #define IOT_MODULE_RESET_PIN 24
 
-enum IOT_MODULE_STATE {
+enum IOT_MODULE_STATE
+{
   IOT_MODULE_WAITING_INIT,
 
   IOT_MODULE_WAITING_RESET,
@@ -173,7 +174,8 @@ enum IOT_MODULE_STATE {
   IOT_MODULE_FINISH_INIT,
 };
 
-enum IOT_CONN_STATE {
+enum IOT_CONN_STATE
+{
   IOT_CONN_WAITING_INIT,
 
   /* === State Initiation === */
@@ -252,6 +254,8 @@ Counter mqttOpenErrCnt;
 Counter mqttConnErrCnt;
 Counter mqttSubsErrCnt;
 Counter mqttPublErrCnt;
+
+Watchdog iotSoftWatchdog(30000UL);
 
 /*=== rs485 ===*/
 String rs485SerialRecv = "";

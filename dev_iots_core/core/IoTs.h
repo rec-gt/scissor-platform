@@ -79,6 +79,7 @@ protected:
       if (iotExtractedRecv.indexOf(F("RDY")) > -1) {
         this->printlnFlush(F("ATI"));
         iotModuleState = IOT_MODULE_WAITING_GET_MODEL;
+        iotSoftWatchdog.pet();
       }
     }
 
@@ -95,6 +96,7 @@ protected:
 
       if (res) {
         iotModuleState = IOT_MODULE_FINISH_GET_MODEL;
+        iotSoftWatchdog.pet();
       }
     }
 
@@ -481,10 +483,19 @@ public:
     SerialIoT.begin(115200);
     pinMode(IOT_MODULE_RESET_PIN, OUTPUT);
     digitalWrite(IOT_MODULE_RESET_PIN, HIGH);
+    iotModuleState = IOT_MODULE_WAITING_INIT;
     iotConnState = IOT_CONN_WAITING_INIT;
+
+    iotSoftWatchdog.enable();
+    iotSoftWatchdog.setCallback([]() {
+      iotModuleState = IOT_MODULE_WAITING_INIT;
+      iotConnState = IOT_CONN_WAITING_INIT;
+    });
   }
 
   void loop() {
+    iotSoftWatchdog.monitor();
+
     this->listen();
     this->consume();
     this->manageModuleState();

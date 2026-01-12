@@ -13,6 +13,8 @@ private:
   CallbackFunction callback;
 
 public:
+  Watchdog() {}
+
   Watchdog(uint32_t timeout) {
     this->timeout = timeout;
     this->callback = nullptr;

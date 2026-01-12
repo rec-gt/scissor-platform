@@ -451,7 +451,7 @@ public:
     this->consume();
     this->manageModuleState();
     this->manageConnectionState();
-    this->monitorParams();
+
     this->queryParams();
 
     this->captureIMEI();

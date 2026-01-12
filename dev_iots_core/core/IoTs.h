@@ -206,7 +206,7 @@ protected:
       } else {
         if (iotExtractedRecv.indexOf(F("+QMTOPEN: 0,0")) > -1) {
           iotConnState = IOT_CONN_FINISH_OPEN_MQTT;
-          
+
           mqttOpenErrCnt.reset();
           iotSoftWatchdog.pet();
         } else {
@@ -383,33 +383,14 @@ protected:
 
   bool inspectCGATT() {
     return iotCGATT == F("1");
-
-    // if (iotCGATT == F("1")) {
-    //   if (iotConnState == IOT_CONN_WAITING_CGATT) {
-    //     iotConnState = IOT_CONN_FINISH_CGATT;
-    //     iotSoftWatchdog.pet();
-    //   }
-    //   // iotCGATTErrCnt.reset();
-    // } else {
-    //   // iotCGATTErrCnt.accu();
-    // }
   }
 
   bool inspectCEREG() {
     return iotCEREG == F("0,1");
-    // if (iotCEREG == F("0,1")) {
-    //   if (iotConnState == IOT_CONN_WAITING_CEREG) {
-    //     iotConnState = IOT_CONN_FINISH_CEREG;
-    //     iotSoftWatchdog.pet();
-    //   }
-    //   // iotCEREGErrCnt.reset();
-    // } else {
-    //   // iotCEREGErrCnt.accu();
-    // }
   }
 
   void queryParams() {
-    if (iotConnState == IOT_CONN_FINISH_INIT) {
+    if (iotConnState >= IOT_CONN_FINISH_INIT) {
       if (mqttPublLock.isReleased()) {
         if (iotParamTimer.autoTimeout(5000)) {
           Serial.println(F(">>> Query?"));

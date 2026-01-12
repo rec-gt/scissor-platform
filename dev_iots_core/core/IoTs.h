@@ -41,7 +41,7 @@ protected:
     }
   }
 
-  void manageModule() {
+  void manageModuleState() {
     if (iotModuleState == IOT_MODULE_WAITING_INIT) {
       Serial.println(F(">>> IOT MODULE INIT, RESET"));
       iotConnState = IOT_MODULE_WAITING_RESET;
@@ -59,33 +59,64 @@ protected:
       mqttForcePublMode.off();
     }
 
-    if (iotConnState == IOT_MODULE_WAITING_RESET_HARDWARE) {
+    if (iotModuleState == IOT_MODULE_WAITING_RESET_HARDWARE) {
       digitalWrite(IOT_MODULE_RESET_PIN, LOW);
-      if (iotStateTimer.autoTimeout(1000)) {
+      if (iotModuleStateTimer.autoTimeout(2000)) {
         digitalWrite(IOT_MODULE_RESET_PIN, HIGH);
-        iotConnState = IOT_MODULE_FINISH_RESET_HARDWARE;
+        iotModuleState = IOT_MODULE_FINISH_RESET_HARDWARE;
       }
     }
 
-    if (iotConnState == IOT_MODULE_FINISH_RESET_HARDWARE) {
-      if (iotStateTimer.autoTimeout(1000)) {
+    if (iotModuleState == IOT_MODULE_FINISH_RESET_HARDWARE) {
+      if (iotModuleStateTimer.autoTimeout(1000)) {
         this->printlnFlush(F("AT+CFUN=1,1"));
-        iotConnState = IOT_MODULE_WAITING_RESET_SOFTWARE;
+        iotModuleState = IOT_MODULE_WAITING_RESET_SOFTWARE;
+        iotModuleState = IOT_MODULE_FINISH_RESET;
       }
     }
 
-    if (iotConnState == IOT_MODULE_WAITING_RESET_SOFTWARE) {
-      iotCmpStrIdx = iotExtractedRecv.indexOf(F("RDY"));
-      if (iotCmpStrIdx > -1) {
-        Serial.println(F("\r\n>>> IOT READY"));
-        iotConnState = IOT_MODULE_FINISH_RESET_SOFTWARE;
-        iotConnState = IOT_MODULE_FINISH_RESET;
+    if (iotModuleState == IOT_MODULE_FINISH_RESET) {
+      if (iotExtractedRecv.indexOf(F("RDY")) > -1) {
         this->printlnFlush(F("ATI"));
+        iotModuleState = IOT_MODULE_WAITING_GET_MODEL;
       }
     }
 
-    if (iotConnState == IOT_CONN_FINISH_RESET) {
-      iotConnState = IOT_CONN_WAITING_CONFIG;
+    if (iotModuleState == IOT_MODULE_WAITING_GET_MODEL) {
+      bool res = false;
+
+      if (iotExtractedRecv.indexOf(F("EC800K")) > -1) {
+        iotModel = F("EC800K");
+        res = true;
+      } else if (iotExtractedRecv.indexOf(F("BC260Y-CN")) > -1) {
+        iotModel = F("BC260Y-CN");
+        res = true;
+      }
+
+      if (res) {
+        iotModuleState = IOT_MODULE_FINISH_GET_MODEL;
+      }
+    }
+
+    if (iotModuleState == IOT_MODULE_FINISH_GET_MODEL) {
+      iotModuleState = IOT_MODULE_FINISH_GET_MODEL;
+      iotModuleState = IOT_MODULE_FINISH_INIT;
+    }
+
+    // if (iotModuleState == IOT_MODULE_WAITING_RESET_SOFTWARE) {
+    //   iotCmpStrIdx = iotExtractedRecv.indexOf(F("RDY"));
+    //     Serial.println(F("\r\n>>> IOT READY"));
+
+    //   if (iotCmpStrIdx > -1) {
+    //     Serial.println(F("\r\n>>> IOT READY"));
+    //     iotModuleState = IOT_MODULE_FINISH_RESET_SOFTWARE;
+    //     iotModuleState = IOT_MODULE_FINISH_RESET;
+    //     this->printlnFlush(F("ATI"));
+    //   }
+    // }
+
+    if (iotModuleState == IOT_CONN_FINISH_RESET) {
+      // iotConnState = IOT_CONN_WAITING_CONFIG;
     }
   }
 
@@ -456,7 +487,7 @@ public:
   void loop() {
     this->listen();
     this->consume();
-    this->getModel();
+    this->manageModuleState();
 
     this->stateManagement();
     this->queryParams();

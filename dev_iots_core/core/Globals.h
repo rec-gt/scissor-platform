@@ -173,7 +173,7 @@ enum IOT_MODULE_STATE {
   IOT_MODULE_FINISH_INIT,
 };
 
-enum IOT_CONN__STATE {
+enum IOT_CONN_STATE {
   IOT_CONN_WAITING_INIT,
 
   /* === State Initiation === */
@@ -241,6 +241,8 @@ String mqttSubsMsgContent = "";
 
 Timer iotParamTimer;
 Timer iotStateTimer;
+Timer iotModuleStateTimer;
+Timer iotConnStateTimer;
 Timer mqttStateTimer;
 
 Counter iotCSQErrCnt;

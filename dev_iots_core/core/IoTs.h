@@ -1,10 +1,10 @@
 #include "Globals.h"
 
-#ifndef IOT_H
-#define IOT_H
+#ifndef IOTS_H
+#define IOTS_H
 
 class IoT {
-private:
+protected:
   void listen() {
     while (SerialIoT.available() > 0) {
       char c = SerialIoT.read();
@@ -41,6 +41,10 @@ private:
     }
   }
 
+private:
+  void confirmModel() {
+  }
+
   void queryParams() {
     if (mqttPublLock.isReleased()) {
       if (iotParamTimer.autoTimeout(5000)) {
@@ -53,9 +57,9 @@ private:
     }
   }
 
-  void monitorParams() {
+  void getModel() {
     /* === Model (Cat1 or NB) === */
-    {
+    if (iotModel == F("")) {
       if (iotExtractedRecv.indexOf(F("EC800K")) > -1) {
         iotModel = F("EC800K");
       }
@@ -63,7 +67,9 @@ private:
         iotModel = F("BC260Y-CN");
       }
     }
+  }
 
+  void monitorParams() {
     /* === IMEI === */
     {
       iotCmpStrIdx = iotExtractedRecv.indexOf(F("+CGSN: "));
@@ -405,6 +411,8 @@ public:
   void loop() {
     this->listen();
     this->consume();
+    this->getModel();
+
     this->stateManagement();
     this->queryParams();
     this->monitorParams();

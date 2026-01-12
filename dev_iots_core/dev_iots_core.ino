@@ -23,6 +23,7 @@ void setup() {
   analogReference(EXTERNAL);
 
   /*=== String / Heap Memory Management ===*/
+  iotModel.reserve(8);
   iotCSQ.reserve(8);
   iotCGATT.reserve(8);
   iotCEREG.reserve(8);

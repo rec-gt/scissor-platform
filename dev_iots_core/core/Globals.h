@@ -160,6 +160,7 @@ String AOPayload = "";
 enum IOT_STATE {
   IOT_STATE_WAITING_INIT,
 
+  /* === State Initiation === */
   IOT_STATE_WAITING_RESET,
   IOT_STATE_WAITING_RESET_HARDWARE,
   IOT_STATE_FINISH_RESET_HARDWARE,
@@ -169,7 +170,8 @@ enum IOT_STATE {
 
   IOT_STATE_WAITING_ASK_MODEL,
   IOT_STATE_FINISH_ASK_MODEL,
-
+  
+  /* === State Management === */
   IOT_STATE_WAITING_IP,
   IOT_STATE_FINISH_IP,
   IOT_STATE_WAITING_CONFIG,
@@ -189,11 +191,12 @@ enum IOT_STATE {
 
   IOT_STATE_FINISH_INIT,
 
-  IOT_PIPELINE_INIT,
-  IOT_PIPELINE_WAITING_PREPARE_PUBMSG,
-  IOT_PIPELINE_FINISH_PREPARE_PUBMSG,
-  IOT_PIPELINE_WAITING_PUBLISH,
-  IOT_PIPELINE_FINISH_PUBLISH,
+  /* === MQTT State Management === */
+  MQTT_STATE_INIT,
+  MQTT_STATE_WAITING_PREPARE_PUBMSG,
+  MQTT_STATE_FINISH_PREPARE_PUBMSG,
+  MQTT_STATE_WAITING_PUBLISH,
+  MQTT_STATE_FINISH_PUBLISH,
 };
 
 byte iotConnState = 0;
@@ -202,9 +205,9 @@ String iotExtractedRecv = "";
 
 int iotCmpStrIdx = 0;
 
-String iotCSQ = "";
-byte iotCSQTrial = 0;
+String iotModel = "";
 String iotIMEI = "";
+String iotCSQ = "";
 String iotCGATT = "";
 String iotCEREG = "";
 byte iotQueryCnt = 0;

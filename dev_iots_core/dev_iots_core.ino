@@ -31,7 +31,7 @@ void setup() {
   iotIP.reserve(16);
   mqttPublACK.reserve(16);
   iotIMEI.reserve(32);
-  iotExtractedRecv.reserve(32);
+  iotExtractedRecv.reserve(64);
   AOPayload.reserve(64);
   mqttConnCmd.reserve(64);
   mqttSubsCmd.reserve(64);

@@ -103,8 +103,8 @@ private:
     }
 
     if (iotModuleState == IOT_MODULE_FINISH_INIT) {
-      iotConnState = IOT_CONN_WAITING_INIT;
       iotModuleState = IOT_MODULE_END_OF_STATE;
+      iotConnState = IOT_CONN_WAITING_INIT;
     }
   }
 
@@ -125,12 +125,12 @@ protected:
     }
 
     if (iotConnState == IOT_CONN_WAITING_CONFIG) {
-      if (iotStateTimer.autoTimeout(500)) {
+      if (iotStateTimer.autoTimeout(1000)) {
         this->printlnFlush(F("ATE0"));
         this->printlnFlush(F("AT+CGSN=1"));
         this->printlnFlush(F("AT+QSCLK=0"));
-        this->printlnFlush(F("AT+QIDNSCFG=0,223.5.5.5,8.8.8.8"));
         this->printlnFlush(F("AT+CFUN=1"));
+        // this->printlnFlush(F("AT+QIDNSCFG=0,223.5.5.5,8.8.8.8")); // for nbiot
         // this->printlnFlush(F("AT+CPSMS=0")); // for nbiot
         // this->printlnFlush(F("AT+CSCON=0")); // for nbiot
         // this->printlnFlush(F("AT+CEDRXS=0,5")); // for nbiot
@@ -155,22 +155,40 @@ protected:
     }
 
     if (iotConnState == IOT_CONN_FINISH_CSQ) {
-      iotConnState = IOT_CONN_WAITING_CGATT;
+      if (iotStateTimer.autoTimeout(1000)) {
+        this->printlnFlush(F("AT+CGATT?"));
+        iotConnState = IOT_CONN_WAITING_CGATT;
+      }
     }
 
     if (iotConnState == IOT_CONN_WAITING_CGATT) {
-      if (iotStateTimer.autoTimeout(1000)) {
-        this->printlnFlush(F("AT+CGATT?"));
+      if (this->inspectCGATT()) {
+        iotConnState = IOT_CONN_FINISH_CGATT;
+
+        iotCGATTErrCnt.reset();
+        iotSoftWatchdog.pet();
+      } else {
+        if (iotStateTimer.autoTimeout(1000)) {
+          iotCGATTErrCnt.accu()
+        }
       }
     }
 
     if (iotConnState == IOT_CONN_FINISH_CGATT) {
-      iotConnState = IOT_CONN_WAITING_CEREG;
+      if (iotStateTimer.autoTimeout(1000)) {
+        this->printlnFlush(F("AT+CEREG?"));
+        iotConnState = IOT_CONN_WAITING_CEREG;
+      }
     }
 
     if (iotConnState == IOT_CONN_WAITING_CEREG) {
-      if (iotStateTimer.autoTimeout(1000)) {
-        this->printlnFlush(F("AT+CEREG?"));
+      if (this->inspectCEREG()) {
+        iotConnState = IOT_CONN_FINISH_CEREG;
+
+        iotSoftWatchdog.pet();
+        iotCEREGErrCnt.reset();
+      } else {
+        iotCEREGErrCnt.accu();
       }
     }
 
@@ -358,39 +376,60 @@ protected:
   }
 
   void inspectCGATT() {
-    if (iotCGATT == F("1")) {
-      if (iotConnState == IOT_CONN_WAITING_CGATT) {
-        iotConnState = IOT_CONN_FINISH_CGATT;
-        iotSoftWatchdog.pet();
-      }
-      // iotCGATTErrCnt.reset();
-    } else {
-      // iotCGATTErrCnt.accu();
-    }
+    return iotCGATT == F("1");
+
+    // if (iotCGATT == F("1")) {
+    //   if (iotConnState == IOT_CONN_WAITING_CGATT) {
+    //     iotConnState = IOT_CONN_FINISH_CGATT;
+    //     iotSoftWatchdog.pet();
+    //   }
+    //   // iotCGATTErrCnt.reset();
+    // } else {
+    //   // iotCGATTErrCnt.accu();
+    // }
   }
 
   void inspectCEREG() {
-    if (iotCEREG == F("0,1")) {
-      if (iotConnState == IOT_CONN_WAITING_CEREG) {
-        iotConnState = IOT_CONN_FINISH_CEREG;
-        iotSoftWatchdog.pet();
-      }
-      // iotCEREGErrCnt.reset();
-    } else {
-      // iotCEREGErrCnt.accu();
-    }
+    return iotCEREG == F("0,1");
+    // if (iotCEREG == F("0,1")) {
+    //   if (iotConnState == IOT_CONN_WAITING_CEREG) {
+    //     iotConnState = IOT_CONN_FINISH_CEREG;
+    //     iotSoftWatchdog.pet();
+    //   }
+    //   // iotCEREGErrCnt.reset();
+    // } else {
+    //   // iotCEREGErrCnt.accu();
+    // }
   }
 
   void queryParams() {
-    if (mqttPublLock.isReleased()) {
-      if (iotParamTimer.autoTimeout(5000)) {
-        Serial.println(F(">>> Query?"));
-        this->printlnFlush(F("AT+CPIN?"));
-        this->printlnFlush(F("AT+CSQ"));
-        this->printlnFlush(F("AT+CGATT?"));
-        this->printlnFlush(F("AT+CEREG?"));
+    if (iotConnState == IOT_CONN_FINISH_INIT) {
+      if (mqttPublLock.isReleased()) {
+        if (iotParamTimer.autoTimeout(5000)) {
+          Serial.println(F(">>> Query?"));
+          this->printlnFlush(F("AT+CPIN?"));
+          this->printlnFlush(F("AT+CSQ"));
+          this->printlnFlush(F("AT+CGATT?"));
+          this->printlnFlush(F("AT+CEREG?"));
+        }
       }
     }
+  }
+
+  void captureParams() {
+    this->captureIMEI();
+    this->captureIP();
+    this->captureCSQ();
+    this->captureCGATT();
+    this->captureCEREG();
+  }
+
+  void inspectParams() {
+    this->inspectIMEI();
+    this->inspectIP();
+    this->inspectCSQ();
+    this->inspectCGATT();
+    this->inspectCEREG();
   }
 
   void errHook() {
@@ -462,18 +501,8 @@ public:
     this->manageConnectionState();
 
     this->queryParams();
-
-    this->captureIMEI();
-    this->captureIP();
-    this->captureCSQ();
-    this->captureCGATT();
-    this->captureCEREG();
-
-    this->inspectIMEI();
-    this->inspectIP();
-    this->inspectCSQ();
-    this->inspectCGATT();
-    this->inspectCEREG();
+    this->captureParams();
+    this->inspectParams();
 
     this->handleMQTTSubs();
     this->errHook();

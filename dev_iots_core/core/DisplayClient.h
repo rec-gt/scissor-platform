@@ -42,6 +42,7 @@ public:
   void prepareBuffer() {
     {
       int csq = iotCSQ.toInt();
+      int iotApp = (iotModel == IOT_MODEL_EC800K ? 0 : 1);
 
       uint8_t idx = 0;
 
@@ -49,6 +50,7 @@ public:
 
       this->buffer[idx++] = iotConnState;
       this->buffer[idx++] = csq;
+      this->buffer[idx++] = iotApp;
       this->buffer[idx++] = DIPayload;
       this->buffer[idx++] = DOPayload;
 

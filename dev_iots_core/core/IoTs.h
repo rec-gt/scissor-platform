@@ -100,7 +100,7 @@ private:
           iotResetHardwareCnt.accu();
         }
 
-        if (iotResetHardwareCnt.over(5)) {
+        if (iotResetHardwareCnt.over(8)) {
           Serial.println(F(">>> IOT SERIAL FAIL!"));
           iotSerialBaudRateIdx++;
           if (iotSerialBaudRateIdx > 2) {

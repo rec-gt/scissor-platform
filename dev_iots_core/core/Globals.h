@@ -214,7 +214,7 @@ enum IOT_CONN_STATE
   MQTT_STATE_FINISH_PUBLISH,
 };
 
-uint32_t iotSerialBaudRates[] = {2400, 9600, 115200};
+uint32_t iotSerialBaudRates[] = {9600, 115200};
 size_t iotSerialBaudRateIdx = 0;
 
 byte iotModuleState = IOT_MODULE_WAITING_INIT;

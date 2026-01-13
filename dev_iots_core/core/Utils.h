@@ -34,9 +34,9 @@ public:
       }
       if (c == '\r') {
         if (serialInputCmd == F("RESET")) {
-          iotConnState = IOT_CONN_WAITING_INIT;
+          iotModuleState = IOT_MODULE_WAITING_INIT;
         } else if (serialInputCmd == F("FORCE")) {
-          Serial.print(F("Force Publish"));
+          Serial.println(F("Force Publish:"));
           iot.forcePublish();
         } else {
           iot.printlnFlush(serialInputCmd);

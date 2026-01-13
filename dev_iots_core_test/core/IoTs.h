@@ -149,7 +149,6 @@ protected:
 
     if (iotConnState == IOT_CONN_WAITING_CONFIG) {
       if (iotConnStateTimer.autoTimeout(1000)) {
-        this->printlnFlush(F("AT+CGSN=1"));
         this->printlnFlush(F("AT+QSCLK=0"));
         this->printlnFlush(F("AT+QIDNSCFG=0,223.5.5.5,8.8.8.8"));
 
@@ -171,7 +170,15 @@ protected:
     }
 
     if (iotConnState == IOT_CONN_FINISH_CONFIG) {
-      iotConnState = IOT_CONN_WAITING_CSQ;
+      if (iotConnStateTimer.autoTimeout(1000)) {
+        this->printlnFlush(F("AT+CGSN=1"));
+      }
+      this->listen();
+      this->captureIMEI();
+      this->clearRecv();
+      if (iotIMEI.length() == 15) {
+        iotConnState = IOT_CONN_WAITING_CSQ;
+      }
     }
 
     if (iotConnState == IOT_CONN_WAITING_CSQ) {
@@ -262,8 +269,8 @@ protected:
     if (iotConnState == IOT_CONN_WAITING_OPEN_MQTT) {
       this->listen();
       if (iotSerialRecv.indexOf(F("+QMTOPEN: 0,0")) > -1) {
+        this->clearRecv();
         iotConnState = IOT_CONN_FINISH_OPEN_MQTT;
-
         mqttOpenErrCnt.reset();
         iotSoftWatchdog.pet();
       } else {
@@ -271,7 +278,6 @@ protected:
           mqttOpenErrCnt.accu();
         }
       }
-      this->clearRecv();
     }
 
     if (iotConnState == IOT_CONN_FINISH_OPEN_MQTT) {
@@ -284,6 +290,7 @@ protected:
     if (iotConnState == IOT_CONN_WAITING_CONN_MQTT) {
       this->listen();
       if (iotSerialRecv.indexOf(F("+QMTCONN: 0,0,0")) > -1) {
+        this->clearRecv();
         iotConnState = IOT_CONN_FINISH_CONN_MQTT;
 
         mqttConnErrCnt.reset();
@@ -293,7 +300,6 @@ protected:
           mqttConnErrCnt.accu();
         }
       }
-      this->clearRecv();
     }
 
     if (iotConnState == IOT_CONN_FINISH_CONN_MQTT) {
@@ -307,6 +313,8 @@ protected:
       this->listen();
 
       if (iotSerialRecv.indexOf(F("+QMTSUB: 0,1,0,0")) > -1) {
+        this->clearRecv();
+
         iotConnState = IOT_CONN_FINISH_SUBS_MQTT_TOPIC;
         iotConnState = IOT_CONN_FINISH_INIT;
         mqttSubsErrCnt.reset();
@@ -316,8 +324,6 @@ protected:
           mqttSubsErrCnt.accu();
         }
       }
-
-      this->clearRecv();
     }
 
     if (iotConnState == IOT_CONN_FINISH_INIT) {
@@ -328,20 +334,20 @@ protected:
       if (mqttForcePublMode.isOn()) {
         mqttPublLock.lock();
         this->printlnFlush(mqttPublMsgPrepare);
-        Serial.println(mqttPublMsgPrepare);
         iotConnState = MQTT_STATE_WAITING_PREPARE_PUBMSG;
         mqttForcePublMode.off();
       } else {
-        if (iotConnStateTimer.autoTimeout(30000)) {
+        if (iotConnStateTimer.autoTimeout(10000)) {
           mqttPublLock.lock();
           this->printlnFlush(mqttPublMsgPrepare);
-          Serial.println(mqttPublMsgPrepare);
           iotConnState = MQTT_STATE_WAITING_PREPARE_PUBMSG;
         }
       }
     }
 
     if (iotConnState == MQTT_STATE_WAITING_PREPARE_PUBMSG) {
+      this->listen();
+
       if (iotSerialRecv.indexOf(F(">")) > -1) {
         iotConnState = MQTT_STATE_FINISH_PREPARE_PUBMSG;
         mqttPublErrCnt.reset();
@@ -350,6 +356,8 @@ protected:
           mqttPublErrCnt.accu();
         }
       }
+
+      this->clearRecv();
     }
 
     if (iotConnState == MQTT_STATE_FINISH_PREPARE_PUBMSG) {
@@ -360,12 +368,14 @@ protected:
     }
 
     if (iotConnState == MQTT_STATE_WAITING_PUBLISH) {
+      this->listen();
       if (iotSerialRecv.indexOf(F("+QMTPUBEX: 0,0,0")) > -1
           || iotSerialRecv.indexOf(F("+QMTPUBEX: 0,1,0")) > -1
           || iotSerialRecv.indexOf(F("+QMTPUB: 0,0,0")) > -1
           || iotSerialRecv.indexOf(F("+QMTPUB: 0,1,0")) > -1) {
         iotConnState = MQTT_STATE_FINISH_PUBLISH;
       }
+      this->clearRecv();
     }
 
     if (iotConnState == MQTT_STATE_FINISH_PUBLISH) {
@@ -375,13 +385,17 @@ protected:
   }
 
   void captureIMEI() {
-    if (iotSerialRecv.indexOf(F("+CGSN: ")) > -1) {
+    int idx = iotSerialRecv.indexOf(F("+CGSN: "));
+
+    if (idx > -1) {
       {
-        iotIMEI = iotSerialRecv.substring(8, 8 + 15);
+        iotIMEI = iotSerialRecv.substring(idx + 8, idx + 8 + 15);
       }
 
       if (iotModel == IOT_MODEL_BC260Y_CN) {
-        iotIMEI = iotSerialRecv.substring(7, 7 + 15);
+        {
+          iotIMEI = iotSerialRecv.substring(idx + 7, idx + 7 + 15);
+        }
       }
 
 

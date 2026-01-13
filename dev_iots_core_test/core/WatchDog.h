@@ -54,6 +54,7 @@ public:
 
   void pet(void) {
     this->prevMillis = millis();
+    Serial.println(F("Pet te dog"));
   };
 
   ~Watchdog(){};

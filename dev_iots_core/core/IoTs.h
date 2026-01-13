@@ -184,10 +184,14 @@ protected:
         this->printlnFlush(F("AT+CGSN=1"));
         this->printlnFlush(F("AT+QSCLK=0"));
         this->printlnFlush(F("AT+CFUN=1"));
-        // this->printlnFlush(F("AT+QIDNSCFG=0,223.5.5.5,8.8.8.8")); // for nbiot
-        // this->printlnFlush(F("AT+CPSMS=0")); // for nbiot
-        // this->printlnFlush(F("AT+CSCON=0")); // for nbiot
-        // this->printlnFlush(F("AT+CEDRXS=0,5")); // for nbiot
+
+        if (iotModel == IOT_MODEL_BC260Y_CN) {
+          this->printlnFlush(F("AT+QIDNSCFG=0,223.5.5.5,8.8.8.8"));  // for nbiot
+          this->printlnFlush(F("AT+CPSMS=0"));                       // for nbiot
+          this->printlnFlush(F("AT+CSCON=0"));                       // for nbiot
+          this->printlnFlush(F("AT+CEDRXS=0,5"));                    // for nbiot
+        }
+
         this->printlnFlush(F("AT+QMTCLOSE=0"));
         this->printlnFlush(F("AT+QMTDISC=0"));
 
@@ -373,10 +377,14 @@ protected:
 
   void captureIMEI() {
     if (iotExtractedRecv.indexOf(F("+CGSN: ")) > -1) {
-
       {
         iotIMEI = iotExtractedRecv.substring(8, 8 + 15);
       }
+
+      if (iotModel == IOT_MODEL_BC260Y_CN) {
+        iotIMEI = iotExtractedRecv.substring(7, 7 + 15);
+      }
+
 
       mqttConnCmd = F("AT+QMTCONN=0,dev_");
       mqttConnCmd.concat(iotIMEI);

@@ -77,6 +77,7 @@ private:
     }
 
     if (iotModuleState == IOT_MODULE_WAITING_RESET) {
+      SerialIoT.end();
       SerialIoT.begin(iotSerialBaudRates[iotSerialBaudRateIdx]);
 
       digitalWrite(IOT_MODULE_RESET_PIN, LOW);

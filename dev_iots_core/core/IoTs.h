@@ -94,13 +94,18 @@ private:
         iotResetHardwareCnt.reset();
       } else {
         if (iotModuleStateTimer.autoTimeout(1000)) {
-          Serial.println(F(">>> IOT SERIAL PROBE..."));
+          Serial.print(F(">>> IOT SERIAL PROBE... ("));
+          Serial.print(iotSerialBaudRates[iotSerialBaudRateIdx]);
+          Serial.println(F(")"));
           iotResetHardwareCnt.accu();
         }
 
         if (iotResetHardwareCnt.over(5)) {
-          Serial.println(F(">>> IOT SERIAL FAIL, RESET"));
+          Serial.println(F(">>> IOT SERIAL FAIL!"));
           iotSerialBaudRateIdx++;
+          if (iotSerialBaudRateIdx > 2) {
+            iotSerialBaudRateIdx = 0;
+          }
           iotModuleState = IOT_MODULE_WAITING_INIT;
         }
       }

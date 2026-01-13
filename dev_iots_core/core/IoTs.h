@@ -103,7 +103,7 @@ private:
         if (iotResetHardwareCnt.over(8)) {
           Serial.println(F(">>> IOT SERIAL FAIL!"));
           iotSerialBaudRateIdx++;
-          if (iotSerialBaudRateIdx > 2) {
+          if (iotSerialBaudRateIdx > 1) {
             iotSerialBaudRateIdx = 0;
           }
           iotModuleState = IOT_MODULE_WAITING_INIT;

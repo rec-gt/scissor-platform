@@ -119,7 +119,7 @@ private:
     }
 
     if (iotModuleState == IOT_MODULE_WAITING_RESET_SOFTWARE) {
-      if (iotExtractedRecv.indexOf(F("RDY")) > -1) {
+      if (iotExtractedRecv.indexOf(F("RDY")) > -1 || iotExtractedRecv.indexOf(F("+IP:")) > -1) {
         Serial.println(F(">>> FINISH SOFTWARE RESET"));
         iotModuleState = IOT_MODULE_FINISH_RESET_SOFTWARE;
         iotSoftWatchdog.pet();

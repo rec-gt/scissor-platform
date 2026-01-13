@@ -36,11 +36,11 @@ void setup() {
   mqttSubsCmd.reserve(64);
   mqttPublMsgPrepare.reserve(64);
   AIPayload.reserve(64);
-  iotExtractedRecv.reserve(128);
   rs485SerialRecv.reserve(128);
-  iotSerialRecv.reserve(128);
   mqttPublMsgPayload.reserve(128);
-  bool remainStrRes = debugStr.reserve(129);
+  iotSerialRecv.reserve(256);
+  iotExtractedRecv.reserve(256);
+  bool remainStrRes = debugStr.reserve(257);
   Serial.println(remainStrRes ? F("[Str Space OK]") : F("[String Space NOT OK]"));
 
   /*=== IoT ===*/

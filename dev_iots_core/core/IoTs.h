@@ -118,32 +118,6 @@ private:
       }
     }
 
-    // if (iotModuleState == IOT_MODULE_FINISH_RESET_HARDWARE) {
-    //   uint32_t baudrate = iotSerialBaudRates[iotSerialBaudRateIdx];
-    //   SerialIoT.begin(baudrate);
-    //   iotModuleState = IOT_MODULE_WAITING_CONFIRM_BAUDRATE;
-    // }
-
-    // if (iotModuleState == IOT_MODULE_WAITING_CONFIRM_BAUDRATE) {
-    //   if (iotModuleStateTimer.autoTimeout(1000)) {
-    //     Serial.println(F("SEND HANDSHAKE"));
-    //     SerialIoT.println(F("SEND HANDSHAKE"));
-    //     iotSerialProbeCnt.accu();
-    //   }
-
-    //   if (iotExtractedRecv.indexOf(F("RDY")) > -1) {
-    //     Serial.println(F(">>> FINISH HARDWARE RESET"));
-    //     iotModuleState = IOT_MODULE_WAITING_RESET_SOFTWARE;
-    //     iotSoftWatchdog.pet();
-    //   }
-
-    //   if (iotSerialProbeCnt.over(5)) {
-    //     SerialIoT.end();
-    //     iotSerialBaudRateIdx++;
-    //     iotModuleState = IOT_MODULE_WAITING_INIT;
-    //   }
-    // }
-
     if (iotModuleState == IOT_MODULE_WAITING_RESET_SOFTWARE) {
       if (iotExtractedRecv.indexOf(F("RDY")) > -1) {
         Serial.println(F(">>> FINISH SOFTWARE RESET"));

@@ -335,7 +335,6 @@ protected:
         mqttPublLock.lock();
         this->printlnFlush(mqttPublMsgPrepare);
         iotConnState = MQTT_STATE_WAITING_PREPARE_PUBMSG;
-        mqttForcePublMode.off();
       } else {
         if (iotConnStateTimer.autoTimeout(10000)) {
           mqttPublLock.lock();
@@ -349,8 +348,8 @@ protected:
       this->listen();
 
       if (iotSerialRecv.indexOf(F(">")) > -1) {
-        iotConnState = MQTT_STATE_FINISH_PREPARE_PUBMSG;
         this->clearRecv();
+        iotConnState = MQTT_STATE_FINISH_PREPARE_PUBMSG;
 
         mqttPublErrCnt.reset();
       } else {
@@ -363,6 +362,7 @@ protected:
     if (iotConnState == MQTT_STATE_FINISH_PREPARE_PUBMSG) {
       this->printlnFlush(mqttPublMsgPayload);
       mqttPublLock.release();
+      mqttForcePublMode.off();
       iotConnState = MQTT_STATE_WAITING_PUBLISH;
     }
 
@@ -535,6 +535,10 @@ public:
       this->manageConnectionState();
     }
 
+    {
+      // this->manageMQTTState();
+    }
+
     // this->handleMQTTSubs();
     // this->errHook();
   }
@@ -546,22 +550,24 @@ public:
   }
 
   void buildMsg(byte _DIPayload, byte _DOPayload, const String& _AIPayload, const String& _AOPayload) {
-    // 1. build payload
-    mqttPublMsgPayload = F("{\"csq\":");
-    mqttPublMsgPayload.concat(iotCSQ);
-    mqttPublMsgPayload.concat(F(","));
-    mqttPublMsgPayload.concat(F("\"din\":"));
-    mqttPublMsgPayload.concat(_DIPayload);
-    mqttPublMsgPayload.concat(F(","));
-    mqttPublMsgPayload.concat(F("\"dout\":"));
-    mqttPublMsgPayload.concat(_DOPayload);
-    mqttPublMsgPayload.concat(F(","));
-    mqttPublMsgPayload.concat(F("\"ain\":"));
-    mqttPublMsgPayload.concat(_AIPayload);
-    mqttPublMsgPayload.concat(F(","));
-    mqttPublMsgPayload.concat(F("\"aout\":"));
-    mqttPublMsgPayload.concat(_AOPayload);
-    mqttPublMsgPayload.concat(F("}"));
+    if (mqttPublLock.isReleased()) {
+      // 1. build payload
+      mqttPublMsgPayload = F("{\"csq\":");
+      mqttPublMsgPayload.concat(iotCSQ);
+      mqttPublMsgPayload.concat(F(","));
+      mqttPublMsgPayload.concat(F("\"din\":"));
+      mqttPublMsgPayload.concat(_DIPayload);
+      mqttPublMsgPayload.concat(F(","));
+      mqttPublMsgPayload.concat(F("\"dout\":"));
+      mqttPublMsgPayload.concat(_DOPayload);
+      mqttPublMsgPayload.concat(F(","));
+      mqttPublMsgPayload.concat(F("\"ain\":"));
+      mqttPublMsgPayload.concat(_AIPayload);
+      mqttPublMsgPayload.concat(F(","));
+      mqttPublMsgPayload.concat(F("\"aout\":"));
+      mqttPublMsgPayload.concat(_AOPayload);
+      mqttPublMsgPayload.concat(F("}"));
+    }
 
     // 2. build prepare msg
     if (iotModel == IOT_MODEL_BC260Y_CN) {

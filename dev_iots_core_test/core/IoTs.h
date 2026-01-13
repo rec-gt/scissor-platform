@@ -8,8 +8,13 @@ private:
   void listen() {
     while (SerialIoT.available() > 0) {
       char c = SerialIoT.read();
+      Serial.print(c);
       iotSerialRecv += c;
     }
+  }
+
+  void clear() {
+    iotSerialRecv = F("");
   }
 
   void consume() {
@@ -86,10 +91,11 @@ private:
     }
 
     if (iotModuleState == IOT_MODULE_WAITING_RESET_HARDWARE) {
-      if (iotExtractedRecv.indexOf(F("RDY")) > -1) {
-        iotExtractedRecv = F("");
+      this->listen();
+      if (iotSerialRecv.indexOf(F("RDY")) > -1) {
         Serial.println(F(">>> FINISH HARDWARE RESET"));
-        this->printlnFlush(F("ATE0"));
+        this->clear();
+        this->printlnFlush(F("ATE1"));
         this->printlnFlush(F("AT+QSCLK=0"));
         iotModuleState = IOT_MODULE_FINISH_RESET_HARDWARE;
 
@@ -102,7 +108,7 @@ private:
           iotResetHardwareCnt.accu();
         }
 
-        if (iotResetHardwareCnt.over(8)) {
+        if (iotResetHardwareCnt.over(5)) {
           Serial.println(F(">>> IOT SERIAL FAIL!"));
           iotSerialBaudRateIdx++;
           if (iotSerialBaudRateIdx > 1) {
@@ -114,21 +120,7 @@ private:
     }
 
     if (iotModuleState == IOT_MODULE_FINISH_RESET_HARDWARE) {
-      // if (iotModuleStateTimer.autoTimeout(1000)) {
-      // this->printlnFlush(F("AT+CFUN=1,1"));
-      iotModuleState = IOT_MODULE_WAITING_RESET_SOFTWARE;
-      // }
-    }
-
-    if (iotModuleState == IOT_MODULE_WAITING_RESET_SOFTWARE) {
-      if (iotExtractedRecv.indexOf(F("RDY")) > -1 || iotExtractedRecv.indexOf(F("+IP:")) > -1) {
-        Serial.println(F(">>> FINISH SOFTWARE RESET"));
-        iotModuleState = IOT_MODULE_FINISH_RESET_SOFTWARE;
-        iotSoftWatchdog.pet();
-      }
-    }
-
-    if (iotModuleState == IOT_MODULE_FINISH_RESET_SOFTWARE) {
+      iotModuleState = IOT_MODULE_FINISH_RESET_SOFTWARE;
       iotModuleState = IOT_MODULE_FINISH_RESET;
     }
 
@@ -136,17 +128,19 @@ private:
       if (iotModuleStateTimer.autoTimeout(1000)) {
         this->printlnFlush(F("ATI"));
         iotModuleState = IOT_MODULE_WAITING_GET_MODEL;
-        iotSoftWatchdog.pet();
       }
     }
 
+
     if (iotModuleState == IOT_MODULE_WAITING_GET_MODEL) {
+      this->listen();
+
       bool res = false;
 
-      if (iotExtractedRecv.indexOf(IOT_MODEL_EC800K) > -1) {
+      if (iotSerialRecv.indexOf(IOT_MODEL_EC800K) > -1) {
         iotModel = IOT_MODEL_EC800K;
         res = true;
-      } else if (iotExtractedRecv.indexOf(IOT_MODEL_BC260Y_CN) > -1) {
+      } else if (iotSerialRecv.indexOf(IOT_MODEL_BC260Y_CN) > -1) {
         iotModel = IOT_MODEL_BC260Y_CN;
         res = true;
       }
@@ -210,16 +204,19 @@ protected:
     if (iotConnState == IOT_CONN_WAITING_CSQ) {
       if (iotConnStateTimer.autoTimeout(1000)) {
         this->printlnFlush(F("AT+CSQ"));
-      } else {
-        if (this->inspectCSQ()) {
-          iotConnState = IOT_CONN_FINISH_CSQ;
+      }
+      this->listen();
+      this->captureCSQ();
+      this->clear();
 
-          iotCSQErrCnt.reset();
-          iotSoftWatchdog.pet();
-        } else {
-          if (iotRetryTimer.autoTimeout(1000)) {
-            iotCSQErrCnt.accu();
-          }
+      if (this->inspectCSQ()) {
+        iotConnState = IOT_CONN_FINISH_CSQ;
+
+        iotCSQErrCnt.reset();
+        iotSoftWatchdog.pet();
+      } else {
+        if (iotRetryTimer.autoTimeout(1000)) {
+          iotCSQErrCnt.accu();
         }
       }
     }
@@ -231,16 +228,20 @@ protected:
     if (iotConnState == IOT_CONN_WAITING_CGATT) {
       if (iotConnStateTimer.autoTimeout(1000)) {
         this->printlnFlush(F("AT+CGATT?"));
-      } else {
-        if (this->inspectCGATT()) {
-          iotConnState = IOT_CONN_FINISH_CGATT;
+      }
 
-          iotCGATTErrCnt.reset();
-          iotSoftWatchdog.pet();
-        } else {
-          if (iotRetryTimer.autoTimeout(1000)) {
-            iotCGATTErrCnt.accu();
-          }
+      this->listen();
+      this->captureCGATT();
+      this->clear();
+
+      if (this->inspectCGATT()) {
+        iotConnState = IOT_CONN_FINISH_CGATT;
+
+        iotCGATTErrCnt.reset();
+        iotSoftWatchdog.pet();
+      } else {
+        if (iotRetryTimer.autoTimeout(1000)) {
+          iotCGATTErrCnt.accu();
         }
       }
     }
@@ -252,16 +253,20 @@ protected:
     if (iotConnState == IOT_CONN_WAITING_CEREG) {
       if (iotConnStateTimer.autoTimeout(1000)) {
         this->printlnFlush(F("AT+CEREG?"));
-      } else {
-        if (this->inspectCEREG()) {
-          iotConnState = IOT_CONN_FINISH_CEREG;
+      }
 
-          iotSoftWatchdog.pet();
-          iotCEREGErrCnt.reset();
-        } else {
-          if (iotRetryTimer.autoTimeout(1000)) {
-            iotCEREGErrCnt.accu();
-          }
+      this->listen();
+      this->captureCEREG();
+      this->clear();
+
+      if (this->inspectCEREG()) {
+        iotConnState = IOT_CONN_FINISH_CEREG;
+
+        iotSoftWatchdog.pet();
+        iotCEREGErrCnt.reset();
+      } else {
+        if (iotRetryTimer.autoTimeout(1000)) {
+          iotCEREGErrCnt.accu();
         }
       }
     }
@@ -409,25 +414,25 @@ protected:
   }
 
   void captureCSQ() {
-    if (iotExtractedRecv.indexOf(F("+CSQ: ")) > -1) {
-      int ws = iotExtractedRecv.indexOf(F(": "));
-      int we = iotExtractedRecv.indexOf(F(","));
+    if (iotSerialRecv.indexOf(F("+CSQ: ")) > -1) {
+      int ws = iotSerialRecv.indexOf(F(": "));
+      int we = iotSerialRecv.indexOf(F(","));
 
       {
-        iotCSQ = iotExtractedRecv.substring(ws + 2, we);
+        iotCSQ = iotSerialRecv.substring(ws + 2, we);
       }
     }
   }
 
   void captureCGATT() {
-    if (iotExtractedRecv.indexOf(F("+CGATT: ")) > -1) {
-      iotCGATT = iotExtractedRecv.substring(8, 9);
+    if (iotSerialRecv.indexOf(F("+CGATT: ")) > -1) {
+      iotCGATT = iotSerialRecv.substring(8, 9);
     }
   }
 
   void captureCEREG() {
-    if (iotExtractedRecv.indexOf(F("+CEREG: ")) > -1) {
-      iotCEREG = iotExtractedRecv.substring(8, 11);
+    if (iotSerialRecv.indexOf(F("+CEREG: ")) > -1) {
+      iotCEREG = iotSerialRecv.substring(8, 11);
     }
   }
 
@@ -437,6 +442,8 @@ protected:
     {
       CSQReading = iotCSQ.toInt();
     }
+
+    Serial.println(CSQReading);
 
     return (CSQReading != 99 && CSQReading > 2);
   }
@@ -465,9 +472,6 @@ protected:
 
   void captureParams() {
     this->captureIMEI();
-    this->captureCSQ();
-    this->captureCGATT();
-    this->captureCEREG();
   }
 
   void errHook() {
@@ -532,11 +536,6 @@ public:
 
   void loop() {
     iotSoftWatchdog.monitor();
-
-
-    this->listen();
-    this->consume();
-    this->printExtractedRecv();
 
     this->manageModuleState();
     if (iotModuleState == IOT_MODULE_END_OF_STATE) {

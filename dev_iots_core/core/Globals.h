@@ -157,7 +157,7 @@ String AOPayload = "";
 #define SerialIoT Serial1
 #define IOT_MODULE_RESET_PIN 24
 #define IOT_MODEL_EC800K "EC800K"
-#define IOT_MODEL_BC260Y_CN "BC260Y-CN"
+#define IOT_MODEL_BC260Y_CN "Quectel_BC260Y-CN"
 
 enum IOT_MODULE_STATE
 {

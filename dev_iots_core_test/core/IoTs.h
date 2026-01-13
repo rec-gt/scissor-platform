@@ -282,7 +282,7 @@ protected:
         }
       } else if (iotModel == IOT_MODEL_BC260Y_CN) {
         if (iotConnStateTimer.autoTimeout(1000)) {
-          this->printlnFlush(F("AT+QMTOPEN=0,iot.rec-gt.com,1880"));
+          this->printlnFlush(F("AT+QMTOPEN=0,8.210.84.24,1880"));
           iotConnState = IOT_CONN_WAITING_OPEN_MQTT;
         }
       }
@@ -311,6 +311,7 @@ protected:
     }
 
     if (iotConnState == IOT_CONN_WAITING_CONN_MQTT) {
+      this->listen();
       if (iotExtractedRecv.indexOf(F("+QMTCONN: 0,0,0")) > -1) {
         iotConnState = IOT_CONN_FINISH_CONN_MQTT;
 
@@ -321,6 +322,7 @@ protected:
           mqttConnErrCnt.accu();
         }
       }
+      this->clearRecv();
     }
 
     if (iotConnState == IOT_CONN_FINISH_CONN_MQTT) {
@@ -331,6 +333,8 @@ protected:
     }
 
     if (iotConnState == IOT_CONN_WAITING_SUBS_MQTT_TOPIC) {
+      this->listen();
+
       if (iotExtractedRecv.indexOf(F("+QMTSUB: 0,1,0,0")) > -1) {
         iotConnState = IOT_CONN_FINISH_SUBS_MQTT_TOPIC;
         iotConnState = IOT_CONN_FINISH_INIT;
@@ -341,6 +345,8 @@ protected:
           mqttSubsErrCnt.accu();
         }
       }
+      
+      this->clearRecv();
     }
 
     if (iotConnState == IOT_CONN_FINISH_INIT) {

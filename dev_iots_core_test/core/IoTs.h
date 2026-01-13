@@ -150,8 +150,7 @@ protected:
     if (iotConnState == IOT_CONN_WAITING_CONFIG) {
       if (iotConnStateTimer.autoTimeout(1000)) {
         this->printlnFlush(F("AT+QSCLK=0"));
-        this->printlnFlush(F("AT+QIDNSCFG=0,8.8.8.8,223.5.5.5"));
-        this->printlnFlush(F("AT+QIDNSCFG=1"));
+        this->printlnFlush(F("AT+QIDNSCFG=0,8.8.8.8,1.1.1.1"));
 
         if (iotModel == IOT_MODEL_BC260Y_CN) {
           this->printlnFlush(F("AT+CFUN=1"));

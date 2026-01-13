@@ -243,6 +243,8 @@ Counter mqttConnErrCnt;
 Counter mqttSubsErrCnt;
 Counter mqttPublErrCnt;
 
+Timer iotProbeSerialTimer1;
+Timer iotProbeSerialTimer2;
 Timer iotParamTimer;
 Timer iotModuleStateTimer;
 Timer iotConnStateTimer;

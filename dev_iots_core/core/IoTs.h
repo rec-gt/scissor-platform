@@ -498,6 +498,22 @@ protected:
   }
 
 public:
+  void probe() {
+    if (iotProbeSerialTimer1.autoTimeout(5000)) {
+      int baudRates[] = { 9600, 115200 };
+
+      for (uint16_t rate : baudRates) {
+        SerialIoT.begin(rate);
+        if (iotProbeSerialTimer2.autoTimeout(1000)) {
+          this->printlnFlush(F("HANDSHAKE"));
+        }
+
+        SerialIoT.end();
+      }
+      Serial.println("Could not find correct baud rate.");
+    }
+  }
+
   void init() {
     SerialIoT.begin(115200);
     pinMode(IOT_MODULE_RESET_PIN, OUTPUT);
@@ -514,7 +530,9 @@ public:
 
   void loop() {
     iotSoftWatchdog.monitor();
-
+    
+    this->probe();
+    
     this->listen();
     this->consume();
     this->printExtractedRecv();
@@ -582,6 +600,7 @@ public:
     Serial.println(F("]]"));
   }
 };
+
 
 extern IoT iot;
 

@@ -180,17 +180,17 @@ protected:
 
     if (iotConnState == IOT_CONN_WAITING_CONFIG) {
       if (iotConnStateTimer.autoTimeout(1000)) {
-        if (iotModel == IOT_MODEL_EC800K) {
-          this->printlnFlush(F("ATE0"));
-        }
+        // this->printlnFlush(F("ATE1"));
         this->printlnFlush(F("AT+CGSN=1"));
-        this->printlnFlush(F("AT+CFUN=1"));
         this->printlnFlush(F("AT+QSCLK=0"));
         this->printlnFlush(F("AT+QIDNSCFG=0,223.5.5.5,8.8.8.8"));
+
         if (iotModel == IOT_MODEL_BC260Y_CN) {
-          this->printlnFlush(F("AT+CPSMS=0"));     // for nbiot
-          this->printlnFlush(F("AT+CSCON=0"));     // for nbiot
-          this->printlnFlush(F("AT+CEDRXS=0,5"));  // for nbiot
+          this->printlnFlush(F("AT+CFUN=1"));
+          this->printlnFlush(F("AT+QSCLK=0"));
+          this->printlnFlush(F("AT+CPSMS=0"));
+          this->printlnFlush(F("AT+CSCON=0"));
+          this->printlnFlush(F("AT+CEDRXS=0,5"));
         }
 
         this->printlnFlush(F("AT+QMTCLOSE=0"));
@@ -272,13 +272,8 @@ protected:
           iotConnState = IOT_CONN_WAITING_OPEN_MQTT;
         }
       } else if (iotModel == IOT_MODEL_BC260Y_CN) {
-        if (iotConnStateTimer.autoTimeout(500)) {
-          this->printlnFlush(F("AT+QMTOPEN=0,iot.rec-gt.com,1880"));
-          delay(100);
-          this->printlnFlush(F("AT+QMTOPEN=0,iot.rec-gt.com,1880"));
-          delay(100);
-          this->printlnFlush(F("AT+QMTOPEN=0,iot.rec-gt.com,1880"));
-          delay(100);
+        if (iotConnStateTimer.autoTimeout(1000)) {
+          this->printlnFlush(F("AT+QMTOPEN=0,8.210.84.24,1880"));
           iotConnState = IOT_CONN_WAITING_OPEN_MQTT;
         }
       }
@@ -409,13 +404,6 @@ protected:
     }
   }
 
-  void captureIP() {
-    if (iotExtractedRecv.indexOf(F("+IP:")) > -1) {
-      Serial.println(iotExtractedRecv);
-      iotIP = F("Has IP");
-    }
-  }
-
   void captureCSQ() {
     if (iotExtractedRecv.indexOf(F("+CSQ: ")) > -1) {
       int ws = iotExtractedRecv.indexOf(F(": "));
@@ -486,7 +474,6 @@ protected:
 
   void captureParams() {
     this->captureIMEI();
-    this->captureIP();
     this->captureCSQ();
     this->captureCGATT();
     this->captureCEREG();
@@ -597,7 +584,12 @@ public:
     mqttPublMsgPayload.concat(F("}"));
 
     // 2. build prepare msg
-    mqttPublMsgPrepare = F("AT+QMTPUBEX=0,1,2,0,rgt/");
+    if (iotModel == IOT_MODEL_BC260Y_CN) {
+      mqttPublMsgPrepare = F("AT+QMTPUB=0,1,2,0,rgt/");
+
+    } else if (iotModel == IOT_MODEL_EC800K) {
+      mqttPublMsgPrepare = F("AT+QMTPUBEX=0,1,2,0,rgt/");
+    }
     mqttPublMsgPrepare.concat(iotIMEI);
     mqttPublMsgPrepare.concat(F("/in,"));
     mqttPublMsgPrepare.concat(mqttPublMsgPayload.length());

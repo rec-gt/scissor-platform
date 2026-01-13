@@ -17,35 +17,6 @@ private:
     iotSerialRecv = F("");
   }
 
-  void consume() {
-    int delimiterIndex = -1;
-
-    {  // boundary protection
-      delimiterIndex = iotSerialRecv.length();
-    }
-
-    {  // delimiter check
-      delimiterIndex = iotSerialRecv.indexOf(F("\r"));
-      if (delimiterIndex > -1) {
-        delimiterIndex = iotSerialRecv.indexOf(F("\n"));
-      }
-    }
-
-    if (delimiterIndex > -1) {
-      {
-        iotExtractedRecv = iotSerialRecv.substring(0, delimiterIndex);
-        if (iotExtractedRecv == F("\r") || iotExtractedRecv == F("\n") || iotExtractedRecv == F("\r\n") || iotExtractedRecv == F("\n\r")) {
-          iotExtractedRecv = F("");
-        }
-      }
-      {
-        iotSerialRecv = iotSerialRecv.substring(delimiterIndex + 1);
-      }
-    } else {
-      iotExtractedRecv = F("");
-    }
-  }
-
   void manageModuleState() {
     if (iotModuleState == IOT_MODULE_WAITING_INIT) {
       Serial.println(F(">>> IOT MODULE INIT, RESET"));
@@ -53,7 +24,7 @@ private:
       iotConnState = IOT_CONN_WAITING_INIT;
 
       iotSerialRecv = F("");
-      iotExtractedRecv = F("");
+      iotSerialRecv = F("");
 
       iotModel = F("");
       iotIMEI = F("");
@@ -161,9 +132,9 @@ private:
   }
 
   void handleMQTTSubs() {
-    if (iotExtractedRecv.indexOf(F("+QMTRECV: ")) > -1) {
+    if (iotSerialRecv.indexOf(F("+QMTRECV: ")) > -1) {
       {
-        mqttSubsMsgContent = iotExtractedRecv.substring(41, 46);
+        mqttSubsMsgContent = iotSerialRecv.substring(41, 46);
         Serial.println(mqttSubsMsgContent);
       }
     }
@@ -312,7 +283,7 @@ protected:
 
     if (iotConnState == IOT_CONN_WAITING_CONN_MQTT) {
       this->listen();
-      if (iotExtractedRecv.indexOf(F("+QMTCONN: 0,0,0")) > -1) {
+      if (iotSerialRecv.indexOf(F("+QMTCONN: 0,0,0")) > -1) {
         iotConnState = IOT_CONN_FINISH_CONN_MQTT;
 
         mqttConnErrCnt.reset();
@@ -335,7 +306,7 @@ protected:
     if (iotConnState == IOT_CONN_WAITING_SUBS_MQTT_TOPIC) {
       this->listen();
 
-      if (iotExtractedRecv.indexOf(F("+QMTSUB: 0,1,0,0")) > -1) {
+      if (iotSerialRecv.indexOf(F("+QMTSUB: 0,1,0,0")) > -1) {
         iotConnState = IOT_CONN_FINISH_SUBS_MQTT_TOPIC;
         iotConnState = IOT_CONN_FINISH_INIT;
         mqttSubsErrCnt.reset();
@@ -345,7 +316,7 @@ protected:
           mqttSubsErrCnt.accu();
         }
       }
-      
+
       this->clearRecv();
     }
 
@@ -389,10 +360,10 @@ protected:
     }
 
     if (iotConnState == MQTT_STATE_WAITING_PUBLISH) {
-      if (iotExtractedRecv.indexOf(F("+QMTPUBEX: 0,0,0")) > -1
-          || iotExtractedRecv.indexOf(F("+QMTPUBEX: 0,1,0")) > -1
-          || iotExtractedRecv.indexOf(F("+QMTPUB: 0,0,0")) > -1
-          || iotExtractedRecv.indexOf(F("+QMTPUB: 0,1,0")) > -1) {
+      if (iotSerialRecv.indexOf(F("+QMTPUBEX: 0,0,0")) > -1
+          || iotSerialRecv.indexOf(F("+QMTPUBEX: 0,1,0")) > -1
+          || iotSerialRecv.indexOf(F("+QMTPUB: 0,0,0")) > -1
+          || iotSerialRecv.indexOf(F("+QMTPUB: 0,1,0")) > -1) {
         iotConnState = MQTT_STATE_FINISH_PUBLISH;
       }
     }
@@ -404,13 +375,13 @@ protected:
   }
 
   void captureIMEI() {
-    if (iotExtractedRecv.indexOf(F("+CGSN: ")) > -1) {
+    if (iotSerialRecv.indexOf(F("+CGSN: ")) > -1) {
       {
-        iotIMEI = iotExtractedRecv.substring(8, 8 + 15);
+        iotIMEI = iotSerialRecv.substring(8, 8 + 15);
       }
 
       if (iotModel == IOT_MODEL_BC260Y_CN) {
-        iotIMEI = iotExtractedRecv.substring(7, 7 + 15);
+        iotIMEI = iotSerialRecv.substring(7, 7 + 15);
       }
 
 
@@ -484,11 +455,11 @@ protected:
 
 
   void errHook() {
-    if (iotExtractedRecv.indexOf(F("+QIURC: \"pdpdeact\",1")) > -1) {
+    if (iotSerialRecv.indexOf(F("+QIURC: \"pdpdeact\",1")) > -1) {
       iotModuleState = IOT_MODULE_WAITING_INIT;
     }
 
-    if (iotExtractedRecv.indexOf(F("+CME ERROR")) > -1) {
+    if (iotSerialRecv.indexOf(F("+CME ERROR")) > -1) {
       iotModuleState = IOT_MODULE_WAITING_INIT;
     }
 
@@ -598,9 +569,9 @@ public:
   }
 
   void printExtractedRecv() {
-    if (iotExtractedRecv != F("")) {
+    if (iotSerialRecv != F("")) {
       Serial.print(F("[["));
-      Serial.print(iotExtractedRecv);
+      Serial.print(iotSerialRecv);
       Serial.println(F("]]"));
     }
   }

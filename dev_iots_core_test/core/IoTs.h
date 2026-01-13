@@ -361,7 +361,6 @@ protected:
     }
 
     if (iotConnState == MQTT_STATE_FINISH_PREPARE_PUBMSG) {
-      Serial.println(mqttPublMsgPayload);
       this->printlnFlush(mqttPublMsgPayload);
       mqttPublLock.release();
       iotConnState = MQTT_STATE_WAITING_PUBLISH;

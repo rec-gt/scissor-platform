@@ -8,7 +8,6 @@ private:
   void listen() {
     while (SerialIoT.available() > 0) {
       char c = SerialIoT.read();
-      Serial.print(c);
       iotSerialRecv += c;
     }
   }
@@ -181,17 +180,18 @@ protected:
 
     if (iotConnState == IOT_CONN_WAITING_CONFIG) {
       if (iotConnStateTimer.autoTimeout(1000)) {
-        this->printlnFlush(F("ATE0"));
+        if (iotModel == IOT_MODEL_EC800K) {
+          this->printlnFlush(F("ATE0"));
+        }
         this->printlnFlush(F("AT+CGSN=1"));
         this->printlnFlush(F("AT+QSCLK=0"));
-        this->printlnFlush(F("AT+CFUN=1"));
-
         if (iotModel == IOT_MODEL_BC260Y_CN) {
-          this->printlnFlush(F("AT+QIDNSCFG=0,223.5.5.5,8.8.8.8"));  // for nbiot
           this->printlnFlush(F("AT+CPSMS=0"));                       // for nbiot
           this->printlnFlush(F("AT+CSCON=0"));                       // for nbiot
           this->printlnFlush(F("AT+CEDRXS=0,5"));                    // for nbiot
+          this->printlnFlush(F("AT+QIDNSCFG=0,223.5.5.5,8.8.8.8"));  // for nbiot
         }
+        this->printlnFlush(F("AT+CFUN=1"));
 
         this->printlnFlush(F("AT+QMTCLOSE=0"));
         this->printlnFlush(F("AT+QMTDISC=0"));
@@ -266,9 +266,16 @@ protected:
     }
 
     if (iotConnState == IOT_CONN_FINISH_CEREG) {
-      if (iotConnStateTimer.autoTimeout(1000)) {
-        this->printlnFlush(F("AT+QMTOPEN=0,iot.rec-gt.com,1880"));
-        iotConnState = IOT_CONN_WAITING_OPEN_MQTT;
+      if (iotModel == IOT_MODEL_EC800K) {
+        if (iotConnStateTimer.autoTimeout(1000)) {
+          this->printlnFlush(F("AT+QMTOPEN=0,iot.rec-gt.com,1880"));
+          iotConnState = IOT_CONN_WAITING_OPEN_MQTT;
+        }
+      } else if (iotModel == IOT_MODEL_BC260Y_CN) {
+        if (iotConnStateTimer.autoTimeout(200)) {
+          this->printlnFlush(F("AT+QMTOPEN=0,iot.rec-gt.com,1880"));
+          iotConnState = IOT_CONN_WAITING_OPEN_MQTT;
+        }
       }
     }
 

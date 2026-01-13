@@ -38,6 +38,9 @@ public:
         } else if (serialInputCmd == F("FORCE")) {
           Serial.println(F("Force Publish:"));
           iot.forcePublish();
+        } else if (serialInputCmd == F("OPEN")) {
+          Serial.println(F("Force Open:"));
+          iot.printlnFlush((F("AT+QMTOPEN=0,iot.rec-gt.com,1880")));
         } else {
           iot.printlnFlush(serialInputCmd);
         }

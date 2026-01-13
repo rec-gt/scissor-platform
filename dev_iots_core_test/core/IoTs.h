@@ -350,14 +350,14 @@ protected:
 
       if (iotSerialRecv.indexOf(F(">")) > -1) {
         iotConnState = MQTT_STATE_FINISH_PREPARE_PUBMSG;
+        this->clearRecv();
+
         mqttPublErrCnt.reset();
       } else {
         if (iotConnStateTimer.autoTimeout(1000)) {
           mqttPublErrCnt.accu();
         }
       }
-
-      this->clearRecv();
     }
 
     if (iotConnState == MQTT_STATE_FINISH_PREPARE_PUBMSG) {

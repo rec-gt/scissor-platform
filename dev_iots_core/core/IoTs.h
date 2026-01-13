@@ -341,7 +341,7 @@ protected:
     }
 
     if (iotConnState == MQTT_STATE_WAITING_PUBLISH) {
-      if (iotExtractedRecv.indexOf(F("+QMTPUBEX: 0,0,0")) > -1) {
+      if (iotExtractedRecv.indexOf(F("+QMTPUBEX: 0,0,0")) > -1 || iotExtractedRecv.indexOf(F("+QMTPUBEX: 0,1,0")) > -1) {
         iotConnState = MQTT_STATE_FINISH_PUBLISH;
       }
     }
@@ -556,7 +556,7 @@ public:
     mqttPublMsgPayload.concat(F("}"));
 
     // 2. build prepare msg
-    mqttPublMsgPrepare = F("AT+QMTPUBEX=0,0,0,0,rgt/");
+    mqttPublMsgPrepare = F("AT+QMTPUBEX=0,1,2,0,rgt/");
     mqttPublMsgPrepare.concat(iotIMEI);
     mqttPublMsgPrepare.concat(F("/in,"));
     mqttPublMsgPrepare.concat(mqttPublMsgPayload.length());

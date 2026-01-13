@@ -159,19 +159,6 @@ String AOPayload = "";
 #define IOT_MODEL_EC800K "EC800K"
 #define IOT_MODEL_BC260Y_CN "BC260Y-CN"
 
-enum IOT_PROBE_STATE
-{
-  IOT_PROBE_WAITING_INIT,
-
-  IOT_PROBE_WAITING_SET_BAUDRATE,
-  IOT_PROBE_FINISH_SET_BAUDRATE,
-
-  IOT_PROBE_WAITING_HANDSHAKE_RESPONSE,
-  IOT_PROBE_FINISH_HANDSHAKE_RESPONSE,
-
-  IOT_PROBE_FINISH_INIT,
-};
-
 enum IOT_MODULE_STATE
 {
   IOT_MODULE_WAITING_INIT,
@@ -230,7 +217,6 @@ enum IOT_CONN_STATE
 uint32_t iotSerialBaudRates[] = {2400, 9600, 115200};
 size_t iotSerialBaudRateIdx = 0;
 
-byte iotProbeState = IOT_PROBE_WAITING_INIT;
 byte iotModuleState = IOT_MODULE_WAITING_INIT;
 byte iotConnState = IOT_CONN_WAITING_INIT;
 String iotSerialRecv = "";
@@ -254,7 +240,7 @@ String mqttPublMsgPrepare = "";
 String mqttPublMsgPayload = "";
 String mqttSubsMsgContent = "";
 
-Counter iotSerialProbeCnt;
+Counter iotResetHardwareCnt;
 Counter iotCSQErrCnt;
 Counter iotCGATTErrCnt;
 Counter iotCEREGErrCnt;
@@ -263,8 +249,6 @@ Counter mqttConnErrCnt;
 Counter mqttSubsErrCnt;
 Counter mqttPublErrCnt;
 
-Timer iotProbeSerialTimer1;
-Timer iotProbeSerialTimer2;
 Timer iotParamTimer;
 Timer iotModuleStateTimer;
 Timer iotConnStateTimer;

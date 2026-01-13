@@ -373,9 +373,9 @@ protected:
           || iotSerialRecv.indexOf(F("+QMTPUBEX: 0,1,0")) > -1
           || iotSerialRecv.indexOf(F("+QMTPUB: 0,0,0")) > -1
           || iotSerialRecv.indexOf(F("+QMTPUB: 0,1,0")) > -1) {
+        this->clearRecv();
         iotConnState = MQTT_STATE_FINISH_PUBLISH;
       }
-      this->clearRecv();
     }
 
     if (iotConnState == MQTT_STATE_FINISH_PUBLISH) {

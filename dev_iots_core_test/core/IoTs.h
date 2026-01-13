@@ -577,7 +577,9 @@ public:
 
   void forcePublish() {
     if (MQTT_STATE_INIT <= iotConnState && iotConnState <= MQTT_STATE_FINISH_PUBLISH) {
-      mqttForcePublMode.on();
+      if (!mqttForcePublMode.isOn()) {
+        mqttForcePublMode.on();
+      }
     }
   }
 

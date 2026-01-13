@@ -13,7 +13,7 @@ private:
     }
   }
 
-  void clear() {
+  void clearRecv() {
     iotSerialRecv = F("");
   }
 
@@ -94,7 +94,7 @@ private:
       this->listen();
       if (iotSerialRecv.indexOf(F("RDY")) > -1) {
         Serial.println(F(">>> FINISH HARDWARE RESET"));
-        this->clear();
+        this->clearRecv();
         this->printlnFlush(F("ATE1"));
         this->printlnFlush(F("AT+QSCLK=0"));
         iotModuleState = IOT_MODULE_FINISH_RESET_HARDWARE;
@@ -146,6 +146,8 @@ private:
       }
 
       if (res) {
+        Serial.print(iotModel);
+        this->clearRecv();
         iotModuleState = IOT_MODULE_FINISH_GET_MODEL;
         iotModuleState = IOT_MODULE_FINISH_INIT;
         iotSoftWatchdog.pet();
@@ -207,7 +209,7 @@ protected:
       }
       this->listen();
       this->captureCSQ();
-      this->clear();
+      this->clearRecv();
 
       if (this->inspectCSQ()) {
         iotConnState = IOT_CONN_FINISH_CSQ;
@@ -228,11 +230,12 @@ protected:
     if (iotConnState == IOT_CONN_WAITING_CGATT) {
       if (iotConnStateTimer.autoTimeout(1000)) {
         this->printlnFlush(F("AT+CGATT?"));
+        Serial.println(iotSerialRecv);
       }
 
       this->listen();
       this->captureCGATT();
-      this->clear();
+      this->clearRecv();
 
       if (this->inspectCGATT()) {
         iotConnState = IOT_CONN_FINISH_CGATT;
@@ -257,7 +260,7 @@ protected:
 
       this->listen();
       this->captureCEREG();
-      this->clear();
+      this->clearRecv();
 
       if (this->inspectCEREG()) {
         iotConnState = IOT_CONN_FINISH_CEREG;
@@ -279,14 +282,15 @@ protected:
         }
       } else if (iotModel == IOT_MODEL_BC260Y_CN) {
         if (iotConnStateTimer.autoTimeout(1000)) {
-          this->printlnFlush(F("AT+QMTOPEN=0,8.210.84.24,1880"));
+          this->printlnFlush(F("AT+QMTOPEN=0,iot.rec-gt.com,1880"));
           iotConnState = IOT_CONN_WAITING_OPEN_MQTT;
         }
       }
     }
 
     if (iotConnState == IOT_CONN_WAITING_OPEN_MQTT) {
-      if (iotExtractedRecv.indexOf(F("+QMTOPEN: 0,0")) > -1) {
+      this->listen();
+      if (iotSerialRecv.indexOf(F("+QMTOPEN: 0,0")) > -1) {
         iotConnState = IOT_CONN_FINISH_OPEN_MQTT;
 
         mqttOpenErrCnt.reset();
@@ -296,6 +300,7 @@ protected:
           mqttOpenErrCnt.accu();
         }
       }
+      this->clearRecv();
     }
 
     if (iotConnState == IOT_CONN_FINISH_OPEN_MQTT) {
@@ -425,14 +430,16 @@ protected:
   }
 
   void captureCGATT() {
-    if (iotSerialRecv.indexOf(F("+CGATT: ")) > -1) {
-      iotCGATT = iotSerialRecv.substring(8, 9);
+    if (iotSerialRecv.indexOf(F("+CGATT: 1")) > -1) {
+      {
+        iotCGATT = F("1");
+      }
     }
   }
 
   void captureCEREG() {
-    if (iotSerialRecv.indexOf(F("+CEREG: ")) > -1) {
-      iotCEREG = iotSerialRecv.substring(8, 11);
+    if (iotSerialRecv.indexOf(F("+CEREG: 0,1")) > -1) {
+      iotCEREG = F("0,1");
     }
   }
 
@@ -443,12 +450,11 @@ protected:
       CSQReading = iotCSQ.toInt();
     }
 
-    Serial.println(CSQReading);
-
     return (CSQReading != 99 && CSQReading > 2);
   }
 
   bool inspectCGATT() {
+    Serial.print(iotCGATT);
     return iotCGATT == F("1");
   }
 
@@ -470,9 +476,6 @@ protected:
     }
   }
 
-  void captureParams() {
-    this->captureIMEI();
-  }
 
   void errHook() {
     if (iotExtractedRecv.indexOf(F("+QIURC: \"pdpdeact\",1")) > -1) {
@@ -542,11 +545,8 @@ public:
       this->manageConnectionState();
     }
 
-    this->queryParams();
-    this->captureParams();
-
-    this->handleMQTTSubs();
-    this->errHook();
+    // this->handleMQTTSubs();
+    // this->errHook();
   }
 
   void printlnFlush(const String& cmd) {

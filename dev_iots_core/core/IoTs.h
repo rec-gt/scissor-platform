@@ -184,14 +184,14 @@ protected:
           this->printlnFlush(F("ATE0"));
         }
         this->printlnFlush(F("AT+CGSN=1"));
-        this->printlnFlush(F("AT+QSCLK=0"));
-        if (iotModel == IOT_MODEL_BC260Y_CN) {
-          this->printlnFlush(F("AT+CPSMS=0"));                       // for nbiot
-          this->printlnFlush(F("AT+CSCON=0"));                       // for nbiot
-          this->printlnFlush(F("AT+CEDRXS=0,5"));                    // for nbiot
-          this->printlnFlush(F("AT+QIDNSCFG=0,223.5.5.5,8.8.8.8"));  // for nbiot
-        }
         this->printlnFlush(F("AT+CFUN=1"));
+        this->printlnFlush(F("AT+QSCLK=0"));
+        this->printlnFlush(F("AT+QIDNSCFG=0,223.5.5.5,8.8.8.8"));
+        if (iotModel == IOT_MODEL_BC260Y_CN) {
+          this->printlnFlush(F("AT+CPSMS=0"));     // for nbiot
+          this->printlnFlush(F("AT+CSCON=0"));     // for nbiot
+          this->printlnFlush(F("AT+CEDRXS=0,5"));  // for nbiot
+        }
 
         this->printlnFlush(F("AT+QMTCLOSE=0"));
         this->printlnFlush(F("AT+QMTDISC=0"));
@@ -272,8 +272,13 @@ protected:
           iotConnState = IOT_CONN_WAITING_OPEN_MQTT;
         }
       } else if (iotModel == IOT_MODEL_BC260Y_CN) {
-        if (iotConnStateTimer.autoTimeout(200)) {
+        if (iotConnStateTimer.autoTimeout(500)) {
           this->printlnFlush(F("AT+QMTOPEN=0,iot.rec-gt.com,1880"));
+          delay(100);
+          this->printlnFlush(F("AT+QMTOPEN=0,iot.rec-gt.com,1880"));
+          delay(100);
+          this->printlnFlush(F("AT+QMTOPEN=0,iot.rec-gt.com,1880"));
+          delay(100);
           iotConnState = IOT_CONN_WAITING_OPEN_MQTT;
         }
       }
@@ -511,8 +516,8 @@ protected:
       iotModuleState = IOT_MODULE_WAITING_INIT;
     }
 
-    if (mqttOpenErrCnt.over(10)) {
-      Serial.print(F("mqttOpenErrCnt.over(10)"));
+    if (mqttOpenErrCnt.over(20)) {
+      Serial.print(F("mqttOpenErrCnt.over(20)"));
       iotModuleState = IOT_MODULE_WAITING_INIT;
     }
 

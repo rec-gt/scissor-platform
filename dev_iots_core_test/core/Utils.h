@@ -36,7 +36,6 @@ public:
         if (serialInputCmd == F("RESET")) {
           iotModuleState = IOT_MODULE_WAITING_INIT;
         } else if (serialInputCmd == F("FORCE")) {
-          Serial.println(F("Force Publish:"));
           iot.forcePublish();
         } else if (serialInputCmd == F("OPEN")) {
           Serial.println(F("Force Open:"));

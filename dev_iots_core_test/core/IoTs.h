@@ -423,7 +423,7 @@ protected:
       }
     }
 
-    if (iotExtractedRecv.indexOf(F(">")) > -1) {
+    if (iotSerialRecv.indexOf(F(">")) > -1) {
       if (iotMqttMsgState == IOT_MQTT_MSG_WAITING_PUBLISH) {
         this->printlnFlush(mqttPublMsgPayload);
         mqttPublLock.release();
@@ -432,8 +432,8 @@ protected:
       }
     }
 
-    if (iotExtractedRecv.indexOf(F("+QMTPUBEX: 0,0,0")) > -1 || iotExtractedRecv.indexOf(F("+QMTPUBEX: 0,1,0")) > -1
-        || iotExtractedRecv.indexOf(F("+QMTPUB: 0,0,0")) > -1 || iotExtractedRecv.indexOf(F("+QMTPUB: 0,1,0")) > -1) {
+    if (iotSerialRecv.indexOf(F("+QMTPUBEX: 0,0,0")) > -1 || iotSerialRecv.indexOf(F("+QMTPUBEX: 0,1,0")) > -1
+        || iotSerialRecv.indexOf(F("+QMTPUB: 0,0,0")) > -1 || iotSerialRecv.indexOf(F("+QMTPUB: 0,1,0")) > -1) {
       if (iotMqttMsgState == IOT_MQTT_MSG_WAITING_PUBLISH_ACK) {
         iotMqttMsgState = IOT_MQTT_MSG_FINISH_PUBLISH;
         iotMqttMsgState = IOT_MQTT_MSG_LOOP_START;  // finish one publish, loop-back
@@ -441,12 +441,15 @@ protected:
       }
     }
 
-    if (iotExtractedRecv.indexOf(F("+QMTRECV: ")) > -1) {
+    int idx = iotSerialRecv.indexOf(F("+QMTRECV: "));
+    if (idx > -1) {
       {
-        mqttSubsMsgContent = iotSerialRecv.substring(41, 46);
+        mqttSubsMsgContent = iotSerialRecv.substring(idx + 41, idx + 46);
         Serial.println(mqttSubsMsgContent);
       }
     }
+
+    this->queryParams();
 
     this->captureCSQ();
   }
@@ -650,6 +653,7 @@ public:
 
   void forcePublish() {
     if (!mqttForcePublMode.isOn()) {
+      Serial.println(F("Force Publish:"));
       mqttForcePublMode.on();
     }
   }

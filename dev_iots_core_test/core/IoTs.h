@@ -17,6 +17,35 @@ private:
     iotSerialRecv = F("");
   }
 
+  void consume() {
+    int delimiterIndex = -1;
+
+    {  // boundary protection
+      delimiterIndex = iotSerialRecv.length();
+    }
+
+    {  // delimiter check
+      delimiterIndex = iotSerialRecv.indexOf(F("\r"));
+      if (delimiterIndex > -1) {
+        delimiterIndex = iotSerialRecv.indexOf(F("\n"));
+      }
+    }
+
+    if (delimiterIndex > -1) {
+      {
+        iotExtractedRecv = iotSerialRecv.substring(0, delimiterIndex);
+        if (iotExtractedRecv == F("\r") || iotExtractedRecv == F("\n") || iotExtractedRecv == F("\r\n") || iotExtractedRecv == F("\n\r")) {
+          iotExtractedRecv = F("");
+        }
+      }
+      {
+        iotSerialRecv = iotSerialRecv.substring(delimiterIndex + 1);
+      }
+    } else {
+      iotExtractedRecv = F("");
+    }
+  }
+
   void manageModuleState() {
     if (iotModuleState == IOT_MODULE_WAITING_INIT) {
       Serial.println(F(">>> IOT MODULE INIT, RESET"));
@@ -373,6 +402,31 @@ protected:
     if (iotMqttMsgState == IOT_MQTT_MSG_FINISH_PUBLISH) {
       iotMqttMsgState = IOT_MQTT_MSG_LOOP_START;  // finish one publish, loop-back
       iotSoftWatchdog.pet();
+    }
+  }
+
+  void manageMqttMessageState() {
+    this->listen();
+    this->consume();
+
+    if (iotExtractedRecv.indexOf(F(">")) > -1) {
+      if (iotMqttMsgState == IOT_MQTT_MSG_WAITING_PUBLISH) {
+        this->printlnFlush(mqttPublMsgPayload);
+      }
+    }
+
+    if (iotExtractedRecv.indexOf(F("+QMTPUBEX: 0,0,0")) > -1 || iotExtractedRecv.indexOf(F("+QMTPUBEX: 0,1,0")) > -1
+        || iotExtractedRecv.indexOf(F("+QMTPUB: 0,0,0")) > -1 || iotExtractedRecv.indexOf(F("+QMTPUB: 0,1,0")) > -1) {
+      if (iotMqttMsgState == IOT_MQTT_MSG_WAITING_PUBLISH_ACK) {
+        iotMqttMsgState = IOT_MQTT_MSG_FINISH_PUBLISH;
+      }
+    }
+
+    if (iotExtractedRecv.indexOf(F("+QMTRECV: ")) > -1) {
+      {
+        mqttSubsMsgContent = iotSerialRecv.substring(41, 46);
+        Serial.println(mqttSubsMsgContent);
+      }
     }
   }
 

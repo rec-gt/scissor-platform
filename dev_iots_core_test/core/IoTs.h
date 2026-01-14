@@ -220,13 +220,7 @@ protected:
 
       if (this->inspectCSQ()) {
         iotConnState = IOT_CONN_FINISH_CSQ;
-
-        iotCSQErrCnt.reset();
         iotSoftWatchdog.pet();
-      } else {
-        if (iotRetryTimer.autoTimeout(1000)) {
-          iotCSQErrCnt.accu();
-        }
       }
     }
 
@@ -427,6 +421,7 @@ protected:
       if (iotMqttMsgState == IOT_MQTT_MSG_WAITING_PUBLISH) {
         this->printlnFlush(mqttPublMsgPayload);
         mqttPublLock.release();
+        mqttForcePublMode.off();
         iotMqttMsgState = IOT_MQTT_MSG_WAITING_PUBLISH_ACK;
       }
     }
@@ -434,7 +429,6 @@ protected:
     if (iotSerialRecv.indexOf(F("+QMTPUBEX: 0,0,0")) > -1 || iotSerialRecv.indexOf(F("+QMTPUBEX: 0,1,0")) > -1
         || iotSerialRecv.indexOf(F("+QMTPUB: 0,0,0")) > -1 || iotSerialRecv.indexOf(F("+QMTPUB: 0,1,0")) > -1) {
       if (iotMqttMsgState == IOT_MQTT_MSG_WAITING_PUBLISH_ACK) {
-        mqttForcePublMode.off();
         iotMqttMsgState = IOT_MQTT_MSG_FINISH_PUBLISH;
         iotMqttMsgState = IOT_MQTT_MSG_LOOP_START;  // finish one publish, loop-back
         iotSoftWatchdog.pet();

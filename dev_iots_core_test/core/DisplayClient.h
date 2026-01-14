@@ -48,7 +48,7 @@ public:
 
       this->buffer[idx++] = 0x5B;  // '['
 
-      this->buffer[idx++] = iotConnState;
+      this->buffer[idx++] = iotModuleState + iotConnState + iotMqttMsgState;
       this->buffer[idx++] = csq;
       this->buffer[idx++] = iotApp;
       this->buffer[idx++] = DIPayload;

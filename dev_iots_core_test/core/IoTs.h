@@ -428,6 +428,8 @@ protected:
         Serial.println(mqttSubsMsgContent);
       }
     }
+
+    this->captureCSQ();
   }
 
   void captureIMEI() {

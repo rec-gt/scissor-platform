@@ -649,10 +649,8 @@ public:
   }
 
   void forcePublish() {
-    if (IOT_MQTT_MSG_LOOP_START <= iotMqttMsgState && iotMqttMsgState <= IOT_MQTT_MSG_FINISH_PUBLISH) {
-      if (!mqttForcePublMode.isOn()) {
-        mqttForcePublMode.on();
-      }
+    if (!mqttForcePublMode.isOn()) {
+      mqttForcePublMode.on();
     }
   }
 

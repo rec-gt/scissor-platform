@@ -8,7 +8,7 @@ private:
   void listen() {
     while (SerialIoT.available() > 0) {
       char c = SerialIoT.read();
-      Serial.print(c);
+      // Serial.print(c);
       iotSerialRecv += c;
     }
   }
@@ -476,9 +476,10 @@ protected:
   void captureCSQ() {
     if (iotSerialRecv.indexOf(F("+CSQ: ")) > -1) {
       {
-        int ws = iotSerialRecv.indexOf(F(": "));
+        int ws = iotSerialRecv.indexOf(F("+CSQ: "));
         int we = iotSerialRecv.indexOf(F(","));
-        iotCSQ = iotSerialRecv.substring(ws + 2, we);
+        iotCSQ = iotSerialRecv.substring(ws + 4, we);
+        Serial.print(iotCSQ);
       }
     }
   }

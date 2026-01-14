@@ -23,8 +23,8 @@ void setup() {
   analogReference(EXTERNAL);
 
   /*=== String / Heap Memory Management ===*/
-  iotCSQ.reserve(2);
-  iotCGATT.reserve(2);
+  iotCSQ.reserve(8);
+  iotCGATT.reserve(8);
   iotCEREG.reserve(8);
   mqttSubsMsgContent.reserve(8);
   iotModel.reserve(16);

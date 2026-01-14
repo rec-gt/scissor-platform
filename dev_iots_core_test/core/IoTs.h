@@ -478,7 +478,7 @@ protected:
       {
         int ws = iotSerialRecv.indexOf(F("+CSQ: "));
         int we = iotSerialRecv.indexOf(F(","));
-        iotCSQ = iotSerialRecv.substring(ws + 4, we);
+        iotCSQ = iotSerialRecv.substring(ws + 6, we);
         Serial.print(iotCSQ);
       }
     }

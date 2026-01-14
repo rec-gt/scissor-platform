@@ -8,7 +8,7 @@ private:
   void listen() {
     while (SerialIoT.available() > 0) {
       char c = SerialIoT.read();
-      // Serial.print(c);
+      Serial.print(c);
       iotSerialRecv += c;
     }
   }

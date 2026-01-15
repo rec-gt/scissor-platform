@@ -244,18 +244,10 @@ String mqttPublMsgPayload = "";
 String mqttSubsMsgContent = "";
 
 Counter iotResetHardwareCnt;
-Counter iotCSQErrCnt;
-Counter iotCGATTErrCnt;
-Counter iotCEREGErrCnt;
-Counter mqttOpenErrCnt;
-Counter mqttConnErrCnt;
-Counter mqttSubsErrCnt;
-Counter mqttPublErrCnt;
 
 Timer iotParamTimer;
 Timer iotModuleStateTimer;
 Timer iotConnStateTimer;
-Timer iotRetryTimer;
 
 Watchdog iotSoftWatchdog(45000UL);
 

@@ -8,7 +8,7 @@ private:
   void listen() {
     while (SerialIoT.available() > 0) {
       char c = SerialIoT.read();
-      Serial.print(c);
+      // Serial.print(c);
       iotSerialRecv += c;
     }
     this->parse();
@@ -471,8 +471,10 @@ public:
 
   void forcePublish() {
     if (!mqttForcePublMode.isOn()) {
-      Serial.println(F("Force Publish:"));
-      mqttForcePublMode.on();
+      if (mqttPublLock.isReleased()) {
+        Serial.println(F("Force Publish:"));
+        mqttForcePublMode.on();
+      }
     }
   }
 };

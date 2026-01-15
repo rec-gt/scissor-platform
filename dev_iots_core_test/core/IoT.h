@@ -13,8 +13,11 @@ private:
     }
     this->parse();
     Serial.print(F("String Length: "));
+    Serial.flush();
     Serial.println(iotSerialRecv.length());
+    Serial.flush();
     Serial.println(iotSerialRecv);
+    Serial.flush();
     this->clear();
   }
 

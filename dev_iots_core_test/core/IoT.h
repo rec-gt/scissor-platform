@@ -12,6 +12,9 @@ private:
       iotSerialRecv += c;
     }
     this->parse();
+    Serial.print(F("String Length: "));
+    Serial.println(iotSerialRecv.length());
+    Serial.println(iotSerialRecv);
     this->clear();
   }
 
@@ -421,16 +424,7 @@ public:
 
   void loop() {
     iotSoftWatchdog.monitor();
-
     this->listen();
-
-    // this->manageModuleState();
-    // if (iotModuleState == IOT_MODULE_END_OF_STATE) {
-    //   this->manageConnectionState();
-    //   if (iotConnState == IOT_CONN_END_OF_STATE) {
-    //     this->manageMqttMessageState();
-    //   }
-    // }
   }
 
   void printlnFlush(const String& cmd) {
@@ -476,20 +470,6 @@ public:
       Serial.println(F("Force Publish:"));
       mqttForcePublMode.on();
     }
-  }
-
-  void printExtractedRecv() {
-    if (iotSerialRecv != F("")) {
-      Serial.print(F("[["));
-      Serial.print(iotSerialRecv);
-      Serial.println(F("]]"));
-    }
-  }
-
-  void printSerialRecv() {
-    Serial.print(F("[["));
-    Serial.print(iotSerialRecv);
-    Serial.println(F("]]"));
   }
 };
 

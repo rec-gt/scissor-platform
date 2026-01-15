@@ -45,12 +45,13 @@ private:
 
     /* === CSQ === */
     {
-      if (iotSerialRecv.indexOf(F("+CSQ: ")) > -1) {
-        {
-          int ws = iotSerialRecv.indexOf(F("+CSQ: "));
-          int we = iotSerialRecv.indexOf(F(","));
-          iotCSQ = iotSerialRecv.substring(ws + 6, we);
+      iotParseIdx = iotSerialRecv.indexOf(F("+CSQ: "));
+      if (iotParseIdx > -1) {
+        iotCSQ = iotSerialRecv.substring(iotParseIdx + 6, 2);
+        if (iotCSQ.length() > 1 && iotCSQ[1] == ',') {
+          iotCSQ = iotCSQ.substring(0, 1);
         }
+        Serial.println(iotCSQ);
       }
     }
 

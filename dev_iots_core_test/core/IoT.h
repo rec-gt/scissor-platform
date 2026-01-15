@@ -48,7 +48,7 @@ private:
       iotParseIdx = iotSerialRecv.indexOf(F("+CSQ: "));
       if (iotParseIdx > -1) {
         iotCSQ = iotSerialRecv.substring(iotParseIdx + 6, 2);
-        if (iotCSQ.length() > 1 && iotCSQ[1] == ",") {
+        if (iotCSQ.length() > 1 && iotCSQ[1] == ',') {
           iotCSQ = iotCSQ.substring(0, 1);
         }
       }

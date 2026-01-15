@@ -20,7 +20,7 @@ private:
   }
 
   void parse() {
-    /* === Free parameters === */
+    /* ====== Stateless Parameters ====== */
     /* === IMEI === */
     {
       iotParseIdx = iotSerialRecv.indexOf(F("+CGSN: "));
@@ -68,7 +68,16 @@ private:
       }
     }
 
-    /* === Parameters with state === */
+    /* === Subscribed Message === */
+    {
+      iotParseIdx = iotSerialRecv.indexOf(F("+QMTRECV: "));
+      if (iotParseIdx > -1) {
+        mqttSubsMsgContent = iotSerialRecv.substring(iotParseIdx + 41, iotParseIdx + 46);
+        Serial.println(mqttSubsMsgContent);
+      }
+    }
+
+    /* ====== Parameters with state ====== */
     if (iotSerialRecv.indexOf(F(">")) > -1) {
       if (iotMqttMsgState == IOT_MQTT_MSG_WAITING_PUBLISH) {
         this->printlnFlush(mqttPublMsgPayload);
@@ -83,14 +92,6 @@ private:
         iotSoftWatchdog.pet();
         iotMqttMsgState = IOT_MQTT_MSG_FINISH_PUBLISH;
         iotMqttMsgState = IOT_MQTT_MSG_LOOP_START;  // finish one publish, loop-back
-      }
-    }
-
-    int idx = iotSerialRecv.indexOf(F("+QMTRECV: "));
-    if (idx > -1) {
-      {
-        mqttSubsMsgContent = iotSerialRecv.substring(idx + 41, idx + 46);
-        Serial.println(mqttSubsMsgContent);
       }
     }
   }

@@ -161,15 +161,6 @@ private:
     }
   }
 
-  void handleMQTTSubs() {
-    if (iotSerialRecv.indexOf(F("+QMTRECV: ")) > -1) {
-      {
-        mqttSubsMsgContent = iotSerialRecv.substring(41, 46);
-        Serial.println(mqttSubsMsgContent);
-      }
-    }
-  }
-
 protected:
   void manageConnectionState() {
     if (iotConnState == IOT_CONN_WAITING_INIT) {
@@ -233,7 +224,6 @@ protected:
     if (iotConnState == IOT_CONN_WAITING_CGATT) {
       if (iotConnStateTimer.autoTimeout(1000)) {
         this->printlnFlush(F("AT+CGATT?"));
-        Serial.println(iotSerialRecv);
       }
 
       this->listen();
@@ -363,6 +353,7 @@ protected:
 
     if (iotMqttMsgState == IOT_MQTT_MSG_LOOP_START) {
       if (mqttForcePublMode.isOn()) {
+        mqttForcePublMode.off();
         mqttPublLock.lock();
         this->printlnFlush(mqttPublMsgPrepare);
         iotMqttMsgState = IOT_MQTT_MSG_WAITING_PUBLISH;
@@ -379,7 +370,6 @@ protected:
       if (iotMqttMsgState == IOT_MQTT_MSG_WAITING_PUBLISH) {
         this->printlnFlush(mqttPublMsgPayload);
         mqttPublLock.release();
-        mqttForcePublMode.off();
         iotMqttMsgState = IOT_MQTT_MSG_WAITING_PUBLISH_ACK;
       }
     }
@@ -563,7 +553,6 @@ public:
       }
     }
 
-    // this->handleMQTTSubs();
     // this->errHook();
   }
 

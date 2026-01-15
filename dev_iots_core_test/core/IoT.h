@@ -85,8 +85,12 @@ private:
     /* ====== Parameters with state ====== */
     {
       this->manageModuleState();
-      this->manageConnectionState();
-      this->manageMqttMessageState();
+      if (iotModuleState == IOT_MODULE_END_OF_STATE) {
+        this->manageConnectionState();
+        if (iotConnState == IOT_CONN_END_OF_STATE) {
+          this->manageMqttMessageState();
+        }
+      }
     }
   }
 

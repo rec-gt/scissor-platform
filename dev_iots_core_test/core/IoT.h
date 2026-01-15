@@ -255,7 +255,6 @@ protected:
     }
 
     if (iotConnState == IOT_CONN_WAITING_OPEN_MQTT) {
-      this->listen();
       if (iotSerialRecv.indexOf(F("+QMTOPEN: 0,0")) > -1) {
         iotConnState = IOT_CONN_FINISH_OPEN_MQTT;
         iotSoftWatchdog.pet();
@@ -391,16 +390,15 @@ public:
   void loop() {
     iotSoftWatchdog.monitor();
 
-    this->manageModuleState();
+    this->listen();
 
-    if (iotModuleState == IOT_MODULE_END_OF_STATE) {
-      this->manageConnectionState();
-      if (iotConnState == IOT_CONN_END_OF_STATE) {
-        this->manageMqttMessageState();
-      }
-    }
-
-    this->errHook();
+    // this->manageModuleState();
+    // if (iotModuleState == IOT_MODULE_END_OF_STATE) {
+    //   this->manageConnectionState();
+    //   if (iotConnState == IOT_CONN_END_OF_STATE) {
+    //     this->manageMqttMessageState();
+    //   }
+    // }
   }
 
   void printlnFlush(const String& cmd) {

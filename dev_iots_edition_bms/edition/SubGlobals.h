@@ -34,6 +34,8 @@ enum HR_ENUMS {
 };
 static constexpr uint16_t PARAMETERS_SIZE = 10;
 float holdingRegisterValues[PARAMETERS_SIZE] = {};
+float prevHoldingRegisterValues[PARAMETERS_SIZE] = {};
+bool eventTriggerFlag = false;
 
 Timer deviceTimer(10000UL);
 

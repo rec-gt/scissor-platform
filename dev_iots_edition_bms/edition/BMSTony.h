@@ -43,9 +43,9 @@ public:
   void loop() {
     if (deviceTimer.autoTimeout(1000)) {
       this->readIn1000ms();
-      // this->handlePublishContent();
-      this->showData();
+      // this->showData();
     }
+    this->compare();
   }
 
   void readIn1000ms() {
@@ -53,6 +53,21 @@ public:
 
     for (size_t i = 0; i < PARAMETERS_SIZE; i++) {
       holdingRegisterValues[i] = (uint32_t)mbRtuClient.read();
+    }
+  }
+
+  void compare() {
+    bool areAllTheSame = true;
+    for (size_t i = 0; i < PARAMETERS_SIZE; i++) {
+      if (holdingRegisterValues[i] != prevHoldingRegisterValues[i]) {
+        prevHoldingRegisterValues[i] = holdingRegisterValues[i];  // update previous values
+        areAllTheSame = false;
+      }
+    }
+
+    if (!areAllTheSame) {
+      Serial.println("Diff Detected!");
+      eventTriggerFlag = true;
     }
   }
 
@@ -68,61 +83,6 @@ public:
     if (mbRtuClient.lastError()) {
       Serial.println(mbRtuClient.lastError());
     }
-  }
-
-  void handlePublishContent() {
-    // if (!nbiot.pubMsgPayloadLock) {
-    //   nbiotPubMsgPayload = F("{\"csq\":");
-    //   nbiotPubMsgPayload.concat(nbiotCSQ);
-    //   nbiotPubMsgPayload.concat(F(","));
-    //   nbiotPubMsgPayload.concat(F("\"ain\":"));
-    //   nbiotPubMsgPayload.concat(F("["));
-    //   nbiotPubMsgPayload.concat(holdingRegisterValues[HR_UAN]);
-    //   nbiotPubMsgPayload.concat(F(","));
-    //   nbiotPubMsgPayload.concat(holdingRegisterValues[HR_UBN]);
-    //   nbiotPubMsgPayload.concat(F(","));
-    //   nbiotPubMsgPayload.concat(holdingRegisterValues[HR_UCN]);
-    //   nbiotPubMsgPayload.concat(F(","));
-    //   nbiotPubMsgPayload.concat(holdingRegisterValues[HR_UAB]);
-    //   nbiotPubMsgPayload.concat(F(","));
-    //   nbiotPubMsgPayload.concat(holdingRegisterValues[HR_UBC]);
-    //   nbiotPubMsgPayload.concat(F(","));
-    //   nbiotPubMsgPayload.concat(holdingRegisterValues[HR_UCA]);
-    //   nbiotPubMsgPayload.concat(F(","));
-    //   nbiotPubMsgPayload.concat(holdingRegisterValues[HR_IA]);
-    //   nbiotPubMsgPayload.concat(F(","));
-    //   nbiotPubMsgPayload.concat(holdingRegisterValues[HR_IB]);
-    //   nbiotPubMsgPayload.concat(F(","));
-    //   nbiotPubMsgPayload.concat(holdingRegisterValues[HR_IC]);
-    //   nbiotPubMsgPayload.concat(F(","));
-    //   nbiotPubMsgPayload.concat(holdingRegisterValues[HR_P_TOTAL]);
-    //   nbiotPubMsgPayload.concat(F(","));
-    //   nbiotPubMsgPayload.concat(holdingRegisterValues[HR_PF_TOTAL]);
-    //   nbiotPubMsgPayload.concat(F(","));
-    //   nbiotPubMsgPayload.concat(holdingRegisterValues[HR_IN_CALCULATED]);
-    //   nbiotPubMsgPayload.concat(F("]"));
-    //   nbiotPubMsgPayload.concat(F(","));
-    //   nbiotPubMsgPayload.concat(F("\"aout\":"));
-    //   nbiotPubMsgPayload.concat(F("["));
-    //   nbiotPubMsgPayload.concat(holdingRegisterValues[HR_KWH_TOTAL]);
-    //   nbiotPubMsgPayload.concat(F(","));
-    //   nbiotPubMsgPayload.concat(holdingRegisterValues[HR_KWH_TOTAL] * 0.7);
-    //   nbiotPubMsgPayload.concat(F(","));
-    //   nbiotPubMsgPayload.concat(holdingRegisterValues[HR_IB_THD]);
-    //   nbiotPubMsgPayload.concat(F(","));
-    //   nbiotPubMsgPayload.concat(holdingRegisterValues[HR_IC_THD]);
-    //   nbiotPubMsgPayload.concat(F("]"));
-    //   nbiotPubMsgPayload.concat(F("}"));
-    // }
-
-    // nbiotPubMsgPrepare = F("AT+QMTPUB=0,0,0,0,rgt/");
-    // nbiotPubMsgPrepare.concat(nbiotIMEI);
-    // nbiotPubMsgPrepare.concat(F("/in,"));
-    // nbiotPubMsgPrepare.concat(nbiotPubMsgPayload.length());
-
-    // nbiotPubMsgCommand = nbiotPubMsgPrepare;
-    // nbiotPubMsgCommand.concat(F(","));
-    // nbiotPubMsgCommand.concat(nbiotPubMsgPayload);
   }
 };
 

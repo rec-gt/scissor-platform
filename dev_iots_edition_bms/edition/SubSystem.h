@@ -5,14 +5,17 @@
 #include "./SubRS485.h"
 #include "./BMSTony.h"
 #include "../core/IoTs.h"
+#include "../core/Timer.h"
 
 SubRS485 subRS485;
 
 BMSTony bms(1);
 
+Timer debouncer;
+
 class SubSystem {
 private:
-  void handlePublishContent() {
+  void handlePublishPayloads() {
     byte dataPoints_1_8 = 0;
     byte dataPoints_9_10 = 0;
 
@@ -31,6 +34,16 @@ private:
     iot.buildMsg(dataPoints_1_8, dataPoints_9_10, F("[]"), F("[]"));
   }
 
+  void debouncedEventTrigger() {
+    if (eventTriggerFlag) {
+      if (debouncer.autoTimeout(1000)) {
+        Serial.println("Event Trigger - Force Publish");
+        iot.forcePublish();
+        eventTriggerFlag = false;
+      }
+    }
+  }
+
 public:
   SubSystem(void) {}
 
@@ -40,8 +53,9 @@ public:
   }
 
   void loop() {
-    this->handlePublishContent();
     bms.loop();
+    this->handlePublishPayloads();
+    this->debouncedEventTrigger();
   }
 
   ~SubSystem() {}

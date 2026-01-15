@@ -47,6 +47,7 @@ private:
 
     Serial.print(F("Length: "));
     Serial.println(iotSerialRecv.length());
+    Serial.println(iotSerialRecv);
   }
 
   void manageModuleState() {
@@ -90,7 +91,7 @@ private:
       if (iotSerialRecv.indexOf(F("RDY")) > -1) {
         Serial.println(F(">>> FINISH HARDWARE RESET"));
         this->clearRecv();
-        this->printlnFlush(F("ATE0"));
+        this->printlnFlush(F("ATE1"));
         this->printlnFlush(F("AT+QSCLK=0"));
         iotModuleState = IOT_MODULE_FINISH_RESET_HARDWARE;
 

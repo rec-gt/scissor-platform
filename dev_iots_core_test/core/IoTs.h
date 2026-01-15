@@ -44,6 +44,9 @@ private:
     } else {
       iotExtractedRecv = F("");
     }
+
+    Serial.print("Length: ");
+    Serial.println(iotSerialRecv.length());
   }
 
   void manageModuleState() {
@@ -384,9 +387,9 @@ protected:
     if (iotSerialRecv.indexOf(F("+QMTPUBEX: 0,0,0")) > -1 || iotSerialRecv.indexOf(F("+QMTPUBEX: 0,1,0")) > -1
         || iotSerialRecv.indexOf(F("+QMTPUB: 0,0,0")) > -1 || iotSerialRecv.indexOf(F("+QMTPUB: 0,1,0")) > -1) {
       if (iotMqttMsgState == IOT_MQTT_MSG_WAITING_PUBLISH_ACK) {
+        iotSoftWatchdog.pet();
         iotMqttMsgState = IOT_MQTT_MSG_FINISH_PUBLISH;
         iotMqttMsgState = IOT_MQTT_MSG_LOOP_START;  // finish one publish, loop-back
-        iotSoftWatchdog.pet();
       }
     }
 
@@ -402,7 +405,7 @@ protected:
 
     this->captureCSQ();
 
-    this->consumeRecv(); // consume message instead of clear.
+    this->consumeRecv();  // consume message instead of clear.
   }
 
   void captureIMEI() {

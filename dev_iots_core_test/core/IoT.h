@@ -57,7 +57,6 @@ private:
         if (iotCSQ.length() > 1 && iotCSQ[1] == ',') {
           iotCSQ = iotCSQ.substring(0, 1);
         }
-        Serial.println(iotCSQ);
       }
     }
 

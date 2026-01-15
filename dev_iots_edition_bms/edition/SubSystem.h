@@ -37,7 +37,7 @@ private:
   void debouncedEventTrigger() {
     if (eventTriggerFlag) {
       if (debouncer.autoTimeout(1000)) {
-        Serial.println("Event Trigger - Force Publish");
+        Serial.println(F("Event Trigger - Force Publish"));
         iot.forcePublish();
         eventTriggerFlag = false;
       }

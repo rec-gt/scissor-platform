@@ -35,7 +35,7 @@ public:
 
   void init() {
     if (!mbRtuClient.begin(9600)) {
-      Serial.println("Failed to start Modbus RTU Client!");
+      Serial.println(F("Failed to start Modbus RTU Client!"));
       while (1) {};
     }
   }
@@ -66,7 +66,7 @@ public:
     }
 
     if (!areAllTheSame) {
-      Serial.println("Diff Detected!");
+      Serial.println(F("Diff Detected!"));
       eventTriggerFlag = true;
     }
   }
@@ -76,7 +76,7 @@ public:
 
     for (byte i = 0; i < PARAMETERS_SIZE; i++) {
       Serial.print(holdingRegisterDescription[i]);
-      Serial.print(": ");
+      Serial.print(F(": "));
       Serial.println((uint32_t)holdingRegisterValues[i]);
     }
 

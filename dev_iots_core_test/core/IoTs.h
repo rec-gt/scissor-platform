@@ -17,7 +17,7 @@ private:
     iotSerialRecv = F("");
   }
 
-  void consume() {
+  void consumeRecv() {
     int delimiterIndex = -1;
 
     {  // boundary protection
@@ -401,6 +401,8 @@ protected:
     this->queryParams();
 
     this->captureCSQ();
+
+    this->consumeRecv(); // consume message instead of clear.
   }
 
   void captureIMEI() {

@@ -126,6 +126,33 @@ private:
       }
     }
 
+    if (iotModuleState == IOT_MODULE_WAITING_RESET_HARDWARE) {
+      if (iotSerialRecv.indexOf(F("RDY")) > -1) {
+        Serial.println(F(">>> FINISH HARDWARE RESET"));
+        this->printlnFlush(F("ATE1"));
+        this->printlnFlush(F("AT+QSCLK=0"));
+        iotModuleState = IOT_MODULE_FINISH_RESET_HARDWARE;
+
+        iotResetHardwareCnt.reset();
+      } else {
+        if (iotModuleStateTimer.autoTimeout(1000)) {
+          Serial.print(F(">>> IOT SERIAL PROBE... ("));
+          Serial.print(iotSerialBaudRates[iotSerialBaudRateIdx]);
+          Serial.println(F(")"));
+          iotResetHardwareCnt.accu();
+        }
+
+        if (iotResetHardwareCnt.over(5)) {
+          Serial.println(F(">>> IOT SERIAL FAIL!"));
+          iotSerialBaudRateIdx++;
+          if (iotSerialBaudRateIdx > 1) {
+            iotSerialBaudRateIdx = 0;
+          }
+          iotModuleState = IOT_MODULE_WAITING_INIT;
+        }
+      }
+    }
+
     if (iotModuleState == IOT_MODULE_FINISH_RESET_HARDWARE) {
       iotModuleState = IOT_MODULE_FINISH_RESET;
     }

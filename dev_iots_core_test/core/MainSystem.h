@@ -3,7 +3,7 @@
 #include "./DigitalOutput.h"
 #include "./AnalogInput.h"
 #include "./AnalogOutput.h"
-#include "./IoTs.h"
+#include "./IoT.h"
 #include "./DisplayClient.h"
 #include "./Utils.h"
 

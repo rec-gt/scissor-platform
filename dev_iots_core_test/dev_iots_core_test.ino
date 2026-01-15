@@ -1,5 +1,5 @@
 #include "./core/MainSystem.h"
-#include "./core/IoTs.h"
+#include "./core/IoT.h"
 #include "./core/DisplayClient.h"
 #include "./core/Utils.h"
 #include "./core/Timer.h"

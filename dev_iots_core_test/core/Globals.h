@@ -223,6 +223,8 @@ byte iotModuleState = IOT_MODULE_WAITING_INIT;
 byte iotConnState = IOT_CONN_WAITING_INIT;
 byte iotMqttMsgState = IOT_CONN_WAITING_INIT;
 
+byte iotParseIdx =0;
+
 String iotSerialRecv = "";
 String iotExtractedRecv = "";
 

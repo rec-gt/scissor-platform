@@ -18,6 +18,8 @@ private:
     Serial.flush();
     Serial.println(iotSerialRecv);
     Serial.flush();
+    Serial.print(F("======= END OF SERIAL RECV ======="));
+    Serial.flush();
     this->clear();
   }
 

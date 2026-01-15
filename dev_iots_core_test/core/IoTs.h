@@ -45,7 +45,7 @@ private:
       iotExtractedRecv = F("");
     }
 
-    Serial.print("Length: ");
+    Serial.print(F("Length: "));
     Serial.println(iotSerialRecv.length());
   }
 

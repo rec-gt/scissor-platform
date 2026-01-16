@@ -22,7 +22,15 @@ private:
       while (SerialIoT.available() > 0) {
         char c = SerialIoT.read();
         Serial.print(c);
-        iotSerialRecv += c;
+        // iotSerialRecv += c;
+
+        if (c != '\r' && c != '\n') {
+          iotSerialRecv += c;
+        }
+
+        if (c == '\r') {
+          break;
+        }
       }
 
       this->parse();

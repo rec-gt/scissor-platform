@@ -22,14 +22,14 @@ private:
     this->parse();
 
     /* === Debug === */
-    Serial.print(F("String Length: "));
-    Serial.flush();
-    Serial.println(iotSerialRecv.length());
-    Serial.flush();
-    Serial.println(iotSerialRecv);
-    Serial.flush();
-    Serial.println(F("======= END OF SERIAL RECV ======="));
-    Serial.flush();
+    // Serial.print(F("String Length: "));
+    // Serial.flush();
+    // Serial.println(iotSerialRecv.length());
+    // Serial.flush();
+    // Serial.println(iotSerialRecv);
+    // Serial.flush();
+    // Serial.println(F("======= END OF SERIAL RECV ======="));
+    // Serial.flush();
     /* === Debug End=== */
 
     this->clear();

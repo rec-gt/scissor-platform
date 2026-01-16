@@ -248,6 +248,7 @@ Counter iotResetHardwareCnt;
 
 Timer iotModuleTimer;
 Timer iotStateTimer;
+Timer iotQueryTimer;
 
 Watchdog iotSoftWatchdog(45000UL);
 

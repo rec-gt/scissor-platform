@@ -352,7 +352,7 @@ private:
 
       /* === Only here can query data === */
       if (mqttPublishLock.isReleased()) {
-        if (iotStateTimer.autoTimeout(3000)) {
+        if (iotQueryTimer.autoTimeout(3000)) {
           Serial.println(F(">>> Query CPIN & CSQ"));
           this->printlnFlush(F("AT+CPIN?"));
           this->printlnFlush(F("AT+CSQ"));

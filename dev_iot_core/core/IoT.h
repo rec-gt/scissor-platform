@@ -357,7 +357,7 @@ private:
         this->printlnFlush(mqttPublMsgPrepare);
         iotMqttMsgState = IOT_MQTT_MSG_WAITING_PUBLISH;
       } else {
-        if (iotStateTimer.autoTimeout(10000)) {
+        if (iotStateTimer.autoTimeout(30000UL)) {
           mqttPublishLock.lock();
           this->printlnFlush(mqttPublMsgPrepare);
           iotMqttMsgState = IOT_MQTT_MSG_WAITING_PUBLISH;

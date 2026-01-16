@@ -21,16 +21,7 @@ private:
 
     this->parse();
 
-    /* === Debug === */
-    // Serial.print(F("String Length: "));
-    // Serial.flush();
-    // Serial.println(iotSerialRecv.length());
-    // Serial.flush();
-    // Serial.println(iotSerialRecv);
-    // Serial.flush();
-    // Serial.println(F("======= END OF SERIAL RECV ======="));
-    // Serial.flush();
-    /* === Debug End=== */
+    this->debug();
 
     this->clear();
   }
@@ -422,6 +413,17 @@ private:
     if (iotSerialRecv.indexOf(F("+CPIN: NOT READY")) > -1) {
       iotModuleState = IOT_MODULE_WAITING_INIT;
     }
+  }
+
+  void debug() {
+    Serial.print(F("String Length: "));
+    Serial.flush();
+    Serial.println(iotSerialRecv.length());
+    Serial.flush();
+    Serial.println(iotSerialRecv);
+    Serial.flush();
+    Serial.println(F("======= END OF SERIAL RECV ======="));
+    Serial.flush();
   }
 
 public:

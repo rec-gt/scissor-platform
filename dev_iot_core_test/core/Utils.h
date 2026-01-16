@@ -34,10 +34,12 @@ public:
       }
       if (c == '\r') {
         if (serialInputCmd == F("RESET")) {
-          iotConnState = IOT_STATE_WAITING_INIT;
+          iotModuleState = IOT_MODULE_WAITING_INIT;
         } else if (serialInputCmd == F("FORCE")) {
-          Serial.print(F("Force Publish"));
           iot.forcePublish();
+        } else if (serialInputCmd == F("OPEN")) {
+          Serial.println(F("Force Open:"));
+          iot.printlnFlush((F("AT+QMTOPEN=0,iot.rec-gt.com,1880")));
         } else {
           iot.printlnFlush(serialInputCmd);
         }

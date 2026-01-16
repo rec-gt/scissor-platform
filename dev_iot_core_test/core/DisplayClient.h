@@ -6,7 +6,7 @@
 #define DisplayClient_H
 
 #define DisplaySerial Serial2
-#define DISPLAY_BUFFER_SIZE 55
+#define DISPLAY_BUFFER_SIZE 56
 
 class DisplayClient {
 private:
@@ -42,13 +42,15 @@ public:
   void prepareBuffer() {
     {
       int csq = iotCSQ.toInt();
+      int iotApp = (iotModel == F("") ? 0 : (iotModel == IOT_MODEL_EC800K ? 1 : 2));
 
       uint8_t idx = 0;
 
       this->buffer[idx++] = 0x5B;  // '['
 
-      this->buffer[idx++] = iotConnState;
+      this->buffer[idx++] = iotModuleState + iotConnState + iotMqttMsgState;
       this->buffer[idx++] = csq;
+      this->buffer[idx++] = iotApp;
       this->buffer[idx++] = DIPayload;
       this->buffer[idx++] = DOPayload;
 

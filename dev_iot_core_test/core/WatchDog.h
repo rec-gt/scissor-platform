@@ -13,6 +13,8 @@ private:
   CallbackFunction callback;
 
 public:
+  Watchdog() {}
+
   Watchdog(uint32_t timeout) {
     this->timeout = timeout;
     this->callback = nullptr;
@@ -52,6 +54,7 @@ public:
 
   void pet(void) {
     this->prevMillis = millis();
+    Serial.println(F("Pet the dog"));
   };
 
   ~Watchdog(){};

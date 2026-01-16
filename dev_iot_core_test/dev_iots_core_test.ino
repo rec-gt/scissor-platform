@@ -27,19 +27,19 @@ void setup() {
   iotCGATT.reserve(8);
   iotCEREG.reserve(8);
   mqttSubsMsgContent.reserve(8);
-  iotIMEI.reserve(32);
-  iotExtractedRecv.reserve(32);
-  AOPayload.reserve(64);
+  iotModel.reserve(16);
+  iotIMEI.reserve(16);
+  AOPayload.reserve(32);
+  serialInputCmd.reserve(32);
   mqttConnCmd.reserve(64);
   mqttSubsCmd.reserve(64);
-  mqttPublMsgPrepare.reserve(128);
-  AIPayload.reserve(128);
+  mqttPublMsgPrepare.reserve(64);
+  AIPayload.reserve(64);
   rs485SerialRecv.reserve(128);
-  serialInputCmd.reserve(128);
-  iotSerialRecv.reserve(256);
-  mqttPublMsgPayload.reserve(256);
-  bool remainStrRes = debugStr.reserve(257);
-  Serial.print(remainStrRes ? F("[Str Space OK]") : F("[String Space NOT OK]"));
+  mqttPublMsgPayload.reserve(128);
+  bool remainStrRes = iotSerialRecv.reserve(512);
+  // bool remainStrRes = debugStr.reserve(257);
+  Serial.println(remainStrRes ? F("[Str Space OK]") : F("[String Space NOT OK]"));
 
   /*=== IoT ===*/
   iot.init();
@@ -51,7 +51,7 @@ void setup() {
   subSystem.init();
 
   /*=== Watchdog ===*/
-  // wdt_enable(WDTO_8S);
+  wdt_enable(WDTO_8S);
 }
 
 void loop() {
@@ -70,9 +70,12 @@ void loop() {
   subSystem.loop();
 
   /*=== Pet the dog ===*/
-  // if (!systemTimer.isExpired()) {
-  //   wdt_reset();
-  // }
+  if (!systemTimer.isExpired()) {
+    wdt_reset();
+  }
 
   delay(10);
 }
+
+// TODO: EEPROM -AO -DO (Optional)
+// TODO: Event Trigger -AO -DO

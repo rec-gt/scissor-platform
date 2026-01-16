@@ -226,7 +226,6 @@ byte iotMqttMsgState = IOT_CONN_WAITING_INIT;
 int iotParseIdx = 0;
 
 String iotSerialRecv = "";
-String iotExtractedRecv = "";
 
 String iotModel = "";
 String iotIMEI = "";
@@ -238,7 +237,7 @@ String iotCEREG = "";
 String mqttConnCmd = "";
 String mqttSubsCmd = "";
 
-Toggle mqttPublLock;
+Toggle mqttPublishLock;
 Toggle mqttForcePublMode;
 
 String mqttPublMsgPrepare = "";
@@ -247,9 +246,8 @@ String mqttSubsMsgContent = "";
 
 Counter iotResetHardwareCnt;
 
-Timer iotParamTimer;
-Timer iotModuleStateTimer;
-Timer iotConnStateTimer;
+Timer iotModuleTimer;
+Timer iotStateTimer;
 
 Watchdog iotSoftWatchdog(45000UL);
 

@@ -6,36 +6,44 @@
 class IoT {
 private:
   void listenModule() {
-    while (SerialIoT.available() > 0) {
-      char c = SerialIoT.read();
-      iotSerialRecv += c;
+    if (iotModuleState != IOT_MODULE_END_OF_STATE) {
+      while (SerialIoT.available() > 0) {
+        char c = SerialIoT.read();
+        iotSerialRecv += c;
+      }
+      this->manageModuleState();
+      this->clear();
     }
-    this->manageModuleState();
-    this->clear();
   }
 
   void listenState() {
     if (iotModuleState == IOT_MODULE_END_OF_STATE) {
       while (SerialIoT.available() > 0) {
         char c = SerialIoT.read();
-        Serial.print(c);
-        iotSerialRecv += c;
+        // Serial.print(c);
+        // iotSerialRecv += c;
+
+        if (c != '\r' && c != '\n') {
+          iotSerialRecv += c;
+        }
+
+        if (c == '\r') {
+          this->parse();
+
+          /* === Debug === */
+          Serial.print(F("String Length: "));
+          Serial.flush();
+          Serial.println(iotSerialRecv.length());
+          Serial.flush();
+          Serial.println(iotSerialRecv);
+          Serial.flush();
+          Serial.println(F("======= END OF SERIAL RECV ======="));
+          Serial.flush();
+          /* === Debug End=== */
+
+          this->clear();
+        }
       }
-
-      this->parse();
-
-      /* === Debug === */
-      Serial.print(F("String Length: "));
-      Serial.flush();
-      Serial.println(iotSerialRecv.length());
-      Serial.flush();
-      Serial.println(iotSerialRecv);
-      Serial.flush();
-      Serial.println(F("======= END OF SERIAL RECV ======="));
-      Serial.flush();
-      /* === Debug End=== */
-
-      this->clear();
     }
   }
 

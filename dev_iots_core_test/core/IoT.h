@@ -17,33 +17,28 @@ private:
   }
 
   void listenState() {
+    // TODO: fix this
     if (iotModuleState == IOT_MODULE_END_OF_STATE) {
       while (SerialIoT.available() > 0) {
         char c = SerialIoT.read();
-        // Serial.print(c);
-        // iotSerialRecv += c;
-
-        if (c != '\r' && c != '\n') {
-          iotSerialRecv += c;
-        }
-
-        if (c == '\r') {
-          this->parse();
-
-          /* === Debug === */
-          Serial.print(F("String Length: "));
-          Serial.flush();
-          Serial.println(iotSerialRecv.length());
-          Serial.flush();
-          Serial.println(iotSerialRecv);
-          Serial.flush();
-          Serial.println(F("======= END OF SERIAL RECV ======="));
-          Serial.flush();
-          /* === Debug End=== */
-
-          this->clear();
-        }
+        Serial.print(c);
+        iotSerialRecv += c;
       }
+
+      this->parse();
+
+      /* === Debug === */
+      Serial.print(F("String Length: "));
+      Serial.flush();
+      Serial.println(iotSerialRecv.length());
+      Serial.flush();
+      Serial.println(iotSerialRecv);
+      Serial.flush();
+      Serial.println(F("======= END OF SERIAL RECV ======="));
+      Serial.flush();
+      /* === Debug End=== */
+
+      this->clear();
     }
   }
 

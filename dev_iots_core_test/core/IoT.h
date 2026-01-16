@@ -146,8 +146,8 @@ private:
     if (iotModuleState == IOT_MODULE_WAITING_RESET_HARDWARE) {
       if (iotSerialRecv.indexOf(F("RDY")) > -1) {
         Serial.println(F(">>> FINISH HARDWARE RESET"));
-        // this->printlnFlush(F("ATE0"));
-        this->printlnFlush(F("ATE1"));
+        this->printlnFlush(F("ATE0"));
+        // this->printlnFlush(F("ATE1"));
         this->printlnFlush(F("AT+QSCLK=0"));
         iotModuleState = IOT_MODULE_FINISH_RESET_HARDWARE;
 

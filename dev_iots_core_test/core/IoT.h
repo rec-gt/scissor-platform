@@ -5,27 +5,38 @@
 
 class IoT {
 private:
-  void listen() {
+  void listenModule() {
     while (SerialIoT.available() > 0) {
       char c = SerialIoT.read();
-      Serial.print(c);
       iotSerialRecv += c;
     }
-
-    this->parse();
-
-    /* === Debug === */
-    Serial.print(F("String Length: "));
-    Serial.flush();
-    Serial.println(iotSerialRecv.length());
-    Serial.flush();
-    Serial.println(iotSerialRecv);
-    Serial.flush();
-    Serial.println(F("======= END OF SERIAL RECV ======="));
-    Serial.flush();
-    /* === Debug End=== */
-
+    this->manageModuleState();
     this->clear();
+  }
+
+  void listenState() {
+    if (iotModuleState == IOT_MODULE_END_OF_STATE) {
+      while (SerialIoT.available() > 0) {
+        char c = SerialIoT.read();
+        Serial.print(c);
+        iotSerialRecv += c;
+      }
+
+      this->parse();
+
+      /* === Debug === */
+      Serial.print(F("String Length: "));
+      Serial.flush();
+      Serial.println(iotSerialRecv.length());
+      Serial.flush();
+      Serial.println(iotSerialRecv);
+      Serial.flush();
+      Serial.println(F("======= END OF SERIAL RECV ======="));
+      Serial.flush();
+      /* === Debug End=== */
+
+      this->clear();
+    }
   }
 
   void clear() {
@@ -97,7 +108,6 @@ private:
 
     /* ====== Parameters with state ====== */
     {
-      this->manageModuleState();
       if (iotModuleState == IOT_MODULE_END_OF_STATE) {
         this->manageConnectionState();
         if (iotConnState == IOT_CONN_END_OF_STATE) {
@@ -421,7 +431,7 @@ public:
   void init() {
     pinMode(IOT_MODULE_RESET_PIN, OUTPUT);
     digitalWrite(IOT_MODULE_RESET_PIN, HIGH);
-    
+
     iotModuleState = IOT_MODULE_WAITING_INIT;
 
     /* === Soft Watchdog for IoT Service=== */
@@ -434,7 +444,8 @@ public:
 
   void loop() {
     iotSoftWatchdog.monitor();
-    this->listen();
+    this->listenModule();
+    this->listenState();
   }
 
   void printlnFlush(const String& cmd) {

@@ -55,8 +55,7 @@ public:
     /*=== AI Payload ===*/
     AIPayload = F("[");
     for (size_t i = 0; i < AI_NUMS; i++) {
-      // AIPayload += analogInputs[i].getValue();
-      AIPayload += random(0, 1023);
+      AIPayload += analogInputs[i].getValue();
       if (i < AI_NUMS - 1) {
         AIPayload += F(",");
       }

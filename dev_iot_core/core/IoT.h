@@ -21,7 +21,7 @@ private:
 
     this->parse();
 
-    this->debug();
+    // this->debug();
 
     this->clear();
   }

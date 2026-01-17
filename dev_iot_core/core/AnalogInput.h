@@ -62,9 +62,8 @@ public:
       };
       this->smoothedReading = (smoothSum / 64);
     }
-  }
 
-  uint16_t getValue() {
+    /* === parse to value === */
     /* === For 4096 Resolution === */
     if (this->resolution == 1) {
       this->value = map(constrain((int32_t)this->smoothedReading, 0, 16063), 0, 16063, 0, 4095);
@@ -73,7 +72,9 @@ public:
     else {
       this->value = constrain((int32_t)this->smoothedReading, 0, 1023);
     }
+  }
 
+  uint16_t getValue() {
     return this->value;
   }
 };

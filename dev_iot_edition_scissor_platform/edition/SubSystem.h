@@ -2,7 +2,7 @@
 #include "../core/DigitalOutput.h"
 #include "../core/AnalogInput.h"
 #include "../core/AnalogOutput.h"
-#include "../core/NBIoT.h"
+#include "../core/IoT.h"
 #include "../core/DisplayClient.h"
 #include "../core/Utils.h"
 #include "../core/Globals.h"
@@ -100,7 +100,7 @@ public:
     for (size_t i = 0; i < 10; i++) {
       uint16_t distance = analogInputs[i].value;
       Serial.println(analogInputs[i].value);
-      int thresholdDistance = thresholdSwitch.getState() ? this->threshold500 : this->threshold800;
+      uint16_t thresholdDistance = thresholdSwitch.getState() ? this->threshold500 : this->threshold800;
       if (distance <= thresholdDistance) {
         return true;
       }
@@ -116,7 +116,7 @@ public:
       // Serial.print(": ");
       // Serial.println(analogInputs[i].value);
 
-      int thresholdDistance = (thresholdSwitch.getState() ? this->threshold500 : this->threshold800) + 25;
+      uint16_t thresholdDistance = (thresholdSwitch.getState() ? this->threshold500 : this->threshold800) + 25;
       if (distance <= thresholdDistance) {
         flag = false;
       }

@@ -1,8 +1,10 @@
 #ifndef SerialRecv_H
 #define SerialRecv_H
-#define PeripheralSerial Serial
 #define DISPLAY_BUFFER_SIZE 56
 // #define DISPLAY_BUFFER_SIZE 41
+
+#include <SoftwareSerial.h>
+SoftwareSerial PeripheralSerial(10, 11); 
 
 class SerialRecv {
 private:

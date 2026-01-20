@@ -22,3 +22,10 @@ rename "C:\Users\recckyt\Documents\Arduino\hex\prod_nbiot_scissor_platform_editi
 
 arduino-cli compile --fqbn arduino:avr:mega --output-dir "C:\Users\recckyt\Documents\Arduino\hex\prod_pqm_modbus" ./prod_pqm_modbus
 rename "C:\Users\recckyt\Documents\Arduino\hex\prod_pqm_modbus\prod_pqm_modbus.ino.hex" "Controller.hex"
+
+
+/*==========================================*/
+
+
+arduino-cli compile --fqbn arduino:avr:mega --output-dir "C:\Users\recckyt\Documents\Arduino\hex\prod_iot_core" ./prod_iot_core
+rename "C:\Users\recckyt\Documents\Arduino\hex\prod_iot_core\prod_iot_core.ino.hex" "Controller.hex"

@@ -31,7 +31,7 @@ arduino-cli compile --fqbn arduino:avr:mega --output-dir "C:\Users\recckyt\Docum
 rename "C:\Users\recckyt\Documents\Arduino\hex\prod_iot_core\prod_iot_core.ino.hex" "Controller.hex"
 
 arduino-cli compile --fqbn arduino:avr:mega --output-dir "C:\Users\recckyt\Documents\Arduino\hex\prod_iot_core_display" ./prod_iot_core_display
-rename "C:\Users\recckyt\Documents\Arduino\hex\prod_iot_core_display\prod_iot_core_display.ino.hex" "Controller.hex"
+rename "C:\Users\recckyt\Documents\Arduino\hex\prod_iot_core_display\prod_iot_core_display.ino.hex" "Display.hex"
 
 arduino-cli compile --fqbn arduino:avr:mega --output-dir "C:\Users\recckyt\Documents\Arduino\hex\prod_iot_edition_bamako_burner" ./prod_iot_edition_bamako_burner
 rename "C:\Users\recckyt\Documents\Arduino\hex\prod_iot_edition_bamako_burner\prod_iot_edition_bamako_burner.ino.hex" "Controller.hex"

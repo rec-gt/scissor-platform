@@ -2,7 +2,7 @@
 #include "../core/DigitalOutput.h"
 #include "../core/AnalogInput.h"
 #include "../core/AnalogOutput.h"
-#include "../core/NBIoT.h"
+#include "../core/IoT.h"
 #include "../core/MainSystem.h"
 #include "../core/DisplayClient.h"
 #include "../core/Utils.h"
@@ -114,7 +114,7 @@ public:
       if (powerStatusState == 0) {
         mainSystem.buildPayloads();
         mainSystem.handlePublishContent();
-        nbiot.forcePublish();
+        iot.forcePublish();
       }
     };
   }

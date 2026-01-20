@@ -63,7 +63,7 @@ public:
       this->smoothedReading = (smoothSum / 64);
     }
 
-    /* === parse to value === */
+    /* === Parse to value === */
     /* === For 4096 Resolution === */
     if (this->resolution == 1) {
       this->value = map(constrain((int32_t)this->smoothedReading, 0, 16063), 0, 16063, 0, 4095);

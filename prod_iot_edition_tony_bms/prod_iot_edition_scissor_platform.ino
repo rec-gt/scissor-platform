@@ -5,6 +5,7 @@
 #include "./core/Timer.h"
 #include "./edition/SubSystem.h"
 #include <avr/wdt.h>
+#include <HardwareSerial.h>
 
 MainSystem mainSystem;
 

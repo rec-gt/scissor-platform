@@ -5,7 +5,6 @@
 #include "./core/Timer.h"
 #include "./edition/SubSystem.h"
 #include <avr/wdt.h>
-#include <HardwareSerial.h>
 
 MainSystem mainSystem;
 
@@ -38,7 +37,7 @@ void setup() {
   AIPayload.reserve(64);
   rs485SerialRecv.reserve(128);
   mqttPublMsgPayload.reserve(128);
-  bool remainStrRes = iotSerialRecv.reserve(512);
+  bool remainStrRes = iotSerialRecv.reserve(256);
   // bool remainStrRes = debugStr.reserve(257);
   Serial.println(remainStrRes ? F("[Str Space OK]") : F("[String Space NOT OK]"));
 
@@ -77,6 +76,3 @@ void loop() {
 
   delay(10);
 }
-
-// TODO: EEPROM -AO -DO (Optional)
-// TODO: Event Trigger -AO -DO

@@ -1,127 +1,61 @@
-#include "../core/DigitalInput.h"
-#include "../core/DigitalOutput.h"
-#include "../core/AnalogInput.h"
-#include "../core/AnalogOutput.h"
-#include "../core/IoT.h"
-#include "../core/DisplayClient.h"
-#include "../core/Utils.h"
-#include "../core/Globals.h"
-#include "./SubGlobals.h"
-
 #ifndef SubSystem_H
 #define SubSystem_H
 
-enum SubSystemStatus {
-  SYS_INIT,
-  SYS_STARTING,
-  SYS_RUNNING,
-  SYS_STOPPED,
-  SYS_ALLOW_10S,
-  SYS_FAILURE
-};
+#include "./SubGlobals.h"
+#include "./SubRS485.h"
+#include "./BMSTony.h"
+#include "../core/IoT.h"
+#include "../core/Timer.h"
+
+SubRS485 subRS485;
+
+BMSTony bms(1);
+
+Timer debouncer;
 
 class SubSystem {
 private:
-  SubSystemStatus status;
+  void handlePublishPayloads() {
+    byte dataPoints_1_8 = 0;
+    byte dataPoints_9_10 = 0;
 
-  uint16_t threshold500 = 500;
-  uint16_t threshold800 = 800;
+    dataPoints_1_8 |= (byte)holdingRegisterValues[0] << 0;
+    dataPoints_1_8 |= (byte)holdingRegisterValues[1] << 1;
+    dataPoints_1_8 |= (byte)holdingRegisterValues[2] << 2;
+    dataPoints_1_8 |= (byte)holdingRegisterValues[3] << 3;
+    dataPoints_1_8 |= (byte)holdingRegisterValues[4] << 4;
+    dataPoints_1_8 |= (byte)holdingRegisterValues[5] << 5;
+    dataPoints_1_8 |= (byte)holdingRegisterValues[6] << 6;
+    dataPoints_1_8 |= (byte)holdingRegisterValues[7] << 7;
 
-  DigitalOutput &relay = digitalOutputs[0];
-  DigitalOutput &alarm = digitalOutputs[1];
-  DigitalOutput &powerLight = digitalOutputs[2];
-  DigitalOutput &warningLight = digitalOutputs[3];
-  DigitalOutput &trafficGreen = digitalOutputs[4];
-  DigitalOutput &trafficYellow = digitalOutputs[5];
-  DigitalOutput &trafficRed = digitalOutputs[6];
+    dataPoints_9_10 |= (byte)holdingRegisterValues[8] << 0;
+    dataPoints_9_10 |= (byte)holdingRegisterValues[9] << 1;
 
-  DigitalInput &thresholdSwitch = digitalInputs[0];
-  DigitalInput &pressButton = digitalInputs[1];
+    iot.buildMsg(dataPoints_1_8, dataPoints_9_10, F("[]"), F("[]"));
+  }
 
-  unsigned long tenSecondTimer = 0;
+  void debouncedEventTrigger() {
+    if (eventTriggerFlag) {
+      if (debouncer.autoTimeout(1000)) {
+        Serial.println(F("Event Trigger - Force Publish"));
+        iot.forcePublish();
+        eventTriggerFlag = false;
+      }
+    }
+  }
 
 public:
   SubSystem(void) {}
 
   void init() {
     configAnalogInputResolution(0);
-    this->status = SYS_RUNNING;
+    bms.init();
   }
 
   void loop() {
-    powerLight.connect();
-
-    if (this->status == SYS_RUNNING) {
-      relay.connect();
-      alarm.cut();
-      warningLight.cut();
-
-      trafficGreen.connect();
-      trafficYellow.cut();
-      trafficRed.cut();
-
-      if (this->isOneDetected()) {
-        this->status = SYS_STOPPED;
-      }
-
-    } else if (this->status == SYS_STOPPED) {
-      relay.cut();
-      alarm.connect();
-      warningLight.connect();
-
-      trafficGreen.cut();
-      trafficYellow.cut();
-      trafficRed.connect();
-
-      if (areAllEscaped()) {
-        this->status = SYS_RUNNING;
-      }
-
-      if (pressButton.getState()) {
-        this->status = SYS_ALLOW_10S;
-        this->tenSecondTimer = millis();
-      }
-    } else if (this->status == SYS_ALLOW_10S) {
-      relay.connect();
-      alarm.cut();
-      warningLight.cut();
-
-      trafficGreen.connect();
-      trafficYellow.connect();
-      trafficRed.cut();
-
-      if ((millis() - this->tenSecondTimer) >= 10000) {
-        this->status = SYS_STOPPED;
-      }
-    }
-  }
-
-  bool isOneDetected() {
-    for (size_t i = 0; i < 10; i++) {
-      uint16_t distance = analogInputs[i].value;
-      Serial.println(analogInputs[i].value);
-      uint16_t thresholdDistance = thresholdSwitch.getState() ? this->threshold500 : this->threshold800;
-      if (distance <= thresholdDistance) {
-        return true;
-      }
-    }
-    return false;
-  }
-
-  bool areAllEscaped() {
-    bool flag = true;
-    for (size_t i = 0; i < 10; i++) {
-      uint16_t distance = analogInputs[i].value;
-      // Serial.print(i);
-      // Serial.print(": ");
-      // Serial.println(analogInputs[i].value);
-
-      uint16_t thresholdDistance = (thresholdSwitch.getState() ? this->threshold500 : this->threshold800) + 25;
-      if (distance <= thresholdDistance) {
-        flag = false;
-      }
-    }
-    return flag;
+    bms.loop();
+    this->handlePublishPayloads();
+    this->debouncedEventTrigger();
   }
 
   ~SubSystem() {}

@@ -76,6 +76,3 @@ void loop() {
 
   delay(10);
 }
-
-// TODO: EEPROM -AO -DO (Optional)
-// TODO: Event Trigger -AO -DO

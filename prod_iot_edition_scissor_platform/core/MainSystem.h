@@ -40,19 +40,19 @@ public:
   }
 
   void buildPayloads() {
-    /*=== DI ===*/
+    /*=== DI Payload ===*/
     DIPayload = 0;
     for (size_t i = 0; i < DI_NUMS; i++) {
       DIPayload |= digitalInputs[i].getState() << i;
     }
 
-    /*=== DO ===*/
+    /*=== DO Payload ===*/
     DOPayload = 0;
     for (size_t i = 0; i < DO_NUMS; i++) {
       DOPayload |= digitalOutputs[i].getState() << i;
     }
 
-    /*=== AI ===*/
+    /*=== AI Payload ===*/
     AIPayload = F("[");
     for (size_t i = 0; i < AI_NUMS; i++) {
       AIPayload += analogInputs[i].getValue();
@@ -62,7 +62,7 @@ public:
     }
     AIPayload += F("]");
 
-    /*=== AO ===*/
+    /*=== AO Payload ===*/
     AOPayload = F("[");
     for (size_t i = 0; i < AO_NUMS; i++) {
       AOPayload += analogOutputs[i].getValue();
@@ -74,48 +74,26 @@ public:
   }
 
   void handlePublishContent() {
-    if (!iot.pubMsgPayloadLock) {
-      iotPubMsgPayload = F("{\"csq\":");
-      iotPubMsgPayload.concat(iotCSQ);
-      iotPubMsgPayload.concat(F(","));
-      iotPubMsgPayload.concat(F("\"din\":"));
-      iotPubMsgPayload.concat(DIPayload);
-      iotPubMsgPayload.concat(F(","));
-      iotPubMsgPayload.concat(F("\"dout\":"));
-      iotPubMsgPayload.concat(DOPayload);
-      iotPubMsgPayload.concat(F(","));
-      iotPubMsgPayload.concat(F("\"ain\":"));
-      iotPubMsgPayload.concat(AIPayload);
-      iotPubMsgPayload.concat(F(","));
-      iotPubMsgPayload.concat(F("\"aout\":"));
-      iotPubMsgPayload.concat(AOPayload);
-      iotPubMsgPayload.concat(F("}"));
-    }
-
-    iotPubMsgPrepare = F("AT+QMTPUB=0,0,0,0,rgt/");
-    iotPubMsgPrepare.concat(iotIMEI);
-    iotPubMsgPrepare.concat(F("/in,"));
-    iotPubMsgPrepare.concat(iotPubMsgPayload.length());
-
-    iotPubMsgCommand = iotPubMsgPrepare;
-    iotPubMsgCommand.concat(F(","));
-    iotPubMsgCommand.concat(iotPubMsgPayload);
-
-    // Serial.println(iotPubMsgPrepare);
-    // Serial.println(iotPubMsgPayload);
-    // Serial.println(iotPubMsgCommand);
+    iot.buildMsg(DIPayload, DOPayload, AIPayload, AOPayload);
   }
 
   void handleSubscribeContent() {
-    if (iotSubMsgContent.length() <= 0) {
+    if (mqttSubsMsgContent.length() <= 0) {
       return;
     }
 
-    byte b0 = iotSubMsgContent.charAt(0);
-    byte b1 = iotSubMsgContent.charAt(1);
-    // byte b2 = iotSubMsgContent.charAt(2); // b2 is useless
-    byte b3 = iotSubMsgContent.charAt(3);
-    byte b4 = iotSubMsgContent.charAt(4);
+    byte b0 = 0;
+    byte b1 = 0;
+    // byte b2 = 0; // b2 is useless
+    byte b3 = 0;
+    byte b4 = 0;
+
+    {
+      b0 = mqttSubsMsgContent.charAt(0);
+      b1 = mqttSubsMsgContent.charAt(1);
+      b3 = mqttSubsMsgContent.charAt(3);
+      b4 = mqttSubsMsgContent.charAt(4);
+    }
 
     if (b0 == 68) {                                                                   // D
       if (b1 == 58) {                                                                 // :
@@ -142,7 +120,7 @@ public:
       }
     }
 
-    iotSubMsgContent = F("");
+    mqttSubsMsgContent = F("");
   }
 
   ~MainSystem() {}

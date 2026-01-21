@@ -6,7 +6,7 @@ private:
   byte pin;
 
 public:
-  uint16_t value;
+  byte value;
 
   AnalogOutput() {}
 
@@ -15,12 +15,12 @@ public:
     pinMode(pin, OUTPUT);
   }
 
-  void set(uint16_t value) {
+  void set(byte value) {
     this->value = value;
     analogWrite(this->pin, this->value);
   }
 
-  uint16_t getValue() {
+  byte getValue() {
     return this->value;
   }
 };

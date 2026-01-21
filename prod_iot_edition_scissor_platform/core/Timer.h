@@ -1,16 +1,16 @@
-#ifndef AsyncTimer_H
-#define AsyncTimer_H
+#ifndef Timer_H
+#define Timer_H
 
-class AsyncTimer {
+class Timer {
 private:
-  unsigned long timeout = 3000;
-  unsigned long prevMillis = 0;
+  uint32_t timeout = 3000;
+  uint32_t prevMillis = 0;
   bool _lock = false;
 
 public:
-  AsyncTimer(){};
+  Timer(){};
 
-  AsyncTimer(unsigned long timeout)
+  Timer(uint32_t timeout)
     : timeout(timeout){};
 
   bool isExpired(void) {
@@ -21,8 +21,8 @@ public:
     this->prevMillis = millis();
   }
 
-  bool autoExpired(unsigned long autoTimeout) {
-    bool isTimeout = millis() - this->prevMillis > autoTimeout;
+  bool autoTimeout(uint16_t _to) {
+    bool isTimeout = millis() - this->prevMillis > _to;
 
     if (this->_lock == false) {
       this->prevMillis = millis();
@@ -33,12 +33,13 @@ public:
       this->_lock = false;
     }
 
-    isTimeout = millis() - this->prevMillis > autoTimeout;
+    isTimeout = millis() - this->prevMillis > _to;
 
     return isTimeout;
   }
 
-  ~AsyncTimer() {}
+
+  ~Timer() {}
 };
 
 #endif

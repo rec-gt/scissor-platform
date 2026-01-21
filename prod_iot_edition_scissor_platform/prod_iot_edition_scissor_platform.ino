@@ -2,9 +2,10 @@
 #include "./core/IoT.h"
 #include "./core/DisplayClient.h"
 #include "./core/Utils.h"
-#include "./core/AsyncTimer.h"
+#include "./core/Timer.h"
 #include "./edition/SubSystem.h"
 #include <avr/wdt.h>
+#include <HardwareSerial.h>
 
 MainSystem mainSystem;
 
@@ -16,7 +17,7 @@ Utils utils;
 
 SubSystem subSystem;
 
-AsyncTimer systemTimer(86400000UL);
+Timer systemTimer(86400000);
 
 void setup() {
   Serial.begin(9600);
@@ -26,25 +27,23 @@ void setup() {
   iotCSQ.reserve(8);
   iotCGATT.reserve(8);
   iotCEREG.reserve(8);
-  iotPubAck.reserve(8);
-  iotSubAck.reserve(8);
-  iotSubMsgContent.reserve(8);
-  iotIMEI.reserve(32);
-  cmpStr.reserve(32);
-  AOPayload.reserve(64);
-  iotConnCmd.reserve(64);
-  iotSubsCmd.reserve(64);
-  iotPubMsgPrepare.reserve(64);
-  AIPayload.reserve(128);
+  mqttSubsMsgContent.reserve(8);
+  iotModel.reserve(16);
+  iotIMEI.reserve(16);
+  AOPayload.reserve(32);
+  serialInputCmd.reserve(32);
+  mqttConnCmd.reserve(64);
+  mqttSubsCmd.reserve(64);
+  mqttPublMsgPrepare.reserve(64);
+  AIPayload.reserve(64);
   rs485SerialRecv.reserve(128);
-  iotSerialRecv.reserve(128);
-  iotPubMsgPayload.reserve(256);
-  bool remainStrRes = iotPubMsgCommand.reserve(512);
-  Serial.print(remainStrRes ? F("[Str Space OK]") : F("[String Space NOT OK]"));
+  mqttPublMsgPayload.reserve(128);
+  bool remainStrRes = iotSerialRecv.reserve(512);
+  // bool remainStrRes = debugStr.reserve(257);
+  Serial.println(remainStrRes ? F("[Str Space OK]") : F("[String Space NOT OK]"));
 
   /*=== IoT ===*/
-  iot.init(true);
-  iot.debug();
+  iot.init();
 
   /*=== Display ===*/
   displayClient.setup();
@@ -57,6 +56,8 @@ void setup() {
 }
 
 void loop() {
+  utils.serialInput();
+
   /*=== Register IoT ===*/
   iot.loop();
 
@@ -76,3 +77,6 @@ void loop() {
 
   delay(10);
 }
+
+// TODO: EEPROM -AO -DO (Optional)
+// TODO: Event Trigger -AO -DO

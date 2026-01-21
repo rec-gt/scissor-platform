@@ -27,14 +27,17 @@ rename "C:\Users\recckyt\Documents\Arduino\hex\prod_pqm_modbus\prod_pqm_modbus.i
 /*==========================================*/
 
 
-arduino-cli compile --fqbn arduino:avr:mega --output-dir "C:\Users\recckyt\Documents\Arduino\hex\prod_iot_core" ./prod_iot_core
-rename "C:\Users\recckyt\Documents\Arduino\hex\prod_iot_core\prod_iot_core.ino.hex" "Controller.hex"
-
 arduino-cli compile --fqbn arduino:avr:nano:cpu=atmega328old --output-dir "C:\Users\recckyt\Documents\Arduino\hex\prod_iot_core_display" ./prod_iot_core_display
 rename "C:\Users\recckyt\Documents\Arduino\hex\prod_iot_core_display\prod_iot_core_display.ino.hex" "Display.hex"
+
+arduino-cli compile --fqbn arduino:avr:mega --output-dir "C:\Users\recckyt\Documents\Arduino\hex\prod_iot_core" ./prod_iot_core
+rename "C:\Users\recckyt\Documents\Arduino\hex\prod_iot_core\prod_iot_core.ino.hex" "Controller.hex"
 
 arduino-cli compile --fqbn arduino:avr:mega --output-dir "C:\Users\recckyt\Documents\Arduino\hex\prod_iot_edition_bamako_burner" ./prod_iot_edition_bamako_burner
 rename "C:\Users\recckyt\Documents\Arduino\hex\prod_iot_edition_bamako_burner\prod_iot_edition_bamako_burner.ino.hex" "Controller.hex"
 
 arduino-cli compile --fqbn arduino:avr:mega --output-dir "C:\Users\recckyt\Documents\Arduino\hex\prod_iot_core_clear_2560" ./prod_iot_core_clear_2560
 rename "C:\Users\recckyt\Documents\Arduino\hex\prod_iot_core_clear_2560\prod_iot_core_clear_2560.ino.hex" "Clear2560.hex"
+
+arduino-cli compile --fqbn arduino:avr:mega --output-dir "C:\Users\recckyt\Documents\Arduino\hex\prod_iot_edition_scissor_platform" ./prod_iot_edition_scissor_platform
+rename "C:\Users\recckyt\Documents\Arduino\hex\prod_iot_edition_scissor_platform\prod_iot_edition_scissor_platform.ino.hex" "Controller.hex"

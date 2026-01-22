@@ -340,16 +340,6 @@ private:
 
   void manageMqttMessageState() {
     if (iotMqttMsgState == IOT_MQTT_MSG_LOOP_START) {
-
-      /* === Only here can query data === */
-      if (mqttPublishLock.isReleased()) {
-        if (iotQueryTimer.autoTimeout(3000)) {
-          Serial.println(F(">>> Query CPIN & CSQ"));
-          this->printlnFlush(F("AT+CPIN?"));
-          this->printlnFlush(F("AT+CSQ"));
-        }
-      }
-
       /* === Handle publish message === */
       if (mqttForcePublMode.isOn()) {
         mqttForcePublMode.off();
@@ -361,6 +351,14 @@ private:
           mqttPublishLock.lock();
           this->printlnFlush(mqttPublMsgPrepare);
           iotMqttMsgState = IOT_MQTT_MSG_WAITING_PUBLISH;
+        }
+        /* === Only here can query data === */
+        if (mqttPublishLock.isReleased()) {
+          if (iotQueryTimer.autoTimeout(3000)) {
+            Serial.println(F(">>> Query CPIN & CSQ"));
+            this->printlnFlush(F("AT+CPIN?"));
+            this->printlnFlush(F("AT+CSQ"));
+          }
         }
       }
     }

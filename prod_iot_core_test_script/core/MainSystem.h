@@ -45,20 +45,17 @@ public:
     for (size_t i = 0; i < DI_NUMS; i++) {
       DIPayload |= digitalInputs[i].getState() << i;
     }
-    DIPayload = random(255);
 
     /*=== DO Payload ===*/
     DOPayload = 0;
     for (size_t i = 0; i < DO_NUMS; i++) {
       DOPayload |= digitalOutputs[i].getState() << i;
     }
-    DOPayload = random(255);
 
     /*=== AI Payload ===*/
     AIPayload = F("[");
     for (size_t i = 0; i < AI_NUMS; i++) {
-      // AIPayload += analogInputs[i].getValue();
-      AIPayload += random(4095);
+      AIPayload += analogInputs[i].getValue();
       if (i < AI_NUMS - 1) {
         AIPayload += F(",");
       }
@@ -68,8 +65,7 @@ public:
     /*=== AO Payload ===*/
     AOPayload = F("[");
     for (size_t i = 0; i < AO_NUMS; i++) {
-      // AOPayload += analogOutputs[i].getValue();
-      AOPayload += random(255);
+      AOPayload += analogOutputs[i].getValue();
       if (i < AO_NUMS - 1) {
         AOPayload += F(",");
       }

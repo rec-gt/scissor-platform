@@ -8,7 +8,7 @@ private:
   void listen() {
     while (SerialIoT.available() > 0) {
       char c = SerialIoT.read();
-      Serial.print(c);
+      // Serial.print(c);
 
       if (c != '\r' && c != '\n') {
         iotSerialRecv += c;
@@ -352,7 +352,6 @@ private:
           this->printlnFlush(mqttPublMsgPrepare);
           iotMqttMsgState = IOT_MQTT_MSG_WAITING_PUBLISH;
         }
-
         /* === Only here can query data === */
         if (mqttPublishLock.isReleased()) {
           if (iotQueryTimer.autoTimeout(3000)) {
@@ -410,10 +409,6 @@ private:
     }
 
     if (iotSerialRecv.indexOf(F("+CPIN: NOT READY")) > -1) {
-      iotModuleState = IOT_MODULE_WAITING_INIT;
-    }
-
-    if (iotSerialRecv.indexOf(F("+QMTSTAT: 0,1")) > -1) {
       iotModuleState = IOT_MODULE_WAITING_INIT;
     }
   }

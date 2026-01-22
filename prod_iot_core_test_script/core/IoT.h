@@ -380,12 +380,6 @@ private:
         iotMqttMsgState = IOT_MQTT_MSG_LOOP_START;  // finish one publish, loop-back
       }
     }
-
-    if (iotSerialRecv.indexOf(F("+QMTPUBEX: 0,1,1")) > -1) {
-      Serial.println(iotSerialRecv);
-      Serial.flush();
-      iotSoftWatchdog.pet();
-    }
   }
 
   bool inspectCSQ() {
@@ -416,6 +410,10 @@ private:
     }
 
     if (iotSerialRecv.indexOf(F("+CPIN: NOT READY")) > -1) {
+      iotModuleState = IOT_MODULE_WAITING_INIT;
+    }
+
+    if (iotSerialRecv.indexOf(F("+QMTSTAT: 0,1")) > -1) {
       iotModuleState = IOT_MODULE_WAITING_INIT;
     }
   }

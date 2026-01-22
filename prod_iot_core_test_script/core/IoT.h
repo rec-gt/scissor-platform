@@ -8,7 +8,7 @@ private:
   void listen() {
     while (SerialIoT.available() > 0) {
       char c = SerialIoT.read();
-      // Serial.print(c);
+      Serial.print(c);
 
       if (c != '\r' && c != '\n') {
         iotSerialRecv += c;
@@ -340,16 +340,6 @@ private:
 
   void manageMqttMessageState() {
     if (iotMqttMsgState == IOT_MQTT_MSG_LOOP_START) {
-
-      /* === Only here can query data === */
-      if (mqttPublishLock.isReleased()) {
-        if (iotQueryTimer.autoTimeout(3000)) {
-          Serial.println(F(">>> Query CPIN & CSQ"));
-          this->printlnFlush(F("AT+CPIN?"));
-          this->printlnFlush(F("AT+CSQ"));
-        }
-      }
-
       /* === Handle publish message === */
       if (mqttForcePublMode.isOn()) {
         mqttForcePublMode.off();
@@ -361,6 +351,15 @@ private:
           mqttPublishLock.lock();
           this->printlnFlush(mqttPublMsgPrepare);
           iotMqttMsgState = IOT_MQTT_MSG_WAITING_PUBLISH;
+        }
+
+        /* === Only here can query data === */
+        if (mqttPublishLock.isReleased()) {
+          if (iotQueryTimer.autoTimeout(3000)) {
+            Serial.println(F(">>> Query CPIN & CSQ"));
+            this->printlnFlush(F("AT+CPIN?"));
+            this->printlnFlush(F("AT+CSQ"));
+          }
         }
       }
     }
@@ -380,6 +379,12 @@ private:
         iotMqttMsgState = IOT_MQTT_MSG_FINISH_PUBLISH;
         iotMqttMsgState = IOT_MQTT_MSG_LOOP_START;  // finish one publish, loop-back
       }
+    }
+
+    if (iotSerialRecv.indexOf(F("+QMTPUBEX: 0,1,1")) > -1) {
+      Serial.println(iotSerialRecv);
+      Serial.flush();
+      iotSoftWatchdog.pet();
     }
   }
 

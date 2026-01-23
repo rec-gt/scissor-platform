@@ -26,6 +26,10 @@ private:
     return map(constrain(reading, 196, 1023), 196, 1023, 0, 1300);
   }
 
+  bool isOverHeat() {
+    return (temp1 > 60 || temp2 > 60 || temp3 > 60 || temp4 > 60 || temp5 > 60 || temp6 > 60);
+  }
+
 public:
   SubSystem(void) {}
 
@@ -47,6 +51,15 @@ public:
     temp4 = readingToActualTemp(kps4.getValue());
     temp5 = readingToActualTemp(kps5.getValue());
     temp6 = readingToActualTemp(kps6.getValue());
+
+    if (this->isOverHeat()) {
+      relay1.cut();
+      relay2.connect();
+      iot.forcePublish();
+    } else {
+      relay1.connect();
+      relay2.cut();
+    }
   }
 
   ~SubSystem() {}

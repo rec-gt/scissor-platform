@@ -1,5 +1,6 @@
 #ifndef SubSystem_H
 #define SubSystem_H
+#define SET_TEMP 60
 #define HISTORY_SIZE 10
 
 #include "./SubGlobals.h"
@@ -34,15 +35,35 @@ private:
     return map(constrain(reading, 196, 1023), 196, 1023, 0, 1300);
   }
 
-  bool isOverHeat() {
-    return (temp1 > 60 || temp2 > 60 || temp3 > 60 || temp4 > 60 || temp5 > 60 || temp6 > 60);
-  }
-
   void updateTempHistory(int (&history)[HISTORY_SIZE], int temp) {
     for (int i = 1; i < HISTORY_SIZE; i++) {
       history[i - 1] = history[i];
     }
     history[HISTORY_SIZE - 1] = temp;
+  }
+
+  bool isOneOverHeat(int (&history)[HISTORY_SIZE]) {
+    bool flag = false;
+    for (int i = 0; i < HISTORY_SIZE; i++) {
+      if (history[i] > SET_TEMP) {
+        flag = true;
+      } else {
+        flag = false;
+      }
+    }
+
+    return flag;
+  }
+
+  bool isOverHeat() {
+    bool flag = false;
+    flag = this->isOneOverHeat(tempHistory1);
+    flag = this->isOneOverHeat(tempHistory2);
+    flag = this->isOneOverHeat(tempHistory3);
+    flag = this->isOneOverHeat(tempHistory4);
+    flag = this->isOneOverHeat(tempHistory5);
+    flag = this->isOneOverHeat(tempHistory6);
+    return flag;
   }
 
 public:

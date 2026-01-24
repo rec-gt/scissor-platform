@@ -77,7 +77,7 @@ void loop() {
 
   delay(10);
 
-  Serial.println(analogInputs[0].value);
+  // Serial.println(analogInputs[0].value);
 }
 
 // TODO: EEPROM -AO -DO (Optional)

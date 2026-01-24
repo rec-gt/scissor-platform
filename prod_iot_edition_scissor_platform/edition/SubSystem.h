@@ -91,7 +91,7 @@ public:
       trafficRed.cut();
 
       if ((millis() - this->tenSecondTimer) >= 10000) {
-        this->status = SYS_STOPPED;
+        this->status = SYS_RUNNING;
       }
     }
   }

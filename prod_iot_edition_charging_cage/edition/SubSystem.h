@@ -2,8 +2,12 @@
 #define SubSystem_H
 #define SET_TEMP 60
 #define HISTORY_SIZE 10
+#define PARAMETERS_SIZE 6
 
 #include "./SubGlobals.h"
+Timer deviceTimer(10000UL);
+
+float holdingRegisterValues[PARAMETERS_SIZE] = {};
 
 int temp1 = 25;
 int temp2 = 25;
@@ -31,6 +35,15 @@ AnalogInput &kps6 = analogInputs[5];
 
 class SubSystem {
 private:
+  void readIn1000ms() {
+    mbRtuClient.requestFrom(1, HOLDING_REGISTERS, 0, PARAMETERS_SIZE);
+
+    for (size_t i = 0; i < PARAMETERS_SIZE; i++) {
+      holdingRegisterValues[i] = (uint32_t)mbRtuClient.read();
+      Serial.println(holdingRegisterValues[i]);
+    }
+  }
+
   int readingToActualTemp(int reading) {
     return map(constrain(reading, 196, 1023), 196, 1023, 0, 1300);
   }
@@ -70,10 +83,17 @@ public:
   SubSystem(void) {}
 
   void init() {
-    configAnalogInputResolution(0);
+    if (!mbRtuClient.begin(9600)) {
+      Serial.println(F("Failed to start Modbus RTU Client!"));
+      while (1) {};
+    }
   }
 
   void loop() {
+    if (deviceTimer.autoTimeout(1000)) {
+      this->readIn1000ms();
+    }
+
     kps1.listen();
     kps2.listen();
     kps3.listen();

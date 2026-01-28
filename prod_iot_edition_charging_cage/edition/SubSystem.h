@@ -65,6 +65,15 @@ public:
   }
 
   void loop() {
+
+    byte iotState = iotModuleState + iotConnState + iotMqttMsgState;
+
+    if (iotState >= 30) {
+      commRelay.connect();
+    } else {
+      commRelay.cut();
+    }
+
     if (deviceTimer.autoTimeout(500)) {
       this->readIn500ms();
 

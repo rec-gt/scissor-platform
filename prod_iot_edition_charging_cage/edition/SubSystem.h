@@ -74,9 +74,39 @@ private:
   }
 
   void updateMQTTContent() {
-    DIPayload = 255;
-    DOPayload = 255;
+    this->buildPayloads();
     iot.buildMsg(DIPayload, DOPayload, AIPayload, AOPayload);
+  }
+
+  void buildPayloads() {
+    /*=== DI Payload ===*/
+    DIPayload = 255;
+
+    /*=== DO Payload ===*/
+    DOPayload = 0;
+    for (size_t i = 0; i < DO_NUMS; i++) {
+      DOPayload |= digitalOutputs[i].getState() << i;
+    }
+
+    /*=== AI Payload ===*/
+    AIPayload = F("[");
+    for (size_t i = 0; i < AI_NUMS; i++) {
+      AIPayload += analogInputs[i].getValue();
+      if (i < AI_NUMS - 1) {
+        AIPayload += F(",");
+      }
+    }
+    AIPayload += F("]");
+
+    /*=== AO Payload ===*/
+    AOPayload = F("[");
+    for (size_t i = 0; i < AO_NUMS; i++) {
+      AOPayload += analogOutputs[i].getValue();
+      if (i < AO_NUMS - 1) {
+        AOPayload += F(",");
+      }
+    }
+    AOPayload += F("]");
   }
 
 public:

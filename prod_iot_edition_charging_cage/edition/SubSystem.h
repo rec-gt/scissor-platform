@@ -27,7 +27,6 @@ private:
 
     for (size_t i = 0; i < PARAMETERS_SIZE; i++) {
       holdingRegisterValues[i] = (uint32_t)mbRtuClient.read();
-      Serial.println(holdingRegisterValues[i]);
     }
   }
 
@@ -61,7 +60,7 @@ public:
         || kps6.isOverheat(THRESHOLD_DANGEROUS)) {
       powerRelay.cut();
       lightRelay.connect();
-      iot.forcePublish();
+      // iot.forcePublish();
     }
 
     if (kps1.isSafe(THRESHOLD_SAFE)
@@ -72,8 +71,10 @@ public:
         || kps6.isSafe(THRESHOLD_SAFE)) {
       powerRelay.connect();
       lightRelay.cut();
-      iot.forcePublish();
+      // iot.forcePublish();
     }
+
+    kps1.debug();
   }
 
   ~SubSystem() {}

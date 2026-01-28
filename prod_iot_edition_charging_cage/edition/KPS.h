@@ -1,6 +1,6 @@
 #ifndef KPS_H
 #define KPS_H
-#define HISTORY_SIZE 10
+#define HISTORY_SIZE 3
 
 #include "./SubGlobals.h"
 
@@ -22,6 +22,13 @@ public:
   void set(uint16_t reading) {
     this->reading = reading;
     this->appendTempHistory(this->readingHistory, this->reading);
+  }
+
+
+  void debug() {
+    for (int i = 0; i < HISTORY_SIZE; i++) {
+      Serial.println(this->readingHistory[i]);
+    }
   }
 
   bool isOverheat(uint16_t setTemp) {

@@ -2,6 +2,7 @@
 #define SubSystem_H
 #define SET_TEMP 60
 
+#include "../core/Globals.h"
 #include "./SubGlobals.h"
 #include "./KPS.h"
 
@@ -72,13 +73,6 @@ public:
       kps4.set(holdingRegisterValues[3]);
       kps5.set(holdingRegisterValues[4]);
       kps6.set(holdingRegisterValues[5]);
-
-      analogInputs[0].value = holdingRegisterValues[0];
-      analogInputs[1].value = holdingRegisterValues[1];
-      analogInputs[2].value = holdingRegisterValues[2];
-      analogInputs[3].value = holdingRegisterValues[3];
-      analogInputs[4].value = holdingRegisterValues[4];
-      analogInputs[5].value = holdingRegisterValues[5];
     }
 
     if (this->status == SUBSYS_RUNNING) {
@@ -121,6 +115,14 @@ public:
       powerRelay.cut();
       lightRelay.connect();
     }
+    
+    // update for display
+    analogInputs[0].value = holdingRegisterValues[0];
+    analogInputs[1].value = holdingRegisterValues[1];
+    analogInputs[2].value = holdingRegisterValues[2];
+    analogInputs[3].value = holdingRegisterValues[3];
+    analogInputs[4].value = holdingRegisterValues[4];
+    analogInputs[5].value = holdingRegisterValues[5];
   }
 
 

@@ -63,11 +63,11 @@ void loop() {
   /*=== Register MainSystem ===*/
   mainSystem.loop();
 
-  /*=== Register display ===*/
-  displayClient.loop();
-
   /*=== Register subSystem ===*/
   subSystem.loop();
+
+  /*=== Register display ===*/
+  displayClient.loop();
 
   /*=== Pet the dog ===*/
   if (!systemTimer.isExpired()) {

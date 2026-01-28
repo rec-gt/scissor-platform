@@ -9,7 +9,7 @@
 Timer deviceTimer(10000UL);
 
 uint16_t THRESHOLD_DANGEROUS = 310;
-uint16_t THRESHOLD_SAFE = THRESHOLD_DANGEROUS - 50;
+uint16_t THRESHOLD_SAFE = THRESHOLD_DANGEROUS - 30;
 
 KPS kps1;
 KPS kps2;
@@ -64,13 +64,18 @@ private:
     iotState >= 30 ? commRelay.connect() : commRelay.cut();
   }
 
-  void updateDisplay() {
+  void updateDisplayContent() {
     analogInputs[0].value = holdingRegisterValues[0];
     analogInputs[1].value = holdingRegisterValues[1];
     analogInputs[2].value = holdingRegisterValues[2];
     analogInputs[3].value = holdingRegisterValues[3];
     analogInputs[4].value = holdingRegisterValues[4];
     analogInputs[5].value = holdingRegisterValues[5];
+  }
+
+  void updateMQTTContent() {
+    digitalInputs[0].state = sysHealth == SUBSYS_HEALTHY ? 1 : 0;  // sysHealth
+    digitalInputs[1].state = sysStatus == SUBSYS_RUNNING ? 1 : 0;  // sysStatus
   }
 
 public:
@@ -139,7 +144,8 @@ public:
       }
     }
 
-    this->updateDisplay();
+    this->updateDisplayContent();
+    this->updateMQTTContent();
   }
 
 

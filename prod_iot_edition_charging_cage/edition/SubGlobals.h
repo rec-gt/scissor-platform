@@ -19,4 +19,9 @@ RS485Class recommendedStandard485(RS485Serial, 0, 0, RS485_RE_DE_PIN);
 ModbusRTUClientClass mbRtuClient(recommendedStandard485);
 // ModbusRTUServerClass mbServer(recommendedStandard485);
 
+/*=== For Subsystem ===*/
+#define PARAMETERS_SIZE 6
+uint16_t holdingRegisterValues[PARAMETERS_SIZE] = {};
+
+
 #endif

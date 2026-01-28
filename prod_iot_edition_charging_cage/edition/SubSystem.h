@@ -1,13 +1,9 @@
 #ifndef SubSystem_H
 #define SubSystem_H
 #define SET_TEMP 60
-#define HISTORY_SIZE 10
-#define PARAMETERS_SIZE 6
 
 #include "./SubGlobals.h"
 Timer deviceTimer(10000UL);
-
-float holdingRegisterValues[PARAMETERS_SIZE] = {};
 
 int temp1 = 25;
 int temp2 = 25;
@@ -44,41 +40,6 @@ private:
     }
   }
 
-  int readingToActualTemp(int reading) {
-    return map(constrain(reading, 196, 1023), 196, 1023, 0, 1300);
-  }
-
-  void updateTempHistory(int (&history)[HISTORY_SIZE], int temp) {
-    for (int i = 1; i < HISTORY_SIZE; i++) {
-      history[i - 1] = history[i];
-    }
-    history[HISTORY_SIZE - 1] = temp;
-  }
-
-  bool isOneOverHeat(int (&history)[HISTORY_SIZE]) {
-    bool flag = false;
-    for (int i = 0; i < HISTORY_SIZE; i++) {
-      if (history[i] > SET_TEMP) {
-        flag = true;
-      } else {
-        flag = false;
-      }
-    }
-
-    return flag;
-  }
-
-  bool isOverHeat() {
-    bool flag = false;
-    flag = this->isOneOverHeat(tempHistory1);
-    flag = this->isOneOverHeat(tempHistory2);
-    flag = this->isOneOverHeat(tempHistory3);
-    flag = this->isOneOverHeat(tempHistory4);
-    flag = this->isOneOverHeat(tempHistory5);
-    flag = this->isOneOverHeat(tempHistory6);
-    return flag;
-  }
-
 public:
   SubSystem(void) {}
 
@@ -94,35 +55,21 @@ public:
       this->readIn1000ms();
     }
 
-    kps1.listen();
-    kps2.listen();
-    kps3.listen();
-    kps4.listen();
-    kps5.listen();
-    kps6.listen();
+    kps1.set(holdingRegisterValues[0]);
+    kps2.set(holdingRegisterValues[1]);
+    kps3.set(holdingRegisterValues[2]);
+    kps4.set(holdingRegisterValues[3]);
+    kps5.set(holdingRegisterValues[4]);
+    kps6.set(holdingRegisterValues[5]);
 
-    temp1 = readingToActualTemp(kps1.getValue());
-    temp2 = readingToActualTemp(kps2.getValue());
-    temp3 = readingToActualTemp(kps3.getValue());
-    temp4 = readingToActualTemp(kps4.getValue());
-    temp5 = readingToActualTemp(kps5.getValue());
-    temp6 = readingToActualTemp(kps6.getValue());
-
-    this->updateTempHistory(tempHistory1, temp1);
-    this->updateTempHistory(tempHistory2, temp2);
-    this->updateTempHistory(tempHistory3, temp3);
-    this->updateTempHistory(tempHistory4, temp4);
-    this->updateTempHistory(tempHistory5, temp5);
-    this->updateTempHistory(tempHistory6, temp6);
-
-    if (this->isOverHeat()) {
-      relay1.cut();
-      relay2.connect();
-      iot.forcePublish();
-    } else {
-      relay1.connect();
-      relay2.cut();
-    }
+    // if (this->isOverHeat()) {
+    //   relay1.cut();
+    //   relay2.connect();
+    //   iot.forcePublish();
+    // } else {
+    //   relay1.connect();
+    //   relay2.cut();
+    // }
   }
 
   ~SubSystem() {}

@@ -1,16 +1,40 @@
 #ifndef KPS_H
 #define KPS_H
+#define HISTORY_SIZE 10
 
 #include "./SubGlobals.h"
 
 class KPS {
 private:
+  uint16_t reading = 250;
+  uint16_t readingHistory[HISTORY_SIZE] = {};
+
+  void appendTempHistory(uint16_t (&history)[HISTORY_SIZE], uint16_t temp) {
+    for (int i = 1; i < HISTORY_SIZE; i++) {
+      history[i - 1] = history[i];
+    }
+    history[HISTORY_SIZE - 1] = temp;
+  }
 
 public:
   KPS(void) {}
 
-  void loop() {
-    analogOutputs[2].set(128);
+  void set(uint16_t reading) {
+    this->reading = reading;
+    this->appendTempHistory(this->readingHistory, this->reading);
+  }
+
+  bool isOverHeat(uint16_t (&history)[HISTORY_SIZE]) {
+    bool flag = false;
+    for (int i = 0; i < HISTORY_SIZE; i++) {
+      if (history[i] > SET_TEMP) {
+        flag = true;
+      } else {
+        flag = false;
+      }
+    }
+
+    return flag;
   }
 
   ~KPS() {}

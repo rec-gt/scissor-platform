@@ -74,6 +74,17 @@ public:
       // iot.forcePublish();
     }
 
+    if (kps1.isFailure()
+        || kps2.isFailure()
+        || kps3.isFailure()
+        || kps4.isFailure()
+        || kps5.isFailure()
+        || kps6.isFailure()) {
+      powerRelay.cut();
+      lightRelay.connect();
+      // iot.forcePublish();
+    }
+
     kps1.debug();
   }
 

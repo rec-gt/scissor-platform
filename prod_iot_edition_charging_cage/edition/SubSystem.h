@@ -8,7 +8,7 @@
 
 Timer deviceTimer(10000UL);
 
-uint16_t THRESHOLD_DANGEROUS = 330;
+uint16_t THRESHOLD_DANGEROUS = 310;
 uint16_t THRESHOLD_SAFE = THRESHOLD_DANGEROUS - 50;
 
 KPS kps1;
@@ -65,6 +65,7 @@ public:
   }
 
   void loop() {
+    kps6.debug();
 
     byte iotState = iotModuleState + iotConnState + iotMqttMsgState;
 
@@ -111,6 +112,13 @@ public:
           && kps5.isSafe(THRESHOLD_SAFE)
           && kps6.isSafe(THRESHOLD_SAFE)) {
         this->status = SUBSYS_RUNNING;
+    kps1.debug();
+    kps2.debug();
+    kps3.debug();
+    kps4.debug();
+    kps5.debug();
+    kps6.debug();
+
       }
 
       Serial.println(F("SUBSYS_STOPPED"));

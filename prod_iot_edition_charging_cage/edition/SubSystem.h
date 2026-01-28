@@ -3,31 +3,20 @@
 #define SET_TEMP 60
 
 #include "./SubGlobals.h"
+#include "./KPS.h"
+
 Timer deviceTimer(10000UL);
 
-int temp1 = 25;
-int temp2 = 25;
-int temp3 = 25;
-int temp4 = 25;
-int temp5 = 25;
-int temp6 = 25;
-
-int tempHistory1[10] = {};
-int tempHistory2[10] = {};
-int tempHistory3[10] = {};
-int tempHistory4[10] = {};
-int tempHistory5[10] = {};
-int tempHistory6[10] = {};
+uint16_t setTemp = 600;
+KPS kps1;
+KPS kps2;
+KPS kps3;
+KPS kps4;
+KPS kps5;
+KPS kps6;
 
 DigitalOutput &relay1 = digitalOutputs[0];
 DigitalOutput &relay2 = digitalOutputs[1];
-
-AnalogInput &kps1 = analogInputs[0];
-AnalogInput &kps2 = analogInputs[1];
-AnalogInput &kps3 = analogInputs[2];
-AnalogInput &kps4 = analogInputs[3];
-AnalogInput &kps5 = analogInputs[4];
-AnalogInput &kps6 = analogInputs[5];
 
 class SubSystem {
 private:
@@ -53,23 +42,23 @@ public:
   void loop() {
     if (deviceTimer.autoTimeout(1000)) {
       this->readIn1000ms();
+
+      kps1.set(holdingRegisterValues[0]);
+      kps2.set(holdingRegisterValues[1]);
+      kps3.set(holdingRegisterValues[2]);
+      kps4.set(holdingRegisterValues[3]);
+      kps5.set(holdingRegisterValues[4]);
+      kps6.set(holdingRegisterValues[5]);
     }
 
-    kps1.set(holdingRegisterValues[0]);
-    kps2.set(holdingRegisterValues[1]);
-    kps3.set(holdingRegisterValues[2]);
-    kps4.set(holdingRegisterValues[3]);
-    kps5.set(holdingRegisterValues[4]);
-    kps6.set(holdingRegisterValues[5]);
-
-    // if (this->isOverHeat()) {
-    //   relay1.cut();
-    //   relay2.connect();
-    //   iot.forcePublish();
-    // } else {
-    //   relay1.connect();
-    //   relay2.cut();
-    // }
+    if (kps1.isOverheat(setTemp) || kps2.isOverheat(setTemp) || kps3.isOverheat(setTemp) || kps4.isOverheat(setTemp) || kps5.isOverheat(setTemp) || kps6.isOverheat(setTemp)) {
+      relay1.cut();
+      relay2.connect();
+      iot.forcePublish();
+    } else {
+      relay1.connect();
+      relay2.cut();
+    }
   }
 
   ~SubSystem() {}

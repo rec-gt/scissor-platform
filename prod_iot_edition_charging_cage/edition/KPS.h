@@ -24,14 +24,10 @@ public:
     this->appendTempHistory(this->readingHistory, this->reading);
   }
 
-  bool isOverHeat(uint16_t (&history)[HISTORY_SIZE]) {
-    bool flag = false;
+  bool isOverheat(uint16_t (&history)[HISTORY_SIZE], uint16_t setTemp) {
+    bool flag = false;  // flag == true 等於過熱
     for (int i = 0; i < HISTORY_SIZE; i++) {
-      if (history[i] > SET_TEMP) {
-        flag = true;
-      } else {
-        flag = false;
-      }
+      flag = history[i] > setTemp;
     }
 
     return flag;

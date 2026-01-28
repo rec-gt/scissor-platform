@@ -7,7 +7,7 @@
 
 Timer deviceTimer(10000UL);
 
-uint16_t THRESHOLD_DANGEROUS = 600;
+uint16_t THRESHOLD_DANGEROUS = 330;
 uint16_t THRESHOLD_SAFE = 450;
 
 KPS kps1;
@@ -22,11 +22,26 @@ DigitalOutput &lightRelay = digitalOutputs[1];
 
 class SubSystem {
 private:
+  enum SUBSYS_STATUS {
+    SUBSYS_RUNNING,
+    SUBSYS_STOPPED,
+    SUBSYS_FAILURE,
+  };
+
+  byte status = SUBSYS_RUNNING;
+
   void readIn1000ms() {
     mbRtuClient.requestFrom(1, HOLDING_REGISTERS, 0, PARAMETERS_SIZE);
 
     for (size_t i = 0; i < PARAMETERS_SIZE; i++) {
       holdingRegisterValues[i] = (uint32_t)mbRtuClient.read();
+    }
+
+    // value checker
+    for (size_t i = 0; i < PARAMETERS_SIZE; i++) {
+      if (holdingRegisterValues[i] > 2000 * 10) {
+        this->status = SUBSYS_FAILURE;
+      }
     }
   }
 
@@ -36,7 +51,7 @@ public:
   void init() {
     if (!mbRtuClient.begin(9600)) {
       Serial.println(F("Failed to start Modbus RTU Client!"));
-      while (1) {};
+      this->status = SUBSYS_FAILURE;
     }
   }
 
@@ -52,41 +67,49 @@ public:
       kps6.set(holdingRegisterValues[5]);
     }
 
-    if (kps1.isOverheat(THRESHOLD_DANGEROUS)
-        || kps2.isOverheat(THRESHOLD_DANGEROUS)
-        || kps3.isOverheat(THRESHOLD_DANGEROUS)
-        || kps4.isOverheat(THRESHOLD_DANGEROUS)
-        || kps5.isOverheat(THRESHOLD_DANGEROUS)
-        || kps6.isOverheat(THRESHOLD_DANGEROUS)) {
-      powerRelay.cut();
-      lightRelay.connect();
-      // iot.forcePublish();
-    }
+    if (this->status == SUBSYS_RUNNING) {
+      // logic
+      if (kps1.isOverheat(THRESHOLD_DANGEROUS)
+          || kps2.isOverheat(THRESHOLD_DANGEROUS)
+          || kps3.isOverheat(THRESHOLD_DANGEROUS)
+          || kps4.isOverheat(THRESHOLD_DANGEROUS)
+          || kps5.isOverheat(THRESHOLD_DANGEROUS)
+          || kps6.isOverheat(THRESHOLD_DANGEROUS)) {
+        this->status = SUBSYS_STOPPED;
+      }
 
-    if (kps1.isSafe(THRESHOLD_SAFE)
-        || kps2.isSafe(THRESHOLD_SAFE)
-        || kps3.isSafe(THRESHOLD_SAFE)
-        || kps4.isSafe(THRESHOLD_SAFE)
-        || kps5.isSafe(THRESHOLD_SAFE)
-        || kps6.isSafe(THRESHOLD_SAFE)) {
+      // control
       powerRelay.connect();
       lightRelay.cut();
-      // iot.forcePublish();
     }
 
-    if (kps1.isFailure()
-        || kps2.isFailure()
-        || kps3.isFailure()
-        || kps4.isFailure()
-        || kps5.isFailure()
-        || kps6.isFailure()) {
+    if (this->status == SUBSYS_STOPPED) {
+      // logic
+      if (kps1.isSafe(THRESHOLD_SAFE)
+          || kps2.isSafe(THRESHOLD_SAFE)
+          || kps3.isSafe(THRESHOLD_SAFE)
+          || kps4.isSafe(THRESHOLD_SAFE)
+          || kps5.isSafe(THRESHOLD_SAFE)
+          || kps6.isSafe(THRESHOLD_SAFE)) {
+        this->status = SUBSYS_RUNNING;
+      }
+
+      Serial.println(F("SYSTEM FAILURE"))
+
+        // control
+        powerRelay.cut();
+      lightRelay.connect();
+    }
+
+    if (this->status == SUBSYS_FAILURE) {
+      Serial.println(F("SYSTEM FAILURE"));
       powerRelay.cut();
       lightRelay.connect();
-      // iot.forcePublish();
     }
 
     kps1.debug();
   }
+
 
   ~SubSystem() {}
 };

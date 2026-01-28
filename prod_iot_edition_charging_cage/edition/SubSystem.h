@@ -7,7 +7,9 @@
 
 Timer deviceTimer(10000UL);
 
-uint16_t setTemp = 600;
+uint16_t THRESHOLD_DANGEROUS = 600;
+uint16_t THRESHOLD_SAFE = 450;
+
 KPS kps1;
 KPS kps2;
 KPS kps3;
@@ -15,8 +17,8 @@ KPS kps4;
 KPS kps5;
 KPS kps6;
 
-DigitalOutput &relay1 = digitalOutputs[0];
-DigitalOutput &relay2 = digitalOutputs[1];
+DigitalOutput &powerRelay = digitalOutputs[0];
+DigitalOutput &lightRelay = digitalOutputs[1];
 
 class SubSystem {
 private:
@@ -51,13 +53,26 @@ public:
       kps6.set(holdingRegisterValues[5]);
     }
 
-    if (kps1.isOverheat(setTemp) || kps2.isOverheat(setTemp) || kps3.isOverheat(setTemp) || kps4.isOverheat(setTemp) || kps5.isOverheat(setTemp) || kps6.isOverheat(setTemp)) {
-      relay1.cut();
-      relay2.connect();
+    if (kps1.isOverheat(THRESHOLD_DANGEROUS)
+        || kps2.isOverheat(THRESHOLD_DANGEROUS)
+        || kps3.isOverheat(THRESHOLD_DANGEROUS)
+        || kps4.isOverheat(THRESHOLD_DANGEROUS)
+        || kps5.isOverheat(THRESHOLD_DANGEROUS)
+        || kps6.isOverheat(THRESHOLD_DANGEROUS)) {
+      powerRelay.cut();
+      lightRelay.connect();
       iot.forcePublish();
-    } else {
-      relay1.connect();
-      relay2.cut();
+    }
+
+    if (kps1.isSafe(THRESHOLD_SAFE)
+        || kps2.isSafe(THRESHOLD_SAFE)
+        || kps3.isSafe(THRESHOLD_SAFE)
+        || kps4.isSafe(THRESHOLD_SAFE)
+        || kps5.isSafe(THRESHOLD_SAFE)
+        || kps6.isSafe(THRESHOLD_SAFE)) {
+      powerRelay.connect();
+      lightRelay.cut();
+      iot.forcePublish();
     }
   }
 

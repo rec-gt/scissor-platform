@@ -33,6 +33,15 @@ public:
     return flag;
   }
 
+  bool isSafe(uint16_t setTemp) {
+    bool flag = false;  // flag == true 等於低溫
+    for (int i = 0; i < HISTORY_SIZE; i++) {
+      flag = this->readingHistory[i] < setTemp;
+    }
+
+    return flag;
+  }
+
   ~KPS() {}
 };
 

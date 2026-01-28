@@ -42,7 +42,7 @@ private:
     this->status = flag ? SUBSYS_RUNNING : SUBSYS_FAILURE;
   }
 
-  void readIn1000ms() {
+  void readIn500ms() {
     mbRtuClient.requestFrom(1, HOLDING_REGISTERS, 0, PARAMETERS_SIZE);
 
     for (size_t i = 0; i < PARAMETERS_SIZE; i++) {
@@ -63,8 +63,8 @@ public:
   }
 
   void loop() {
-    if (deviceTimer.autoTimeout(1000)) {
-      this->readIn1000ms();
+    if (deviceTimer.autoTimeout(500)) {
+      this->readIn500ms();
 
       kps1.set(holdingRegisterValues[0]);
       kps2.set(holdingRegisterValues[1]);
@@ -72,6 +72,13 @@ public:
       kps4.set(holdingRegisterValues[3]);
       kps5.set(holdingRegisterValues[4]);
       kps6.set(holdingRegisterValues[5]);
+
+      analogInputs[0].value = holdingRegisterValues[0];
+      analogInputs[1].value = holdingRegisterValues[1];
+      analogInputs[2].value = holdingRegisterValues[2];
+      analogInputs[3].value = holdingRegisterValues[3];
+      analogInputs[4].value = holdingRegisterValues[4];
+      analogInputs[5].value = holdingRegisterValues[5];
     }
 
     if (this->status == SUBSYS_RUNNING) {
@@ -114,8 +121,6 @@ public:
       powerRelay.cut();
       lightRelay.connect();
     }
-
-    kps1.debug();
   }
 
 

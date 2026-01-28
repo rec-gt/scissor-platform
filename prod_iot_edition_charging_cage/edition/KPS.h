@@ -35,7 +35,6 @@ public:
     bool flag = false;  // flag == true 等於過熱
     for (int i = 0; i < HISTORY_SIZE; i++) {
       flag = this->readingHistory[i] > setTemp;
-      Serial.println(this->readingHistory[i] > setTemp);
     }
     return flag;
   }

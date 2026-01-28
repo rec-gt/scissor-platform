@@ -30,6 +30,18 @@ private:
 
   byte status = SUBSYS_RUNNING;
 
+  void valueChecker() {
+    bool flag = true;  // flag = true 等於系統正常
+
+    for (size_t i = 0; i < PARAMETERS_SIZE; i++) {
+      if (holdingRegisterValues[i] > 2000 * 10) {
+        flag = false;
+      }
+    }
+
+    this->status = flag ? SUBSYS_RUNNING : SUBSYS_FAILURE;
+  }
+
   void readIn1000ms() {
     mbRtuClient.requestFrom(1, HOLDING_REGISTERS, 0, PARAMETERS_SIZE);
 
@@ -37,12 +49,7 @@ private:
       holdingRegisterValues[i] = (uint32_t)mbRtuClient.read();
     }
 
-    // value checker
-    for (size_t i = 0; i < PARAMETERS_SIZE; i++) {
-      if (holdingRegisterValues[i] > 2000 * 10) {
-        this->status = SUBSYS_FAILURE;
-      }
-    }
+    this->valueChecker();
   }
 
 public:
@@ -77,6 +84,7 @@ public:
           || kps6.isOverheat(THRESHOLD_DANGEROUS)) {
         this->status = SUBSYS_STOPPED;
       }
+      Serial.println(F("SUBSYS_RUNNING"));
 
       // control
       powerRelay.connect();
@@ -94,10 +102,10 @@ public:
         this->status = SUBSYS_RUNNING;
       }
 
-      Serial.println(F("SYSTEM FAILURE"))
+      Serial.println(F("SUBSYS_STOPPED"));
 
-        // control
-        powerRelay.cut();
+      // control
+      powerRelay.cut();
       lightRelay.connect();
     }
 

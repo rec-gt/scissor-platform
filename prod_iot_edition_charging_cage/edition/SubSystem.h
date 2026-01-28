@@ -18,8 +18,8 @@ KPS kps4;
 KPS kps5;
 KPS kps6;
 
-DigitalOutput &powerRelay = digitalOutputs[0];
-DigitalOutput &lightRelay = digitalOutputs[1];
+DigitalOutput &alarmRelay = digitalOutputs[0];
+DigitalOutput &commRelay = digitalOutputs[1];
 
 class SubSystem {
 private:

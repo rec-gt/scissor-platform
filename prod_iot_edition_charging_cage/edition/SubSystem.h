@@ -76,6 +76,7 @@ private:
   void updateMQTTContent() {
     DIPayload = 255;
     DOPayload = 255;
+    iot.buildMsg(DIPayload, DOPayload, AIPayload, AOPayload);
   }
 
 public:

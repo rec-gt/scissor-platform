@@ -129,12 +129,6 @@ public:
             && kps5.isSafe(THRESHOLD_SAFE)
             && kps6.isSafe(THRESHOLD_SAFE)) {
           this->sysStatus = SUBSYS_RUNNING;
-          kps1.debug();
-          kps2.debug();
-          kps3.debug();
-          kps4.debug();
-          kps5.debug();
-          kps6.debug();
         }
 
         Serial.println(F("SUBSYS_STOPPED"));

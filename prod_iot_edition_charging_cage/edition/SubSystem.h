@@ -24,13 +24,18 @@ DigitalOutput &commRelay = digitalOutputs[2];
 
 class SubSystem {
 private:
-  enum SUBSYS_STATUS {
-    SUBSYS_RUNNING,
-    SUBSYS_STOPPED,
+  enum SUBSYS_HEALTH {
+    SUBSYS_HEALTHY,
     SUBSYS_FAILURE,
   };
 
-  byte status = SUBSYS_RUNNING;
+  enum SUBSYS_STATUS {
+    SUBSYS_RUNNING,
+    SUBSYS_STOPPED,
+  };
+
+  byte sysHealth = SUBSYS_HEALTHY;
+  byte sysStatus = SUBSYS_RUNNING;
 
   void valueChecker() {
     bool flag = true;  // flag = true 等於系統正常
@@ -41,7 +46,7 @@ private:
       }
     }
 
-    this->status = flag ? SUBSYS_RUNNING : SUBSYS_FAILURE;
+    this->sysHealth = flag ? SUBSYS_HEALTHY : SUBSYS_FAILURE;
   }
 
   void readIn500ms() {
@@ -54,27 +59,31 @@ private:
     this->valueChecker();
   }
 
+  void monitorCommHealth() {
+    byte iotState = iotModuleState + iotConnState + iotMqttMsgState;
+    iotState >= 30 ? commRelay.connect() : commRelay.cut();
+  }
+
+  void updateDisplay() {
+    analogInputs[0].value = holdingRegisterValues[0];
+    analogInputs[1].value = holdingRegisterValues[1];
+    analogInputs[2].value = holdingRegisterValues[2];
+    analogInputs[3].value = holdingRegisterValues[3];
+    analogInputs[4].value = holdingRegisterValues[4];
+    analogInputs[5].value = holdingRegisterValues[5];
+  }
+
 public:
   SubSystem(void) {}
 
   void init() {
     if (!mbRtuClient.begin(9600)) {
       Serial.println(F("Failed to start Modbus RTU Client!"));
-      this->status = SUBSYS_FAILURE;
+      this->sysHealth = SUBSYS_FAILURE;
     }
   }
 
   void loop() {
-    kps6.debug();
-
-    byte iotState = iotModuleState + iotConnState + iotMqttMsgState;
-
-    if (iotState >= 30) {
-      commRelay.connect();
-    } else {
-      commRelay.cut();
-    }
-
     if (deviceTimer.autoTimeout(500)) {
       this->readIn500ms();
 
@@ -86,61 +95,57 @@ public:
       kps6.set(holdingRegisterValues[5]);
     }
 
-    if (this->status == SUBSYS_RUNNING) {
-      // logic
-      if (kps1.isOverheat(THRESHOLD_DANGEROUS)
-          || kps2.isOverheat(THRESHOLD_DANGEROUS)
-          || kps3.isOverheat(THRESHOLD_DANGEROUS)
-          || kps4.isOverheat(THRESHOLD_DANGEROUS)
-          || kps5.isOverheat(THRESHOLD_DANGEROUS)
-          || kps6.isOverheat(THRESHOLD_DANGEROUS)) {
-        this->status = SUBSYS_STOPPED;
-      }
-      Serial.println(F("SUBSYS_RUNNING"));
-
-      // control
-      powerRelay.connect();
-      alarmRelay.cut();
-    }
-
-    if (this->status == SUBSYS_STOPPED) {
-      // logic
-      if (kps1.isSafe(THRESHOLD_SAFE)
-          && kps2.isSafe(THRESHOLD_SAFE)
-          && kps3.isSafe(THRESHOLD_SAFE)
-          && kps4.isSafe(THRESHOLD_SAFE)
-          && kps5.isSafe(THRESHOLD_SAFE)
-          && kps6.isSafe(THRESHOLD_SAFE)) {
-        this->status = SUBSYS_RUNNING;
-    kps1.debug();
-    kps2.debug();
-    kps3.debug();
-    kps4.debug();
-    kps5.debug();
-    kps6.debug();
-
-      }
-
-      Serial.println(F("SUBSYS_STOPPED"));
-
-      // control
-      powerRelay.cut();
-      alarmRelay.connect();
-    }
-
-    if (this->status == SUBSYS_FAILURE) {
+    if (this->sysHealth == SUBSYS_FAILURE) {
       Serial.println(F("SYSTEM FAILURE"));
       powerRelay.cut();
       alarmRelay.connect();
+    } else if (this->sysHealth == SUBSYS_HEALTHY) {
+
+      this->monitorCommHealth();
+
+      if (this->sysStatus == SUBSYS_RUNNING) {
+        // logic
+        if (kps1.isOverheat(THRESHOLD_DANGEROUS)
+            || kps2.isOverheat(THRESHOLD_DANGEROUS)
+            || kps3.isOverheat(THRESHOLD_DANGEROUS)
+            || kps4.isOverheat(THRESHOLD_DANGEROUS)
+            || kps5.isOverheat(THRESHOLD_DANGEROUS)
+            || kps6.isOverheat(THRESHOLD_DANGEROUS)) {
+          this->sysStatus = SUBSYS_STOPPED;
+        }
+        Serial.println(F("SUBSYS_RUNNING"));
+
+        // control
+        powerRelay.connect();
+        alarmRelay.cut();
+      }
+
+      if (this->sysStatus == SUBSYS_STOPPED) {
+        // logic
+        if (kps1.isSafe(THRESHOLD_SAFE)
+            && kps2.isSafe(THRESHOLD_SAFE)
+            && kps3.isSafe(THRESHOLD_SAFE)
+            && kps4.isSafe(THRESHOLD_SAFE)
+            && kps5.isSafe(THRESHOLD_SAFE)
+            && kps6.isSafe(THRESHOLD_SAFE)) {
+          this->sysStatus = SUBSYS_RUNNING;
+          kps1.debug();
+          kps2.debug();
+          kps3.debug();
+          kps4.debug();
+          kps5.debug();
+          kps6.debug();
+        }
+
+        Serial.println(F("SUBSYS_STOPPED"));
+
+        // control
+        powerRelay.cut();
+        alarmRelay.connect();
+      }
     }
 
-    // for display update
-    analogInputs[0].value = holdingRegisterValues[0];
-    analogInputs[1].value = holdingRegisterValues[1];
-    analogInputs[2].value = holdingRegisterValues[2];
-    analogInputs[3].value = holdingRegisterValues[3];
-    analogInputs[4].value = holdingRegisterValues[4];
-    analogInputs[5].value = holdingRegisterValues[5];
+    this->updateDisplay();
   }
 
 

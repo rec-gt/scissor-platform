@@ -74,16 +74,6 @@ private:
   }
 
   void updateMQTTContent() {
-    /*=== DI Payload ===*/
-    DIPayload = 0;
-    DIPayload |= sysHealth == SUBSYS_HEALTHY ? 1 : 0 << 0;
-    DIPayload |= sysStatus == SUBSYS_RUNNING ? 1 : 0 << 1;
-    DIPayload |= 0 << 2;
-    DIPayload |= 0 << 3;
-    DIPayload |= 0 << 4;
-    DIPayload |= 0 << 5;
-    DIPayload |= 0 << 6;
-    DIPayload |= 0 << 7;
   }
 
 public:
@@ -125,6 +115,8 @@ public:
             || kps5.isOverheat(THRESHOLD_DANGEROUS)
             || kps6.isOverheat(THRESHOLD_DANGEROUS)) {
           this->sysStatus = SUBSYS_STOPPED;
+          iot.buildMsg(127, DOPayload, AIPayload, AOPayload);
+          iot.forcePublish();
         }
         Serial.println(F("SUBSYS_RUNNING"));
 
@@ -153,7 +145,6 @@ public:
     }
 
     this->updateDisplayContent();
-    this->updateMQTTContent();
   }
 
 

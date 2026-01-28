@@ -115,8 +115,8 @@ public:
       powerRelay.cut();
       lightRelay.connect();
     }
-    
-    // update for display
+
+    // for display update
     analogInputs[0].value = holdingRegisterValues[0];
     analogInputs[1].value = holdingRegisterValues[1];
     analogInputs[2].value = holdingRegisterValues[2];

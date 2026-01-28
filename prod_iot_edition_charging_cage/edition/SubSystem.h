@@ -74,6 +74,8 @@ private:
   }
 
   void updateMQTTContent() {
+    DIPayload = 255;
+    DOPayload = 255;
   }
 
 public:
@@ -115,7 +117,6 @@ public:
             || kps5.isOverheat(THRESHOLD_DANGEROUS)
             || kps6.isOverheat(THRESHOLD_DANGEROUS)) {
           this->sysStatus = SUBSYS_STOPPED;
-          iot.buildMsg(127, DOPayload, AIPayload, AOPayload);
           iot.forcePublish();
         }
         Serial.println(F("SUBSYS_RUNNING"));
@@ -145,6 +146,7 @@ public:
     }
 
     this->updateDisplayContent();
+    this->updateMQTTContent();
   }
 
 

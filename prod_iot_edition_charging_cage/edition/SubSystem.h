@@ -18,8 +18,9 @@ KPS kps4;
 KPS kps5;
 KPS kps6;
 
-DigitalOutput &alarmRelay = digitalOutputs[0];
-DigitalOutput &commRelay = digitalOutputs[1];
+DigitalOutput &powerRelay = digitalOutputs[0];
+DigitalOutput &alarmRelay = digitalOutputs[1];
+DigitalOutput &commRelay = digitalOutputs[2];
 
 class SubSystem {
 private:
@@ -89,17 +90,17 @@ public:
 
       // control
       powerRelay.connect();
-      lightRelay.cut();
+      alarmRelay.cut();
     }
 
     if (this->status == SUBSYS_STOPPED) {
       // logic
       if (kps1.isSafe(THRESHOLD_SAFE)
-          || kps2.isSafe(THRESHOLD_SAFE)
-          || kps3.isSafe(THRESHOLD_SAFE)
-          || kps4.isSafe(THRESHOLD_SAFE)
-          || kps5.isSafe(THRESHOLD_SAFE)
-          || kps6.isSafe(THRESHOLD_SAFE)) {
+          && kps2.isSafe(THRESHOLD_SAFE)
+          && kps3.isSafe(THRESHOLD_SAFE)
+          && kps4.isSafe(THRESHOLD_SAFE)
+          && kps5.isSafe(THRESHOLD_SAFE)
+          && kps6.isSafe(THRESHOLD_SAFE)) {
         this->status = SUBSYS_RUNNING;
       }
 
@@ -107,13 +108,13 @@ public:
 
       // control
       powerRelay.cut();
-      lightRelay.connect();
+      alarmRelay.connect();
     }
 
     if (this->status == SUBSYS_FAILURE) {
       Serial.println(F("SYSTEM FAILURE"));
       powerRelay.cut();
-      lightRelay.connect();
+      alarmRelay.connect();
     }
 
     // for display update

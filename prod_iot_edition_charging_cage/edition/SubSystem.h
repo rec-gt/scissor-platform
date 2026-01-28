@@ -76,8 +76,8 @@ private:
   void updateMQTTContent() {
     /*=== DI Payload ===*/
     DIPayload = 0;
-    DIPayload |= digitalInputs[0].state = sysHealth == SUBSYS_HEALTHY ? 1 : 0 << 0;
-    DIPayload |= digitalInputs[1].state = sysHealth == SUBSYS_HEALTHY ? 1 : 0 << 1;
+    DIPayload |= sysHealth == SUBSYS_HEALTHY ? 1 : 0 << 0;
+    DIPayload |= sysStatus == SUBSYS_RUNNING ? 1 : 0 << 1;
     DIPayload |= 0 << 2;
     DIPayload |= 0 << 3;
     DIPayload |= 0 << 4;

@@ -75,7 +75,7 @@ private:
     }
 
     if (threeGG >= 3) {
-      if (evMonitorTimer.autoTimeout(10000UL)) {
+      if (evMonitorTimer.autoTimeout(300000UL)) {
         relay4.connect();
       }
     } else {
@@ -97,8 +97,6 @@ public:
   void init() {}
 
   void loop() {
-    evMonitorTimer.debug();
-
     running.listen();
     powerStatus.listen();
     fault.listen();

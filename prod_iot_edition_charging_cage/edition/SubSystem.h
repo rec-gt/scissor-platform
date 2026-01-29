@@ -81,8 +81,8 @@ private:
   void overwriteMQTTPayloads() {
     /*=== DI Payload ===*/
     DIPayload = 0;
-    DIPayload |= (sysStatus == SUBSYS_RUNNING ? 1 : 0) << 0;
-    DIPayload |= (sysHealth == SUBSYS_HEALTHY ? 1 : 0) << 1;
+    DIPayload |= (sysStatus == SUBSYS_STOPPED ? 1 : 0) << 0;
+    DIPayload |= (sysHealth == SUBSYS_FAILURE ? 1 : 0) << 1;
     DIPayload |= 0 << 2;
     DIPayload |= 0 << 3;
     DIPayload |= 0 << 4;

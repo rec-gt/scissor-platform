@@ -7,6 +7,7 @@
 #include "../core/DisplayClient.h"
 #include "../core/Utils.h"
 #include "../core/Globals.h"
+#include "../core/Timer.h"
 #include "./SubGlobals.h"
 
 #ifndef SubSystem_H
@@ -29,6 +30,7 @@ DigitalInput &waterLevelHigh = digitalInputs[4];
 DigitalOutput &relay1 = digitalOutputs[0];
 DigitalOutput &relay2 = digitalOutputs[1];
 DigitalOutput &relay3 = digitalOutputs[2];
+DigitalOutput &relay4 = digitalOutputs[3]; // relay for 3 EV GG
 
 AnalogInput &temp1 = analogInputs[0];
 AnalogInput &temp2 = analogInputs[1];
@@ -44,9 +46,42 @@ AnalogOutput &ao1 = analogOutputs[0];
 AnalogOutput &ao2 = analogOutputs[1];
 AnalogOutput &ao3 = analogOutputs[2];
 
+Timer evMonitorTimer;
+
 class SubSystem {
 private:
   byte prevPowerStatus = 0;
+
+  void handleEV() {
+    byte threeGG = 0;
+
+    if (ev1.getValue() < 512) {
+      threeGG++;
+    }
+    if (ev2.getValue() < 512) {
+      threeGG++;
+    }
+    if (ev3.getValue() < 512) {
+      threeGG++;
+    }
+    if (ev5.getValue() < 512) {
+      threeGG++;
+    }
+    if (ev6.getValue() < 512) {
+      threeGG++;
+    }
+    if (ev7.getValue() < 512) {
+      threeGG++;
+    }
+
+    if (threeGG >= 3) {
+      if (evMonitorTimer.autoTimeout(5 * 60 * 1000)) {
+        relay4.connect();
+      }
+    } else {
+      relay4.cut();
+    }
+  }
 public:
   SubSystem(void) {
     configAnalogInputResolution(0);
@@ -117,6 +152,8 @@ public:
         iot.forcePublish();
       }
     };
+
+    this->handleEV();
   }
 
   ~SubSystem() {}

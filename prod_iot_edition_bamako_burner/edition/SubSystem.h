@@ -30,7 +30,7 @@ DigitalInput &waterLevelHigh = digitalInputs[4];
 DigitalOutput &relay1 = digitalOutputs[0];
 DigitalOutput &relay2 = digitalOutputs[1];
 DigitalOutput &relay3 = digitalOutputs[2];
-DigitalOutput &relay4 = digitalOutputs[3]; // relay for 3 EV GG
+DigitalOutput &relay4 = digitalOutputs[3];  // relay for 3 EV GG
 
 AnalogInput &temp1 = analogInputs[0];
 AnalogInput &temp2 = analogInputs[1];
@@ -68,9 +68,6 @@ private:
       threeGG++;
     }
     if (ev6.getValue() < 512) {
-      threeGG++;
-    }
-    if (ev7.getValue() < 512) {
       threeGG++;
     }
 

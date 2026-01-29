@@ -38,7 +38,11 @@ public:
     return isTimeout;
   }
 
-
+  void debug() {
+    Serial.println(this->prevMillis);
+    Serial.println(millis() - this->prevMillis);
+  }
+  
   ~Timer() {}
 };
 

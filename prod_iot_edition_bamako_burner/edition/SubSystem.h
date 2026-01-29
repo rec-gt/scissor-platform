@@ -83,6 +83,7 @@ private:
       relay4.cut();
     }
   }
+  
 public:
   SubSystem(void) {
     configAnalogInputResolution(0);

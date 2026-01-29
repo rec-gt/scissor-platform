@@ -46,7 +46,7 @@ AnalogOutput &ao1 = analogOutputs[0];
 AnalogOutput &ao2 = analogOutputs[1];
 AnalogOutput &ao3 = analogOutputs[2];
 
-Timer evMonitorTimer = new Timer();
+Timer evMonitorTimer;
 
 class SubSystem {
 private:
@@ -74,8 +74,8 @@ private:
       threeGG++;
     }
 
-    if (threeGG >= 6) {
-      if (evMonitorTimer.autoTimeout(300000UL)) {
+    if (threeGG >= 3) {
+      if (evMonitorTimer.autoTimeout(10000UL)) {
         relay4.connect();
       }
     } else {
@@ -83,7 +83,7 @@ private:
       relay4.cut();
     }
   }
-  
+
 public:
   SubSystem(void) {
     configAnalogInputResolution(0);
@@ -91,6 +91,7 @@ public:
     relay1.cut();
     relay2.cut();
     relay3.cut();
+    relay4.cut();
   }
 
   void init() {}

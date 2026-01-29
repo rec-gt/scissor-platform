@@ -71,8 +71,9 @@ private:
       threeGG++;
     }
 
-    if (threeGG >= 3) {
-      if (evMonitorTimer.autoTimeout(5 * 60 * 1000)) {
+    if (threeGG >= 6) {
+      if (evMonitorTimer.autoTimeout(10000UL)) {
+      // if (evMonitorTimer.autoTimeout(300000UL)) {
         relay4.connect();
       }
     } else {

@@ -63,13 +63,11 @@ public:
       }
 
       if (hasIMEI) {
-        u8g2.print(F("RGT IoT V2"));
+        u8g2.print(F("RGT IoT"));
         u8g2.setCursor(53, y);
         u8g2.print(imei);
       } else {
         u8g2.print(F("RGT IoT Controller"));
-        u8g2.setCursor(108, y);
-        u8g2.print(F("V2.0"));
       }
 
       u8g2.drawLine(0, 8, 128, 8);

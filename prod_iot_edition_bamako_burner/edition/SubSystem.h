@@ -80,6 +80,7 @@ private:
         relay4.connect();
       }
     } else {
+      evMonitorTimer.refresh();
       relay4.cut();
     }
   }
@@ -96,7 +97,7 @@ public:
 
   void loop() {
     evMonitorTimer.debug();
-    
+
     running.listen();
     powerStatus.listen();
     fault.listen();

@@ -104,7 +104,6 @@ public:
   bool isOneDetected() {
     for (size_t i = 0; i < 10; i++) {
       uint16_t distance = analogInputs[i].value;
-      Serial.println(analogInputs[i].value);
       uint16_t thresholdDistance = thresholdSwitch.getState() ? this->threshold500 : this->threshold800;
       if (distance <= thresholdDistance) {
         return true;

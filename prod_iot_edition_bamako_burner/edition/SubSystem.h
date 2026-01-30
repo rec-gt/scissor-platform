@@ -52,7 +52,62 @@ class SubSystem {
 private:
   byte prevPowerStatus = 0;
 
+  void handleTemperature() {
+    int actualTemp1 = readingToActualTemp(temp1.getValue());
+    int actualTemp2 = readingToActualTemp(temp2.getValue());
+    int actualTemp3 = readingToActualTemp(temp3.getValue());
+    int aoValue1 = getAoValue(actualTemp1);
+    int aoValue2 = getAoValue(actualTemp2);
+    int aoValue3 = getAoValue(actualTemp3);
+
+    if (actualTemp1 > 800) {
+      relay1.connect();
+    } else {
+      if (actualTemp1 < 797) {
+        relay1.cut();
+      }
+    }
+
+    if (actualTemp2 > 250) {
+      relay2.connect();
+    } else {
+      if (actualTemp2 < 247) {
+        relay2.cut();
+      }
+    }
+
+    if (actualTemp3 > 30) {
+      relay3.connect();
+    } else {
+      if (actualTemp3 < 27) {
+        relay3.cut();
+      }
+    }
+
+    ao1.set(aoValue1);
+    ao2.set(aoValue2);
+    ao3.set(aoValue3);
+  }
+
+  void handlePowerLossForcePublish() {
+    // handle last will for power loss
+    byte powerStatusState = powerStatus.getState();
+    if (this->prevPowerStatus != powerStatusState) {
+      this->prevPowerStatus = powerStatusState;
+      if (powerStatusState == 0) {
+        mainSystem.buildPayloads();
+        mainSystem.handlePublishContent();
+        iot.forcePublish();
+      }
+    };
+  }
+
   void handleEV() {
+    // Ensure it is in running mode
+    if (running.getState() != HIGH) {
+      return;
+    }
+
     byte threeGG = 0;
 
     if (ev1.getValue() < 512) {
@@ -107,55 +162,8 @@ public:
     temp2.listen();
     temp3.listen();
 
-    int actualTemp1 = readingToActualTemp(temp1.getValue());
-    int actualTemp2 = readingToActualTemp(temp2.getValue());
-    int actualTemp3 = readingToActualTemp(temp3.getValue());
-    int aoValue1 = getAoValue(actualTemp1);
-    int aoValue2 = getAoValue(actualTemp2);
-    int aoValue3 = getAoValue(actualTemp3);
-
-    // Serial.print("Actual Temp1: ");
-    // Serial.println(actualTemp1);
-
-    if (actualTemp1 > 800) {
-      relay1.connect();
-    } else {
-      if (actualTemp1 < 797) {
-        relay1.cut();
-      }
-    }
-
-    if (actualTemp2 > 250) {
-      relay2.connect();
-    } else {
-      if (actualTemp2 < 247) {
-        relay2.cut();
-      }
-    }
-
-    if (actualTemp3 > 30) {
-      relay3.connect();
-    } else {
-      if (actualTemp3 < 27) {
-        relay3.cut();
-      }
-    }
-
-    ao1.set(aoValue1);
-    ao2.set(aoValue2);
-    ao3.set(aoValue3);
-
-    // handle last will for power loss
-    byte powerStatusState = powerStatus.getState();
-    if (this->prevPowerStatus != powerStatusState) {
-      this->prevPowerStatus = powerStatusState;
-      if (powerStatusState == 0) {
-        mainSystem.buildPayloads();
-        mainSystem.handlePublishContent();
-        iot.forcePublish();
-      }
-    };
-
+    this->handleTemperature();
+    this->handlePowerLossForcePublish();
     this->handleEV();
   }
 

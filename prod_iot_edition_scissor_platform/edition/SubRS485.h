@@ -7,6 +7,8 @@
 class SubRS485 {
 
 private:
+  bool unlocked = false;
+
   void prepareRecv() {
     digitalWrite(RS485_RE_DE_PIN, LOW);  // HIGH = send, LOW = receive
     delay(2);
@@ -35,6 +37,7 @@ public:
     pinMode(RS485_RE_DE_PIN, OUTPUT);
     this->prepareRecv();
     RS485Serial.begin(9600, SERIAL_8N1);
+    this->unlocked = false;
   }
 
   void loop() {
@@ -61,36 +64,26 @@ public:
   }
 
   void answer() {
-    if (rs485SerialRecv == F("AT+ALL=600")) {
-      this->printlnFlush(F("[ok]"));
-    }
+    if (!this->unlocked) {
+      if (rs485SerialRecv == F("AT+UNLOCK=RGT@2011")) {
+        this->unlocked = true;
+        this->printlnFlush(F("MODULE UNLOCKED"));
+      }
+    } else {
+      if (rs485SerialRecv == F("AT+ALL=800")) {
+        sensorThresholdDistance = 800;
+        this->printlnFlush(F("OK, 800"));
+      }
 
-    if (rs485SerialRecv == F("AT+ALL=800")) {
-      this->printlnFlush(F("[ok]"));
-    }
+      if (rs485SerialRecv == F("AT+ALL=1000")) {
+        sensorThresholdDistance = 1000;
+        this->printlnFlush(F("OK, 1000"));
+      }
 
-    if (rs485SerialRecv == F("AT+ALL=1000")) {
-      this->printlnFlush(F("[ok]"));
-    }
-
-    if (rs485SerialRecv == F("AT+ALL=1200")) {
-      this->printlnFlush(F("[ok]"));
-    }
-
-    if (rs485SerialRecv == F("AT+FB=600")) {
-      this->printlnFlush(F("[ok]"));
-    }
-
-    if (rs485SerialRecv == F("AT+FB=800")) {
-      this->printlnFlush(F("[ok]"));
-    }
-
-    if (rs485SerialRecv == F("AT+FB=1000")) {
-      this->printlnFlush(F("[ok]"));
-    }
-
-    if (rs485SerialRecv == F("AT+FB=1200")) {
-      this->printlnFlush(F("[ok]"));
+      if (rs485SerialRecv == F("AT+ALL=1200")) {
+        sensorThresholdDistance = 1200;
+        this->printlnFlush(F("OK, 1200"));
+      }
     }
   }
 

@@ -28,6 +28,12 @@ private:
   SubSystemStatus status;
 
   enum THRESHOLD_DISTANCE {
+    ALL_600,
+    ALL_800,
+    ALL_1000,
+    ALL_1200,
+    ALL_1400,
+
     ALL_600_FB_600,
     ALL_800_FB_600,
     ALL_1000_FB_600,
@@ -59,6 +65,7 @@ private:
     ALL_1400_FB_1400,
   };
 
+  byte thresholdDistance = ALL_1000_FB_1000;
   uint16_t threshold500 = 500;
   uint16_t threshold800 = 800;
 
@@ -137,7 +144,8 @@ public:
   bool isOneDetected() {
     for (size_t i = 0; i < 10; i++) {
       uint16_t distance = analogInputs[i].value;
-      uint16_t thresholdDistance = thresholdSwitch.getState() ? this->threshold500 : this->threshold800;
+      // uint16_t thresholdDistance = thresholdSwitch.getState() ? this->threshold500 : this->threshold800;
+      uint16_t thresholdDistance = 1000;
       if (distance <= thresholdDistance) {
         return true;
       }
@@ -149,7 +157,8 @@ public:
     bool flag = true;
     for (size_t i = 0; i < 10; i++) {
       uint16_t distance = analogInputs[i].value;
-      uint16_t thresholdDistance = (thresholdSwitch.getState() ? this->threshold500 : this->threshold800) + 25;
+      uint16_t thresholdDistance = 1000 + 25;
+      // uint16_t thresholdDistance = (thresholdSwitch.getState() ? this->threshold500 : this->threshold800) + 25;
       if (distance <= thresholdDistance) {
         flag = false;
       }

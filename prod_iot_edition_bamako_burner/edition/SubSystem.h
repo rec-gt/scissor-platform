@@ -104,7 +104,9 @@ private:
 
   void handleEV() {
     // Ensure it is in running mode
-    if (running.getState() != HIGH) {
+    if (running.getState() != HIGH) {  // not running
+      evMonitorTimer.refresh();
+      relay4.cut();
       return;
     }
 

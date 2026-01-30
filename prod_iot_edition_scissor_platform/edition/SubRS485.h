@@ -28,10 +28,6 @@ private:
     delay(2);
   }
 
-  uint16_t prevMillis = millis();
-
-  byte mode = 0;  // 0 = ask-reply mode, 1 = active-send mode
-
 public:
   SubRS485(void) {}
 
@@ -43,48 +39,58 @@ public:
 
   void loop() {
     this->listen();
-
-    if (this->mode == 0) {
-
-    } else if (this->mode == 1) {
-      this->say();
-    }
   }
 
   void listen() {
     this->prepareRecv();
+
     while (RS485Serial.available()) {
       char c = RS485Serial.read();
 
       if (c != '\r' && c != '\n') {
         rs485SerialRecv += c;
       }
+
       if (c == '\r') {
-        this->answer();
-        this->clear();
+        break;
       }
     }
+
+    this->answer();
+    this->clear();
   }
 
   void answer() {
-    if (rs485SerialRecv == F("AT")) {
-      this->printlnFlush(F("[<<reply to computer, reply to computer, reply to computer]"));
+    if (rs485SerialRecv == F("AT+ALL=600")) {
+      this->printlnFlush(F("[ok]"));
     }
 
-    if (rs485SerialRecv == F("AT+MODE=MANUAL")) {
-      this->mode = 0;
+    if (rs485SerialRecv == F("AT+ALL=800")) {
+      this->printlnFlush(F("[ok]"));
     }
 
-    if (rs485SerialRecv == F("AT+MODE=SEND")) {
-      this->mode = 1;
+    if (rs485SerialRecv == F("AT+ALL=1000")) {
+      this->printlnFlush(F("[ok]"));
     }
-  }
 
-  void say() {
-    uint16_t currMillis = millis();
-    if (currMillis - this->prevMillis > 1000) {
-      this->printlnFlush(F("[>>send to computer, send to computer, send to computer]"));
-      this->prevMillis = millis();
+    if (rs485SerialRecv == F("AT+ALL=1200")) {
+      this->printlnFlush(F("[ok]"));
+    }
+
+    if (rs485SerialRecv == F("AT+FB=600")) {
+      this->printlnFlush(F("[ok]"));
+    }
+
+    if (rs485SerialRecv == F("AT+FB=800")) {
+      this->printlnFlush(F("[ok]"));
+    }
+
+    if (rs485SerialRecv == F("AT+FB=1000")) {
+      this->printlnFlush(F("[ok]"));
+    }
+
+    if (rs485SerialRecv == F("AT+FB=1200")) {
+      this->printlnFlush(F("[ok]"));
     }
   }
 

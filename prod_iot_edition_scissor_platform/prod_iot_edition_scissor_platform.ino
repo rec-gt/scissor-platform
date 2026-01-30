@@ -58,17 +58,17 @@ void setup() {
 void loop() {
   utils.serialInput();
 
-  /*=== Register IoT ===*/
-  iot.loop();
-
   /*=== Register MainSystem ===*/
   mainSystem.loop();
+
+  /*=== Register subSystem ===*/
+  subSystem.loop();
 
   /*=== Register display ===*/
   displayClient.loop();
 
-  /*=== Register subSystem ===*/
-  subSystem.loop();
+  /*=== Register IoT ===*/
+  iot.loop();
 
   /*=== Pet the dog ===*/
   if (!systemTimer.isExpired()) {

@@ -25,7 +25,7 @@ rename "C:\Users\recckyt\Documents\Arduino\hex\prod_pqm_modbus\prod_pqm_modbus.i
 
 
 /*==========================================*/
-
+rd /s /q "./hex"
 
 arduino-cli compile --fqbn arduino:avr:nano:cpu=atmega328old --output-dir "C:\Users\recckyt\Documents\Arduino\hex\prod_iot_core_display" ./prod_iot_core_display
 rename "C:\Users\recckyt\Documents\Arduino\hex\prod_iot_core_display\prod_iot_core_display.ino.hex" "Display.hex"

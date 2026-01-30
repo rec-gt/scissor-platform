@@ -9,12 +9,12 @@ class SubRS485 {
 private:
   void prepareRecv() {
     digitalWrite(RS485_RE_DE_PIN, LOW);  // HIGH = send, LOW = receive
-    delay(1);
+    delay(2);
   }
 
   void prepareSend() {
     digitalWrite(RS485_RE_DE_PIN, HIGH);  // HIGH = send, LOW = receive
-    delay(1);
+    delay(2);
   }
 
   void clear() {
@@ -25,8 +25,12 @@ private:
     this->prepareSend();
     RS485Serial.println(cmd);
     RS485Serial.flush();
-    delay(1);
+    delay(2);
   }
+
+  uint16_t prevMillis = millis();
+
+  byte mode = 0;  // 0 = ask-reply mode, 1 = active-send mode
 
 public:
   SubRS485(void) {}
@@ -39,35 +43,54 @@ public:
 
   void loop() {
     this->listen();
+
+    if (this->mode == 0) {
+
+    } else if (this->mode == 1) {
+      this->say();
+    }
   }
 
   void listen() {
     this->prepareRecv();
-    while (RS485Serial.available() > 0) {
+    while (RS485Serial.available()) {
       char c = RS485Serial.read();
-      if (c != '\r' && c != '\n') {
-        iotSerialRecv += c;
-      }
 
+      if (c != '\r' && c != '\n') {
+        rs485SerialRecv += c;
+      }
       if (c == '\r') {
-        break;
+        this->answer();
+        this->clear();
       }
     }
-    this->answer();
-    this->clear();
   }
 
   void answer() {
-    int idx = rs485SerialRecv.indexOf(F("AT"));
+    if (rs485SerialRecv == F("AT")) {
+      this->printlnFlush(F("[<<reply to computer, reply to computer, reply to computer]"));
+    }
 
-    if (idx > -1) {
-      this->printlnFlush(F("[Hello from REC-GT]"));
+    if (rs485SerialRecv == F("AT+MODE=MANUAL")) {
+      this->mode = 0;
+    }
+
+    if (rs485SerialRecv == F("AT+MODE=SEND")) {
+      this->mode = 1;
+    }
+  }
+
+  void say() {
+    uint16_t currMillis = millis();
+    if (currMillis - this->prevMillis > 1000) {
+      this->printlnFlush(F("[>>send to computer, send to computer, send to computer]"));
+      this->prevMillis = millis();
     }
   }
 
   ~SubRS485() {}
 };
 
-extern SubRS485 rStd485;
-
+extern SubRS485 subRS485;
+// 4:57
 #endif

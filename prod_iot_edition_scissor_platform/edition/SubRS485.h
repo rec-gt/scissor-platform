@@ -43,17 +43,18 @@ public:
 
   void listen() {
     this->prepareRecv();
-    while (RS485Serial.available()) {
+    while (RS485Serial.available() > 0) {
       char c = RS485Serial.read();
-
       if (c != '\r' && c != '\n') {
-        rs485SerialRecv += c;
+        iotSerialRecv += c;
       }
+
       if (c == '\r') {
-        this->answer();
-        this->clear();
+        break;
       }
     }
+    this->answer();
+    this->clear();
   }
 
   void answer() {

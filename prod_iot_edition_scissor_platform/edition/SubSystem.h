@@ -7,9 +7,12 @@
 #include "../core/Utils.h"
 #include "../core/Globals.h"
 #include "./SubGlobals.h"
+#include "./SubRS485.h"
 
 #ifndef SubSystem_H
 #define SubSystem_H
+
+SubRS485 rStd485;
 
 enum SubSystemStatus {
   SYS_INIT,
@@ -94,6 +97,8 @@ public:
         this->status = SYS_RUNNING;
       }
     }
+
+    rStd485.loop();
   }
 
   bool isOneDetected() {

@@ -27,6 +27,38 @@ class SubSystem {
 private:
   SubSystemStatus status;
 
+  enum THRESHOLD_DISTANCE {
+    ALL_600_FB_600,
+    ALL_800_FB_600,
+    ALL_1000_FB_600,
+    ALL_1200_FB_600,
+    ALL_1400_FB_600,
+
+    ALL_600_FB_800,
+    ALL_800_FB_800,
+    ALL_1000_FB_800,
+    ALL_1200_FB_800,
+    ALL_1400_FB_800,
+
+    ALL_600_FB_1000,
+    ALL_800_FB_1000,
+    ALL_1000_FB_1000,
+    ALL_1200_FB_1000,
+    ALL_1400_FB_1000,
+
+    ALL_600_FB_1200,
+    ALL_800_FB_1200,
+    ALL_1000_FB_1200,
+    ALL_1200_FB_1200,
+    ALL_1400_FB_1200,
+
+    ALL_600_FB_1400,
+    ALL_800_FB_1400,
+    ALL_1000_FB_1400,
+    ALL_1200_FB_1400,
+    ALL_1400_FB_1400,
+  };
+
   uint16_t threshold500 = 500;
   uint16_t threshold800 = 800;
 

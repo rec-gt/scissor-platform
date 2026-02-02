@@ -118,10 +118,10 @@ private:
     if (ev2.getValue() < 80) {
       threeGG++;
     }
-    if (ev3.getValue() < 220) {
+    if (ev3.getValue() < 230) {
       threeGG++;
     }
-    if (ev4.getValue() < 220) {
+    if (ev4.getValue() < 230) {
       threeGG++;
     }
     if (ev5.getValue() < 240) {

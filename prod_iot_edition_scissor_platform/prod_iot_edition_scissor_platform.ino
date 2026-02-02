@@ -75,15 +75,14 @@ void loop() {
     wdt_reset();
   }
 
-  uint16_t distance = map(constrain(analogInputs[5].value, 195, 1000), 195, 1000, 0, 1830);
-  Serial.print(F("reading:"));
-  Serial.print(analogInputs[5].value);
-  Serial.print(F(", distance:"));
-  Serial.println(distance);
-
-  if (distance <= sensorThresholdDistance) {
-    Serial.println(F("Enter Threshold"));
-  }
+  // uint16_t distance = map(constrain(analogInputs[5].value, 195, 1000), 195, 1000, 0, 1830);
+  // Serial.print(F("reading:"));
+  // Serial.print(analogInputs[5].value);
+  // Serial.print(F(", distance:"));
+  // Serial.println(distance);
+  // if (distance <= sensorThresholdDistance) {
+  //   Serial.println(F("Enter Threshold"));
+  // }
 
   delay(10);
 }

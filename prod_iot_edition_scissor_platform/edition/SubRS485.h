@@ -89,6 +89,11 @@ public:
         sensorThresholdDistance = 1200;
         this->printlnFlush(F("OK, THRESHOLD: 1200"));
       }
+
+      if (rs485SerialRecv == F("AT+LOCK")) {
+        this->unlocked = false;
+        this->printlnFlush(F("OK, MODULE LOCKED"));
+      }
     }
   }
 

@@ -1,3 +1,4 @@
+#include "Arduino.h"
 #include "../core/DigitalInput.h"
 #include "../core/DigitalOutput.h"
 #include "../core/AnalogInput.h"
@@ -143,9 +144,8 @@ public:
 
   bool isOneDetected() {
     for (size_t i = 0; i < 10; i++) {
-      uint16_t distance = analogInputs[i].value;
-      // uint16_t thresholdDistance = thresholdSwitch.getState() ? this->threshold500 : this->threshold800;
-      uint16_t thresholdDistance = 1000;
+      uint16_t distance = map(constrain(analogInputs[i].value, 195, 1000), 195, 1000, 0, 1800);
+      uint16_t thresholdDistance = sensorThresholdDistance;
       if (distance <= thresholdDistance) {
         return true;
       }
@@ -156,9 +156,8 @@ public:
   bool areAllEscaped() {
     bool flag = true;
     for (size_t i = 0; i < 10; i++) {
-      uint16_t distance = analogInputs[i].value;
-      uint16_t thresholdDistance = 1000 + 25;
-      // uint16_t thresholdDistance = (thresholdSwitch.getState() ? this->threshold500 : this->threshold800) + 25;
+      uint16_t distance = map(constrain(analogInputs[i].value, 195, 1000), 195, 1000, 0, 1800);
+      uint16_t thresholdDistance = sensorThresholdDistance + 25;
       if (distance <= thresholdDistance) {
         flag = false;
       }

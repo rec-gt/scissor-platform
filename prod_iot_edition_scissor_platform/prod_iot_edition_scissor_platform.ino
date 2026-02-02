@@ -75,9 +75,13 @@ void loop() {
     wdt_reset();
   }
 
-  delay(10);
+  uint16_t distance = map(constrain(analogInputs[5].value, 195, 1000), 195, 1000, 0, 1830);
+  uint16_t thresholdDistance = sensorThresholdDistance + 25;
+  if (distance <= thresholdDistance) {
+    Serial.println(F("Enter Threshold")));
+  }
 
-  // Serial.println(analogInputs[0].value);
+  delay(10);
 }
 
 // TODO: EEPROM -AO -DO (Optional)

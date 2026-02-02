@@ -27,9 +27,9 @@ DigitalInput &fault = digitalInputs[2];
 DigitalInput &waterLevelLow = digitalInputs[3];
 DigitalInput &waterLevelHigh = digitalInputs[4];
 
-DigitalOutput &relay1 = digitalOutputs[0];
-DigitalOutput &relay2 = digitalOutputs[1];
-DigitalOutput &relay3 = digitalOutputs[2];
+DigitalOutput &relay1 = digitalOutputs[0];  // ?
+DigitalOutput &relay2 = digitalOutputs[1];  // ?
+DigitalOutput &relay3 = digitalOutputs[2];  // ?
 DigitalOutput &relay4 = digitalOutputs[3];  // relay for 3 EV GG
 
 AnalogInput &temp1 = analogInputs[0];
@@ -112,22 +112,22 @@ private:
 
     byte threeGG = 0;
 
-    if (ev1.getValue() < 20) {
+    if (ev1.getValue() < 80) {
       threeGG++;
     }
-    if (ev2.getValue() < 20) {
+    if (ev2.getValue() < 80) {
       threeGG++;
     }
-    if (ev3.getValue() < 20) {
+    if (ev3.getValue() < 220) {
       threeGG++;
     }
-    if (ev4.getValue() < 20) {
+    if (ev4.getValue() < 220) {
       threeGG++;
     }
-    if (ev5.getValue() < 20) {
+    if (ev5.getValue() < 240) {
       threeGG++;
     }
-    if (ev6.getValue() < 20) {
+    if (ev6.getValue() < 240) {
       threeGG++;
     }
 

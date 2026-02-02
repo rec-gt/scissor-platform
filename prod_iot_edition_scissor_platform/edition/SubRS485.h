@@ -70,19 +70,24 @@ public:
         this->printlnFlush(F("MODULE UNLOCKED"));
       }
     } else {
+      if (rs485SerialRecv == F("AT+ALL=600")) {
+        sensorThresholdDistance = 600;
+        this->printlnFlush(F("OK, THRESHOLD: 600"));
+      }
+
       if (rs485SerialRecv == F("AT+ALL=800")) {
         sensorThresholdDistance = 800;
-        this->printlnFlush(F("OK, 800"));
+        this->printlnFlush(F("OK, THRESHOLD: 800"));
       }
 
       if (rs485SerialRecv == F("AT+ALL=1000")) {
         sensorThresholdDistance = 1000;
-        this->printlnFlush(F("OK, 1000"));
+        this->printlnFlush(F("OK, THRESHOLD: 1000"));
       }
 
       if (rs485SerialRecv == F("AT+ALL=1200")) {
         sensorThresholdDistance = 1200;
-        this->printlnFlush(F("OK, 1200"));
+        this->printlnFlush(F("OK, THRESHOLD: 1200"));
       }
     }
   }

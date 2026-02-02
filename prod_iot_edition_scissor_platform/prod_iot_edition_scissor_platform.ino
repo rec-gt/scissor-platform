@@ -76,9 +76,13 @@ void loop() {
   }
 
   uint16_t distance = map(constrain(analogInputs[5].value, 195, 1000), 195, 1000, 0, 1830);
-  uint16_t thresholdDistance = sensorThresholdDistance + 25;
-  if (distance <= thresholdDistance) {
-    Serial.println(F("Enter Threshold")));
+  Serial.print(F("reading:"));
+  Serial.print(analogInputs[5].value);
+  Serial.print(F(", distance:"));
+  Serial.println(distance);
+
+  if (distance <= sensorThresholdDistance) {
+    Serial.println(F("Enter Threshold"));
   }
 
   delay(10);

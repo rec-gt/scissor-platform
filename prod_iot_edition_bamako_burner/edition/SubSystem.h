@@ -112,22 +112,22 @@ private:
 
     byte threeGG = 0;
 
-    if (ev1.getValue() < 80) {
+    if (ev1.getValue() < 50) {
       threeGG++;
     }
-    if (ev2.getValue() < 80) {
+    if (ev2.getValue() < 50) {
       threeGG++;
     }
-    if (ev3.getValue() < 230) {
+    if (ev3.getValue() < 50) {
       threeGG++;
     }
-    if (ev4.getValue() < 230) {
+    if (ev4.getValue() < 50) {
       threeGG++;
     }
-    if (ev5.getValue() < 240) {
+    if (ev5.getValue() < 50) {
       threeGG++;
     }
-    if (ev6.getValue() < 240) {
+    if (ev6.getValue() < 50) {
       threeGG++;
     }
 

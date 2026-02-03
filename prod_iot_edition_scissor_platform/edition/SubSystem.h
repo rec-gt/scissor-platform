@@ -84,14 +84,13 @@ private:
   unsigned long tenSecondTimer = 0;
 
   void initThresholdDistance() {
-    Serial.println(sensorThresholdDistance);
-
     int prevSensorThresholdDistance = 0;
     prevSensorThresholdDistance = EEPROM.read(EEP_ADDR_THRESHOLD_DISTANCE);
-    if (prevSensorThresholdDistance == 6) {
-      sensorThresholdDistance = 600;
+    if (prevSensorThresholdDistance == 6 || prevSensorThresholdDistance == 8 || prevSensorThresholdDistance == 10 || prevSensorThresholdDistance == 12) {
+      sensorThresholdDistance = prevSensorThresholdDistance * 100;
     }
 
+    Serial.print(F("THRESHOLD: "));
     Serial.println(sensorThresholdDistance);
   }
 public:

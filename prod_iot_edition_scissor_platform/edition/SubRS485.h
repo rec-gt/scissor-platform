@@ -64,29 +64,33 @@ public:
   }
 
   void answer() {
-    if (!this->unlocked) {
-      if (rs485SerialRecv == F("AT+UNLOCK=RGT@2011")) {
-        this->unlocked = true;
-        this->printlnFlush(F("MODULE UNLOCKED"));
-      }
-    } else {
+    if (rs485SerialRecv == F("AT+UNLOCK=RGT@2011")) {
+      this->unlocked = true;
+      this->printlnFlush(F("MODULE UNLOCKED"));
+    }
+
+    if (this->unlocked) {
       if (rs485SerialRecv == F("AT+ALL=600")) {
         sensorThresholdDistance = 600;
+        EEPROM.put(EEP_ADDR_THRESHOLD_DISTANCE, 6);
         this->printlnFlush(F("OK, THRESHOLD: 600"));
       }
 
       if (rs485SerialRecv == F("AT+ALL=800")) {
         sensorThresholdDistance = 800;
+        EEPROM.put(EEP_ADDR_THRESHOLD_DISTANCE, 8);
         this->printlnFlush(F("OK, THRESHOLD: 800"));
       }
 
       if (rs485SerialRecv == F("AT+ALL=1000")) {
         sensorThresholdDistance = 1000;
+        EEPROM.put(EEP_ADDR_THRESHOLD_DISTANCE, 10);
         this->printlnFlush(F("OK, THRESHOLD: 1000"));
       }
 
       if (rs485SerialRecv == F("AT+ALL=1200")) {
         sensorThresholdDistance = 1200;
+        EEPROM.put(EEP_ADDR_THRESHOLD_DISTANCE, 12);
         this->printlnFlush(F("OK, THRESHOLD: 1200"));
       }
 

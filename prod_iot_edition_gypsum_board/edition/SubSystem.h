@@ -12,11 +12,11 @@ public:
 
   void init() {
     configAnalogInputResolution(0);
-    subRS485.init();
+    // subRS485.init();
   }
 
   void loop() {
-    subRS485.loop();
+    // subRS485.loop();
   }
 
   ~SubSystem() {}

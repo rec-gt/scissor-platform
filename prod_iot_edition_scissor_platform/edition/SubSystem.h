@@ -83,6 +83,17 @@ private:
 
   unsigned long tenSecondTimer = 0;
 
+  void initThresholdDistance() {
+    Serial.println(sensorThresholdDistance);
+
+    int prevSensorThresholdDistance = 0;
+    prevSensorThresholdDistance = EEPROM.read(EEP_ADDR_THRESHOLD_DISTANCE);
+    if (prevSensorThresholdDistance == 6) {
+      sensorThresholdDistance = 600;
+    }
+
+    Serial.println(sensorThresholdDistance);
+  }
 public:
   SubSystem(void) {}
 
@@ -90,6 +101,7 @@ public:
     configAnalogInputResolution(0);
     this->status = SYS_RUNNING;
     rStd485.init();
+    initThresholdDistance();
   }
 
   void loop() {

@@ -55,7 +55,7 @@ public:
       holdingRegisterValues[i] = (uint32_t)mbRtuClient.read();
     }
   }
-
+  // TODO
   void compare() {
     bool areAllTheSame = true;
     for (size_t i = 0; i < PARAMETERS_SIZE; i++) {

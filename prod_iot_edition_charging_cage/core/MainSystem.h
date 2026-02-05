@@ -26,7 +26,7 @@ public:
     this->handlePublishContent();
 
     /*=== IoT Subscribe ===*/
-    this->handleSubscribeContent();
+    // this->handleSubscribeContent();
   }
 
   void listen() {

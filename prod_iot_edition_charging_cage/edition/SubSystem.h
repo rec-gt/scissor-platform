@@ -1,3 +1,4 @@
+#include "Arduino.h"
 #ifndef SubSystem_H
 #define SubSystem_H
 #define SET_TEMP 60
@@ -117,6 +118,65 @@ private:
     AOPayload += F("]");
   }
 
+  void handleSubscribeContent() {
+    if (mqttSubsMsgContent.length() <= 0) {
+      return;
+    }
+
+    byte b0 = 0;
+    byte b1 = 0;
+    byte b2 = 0;
+    byte b3 = 0;
+    byte b4 = 0;
+
+    {
+      b0 = mqttSubsMsgContent.charAt(0);
+      b1 = mqttSubsMsgContent.charAt(1);
+      b2 = mqttSubsMsgContent.charAt(2);
+      b3 = mqttSubsMsgContent.charAt(3);
+      b4 = mqttSubsMsgContent.charAt(4);
+    }
+
+    Serial.println(b0);
+    Serial.println(b1);
+    Serial.println(b2);
+    Serial.println(b3);
+
+    // D0: 0/1
+    if (b0 == 68) {                // D
+      if (b1 <= 48 && b1 <= 55) {  // 0-7
+        b3 == 48 ? digitalOutputs[b1 - 48].cut() : digitalOutputs[b1 - 48].connect();
+      }
+    }
+
+    // if (b0 == 68) {                                                                   // D
+    //   if (b1 == 58) {                                                                 // :
+    //     byte finalByte = (utils.hexCharToByte(b3) << 4) | (utils.hexCharToByte(b4));  // hex -> dec -> byte
+    //     bitRead(finalByte, 0) == 0 ? digitalOutputs[7].cut() : digitalOutputs[7].connect();
+    //     bitRead(finalByte, 1) == 0 ? digitalOutputs[6].cut() : digitalOutputs[6].connect();
+    //     bitRead(finalByte, 2) == 0 ? digitalOutputs[5].cut() : digitalOutputs[5].connect();
+    //     bitRead(finalByte, 3) == 0 ? digitalOutputs[4].cut() : digitalOutputs[4].connect();
+    //     bitRead(finalByte, 4) == 0 ? digitalOutputs[3].cut() : digitalOutputs[3].connect();
+    //     bitRead(finalByte, 5) == 0 ? digitalOutputs[2].cut() : digitalOutputs[2].connect();
+    //     bitRead(finalByte, 6) == 0 ? digitalOutputs[1].cut() : digitalOutputs[1].connect();
+    //     bitRead(finalByte, 7) == 0 ? digitalOutputs[0].cut() : digitalOutputs[0].connect();
+    //   } else if (49 <= b1 && b1 <= 56) {  // 1-8
+    //     if (b3 == 48) {                   // 0
+    //       digitalOutputs[b1 - 49].cut();
+    //     } else {
+    //       digitalOutputs[b1 - 49].connect();
+    //     }
+    //   }
+    // } else if (b0 == 65) {  // A
+    //   if (49 <= b1 && b1 <= 53) {
+    //     byte finalByte = (utils.hexCharToByte(b3) << 4) | utils.hexCharToByte(b4);  // hex -> dec -> byte
+    //     analogOutputs[b1 - 49].set(finalByte);
+    //   }
+    // }
+
+    // mqttSubsMsgContent = F("");
+  }
+
 public:
   SubSystem(void) {}
 
@@ -129,7 +189,7 @@ public:
 
   void loop() {
     if (deviceTimer.autoTimeout(500)) {
-      this->readIn500ms();
+      // this->readIn500ms();
 
       kps1.set(holdingRegisterValues[0]);
       kps2.set(holdingRegisterValues[1]);
@@ -186,6 +246,8 @@ public:
 
     this->updateDisplayContent();
     this->updateMQTTContent();
+
+    this->handleSubscribeContent();
   }
 
 

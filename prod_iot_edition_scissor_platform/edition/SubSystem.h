@@ -93,6 +93,7 @@ private:
     Serial.print(F("THRESHOLD: "));
     Serial.println(sensorThresholdDistance);
   }
+
 public:
   SubSystem(void) {}
 
@@ -174,6 +175,17 @@ public:
       }
     }
     return flag;
+  }
+
+  void debug(byte i = 0) {
+    uint16_t distance = map(constrain(analogInputs[i].value, 195, 1000), 195, 1000, 0, 1830);
+    Serial.print(F("reading:"));
+    Serial.print(analogInputs[i].value);
+    Serial.print(F(", distance:"));
+    Serial.println(distance);
+    if (distance <= sensorThresholdDistance) {
+      Serial.println(F("Within Threshold"));
+    }
   }
 
   ~SubSystem() {}

@@ -127,14 +127,12 @@ private:
     byte b1 = 0;
     byte b2 = 0;
     byte b3 = 0;
-    byte b4 = 0;
 
     {
       b0 = mqttSubsMsgContent.charAt(0);
       b1 = mqttSubsMsgContent.charAt(1);
       b2 = mqttSubsMsgContent.charAt(2);
       b3 = mqttSubsMsgContent.charAt(3);
-      b4 = mqttSubsMsgContent.charAt(4);
     }
 
     Serial.println(b0);
@@ -142,13 +140,13 @@ private:
     Serial.println(b2);
     Serial.println(b3);
 
-    if (b0 == 68) {                // D
-      if (b1 <= 51 && b1 <= 55) {  // 3-7
-        b3 == 48 ? digitalOutputs[b1 - 48].cut() : digitalOutputs[b1 - 48].connect();
+    if (b0 == 68) {    // D
+      if (b1 == 51) {  // DO4 only
+        b3 == 48 ? digitalOutputs[3].cut() : digitalOutputs[3].connect();
       }
     }
 
-    // mqttSubsMsgContent = F("");
+    mqttSubsMsgContent = F("");
   }
 
 public:

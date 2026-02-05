@@ -63,7 +63,7 @@ void loop() {
 
   /*=== Register subSystem ===*/
   subSystem.loop();
-  subSystem.debug();
+  // subSystem.debug(0);
 
   /*=== Register display ===*/
   displayClient.loop();

@@ -96,12 +96,22 @@ private:
 
   void printOneSensor(byte i) {
     uint16_t distance = map(constrain(analogInputs[i].value, 195, 1000), 195, 1000, 0, 1830);
-    Serial.print(F("reading:"));
+    Serial.print(F("Sensor:"));
+    Serial.print(i);
+
+    Serial.print(F(", reading:"));
     Serial.print(analogInputs[i].value);
+
     Serial.print(F(", distance:"));
-    Serial.println(distance);
+    Serial.print(distance);
+
     if (distance <= sensorThresholdDistance) {
-      Serial.println(F("Within Threshold"));
+      Serial.print(F(", within threshold "));
+      Serial.print(F("["));
+      Serial.print(sensorThresholdDistance);
+      Serial.println(F("]"));
+    } else {
+      Serial.println();
     }
   }
 

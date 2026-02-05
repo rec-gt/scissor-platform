@@ -143,8 +143,8 @@ private:
     Serial.println(b3);
 
     if (b0 == 68) {                // D
-      if (b1 <= 48 && b1 <= 55) {  // 0-7
-        b3 == 48 ? digitalOutputs[0].cut() : digitalOutputs[0].connect();
+      if (b1 <= 51 && b1 <= 55) {  // 3-7
+        b3 == 48 ? digitalOutputs[b1 - 48].cut() : digitalOutputs[b1 - 48].connect();
       }
     }
 

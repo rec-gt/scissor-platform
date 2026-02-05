@@ -142,37 +142,11 @@ private:
     Serial.println(b2);
     Serial.println(b3);
 
-    // D0: 0/1
     if (b0 == 68) {                // D
       if (b1 <= 48 && b1 <= 55) {  // 0-7
-        b3 == 48 ? digitalOutputs[b1 - 48].cut() : digitalOutputs[b1 - 48].connect();
+        b3 == 48 ? digitalOutputs[0].cut() : digitalOutputs[0].connect();
       }
     }
-
-    // if (b0 == 68) {                                                                   // D
-    //   if (b1 == 58) {                                                                 // :
-    //     byte finalByte = (utils.hexCharToByte(b3) << 4) | (utils.hexCharToByte(b4));  // hex -> dec -> byte
-    //     bitRead(finalByte, 0) == 0 ? digitalOutputs[7].cut() : digitalOutputs[7].connect();
-    //     bitRead(finalByte, 1) == 0 ? digitalOutputs[6].cut() : digitalOutputs[6].connect();
-    //     bitRead(finalByte, 2) == 0 ? digitalOutputs[5].cut() : digitalOutputs[5].connect();
-    //     bitRead(finalByte, 3) == 0 ? digitalOutputs[4].cut() : digitalOutputs[4].connect();
-    //     bitRead(finalByte, 4) == 0 ? digitalOutputs[3].cut() : digitalOutputs[3].connect();
-    //     bitRead(finalByte, 5) == 0 ? digitalOutputs[2].cut() : digitalOutputs[2].connect();
-    //     bitRead(finalByte, 6) == 0 ? digitalOutputs[1].cut() : digitalOutputs[1].connect();
-    //     bitRead(finalByte, 7) == 0 ? digitalOutputs[0].cut() : digitalOutputs[0].connect();
-    //   } else if (49 <= b1 && b1 <= 56) {  // 1-8
-    //     if (b3 == 48) {                   // 0
-    //       digitalOutputs[b1 - 49].cut();
-    //     } else {
-    //       digitalOutputs[b1 - 49].connect();
-    //     }
-    //   }
-    // } else if (b0 == 65) {  // A
-    //   if (49 <= b1 && b1 <= 53) {
-    //     byte finalByte = (utils.hexCharToByte(b3) << 4) | utils.hexCharToByte(b4);  // hex -> dec -> byte
-    //     analogOutputs[b1 - 49].set(finalByte);
-    //   }
-    // }
 
     // mqttSubsMsgContent = F("");
   }

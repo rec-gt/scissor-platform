@@ -96,6 +96,7 @@ private:
 
   void printOneSensor(byte i) {
     uint16_t distance = map(constrain(analogInputs[i].value, 195, 1000), 195, 1000, 0, 1830);
+    Serial.println(F("======= DEBUG ======="));
     Serial.print(F("Sensor:"));
     Serial.print(i);
 

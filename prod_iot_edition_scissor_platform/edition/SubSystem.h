@@ -163,7 +163,7 @@ public:
       trafficYellow.connect();
       trafficRed.cut();
 
-      if ((millis() - this->tenSecondTimer) >= 10000) {
+      if ((millis() - this->tenSecondTimer) >= escapeCountDown * 1000) {
         this->status = SYS_RUNNING;
       }
     }

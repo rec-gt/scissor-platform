@@ -76,43 +76,43 @@ public:
         this->printlnFlush(F("OK, THRESHOLD: 600"));
       }
 
-      if (rs485SerialRecv == F("AT+ALL=800")) {
+      else if (rs485SerialRecv == F("AT+ALL=800")) {
         sensorThresholdDistance = 800;
         EEPROM.put(EEP_ADDR_THRESHOLD_DISTANCE, 8);
         this->printlnFlush(F("OK, THRESHOLD: 800"));
       }
 
-      if (rs485SerialRecv == F("AT+ALL=1000")) {
+      else if (rs485SerialRecv == F("AT+ALL=1000")) {
         sensorThresholdDistance = 1000;
         EEPROM.put(EEP_ADDR_THRESHOLD_DISTANCE, 10);
         this->printlnFlush(F("OK, THRESHOLD: 1000"));
       }
 
-      if (rs485SerialRecv == F("AT+ALL=1200")) {
+      else if (rs485SerialRecv == F("AT+ALL=1200")) {
         sensorThresholdDistance = 1200;
         EEPROM.put(EEP_ADDR_THRESHOLD_DISTANCE, 12);
         this->printlnFlush(F("OK, THRESHOLD: 1200"));
       }
 
-      if (rs485SerialRecv == F("AT+ESCAPE=5")) {
+      else if (rs485SerialRecv == F("AT+ESCAPE=5")) {
         escapeCountDown = 5;
         EEPROM.put(EEP_ADDR_THRESHOLD_DISTANCE, 5);
         this->printlnFlush(F("OK, ESCAPE COUNTDOWN: 5s"));
       }
 
-      if (rs485SerialRecv == F("AT+ESCAPE=10")) {
+      else if (rs485SerialRecv == F("AT+ESCAPE=10")) {
         escapeCountDown = 10;
         EEPROM.put(EEP_ADDR_THRESHOLD_DISTANCE, 10);
         this->printlnFlush(F("OK, ESCAPE COUNTDOWN: 10s"));
       }
 
-      if (rs485SerialRecv == F("AT+ESCAPE=15")) {
+      else if (rs485SerialRecv == F("AT+ESCAPE=15")) {
         escapeCountDown = 15;
         EEPROM.put(EEP_ADDR_THRESHOLD_DISTANCE, 15);
         this->printlnFlush(F("OK, ESCAPE COUNTDOWN: 15s"));
       }
 
-      if (rs485SerialRecv == F("AT+LOCK")) {
+      else if (rs485SerialRecv == F("AT+LOCK")) {
         this->unlocked = false;
         this->printlnFlush(F("OK, MODULE LOCKED"));
       }

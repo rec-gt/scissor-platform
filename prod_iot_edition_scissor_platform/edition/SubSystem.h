@@ -114,7 +114,8 @@ public:
     configAnalogInputResolution(0);
     this->status = SYS_RUNNING;
     rStd485.init();
-    initThresholdDistance();
+    this->initThresholdDistance();
+    this->initEscapeCountdown();
   }
 
   void loop() {

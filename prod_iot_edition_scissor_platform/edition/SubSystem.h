@@ -104,8 +104,10 @@ private:
       SWPayload = 1;  // 0001
     } else if (this->status == SYS_STOPPED) {
       SWPayload = 3;  // 0011, RUNNING, but obstacle detected
+      // iot.forcePublish();
     } else if (this->status == SYS_ALLOW_10S) {
       SWPayload = 5;  // 0101, RUNNING, but escaping
+      // iot.forcePublish();
     }
   }
 

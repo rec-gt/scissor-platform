@@ -23,9 +23,11 @@ ModbusRTUClientClass mbRtuClient(recommendedStandard485);
 /*=== For EEPROM ===*/
 enum EEPROM_ADDRESS {
   EEP_ADDR_THRESHOLD_DISTANCE,
+  EEP_ADDR_ESCAPE_COUNT_DOWN,
 };
 
 /*=== For SubSystem ===*/
 uint16_t sensorThresholdDistance = 1000;
+uint16_t escapeCountDown = 5;
 
 #endif

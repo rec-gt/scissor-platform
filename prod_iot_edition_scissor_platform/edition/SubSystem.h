@@ -34,41 +34,9 @@ private:
     ALL_1000,
     ALL_1200,
     ALL_1400,
-
-    ALL_600_FB_600,
-    ALL_800_FB_600,
-    ALL_1000_FB_600,
-    ALL_1200_FB_600,
-    ALL_1400_FB_600,
-
-    ALL_600_FB_800,
-    ALL_800_FB_800,
-    ALL_1000_FB_800,
-    ALL_1200_FB_800,
-    ALL_1400_FB_800,
-
-    ALL_600_FB_1000,
-    ALL_800_FB_1000,
-    ALL_1000_FB_1000,
-    ALL_1200_FB_1000,
-    ALL_1400_FB_1000,
-
-    ALL_600_FB_1200,
-    ALL_800_FB_1200,
-    ALL_1000_FB_1200,
-    ALL_1200_FB_1200,
-    ALL_1400_FB_1200,
-
-    ALL_600_FB_1400,
-    ALL_800_FB_1400,
-    ALL_1000_FB_1400,
-    ALL_1200_FB_1400,
-    ALL_1400_FB_1400,
   };
 
-  byte thresholdDistance = ALL_1000_FB_1000;
-  uint16_t threshold500 = 500;
-  uint16_t threshold800 = 800;
+  byte thresholdDistance = ALL_1000;
 
   DigitalOutput &relay = digitalOutputs[0];
   DigitalOutput &alarm = digitalOutputs[1];
@@ -94,6 +62,19 @@ private:
 
     Serial.print(F("THRESHOLD: "));
     Serial.println(sensorThresholdDistance);
+  }
+
+  void initEscapeCountdown() {
+    int prevEscapeCountdown = 0;
+    prevEscapeCountdown = EEPROM.read(EEP_ADDR_THRESHOLD_DISTANCE);
+    if (prevEscapeCountdown == 5 || prevEscapeCountdown == 10 || prevEscapeCountdown == 15) {
+      escapeCountDown = prevEscapeCountdown;
+    } else {
+      escapeCountDown = 5;
+    }
+
+    Serial.print(F("ESCAPE COUNTDOWN: "));
+    Serial.println(escapeCountDown);
   }
 
   void printOneSensor(byte i) {

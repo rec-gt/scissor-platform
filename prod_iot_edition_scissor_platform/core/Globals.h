@@ -153,7 +153,7 @@ byte DIPayload = 0;
 byte DOPayload = 0;
 String AIPayload = "";
 String AOPayload = "";
-String SWPayload = "";
+byte SWPayload = 0;
 
 /*=== IoT (4G & NB-IoT) ===*/
 #define SerialIoT Serial1

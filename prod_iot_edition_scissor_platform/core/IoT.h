@@ -450,7 +450,7 @@ public:
     delay(1);
   }
 
-  void buildMsg(byte _DIPayload, byte _DOPayload, const String& _AIPayload, const String& _AOPayload, const String& _SWPayload) {
+  void buildMsg(byte _DIPayload, byte _DOPayload, const String& _AIPayload, const String& _AOPayload, byte _SWPayload) {
     if (mqttPublishLock.isReleased()) {
       // 1. build payload
       mqttPublMsgPayload = F("{\"csq\":");

@@ -96,19 +96,19 @@ public:
 
       else if (rs485SerialRecv == F("AT+ESCAPE=5")) {
         escapeCountDown = 5;
-        EEPROM.put(EEP_ADDR_THRESHOLD_DISTANCE, 5);
+        EEPROM.put(EEP_ADDR_ESCAPE_COUNT_DOWN, 5);
         this->printlnFlush(F("OK, ESCAPE COUNTDOWN: 5s"));
       }
 
       else if (rs485SerialRecv == F("AT+ESCAPE=10")) {
         escapeCountDown = 10;
-        EEPROM.put(EEP_ADDR_THRESHOLD_DISTANCE, 10);
+        EEPROM.put(EEP_ADDR_ESCAPE_COUNT_DOWN, 10);
         this->printlnFlush(F("OK, ESCAPE COUNTDOWN: 10s"));
       }
 
       else if (rs485SerialRecv == F("AT+ESCAPE=15")) {
         escapeCountDown = 15;
-        EEPROM.put(EEP_ADDR_THRESHOLD_DISTANCE, 15);
+        EEPROM.put(EEP_ADDR_ESCAPE_COUNT_DOWN, 15);
         this->printlnFlush(F("OK, ESCAPE COUNTDOWN: 15s"));
       }
 

@@ -58,6 +58,7 @@ private:
       sensorThresholdDistance = prevSensorThresholdDistance * 100;
     } else {
       sensorThresholdDistance = 1000;
+      EEPROM.put(EEP_ADDR_THRESHOLD_DISTANCE, 5);
     }
 
     Serial.print(F("THRESHOLD: "));
@@ -66,11 +67,12 @@ private:
 
   void initEscapeCountdown() {
     int prevEscapeCountdown = 0;
-    prevEscapeCountdown = EEPROM.read(EEP_ADDR_THRESHOLD_DISTANCE);
+    prevEscapeCountdown = EEPROM.read(EEP_ADDR_ESCAPE_COUNT_DOWN);
     if (prevEscapeCountdown == 5 || prevEscapeCountdown == 10 || prevEscapeCountdown == 15) {
       escapeCountDown = prevEscapeCountdown;
     } else {
       escapeCountDown = 5;
+      EEPROM.put(EEP_ADDR_ESCAPE_COUNT_DOWN, 5);
     }
 
     Serial.print(F("ESCAPE COUNTDOWN: "));

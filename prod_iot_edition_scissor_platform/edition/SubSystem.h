@@ -88,6 +88,8 @@ private:
     prevSensorThresholdDistance = EEPROM.read(EEP_ADDR_THRESHOLD_DISTANCE);
     if (prevSensorThresholdDistance == 6 || prevSensorThresholdDistance == 8 || prevSensorThresholdDistance == 10 || prevSensorThresholdDistance == 12) {
       sensorThresholdDistance = prevSensorThresholdDistance * 100;
+    } else {
+      sensorThresholdDistance = 1000;
     }
 
     Serial.print(F("THRESHOLD: "));
@@ -115,6 +117,15 @@ private:
     }
   }
 
+  void prepareAlarmSignal() {
+    SWPayload = 0;
+    if (this->status == SYS_RUNNING) {
+      SWPayload = 1;  // 0001
+    } else if (this->status == SYS_STOPPED) {
+      SWPayload = 3;  // 0011, RUNNING, but obstacle detected
+    }
+  }
+
 public:
   SubSystem(void) {}
 
@@ -126,6 +137,8 @@ public:
   }
 
   void loop() {
+    this->prepareAlarmSignal();
+
     powerLight.connect();
 
     if (this->status == SYS_RUNNING) {
@@ -158,6 +171,7 @@ public:
         this->status = SYS_ALLOW_10S;
         this->tenSecondTimer = millis();
       }
+
     } else if (this->status == SYS_ALLOW_10S) {
       relay.connect();
       alarm.cut();

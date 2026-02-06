@@ -98,60 +98,62 @@
 #define AO_4 3
 
 DigitalInput digitalInputs[DI_NUMS] = {
-    DigitalInput(DI_PIN_1),
-    DigitalInput(DI_PIN_2),
-    DigitalInput(DI_PIN_3),
-    DigitalInput(DI_PIN_4),
-    DigitalInput(DI_PIN_5),
-    DigitalInput(DI_PIN_6),
-    DigitalInput(DI_PIN_7),
-    DigitalInput(DI_PIN_8),
+  DigitalInput(DI_PIN_1),
+  DigitalInput(DI_PIN_2),
+  DigitalInput(DI_PIN_3),
+  DigitalInput(DI_PIN_4),
+  DigitalInput(DI_PIN_5),
+  DigitalInput(DI_PIN_6),
+  DigitalInput(DI_PIN_7),
+  DigitalInput(DI_PIN_8),
 };
 
 DigitalOutput digitalOutputs[DO_NUMS]{
-    DigitalOutput(DO_PIN_1),
-    DigitalOutput(DO_PIN_2),
-    DigitalOutput(DO_PIN_3),
-    DigitalOutput(DO_PIN_4),
-    DigitalOutput(DO_PIN_5),
-    DigitalOutput(DO_PIN_6),
-    DigitalOutput(DO_PIN_7),
-    DigitalOutput(DO_PIN_8),
+  DigitalOutput(DO_PIN_1),
+  DigitalOutput(DO_PIN_2),
+  DigitalOutput(DO_PIN_3),
+  DigitalOutput(DO_PIN_4),
+  DigitalOutput(DO_PIN_5),
+  DigitalOutput(DO_PIN_6),
+  DigitalOutput(DO_PIN_7),
+  DigitalOutput(DO_PIN_8),
 };
 
 AnalogOutput analogOutputs[AO_NUMS]{
-    AnalogOutput(AO_PIN_1),
-    AnalogOutput(AO_PIN_2),
-    AnalogOutput(AO_PIN_3),
-    AnalogOutput(AO_PIN_4),
+  AnalogOutput(AO_PIN_1),
+  AnalogOutput(AO_PIN_2),
+  AnalogOutput(AO_PIN_3),
+  AnalogOutput(AO_PIN_4),
 };
 
 AnalogInput analogInputs[AI_NUMS] = {
-    AnalogInput(AI_PIN_1, 1),
-    AnalogInput(AI_PIN_2, 1),
-    AnalogInput(AI_PIN_3, 1),
-    AnalogInput(AI_PIN_4, 1),
-    AnalogInput(AI_PIN_5, 1),
-    AnalogInput(AI_PIN_6, 1),
-    AnalogInput(AI_PIN_7, 1),
-    AnalogInput(AI_PIN_8, 1),
-    AnalogInput(AI_PIN_9, 1),
-    AnalogInput(AI_PIN_10, 1),
-    AnalogInput(AI_PIN_11, 1),
-    AnalogInput(AI_PIN_12, 1)};
+  AnalogInput(AI_PIN_1, 1),
+  AnalogInput(AI_PIN_2, 1),
+  AnalogInput(AI_PIN_3, 1),
+  AnalogInput(AI_PIN_4, 1),
+  AnalogInput(AI_PIN_5, 1),
+  AnalogInput(AI_PIN_6, 1),
+  AnalogInput(AI_PIN_7, 1),
+  AnalogInput(AI_PIN_8, 1),
+  AnalogInput(AI_PIN_9, 1),
+  AnalogInput(AI_PIN_10, 1),
+  AnalogInput(AI_PIN_11, 1),
+  AnalogInput(AI_PIN_12, 1)
+};
 
 DryContact dryContacts[DRY_CONTACT_NUMS] = {
-    DryContact(DRY_CONTACT_PIN_1),
-    DryContact(DRY_CONTACT_PIN_2),
-    DryContact(DRY_CONTACT_PIN_3),
-    DryContact(DRY_CONTACT_PIN_4),
-    DryContact(DRY_CONTACT_PIN_5),
+  DryContact(DRY_CONTACT_PIN_1),
+  DryContact(DRY_CONTACT_PIN_2),
+  DryContact(DRY_CONTACT_PIN_3),
+  DryContact(DRY_CONTACT_PIN_4),
+  DryContact(DRY_CONTACT_PIN_5),
 };
 
 byte DIPayload = 0;
 byte DOPayload = 0;
 String AIPayload = "";
 String AOPayload = "";
+String SWPayload = "";
 
 /*=== IoT (4G & NB-IoT) ===*/
 #define SerialIoT Serial1
@@ -159,8 +161,7 @@ String AOPayload = "";
 #define IOT_MODEL_EC800K "EC800K"
 #define IOT_MODEL_BC260Y_CN "Quectel_BC260Y-CN"
 
-enum IOT_MODULE_STATE
-{
+enum IOT_MODULE_STATE {
   IOT_MODULE_WAITING_INIT,
 
   IOT_MODULE_WAITING_RESET,
@@ -181,8 +182,7 @@ enum IOT_MODULE_STATE
   IOT_MODULE_END_OF_STATE,
 };
 
-enum IOT_CONN_STATE
-{
+enum IOT_CONN_STATE {
   IOT_CONN_WAITING_INIT,
 
   IOT_CONN_WAITING_ASSIGN_IP,
@@ -207,8 +207,7 @@ enum IOT_CONN_STATE
   IOT_CONN_END_OF_STATE,
 };
 
-enum IOT_MQTT_MSG_STATE
-{
+enum IOT_MQTT_MSG_STATE {
   /* === MQTT Message State Management === */
   IOT_MQTT_MSG_LOOP_START,
   IOT_MQTT_MSG_WAITING_PUBLISH,
@@ -216,7 +215,7 @@ enum IOT_MQTT_MSG_STATE
   IOT_MQTT_MSG_FINISH_PUBLISH,
 };
 
-uint32_t iotSerialBaudRates[] = {9600, 115200};
+uint32_t iotSerialBaudRates[] = { 9600, 115200 };
 size_t iotSerialBaudRateIdx = 0;
 
 byte iotModuleState = IOT_MODULE_WAITING_INIT;

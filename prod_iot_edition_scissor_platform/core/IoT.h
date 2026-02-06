@@ -450,7 +450,7 @@ public:
     delay(1);
   }
 
-  void buildMsg(byte _DIPayload, byte _DOPayload, const String& _AIPayload, const String& _AOPayload) {
+  void buildMsg(byte _DIPayload, byte _DOPayload, const String& _AIPayload, const String& _AOPayload, const String& _SWPayload) {
     if (mqttPublishLock.isReleased()) {
       // 1. build payload
       mqttPublMsgPayload = F("{\"csq\":");
@@ -467,6 +467,9 @@ public:
       mqttPublMsgPayload.concat(F(","));
       mqttPublMsgPayload.concat(F("\"aout\":"));
       mqttPublMsgPayload.concat(_AOPayload);
+      mqttPublMsgPayload.concat(F(","));
+      mqttPublMsgPayload.concat(F("\"sw\":"));
+      mqttPublMsgPayload.concat(_SWPayload);
       mqttPublMsgPayload.concat(F("}"));
     }
 

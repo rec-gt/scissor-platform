@@ -26,7 +26,7 @@ public:
     this->handlePublishContent();
 
     /*=== IoT Subscribe ===*/
-    this->handleSubscribeContent();
+    // this->handleSubscribeContent();
   }
 
   void listen() {
@@ -74,7 +74,7 @@ public:
   }
 
   void handlePublishContent() {
-    iot.buildMsg(DIPayload, DOPayload, AIPayload, AOPayload);
+    iot.buildMsg(DIPayload, DOPayload, AIPayload, AOPayload, SWPayload);
   }
 
   void handleSubscribeContent() {

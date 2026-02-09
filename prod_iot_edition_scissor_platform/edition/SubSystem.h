@@ -120,13 +120,17 @@ private:
 
   bool canPublish = true;
   void prepareIoTSignal() {
-    iot.buildMsg(DIPayload, DOPayload, AIPayload, AOPayload, SWPayload);
 
     if (this->status == SYS_RUNNING) {
       DIPayload |= 1 << 4;  // X000 1000
+      DIPayload |= 0 << 5;
+      DIPayload |= 0 << 6;
+      DIPayload |= 0 << 7;
     } else if (this->status == SYS_STOPPED) {
       DIPayload |= 1 << 4;
       DIPayload |= 1 << 5;  // X000 1100
+      DIPayload |= 0 << 6;
+      DIPayload |= 0 << 7;
 
       // can publish
       if (canPublish) {
@@ -137,11 +141,15 @@ private:
 
     } else if (this->status == SYS_ALLOW_10S) {
       DIPayload |= 1 << 4;
+      DIPayload |= 0 << 5;
       DIPayload |= 1 << 6;  // X000 1010
+      DIPayload |= 0 << 7;
     } else if (this->status == SYS_FAILURE) {
-      DIPayload |= 1 << 4;  // X000 0000
+      DIPayload |= 0 << 4;
+      DIPayload |= 0 << 5;
+      DIPayload |= 0 << 6;
+      DIPayload |= 0 << 7;  // X000 0000
     }
-
   }
 
   bool isFailure() {
@@ -237,6 +245,8 @@ public:
     }
 
     this->prepareIoTSignal();
+
+    iot.buildMsg(DIPayload, DOPayload, AIPayload, AOPayload, SWPayload);
 
     rStd485.loop();
   }

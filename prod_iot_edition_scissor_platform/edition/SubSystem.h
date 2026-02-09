@@ -46,7 +46,7 @@ private:
   DigitalOutput &trafficYellow = digitalOutputs[5];
   DigitalOutput &trafficRed = digitalOutputs[6];
 
-  DigitalInput &thresholdSwitch = digitalInputs[0];
+  // DigitalInput &thresholdSwitch = digitalInputs[0]; // deprecated
   DigitalInput &pressButton = digitalInputs[1];
 
   unsigned long tenSecondTimer = 0;

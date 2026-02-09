@@ -151,9 +151,9 @@ DryContact dryContacts[DRY_CONTACT_NUMS] = {
 
 byte DIPayload = 0;
 byte DOPayload = 0;
+byte SWPayload = 0;
 String AIPayload = "";
 String AOPayload = "";
-byte SWPayload = 0;
 
 /*=== IoT (4G & NB-IoT) ===*/
 #define SerialIoT Serial1

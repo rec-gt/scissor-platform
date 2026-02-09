@@ -70,6 +70,7 @@ public:
     }
 
     if (this->unlocked) {
+      /* === Distance === */
       if (rs485SerialRecv == F("AT+ALL=600")) {
         sensorThresholdDistance = 600;
         EEPROM.put(EEP_ADDR_THRESHOLD_DISTANCE, 6);
@@ -94,6 +95,7 @@ public:
         this->printlnFlush(F("OK, THRESHOLD: 1200"));
       }
 
+      /* === Escape Timeout === */
       else if (rs485SerialRecv == F("AT+ESCAPE=5")) {
         escapeCountDown = 5;
         EEPROM.put(EEP_ADDR_ESCAPE_COUNT_DOWN, 5);
@@ -112,6 +114,38 @@ public:
         this->printlnFlush(F("OK, ESCAPE COUNTDOWN: 15s"));
       }
 
+      /* === Trigger Duration === */
+      else if (rs485SerialRecv == F("AT+TRIGGER=2")) {
+        triggerDuration = 200;
+        EEPROM.put(EEP_ADDR_TRIGGER_DURATION, 2);
+        this->printlnFlush(F("OK, TRIGGER DURATION: 200ms"));
+      }
+
+      else if (rs485SerialRecv == F("AT+TRIGGER=5")) {
+        triggerDuration = 500;
+        EEPROM.put(EEP_ADDR_TRIGGER_DURATION, 5);
+        this->printlnFlush(F("OK, TRIGGER DURATION: 500ms"));
+      }
+
+      else if (rs485SerialRecv == F("AT+TRIGGER=10")) {
+        triggerDuration = 1000;
+        EEPROM.put(EEP_ADDR_TRIGGER_DURATION, 10);
+        this->printlnFlush(F("OK, TRIGGER DURATION: 1000ms"));
+      }
+
+      else if (rs485SerialRecv == F("AT+TRIGGER=15")) {
+        triggerDuration = 1500;
+        EEPROM.put(EEP_ADDR_TRIGGER_DURATION, 15);
+        this->printlnFlush(F("OK, TRIGGER DURATION: 1500ms"));
+      }
+
+      else if (rs485SerialRecv == F("AT+TRIGGER=20")) {
+        triggerDuration = 2000;
+        EEPROM.put(EEP_ADDR_TRIGGER_DURATION, 20);
+        this->printlnFlush(F("OK, TRIGGER DURATION: 2000ms"));
+      }
+
+      /* === Lock === */
       else if (rs485SerialRecv == F("AT+LOCK")) {
         this->unlocked = false;
         this->printlnFlush(F("OK, MODULE LOCKED"));

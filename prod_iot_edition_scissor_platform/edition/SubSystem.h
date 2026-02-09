@@ -85,9 +85,9 @@ private:
     int prevTriggerDuration = 0;
     prevTriggerDuration = EEPROM.read(EEP_ADDR_TRIGGER_DURATION);
     if (prevTriggerDuration == 2 || prevTriggerDuration == 5 || prevTriggerDuration == 10 || prevTriggerDuration == 15 || prevTriggerDuration == 20) {
-      triggerDuration = prevTriggerDuration;
+      triggerDuration = prevTriggerDuration * 100;
     } else {
-      triggerDuration = 5;
+      triggerDuration = 500;
       EEPROM.put(EEP_ADDR_TRIGGER_DURATION, 5);
     }
 
@@ -138,6 +138,7 @@ public:
     rStd485.init();
     this->initThresholdDistance();
     this->initEscapeCountdown();
+    this->initTriggerDuration();
   }
 
   void loop() {
@@ -157,6 +158,7 @@ public:
       if (this->isOneDetected()) {
         if (triggerTimer.autoTimeout(triggerDuration)) {
           this->status = SYS_STOPPED;
+          Serial.println("SYS_STOPPED");
         }
       } else {
         triggerTimer.refresh();

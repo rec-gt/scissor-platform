@@ -132,7 +132,6 @@ private:
         canPublish = false;
       }
 
-
     } else if (this->status == SYS_ALLOW_10S) {
       SWPayload = 5;  // 0101, RUNNING, but escaping
       // iot.forcePublish();

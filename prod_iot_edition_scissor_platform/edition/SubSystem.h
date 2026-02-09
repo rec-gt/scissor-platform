@@ -30,6 +30,7 @@ Timer triggerTimer;
 class SubSystem {
 private:
   SubSystemStatus status;
+  byte prevStatus = SYS_RUNNING;
 
   enum THRESHOLD_DISTANCE {
     ALL_600,
@@ -119,6 +120,8 @@ private:
 
   bool canPublish = true;
   void prepareIoTSignal() {
+    iot.buildMsg(DIPayload, DOPayload, AIPayload, AOPayload, SWPayload);
+
     if (this->status == SYS_RUNNING) {
       DIPayload |= 1 << 4;  // X000 1000
     } else if (this->status == SYS_STOPPED) {
@@ -138,6 +141,7 @@ private:
     } else if (this->status == SYS_FAILURE) {
       DIPayload |= 1 << 4;  // X000 0000
     }
+
   }
 
   bool isFailure() {
@@ -166,12 +170,15 @@ public:
   void loop() {
     powerLight.connect();
 
-    // if (this->isFailure()) {
-    //   this->status = SYS_FAILURE;
-    //   return;
-    // }
+    if (this->isFailure()) {
+      this->status = SYS_FAILURE;
+    } else {
+      this->status = this->prevStatus;
+    }
 
     if (this->status == SYS_RUNNING) {
+      this->prevStatus = SYS_RUNNING;
+
       relay.connect();
       alarm.cut();
       warningLight.cut();
@@ -190,6 +197,8 @@ public:
       }
 
     } else if (this->status == SYS_STOPPED) {
+      this->prevStatus = SYS_STOPPED;
+
       relay.cut();
       alarm.connect();
       warningLight.connect();
@@ -208,6 +217,8 @@ public:
       }
 
     } else if (this->status == SYS_ALLOW_10S) {
+      this->prevStatus = SYS_ALLOW_10S;
+
       relay.connect();
       alarm.cut();
       warningLight.cut();

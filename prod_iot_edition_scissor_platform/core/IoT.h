@@ -489,6 +489,7 @@ public:
     if (!mqttForcePublMode.isOn()) {
       if (mqttPublishLock.isReleased()) {
         Serial.println(F("Force Publish:"));
+        Serial.println(mqttPublMsgPayload);
         mqttForcePublMode.on();
       }
     }

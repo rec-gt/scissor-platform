@@ -166,62 +166,63 @@ public:
   void loop() {
     powerLight.connect();
 
-    if (this->isFailure()) {
-      this->status = SYS_FAILURE;
-    } else {
-      if (this->status == SYS_RUNNING) {
-        relay.connect();
-        alarm.cut();
-        warningLight.cut();
+    // if (this->isFailure()) {
+    //   this->status = SYS_FAILURE;
+    //   return;
+    // }
 
-        trafficGreen.connect();
-        trafficYellow.cut();
-        trafficRed.cut();
+    if (this->status == SYS_RUNNING) {
+      relay.connect();
+      alarm.cut();
+      warningLight.cut();
 
-        if (this->isOneDetected()) {
-          if (triggerTimer.autoTimeout(triggerDuration)) {
-            this->status = SYS_STOPPED;
-            Serial.println(F("SYS_STOPPED"));
-          }
-        } else {
-          triggerTimer.refresh();
+      trafficGreen.connect();
+      trafficYellow.cut();
+      trafficRed.cut();
+
+      if (this->isOneDetected()) {
+        if (triggerTimer.autoTimeout(triggerDuration)) {
+          this->status = SYS_STOPPED;
+          Serial.println(F("SYS_STOPPED"));
         }
-
-      } else if (this->status == SYS_STOPPED) {
-        relay.cut();
-        alarm.connect();
-        warningLight.connect();
-
-        trafficGreen.cut();
-        trafficYellow.cut();
-        trafficRed.connect();
-
-        if (this->areAllEscaped()) {
-          this->status = SYS_RUNNING;
-        }
-
-        if (pressButton.getState()) {
-          this->status = SYS_ALLOW_10S;
-          this->tenSecondTimer = millis();
-        }
-
-      } else if (this->status == SYS_ALLOW_10S) {
-        relay.connect();
-        alarm.cut();
-        warningLight.cut();
-
-        trafficGreen.connect();
-        trafficYellow.connect();
-        trafficRed.cut();
-
-        if ((millis() - this->tenSecondTimer) >= escapeCountDown * 1000) {
-          this->status = SYS_RUNNING;
-        }
+      } else {
+        triggerTimer.refresh();
       }
 
-      if (alarmTimer.autoTimeout(10000)) {
-        canPublish = true;
+    } else if (this->status == SYS_STOPPED) {
+      relay.cut();
+      alarm.connect();
+      warningLight.connect();
+
+      trafficGreen.cut();
+      trafficYellow.cut();
+      trafficRed.connect();
+
+      if (this->areAllEscaped()) {
+        this->status = SYS_RUNNING;
       }
+
+      if (pressButton.getState()) {
+        this->status = SYS_ALLOW_10S;
+        this->tenSecondTimer = millis();
+      }
+
+    } else if (this->status == SYS_ALLOW_10S) {
+      relay.connect();
+      alarm.cut();
+      warningLight.cut();
+
+      trafficGreen.connect();
+      trafficYellow.connect();
+      trafficRed.cut();
+
+      if ((millis() - this->tenSecondTimer) >= escapeCountDown * 1000) {
+        this->status = SYS_RUNNING;
+      }
+    }
+
+    if (alarmTimer.autoTimeout(10000)) {
+      canPublish = true;
     }
 
     this->prepareIoTSignal();

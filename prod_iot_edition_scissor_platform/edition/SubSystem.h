@@ -120,7 +120,6 @@ private:
 
   bool canPublish = true;
   void prepareIoTSignal() {
-
     if (this->status == SYS_RUNNING) {
       DIPayload |= 1 << 4;  // X000 1000
       DIPayload |= 0 << 5;
@@ -134,6 +133,7 @@ private:
 
       // can publish
       if (canPublish) {
+        iot.buildMsg(DIPayload, DOPayload, AIPayload, AOPayload, SWPayload);
         iot.forcePublish();
         alarmTimer.refresh();
         canPublish = false;
@@ -178,11 +178,11 @@ public:
   void loop() {
     powerLight.connect();
 
-    if (this->isFailure()) {
-      this->status = SYS_FAILURE;
-    } else {
-      this->status = this->prevStatus;
-    }
+    // if (this->isFailure()) {
+    //   this->status = SYS_FAILURE;
+    // } else {
+    //   this->status = this->prevStatus;
+    // }
 
     if (this->status == SYS_RUNNING) {
       this->prevStatus = SYS_RUNNING;

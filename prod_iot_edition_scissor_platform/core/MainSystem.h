@@ -74,7 +74,7 @@ public:
   }
 
   void handlePublishContent() {
-    // iot.buildMsg(DIPayload, DOPayload, AIPayload, AOPayload, SWPayload);
+    iot.buildMsg(DIPayload, DOPayload, AIPayload, AOPayload, SWPayload);
   }
 
   void handleSubscribeContent() {

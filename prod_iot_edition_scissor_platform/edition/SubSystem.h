@@ -24,6 +24,8 @@ enum SubSystemStatus {
   SYS_FAILURE
 };
 
+Timer triggerTimer;
+
 class SubSystem {
 private:
   SubSystemStatus status;
@@ -77,6 +79,20 @@ private:
 
     Serial.print(F("ESCAPE COUNTDOWN: "));
     Serial.println(escapeCountDown);
+  }
+
+  void initTriggerDuration() {
+    int prevTriggerDuration = 0;
+    prevTriggerDuration = EEPROM.read(EEP_ADDR_TRIGGER_DURATION);
+    if (prevTriggerDuration == 2 || prevTriggerDuration == 5 || prevTriggerDuration == 10 || prevTriggerDuration == 15 || prevTriggerDuration == 20) {
+      triggerDuration = prevTriggerDuration;
+    } else {
+      triggerDuration = 5;
+      EEPROM.put(EEP_ADDR_TRIGGER_DURATION, 5);
+    }
+
+    Serial.print(F("TRIGGER DURATION: "));
+    Serial.println(triggerDuration);
   }
 
   void printOneSensor(byte i) {
@@ -139,7 +155,11 @@ public:
       trafficRed.cut();
 
       if (this->isOneDetected()) {
-        this->status = SYS_STOPPED;
+        if (triggerTimer.autoTimeout(triggerDuration)) {
+          this->status = SYS_STOPPED;
+        }
+      } else {
+        triggerTimer.refresh();
       }
 
     } else if (this->status == SYS_STOPPED) {
@@ -151,7 +171,7 @@ public:
       trafficYellow.cut();
       trafficRed.connect();
 
-      if (areAllEscaped()) {
+      if (this->areAllEscaped()) {
         this->status = SYS_RUNNING;
       }
 

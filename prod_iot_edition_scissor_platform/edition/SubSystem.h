@@ -24,6 +24,7 @@ enum SubSystemStatus {
   SYS_FAILURE
 };
 
+Timer alarmTimer;
 Timer triggerTimer;
 
 class SubSystem {
@@ -116,13 +117,22 @@ private:
     }
   }
 
-  void prepareAlarmSignal() {
+  bool canPublish = true;
+  void prepareIoTSignal() {
     SWPayload = 0;
     if (this->status == SYS_RUNNING) {
       SWPayload = 1;  // 0001
     } else if (this->status == SYS_STOPPED) {
       SWPayload = 3;  // 0011, RUNNING, but obstacle detected
-      // iot.forcePublish();
+
+      // can publish
+      if (canPublish) {
+        iot.forcePublish();
+        alarmTimer.refresh();
+        canPublish = false;
+      }
+
+
     } else if (this->status == SYS_ALLOW_10S) {
       SWPayload = 5;  // 0101, RUNNING, but escaping
       // iot.forcePublish();
@@ -142,7 +152,7 @@ public:
   }
 
   void loop() {
-    this->prepareAlarmSignal();
+    this->prepareIoTSignal();
 
     powerLight.connect();
 
@@ -158,7 +168,7 @@ public:
       if (this->isOneDetected()) {
         if (triggerTimer.autoTimeout(triggerDuration)) {
           this->status = SYS_STOPPED;
-          Serial.println("SYS_STOPPED");
+          Serial.println(F("SYS_STOPPED"));
         }
       } else {
         triggerTimer.refresh();
@@ -194,6 +204,10 @@ public:
       if ((millis() - this->tenSecondTimer) >= escapeCountDown * 1000) {
         this->status = SYS_RUNNING;
       }
+    }
+
+    if (alarmTimer.autoTimeout(10000)) {
+      canPublish = true;
     }
 
     rStd485.loop();

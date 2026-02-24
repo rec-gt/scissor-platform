@@ -161,7 +161,7 @@ public:
 
   void loop() {
     if (deviceTimer.autoTimeout(500)) {
-      // this->readIn500ms();
+      this->readIn500ms();
 
       kps1.set(holdingRegisterValues[0]);
       kps2.set(holdingRegisterValues[1]);

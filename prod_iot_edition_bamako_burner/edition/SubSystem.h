@@ -17,6 +17,10 @@ int readingToActualTemp(int reading) {
   return map(constrain(reading, 196, 1023), 196, 1023, 0, 1300);
 }
 
+int readingToActualTemp10to1300(int reading) {
+  return constrain(map(constrain(reading, 196, 1023), 196, 1023, 0, 1300), 10, 1300);
+}
+
 int getAoValue(int actualTemp) {
   return constrain(map(constrain(actualTemp, 0, 1300), 0, 1300, 0, 255) + (actualTemp * 2 / 100) + 1, 0, 255);
 }
@@ -53,6 +57,7 @@ private:
   byte prevPowerStatus = 0;
 
   void handleTemperature() {
+    // int actualTemp1 = readingToActualTemp10to1300(temp1.getValue());
     int actualTemp1 = readingToActualTemp(temp1.getValue());
     int actualTemp2 = readingToActualTemp(temp2.getValue());
     int actualTemp3 = readingToActualTemp(temp3.getValue());

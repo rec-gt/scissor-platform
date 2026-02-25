@@ -29,14 +29,14 @@ public:
         didata |= 0 << 6;
         didata |= 0 << 7;
 
-        iot.buildMsg(didata, 0, F(""), F(""));
+        iot.buildMsg(didata, 0, F("[]"), F("[]"));
         iot.forcePublish();
         alarmTimer.refresh();
         canPublish = false;
       }
     }
 
-    if (alarmTimer.autoTimeout(10000)) {
+    if (alarmTimer.autoTimeout(5000)) {
       canPublish = true;
     }
   }

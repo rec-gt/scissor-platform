@@ -74,7 +74,19 @@ public:
   }
 
   void handlePublishContent() {
-    iot.buildMsg(DIPayload, DOPayload, AIPayload, AOPayload);
+    byte didata = 0;
+    if (digitalInputs[0].getState() == 1) {
+      didata |= 1 << 4;
+      didata |= 1 << 5;  // X000 1100 STOPPED
+      didata |= 0 << 6;
+      didata |= 0 << 7;
+    } else {
+      didata |= 1 << 4;
+      didata |= 0 << 5;  // X000 1000 RUNNING
+      didata |= 0 << 6;
+      didata |= 0 << 7;
+    }
+    iot.buildMsg(didata, 0, AIPayload, AOPayload);
   }
 
   void handleSubscribeContent() {

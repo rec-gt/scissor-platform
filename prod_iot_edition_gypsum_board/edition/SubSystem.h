@@ -29,8 +29,11 @@ public:
     uint16_t reading2 = map(340 - constrain(s2.reading, 0, 340), 0, 340, 0, 1023);
 
     /*=== Change Display Value ===*/
-    analogInputs[0] = reading1;
-    analogInputs[1] = reading2;
+    analogInputs[0].value = reading1;
+    analogInputs[1].value = reading2;
+
+    /*=== Change IoT Payload ===*/
+    iot.buildMsg(DIPayload, DOPayload, AIPayload, AOPayload);
   }
 
   ~SubSystem() {}

@@ -33,6 +33,7 @@ public:
     analogInputs[1].value = reading2;
 
     /*=== Change IoT Payload ===*/
+    mainSystem.buildPayloads();
     iot.buildMsg(DIPayload, DOPayload, AIPayload, AOPayload);
   }
 

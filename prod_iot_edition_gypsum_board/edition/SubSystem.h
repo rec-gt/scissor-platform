@@ -1,6 +1,7 @@
 #ifndef SubSystem_H
 #define SubSystem_H
 
+#include "../core/Globals.h"
 #include "./SubGlobals.h"
 #include "./SubRS485.h"
 #include "./Sensor.h"
@@ -18,17 +19,18 @@ public:
 
   void init() {
     configAnalogInputResolution(0);
-    // subRS485.init();
   }
 
   void loop() {
     s1.loop();
     s2.loop();
 
-    uint16_t r1 = map(340 - constrain(s1.reading, 0, 340), 0, 340, 0, 1023);
-    uint16_t r2 = map(340 - constrain(s2.reading, 0, 340), 0, 340, 0, 1023);
+    uint16_t reading1 = map(340 - constrain(s1.reading, 0, 340), 0, 340, 0, 1023);
+    uint16_t reading2 = map(340 - constrain(s2.reading, 0, 340), 0, 340, 0, 1023);
 
-    Serial.println(r1);
+    /*=== Change Display Value ===*/
+    analogInputs[0] = reading1;
+    analogInputs[1] = reading2;
   }
 
   ~SubSystem() {}

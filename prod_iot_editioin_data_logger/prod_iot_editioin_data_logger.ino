@@ -20,7 +20,7 @@ Timer systemTimer(86400000);
 
 void setup() {
   Serial.begin(9600);
-  // analogReference(EXTERNAL);
+  analogReference(EXTERNAL);
 
   /*=== String / Heap Memory Management ===*/
   iotCSQ.reserve(8);

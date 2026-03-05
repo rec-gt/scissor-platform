@@ -1,10 +1,14 @@
 #ifndef SubSystem_H
 #define SubSystem_H
 
+#include "../core/Timer.h"
 #include "./SubGlobals.h"
 #include "./SubRS485.h"
+#include "./DataLogger.h"
 
 SubRS485 subRS485;
+Timer subSysTimer;
+DataLogger logger;
 
 class SubSystem {
 public:
@@ -16,8 +20,9 @@ public:
   }
 
   void loop() {
-    subRS485.loop();
-    subRS485.write();
+    if (subSysTimer.autoTimeout(1000)) {
+      logger.log(F("Test data"));
+    }
   }
 
   ~SubSystem() {}

@@ -64,9 +64,9 @@ public:
     }
   }
 
-  void write() {
-    RS485Serial.println("Test");
-    delay(1000);
+  void write(const String& data) {
+    this->printlnFlush(data);
+    this->prepareRecv();
   }
 
   ~SubRS485() {}

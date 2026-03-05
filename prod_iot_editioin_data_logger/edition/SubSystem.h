@@ -21,7 +21,7 @@ public:
 
   void loop() {
     if (subSysTimer.autoTimeout(1000)) {
-      logger.log(F("Test data"));
+      logger.log(mqttPublMsgPayload);
     }
   }
 

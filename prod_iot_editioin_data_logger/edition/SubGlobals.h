@@ -20,6 +20,6 @@ ModbusRTUClientClass mbRtuClient(recommendedStandard485);
 // ModbusRTUServerClass mbServer(recommendedStandard485);
 
 /*=== For Data Logger ===*/
-
+String loggerStr = "";
 
 #endif

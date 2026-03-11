@@ -20,6 +20,8 @@ public:
   }
 
   void loop() {
+    
+    /*=== Register the Data Logger ===*/
     if (subSysTimer.autoTimeout(1000)) {
       logger.log(mqttPublMsgPayload);
     }

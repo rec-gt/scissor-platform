@@ -22,7 +22,8 @@ int readingToActualTemp10to1300(int reading) {
 }
 
 int getAoValue(int actualTemp) {
-  return constrain(map(constrain(actualTemp, 0, 1300), 0, 1300, 0, 255) + (actualTemp * 2 / 100) + 1, 0, 255);
+  return constrain(map(constrain(actualTemp, 0, 1300), 0, 1300, 0, 255), 0, 255);
+  // return constrain(map(constrain(actualTemp, 0, 1300), 0, 1300, 0, 255) + (actualTemp * 2 / 100) + 1, 0, 255); // 第一版，tune過的
 }
 
 DigitalInput &running = digitalInputs[0];

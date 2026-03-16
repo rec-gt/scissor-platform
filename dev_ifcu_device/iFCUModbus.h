@@ -26,7 +26,7 @@ private:
 
 
   bool hasQueue() {
-    return QUEUE.length() > 0;
+    return QUEUE != F("");
   }
 
   void freeQueue() {
@@ -110,7 +110,7 @@ public:
       }
 
       this->copyArr(TMP_DATA, WRITE_DATA, 4);
-      
+
       Serial.println("=== WRITE_DATA ===");
       for (size_t i = 0; i < 4; i++) {
         Serial.println(WRITE_DATA[i]);
@@ -122,7 +122,6 @@ public:
   }
 
   void writeDataToDevice() {
-
     if (!this->writeDataChanged) { return; };
     this->writeDataChanged = false;
 

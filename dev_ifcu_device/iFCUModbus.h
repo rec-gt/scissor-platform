@@ -6,9 +6,6 @@
 #define RXD2 16
 #define TXD2 17
 
-constexpr size_t arrayLength = 4 + 1;
-uint16_t jsArray[arrayLength];
-
 uint8_t result;
 
 class iFCUModbus {
@@ -16,14 +13,12 @@ private:
   uint16_t prevMillis = millis();
   byte errMsg = 0;
   bool writeDataChanged = false;
-  // bool compareData() {}
 
   void copyArr(uint16_t *arr1, uint16_t *arr2, size_t size) {
     for (size_t i = 0; i < size; i++) {
       arr2[i] = arr1[i];
     }
   }
-
 
   bool hasQueue() {
     return QUEUE != F("");
@@ -34,10 +29,12 @@ private:
   }
 
 public:
+  bool deviceDisconnected = false;
+
   void init() {
     Serial2.begin(9600, SERIAL_8N1, RXD2, TXD2);
     mbNode.begin(IFCU_SLAVE_ID, Serial2);
-    delay(1000);
+    delay(100);
   }
 
   void readDataFromDevice() {
@@ -52,8 +49,10 @@ public:
       }
 
       this->errMsg = 0;
+      this->deviceDisconnected = false;
     } else {
       this->errMsg = 1;
+      this->deviceDisconnected = true;
       Serial.println("Cannot Fetch Device Data");
     }
   }
@@ -85,10 +84,8 @@ public:
         // J = Decrease Set Temp.
 
         if (c == 'A') {
-          // TMP_DATA[0] |= (1 << 6);
           TMP_DATA[0] = 1;
         } else if (c == 'B') {
-          // TMP_DATA[0] &= ~(1 << 6);
           TMP_DATA[0] = 0;
         } else if (c == 'C') {
           TMP_DATA[1] = 0;
@@ -133,8 +130,10 @@ public:
     result = mbNode.writeMultipleRegisters(40000, 5);
     if (result == mbNode.ku8MBSuccess) {
       this->errMsg = 0;
+      this->deviceDisconnected = false;
     } else {
       this->errMsg = 1;
+      this->deviceDisconnected = true;
       Serial.println("Cannot Write Data to Device");
     }
   }

@@ -32,6 +32,6 @@ void loop() {
   delay(1000);
   ifcuModbus.syncWithQueue();
   delay(1000);
-  ifcuModbus.writeDataToDevice();
-  delay(1000);
+  // ifcuModbus.writeDataToDevice();
+  // delay(1000);
 }

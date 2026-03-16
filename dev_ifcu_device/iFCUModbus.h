@@ -16,7 +16,13 @@ private:
   uint16_t prevMillis = millis();
   byte errMsg = 0;
 
-  bool compareData() {}
+  // bool compareData() {}
+
+  void copyArr(uint16_t *arr1, uint16_t *arr2, size_t size) {
+    for (size_t i = 0; i < size; i++) {
+      arr2[i] = arr1[i];
+    }
+  }
 
   void freeQueue() {
     QUEUE = F("");
@@ -68,17 +74,51 @@ public:
   }
 
   void syncWithQueue() {
+    uint16_t tmpArr[5] = {
+      (READ_DATA[1] & (1 << 6)) ? 1 : 0,
+      READ_DATA[3],
+      READ_DATA[4],
+      READ_DATA[6],
+    };
+
+    this->copyArr(tmpArr, TMP_DATA, 5);
+
     for (int i = 0; i < QUEUE.length(); i++) {
       char c = QUEUE[i];
       Serial.println(c);
-      // A = Increase Set Temp.
-      // B = Decrease Set Temp.
+      // A = On.
+      // B = Off.
       // C = Set Mode to 0.
       // D = Set Mode to 1.
       // E = Set Mode to 2.
       // F = Set Fan Speed to 0.
       // G = Set Fan Speed to 1.
       // H = Set Fan Speed to 2.
+      // I = Increase Set Temp.
+      // J = Decrease Set Temp.
+      if (c == 'A') {
+        // TMP_DATA[1] |= (1 << 6);
+        TMP_DATA[0] = 1;
+      } else if (c == 'B') {
+        // TMP_DATA[1] &= ~(1 << 6);
+        TMP_DATA[0] = 1;
+      } else if (c == 'C') {
+        TMP_DATA[1] = 0;
+      } else if (c == 'D') {
+        TMP_DATA[1] = 1;
+      } else if (c == 'E') {
+        TMP_DATA[1] = 2;
+      } else if (c == 'F') {
+        TMP_DATA[2] = 0;
+      } else if (c == 'G') {
+        TMP_DATA[2] = 1;
+      } else if (c == 'H') {
+        TMP_DATA[2] = 2;
+      } else if (c == 'I') {
+        TMP_DATA[3] += 50;
+      } else if (c == 'J') {
+        TMP_DATA[3] -= 50;
+      }
     }
 
     this->freeQueue();

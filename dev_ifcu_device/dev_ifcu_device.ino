@@ -1,12 +1,9 @@
 #include <HTTPClient.h>
 #include "Globals.h"
-#include "ESPmDNS.h"
 #include "iFCUModbus.h"
 // #include "WiFiService.h"
-#include "MDNSService.h"
 
 // WiFiService wifiService;
-MDNSService mDNSService;
 
 iFCUModbus ifcuModbus;
 
@@ -21,15 +18,12 @@ void loop() {
   //   return;
   // }
 
-  // mDNSService.loop();
-  // if (!mDNSService.isConnected()) {
-  //   return;
-  // }
-  
   while (Serial.available()) {
     char c = Serial.read();
     QUEUE += c;
   }
 
-  ifcuModbus.loop()();
+  // http.loop(); 
+
+  ifcuModbus.loop();
 }

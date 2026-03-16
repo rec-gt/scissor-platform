@@ -50,10 +50,10 @@ public:
         this->writeDataToDevice();
       }
 
-      this->taskNo++;
       if (this->taskNo == 2) {
         this->taskNo = 0;
       }
+      this->taskNo++;
 
       this->prevMillis = millis();
     }

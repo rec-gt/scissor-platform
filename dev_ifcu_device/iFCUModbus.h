@@ -52,8 +52,9 @@ public:
 
       if (this->taskNo == 2) {
         this->taskNo = 0;
+      } else {
+        this->taskNo++;
       }
-      this->taskNo++;
 
       this->prevMillis = millis();
     }

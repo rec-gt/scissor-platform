@@ -25,22 +25,11 @@ void loop() {
   // if (!mDNSService.isConnected()) {
   //   return;
   // }
-
-  // ifcuModbus.handleGetAndSetHR();
-  // delay(500);
-
+  
   while (Serial.available()) {
     char c = Serial.read();
     QUEUE += c;
   }
 
-
-  ifcuModbus.readDataFromDevice();
-  delay(1000);
-  Serial.println(QUEUE);
-  ifcuModbus.syncWithQueue();
-  Serial.println(QUEUE);
-  delay(1000);
-  ifcuModbus.writeDataToDevice();
-  delay(1000);
+  ifcuModbus.loop()();
 }

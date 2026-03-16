@@ -13,6 +13,7 @@ private:
   uint16_t prevMillis = millis();
   byte errMsg = 0;
   bool writeDataChanged = false;
+  byte taskNo = 0;
 
   void copyArr(uint16_t *arr1, uint16_t *arr2, size_t size) {
     for (size_t i = 0; i < size; i++) {
@@ -35,6 +36,27 @@ public:
     Serial2.begin(9600, SERIAL_8N1, RXD2, TXD2);
     mbNode.begin(IFCU_SLAVE_ID, Serial2);
     delay(100);
+  }
+
+  void loop() {
+    if (millis() - this->prevMillis > 333) {
+      if (this->taskNo == 0) {
+        this->readDataFromDevice();
+      } else if (this->taskNo == 1) {
+        Serial.println(QUEUE);
+        this->syncWithQueue();
+        Serial.println(QUEUE);
+      } else if (this->taskNo == 2) {
+        this->writeDataToDevice();
+      }
+
+      this->taskNo++;
+      if (this->taskNo == 2) {
+        this->taskNo = 0;
+      }
+
+      this->prevMillis = millis();
+    }
   }
 
   void readDataFromDevice() {

@@ -53,7 +53,7 @@ uint16_t HR_DATABASE[HR_SIZE] = {};
 
 String QUEUE = "";
 uint16_t READ_DATA[HR_SIZE] = {};
-uint16_t TMP_DATA[HR_SIZE] = {};
-uint16_t WRITE_DATA[HR_SIZE] = {};
+uint16_t TMP_DATA[4] = {};
+uint16_t WRITE_DATA[4] = {};
 
 #endif

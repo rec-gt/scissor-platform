@@ -50,17 +50,9 @@ public:
         rs485SerialRecv += c;
       }
       if (c == '\r') {
-        this->answer();
+        Serial.print(c);
         this->clear();
       }
-    }
-  }
-
-  void answer() {
-    int idx = rs485SerialRecv.indexOf(F("AT"));
-
-    if (idx > -1) {
-      this->printlnFlush(F("[Hello from REC-GT]"));
     }
   }
 

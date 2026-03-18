@@ -22,6 +22,8 @@ public:
     serverPath.concat(READ_DATA[4]);
     serverPath.concat(F("&setTemp="));
     serverPath.concat(READ_DATA[6]);
+    serverPath.concat(F("&roomTemp="));
+    serverPath.concat(READ_DATA[5]);
     serverPath.concat(F("&isConn="));
     serverPath.concat(IS_CONNECT);
     Serial.println(serverPath);

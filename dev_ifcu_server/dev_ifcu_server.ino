@@ -3,12 +3,12 @@
 
 String jsonString = "";
 
-const int MAX_ROWS = 9;
-const int MAX_COLUMNS = 10;
+const int MAX_ROWS = 10;
+const int MAX_COLUMNS = 9;
 
 String database[MAX_ROWS][MAX_COLUMNS] = {
-  { "ifcu-001", "ABC", "", "", "", "", "", "" },
-  { "ifcu-002", "ABC", "", "", "", "", "", "" },
+  { "ifcu-001", "", "", "", "", "", "", "", "" },
+  { "ifcu-002", "", "", "", "", "", "", "", "" },
 };
 
 String* findRowByKey(String key) {
@@ -21,13 +21,13 @@ String* findRowByKey(String key) {
 }
 
 String convert2DArrayToJSON() {
-  jsonString = "\"[";
+  jsonString = "[";
   for (int i = 0; i < MAX_ROWS; i++) {
     jsonString += "[";
     for (int j = 0; j < MAX_COLUMNS; j++) {
-      jsonString += '\'';
+      jsonString += '\"';
       jsonString += database[i][j];
-      jsonString += '\'';
+      jsonString += '\"';
       if (j < MAX_COLUMNS - 1) {
         jsonString += ",";
       }
@@ -38,33 +38,10 @@ String convert2DArrayToJSON() {
     }
   }
 
-  jsonString += "]\"";
+  jsonString += "]";
   return jsonString;
 }
 
-void updateRowByKey(String id, String onOff, String mode, String speed, String setTemp, String isConn) {
-  String* row = findRowByKey(id);
-  if (row != nullptr) {
-    row[2] = onOff;
-    row[3] = mode;
-    row[4] = speed;
-    row[5] = setTemp;
-    row[6] = isConn;
-    Serial.println("Row updated successfully!");
-  } else {
-    Serial.println("Key not found, cannot update!");
-  }
-
-  Serial.println("Data after modification:");
-  for (int i = 0; i < MAX_ROWS; i++) {
-    for (int j = 0; j < MAX_COLUMNS; j++) {
-      Serial.print(database[i][j] + " ");
-    }
-    Serial.println();
-  }
-}
-
-// Replace with your network credentials
 const char* ssid = "REC Guest - 16F";
 const char* password = "guest@@2022";
 
@@ -74,26 +51,23 @@ WebServer server(80);
 // Function to handle the /device/get/ endpoint
 void handleDeviceGet() {
   // Check if parameters exist in the request
-  if (server.hasArg("id") && server.hasArg("onOff") && server.hasArg("mode") && server.hasArg("speed") && server.hasArg("setTemp") && server.hasArg("isConn")) {
+  if (server.hasArg("id")) {
     String id = server.arg("id");
     String onOff = server.arg("onOff");
     String mode = server.arg("mode");
     String speed = server.arg("speed");
     String setTemp = server.arg("setTemp");
+    String roomTemp = server.arg("roomTemp");
     String isConn = server.arg("isConn");
-
-    // Create a response message
-    String response = "Received parameters:\n";
-    response += "id: " + id + "\n";
-    response += "mode: " + mode + "\n";
-    response += "speed: " + speed + "\n";
-    response += "setTemp: " + setTemp + "\n";
-
-    // modify database
-    updateRowByKey(id, onOff, mode, speed, setTemp, isConn);
 
     String* row = findRowByKey(id);
     if (row != nullptr) {
+      row[2] = onOff;
+      row[3] = mode;
+      row[4] = speed;
+      row[5] = setTemp;
+      row[6] = roomTemp;
+      row[7] = isConn;
       server.send(200, "text/plain", row[1]);
       row[1] = "";
     } else {
@@ -125,7 +99,7 @@ void handleBrowserSet() {
 
 void handleBrowserGet() {
   convert2DArrayToJSON();
-  server.send(200, "text/plain", jsonString);
+  server.send(200, "application/json", jsonString);
 }
 
 void setup() {
@@ -141,6 +115,8 @@ void setup() {
   }
   Serial.println("\nWi-Fi connected. IP Address: " + WiFi.localIP().toString());
 
+
+  server.enableCORS();
   // Define the route and bind it to the handler function
   server.on("/device/get", HTTP_GET, handleDeviceGet);
   server.on("/browser/set", HTTP_GET, handleBrowserSet);

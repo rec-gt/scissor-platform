@@ -1,6 +1,8 @@
 #include <WiFi.h>
 #include <WebServer.h>
 
+String jsonString = "";
+
 const int MAX_ROWS = 9;
 const int MAX_COLUMNS = 10;
 
@@ -16,6 +18,26 @@ String* findRowByKey(String key) {
     }
   }
   return nullptr;
+}
+
+String convert2DArrayToJSON() {
+  jsonString = "[";
+  for (int i = 0; i < MAX_ROWS; i++) {
+    jsonString += "[";
+    for (int j = 0; j < MAX_COLUMNS; j++) {
+      jsonString += database[i][j];
+      if (j < MAX_COLUMNS - 1) {
+        jsonString += ",";
+      }
+    }
+    jsonString += "]";
+    if (i < MAX_ROWS - 1) {
+      jsonString += ",";
+    }
+  }
+
+  jsonString += "]";
+  return jsonString;
 }
 
 void updateRowByKey(String id, String onOff, String mode, String speed, String setTemp, String isConn) {
@@ -99,6 +121,11 @@ void handleBrowserSet() {
   }
 }
 
+void handleBrowserGet() {
+  convert2DArrayToJSON();
+  server.send(200, "text/plain", jsonString);
+}
+
 void setup() {
   // Start the Serial connection
   Serial.begin(115200);
@@ -115,6 +142,7 @@ void setup() {
   // Define the route and bind it to the handler function
   server.on("/device/get", HTTP_GET, handleDeviceGet);
   server.on("/browser/set", HTTP_GET, handleBrowserSet);
+  server.on("/browser/get", HTTP_GET, handleBrowserGet);
 
   // Start the server
   server.begin();

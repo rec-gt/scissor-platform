@@ -10,7 +10,7 @@ uint8_t result;
 
 class iFCUModbus {
 private:
-  uint16_t prevMillis = millis();
+  uint32_t prevMillis = millis();
   byte errMsg = 0;
   bool writeDataChanged = false;
   byte taskNo = 0;
@@ -72,10 +72,10 @@ public:
       }
 
       this->errMsg = 0;
-      this->deviceDisconnected = false;
+      IS_CONNECT = true;
     } else {
       this->errMsg = 1;
-      this->deviceDisconnected = true;
+      IS_CONNECT = false;
       Serial.println("Cannot Fetch Device Data");
     }
   }
@@ -153,10 +153,10 @@ public:
     result = mbNode.writeMultipleRegisters(40000, 5);
     if (result == mbNode.ku8MBSuccess) {
       this->errMsg = 0;
-      this->deviceDisconnected = false;
+      IS_CONNECT = true;
     } else {
       this->errMsg = 1;
-      this->deviceDisconnected = true;
+      IS_CONNECT = false;
       Serial.println("Cannot Write Data to Device");
     }
   }

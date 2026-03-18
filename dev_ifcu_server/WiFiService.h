@@ -11,9 +11,9 @@ private:
     /* ===== WiFi Connected ===== */
     if (WiFi.status() == WL_CONNECTED) {
       wifiConnStatus = WIFI_CONNECTED;
-      // Serial.println("WiFi connected..!");
-      // Serial.print("Got IP: ");
-      // Serial.println(WiFi.localIP());
+      Serial.println("WiFi connected..!");
+      Serial.print("Got IP: ");
+      Serial.println(WiFi.localIP());
     } else {
       /* ===== WiFi Disconnected ===== */
       if (wifiConnStatus == WIFI_DISCONNECTED) {

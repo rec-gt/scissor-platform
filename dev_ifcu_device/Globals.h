@@ -3,10 +3,10 @@
 #define GLOBALS_H
 #include <ModbusMaster.h>
 #include <HTTPClient.h>
+#include <WiFi.h>
 
 /* === System Config === */
-byte DEVICE_ID = 0;
-
+String DEVICE_NAME = "IFCU-001";
 
 /* === WiFi Service === */
 const char* WIFI_SSID = "REC Guest - 16F";  // Enter SSID here
@@ -42,10 +42,14 @@ HTTPClient http;
 String httpReqGetHR = "";
 String httpReqSetHR = "";
 
+String serverName = "http://api.example.com/device/get";
+String serverPath = "";
+
 /* === Modbus Service === */
 byte IFCU_SLAVE_ID = 1;
 ModbusMaster mbNode;
 
+/* === iFCU Parameters === */
 constexpr byte IR_SIZE = 17;
 constexpr byte HR_SIZE = 17;
 uint16_t IR_DATABASE[IR_SIZE] = {};
@@ -55,5 +59,6 @@ String QUEUE = "";
 uint16_t READ_DATA[HR_SIZE] = {};
 uint16_t TMP_DATA[4] = {};
 uint16_t WRITE_DATA[4] = {};
+bool IS_CONNECT = false;
 
 #endif

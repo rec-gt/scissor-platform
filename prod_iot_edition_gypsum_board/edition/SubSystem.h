@@ -28,7 +28,7 @@ Sensor s14(A13);
 Sensor s15(A14);
 Sensor s16(A15);
 
-timer mbTimer;
+Timer mbTimer;
 
 class SubSystem {
 public:
@@ -57,6 +57,64 @@ public:
         }
       }
     }
+  }
+
+  void buildAIPayload(
+    uint16_t reading1,
+    uint16_t reading2,
+    uint16_t reading3,
+    uint16_t reading4,
+    uint16_t reading5,
+    uint16_t reading6,
+    uint16_t reading7,
+    uint16_t reading8,
+    uint16_t reading9,
+    uint16_t reading10,
+    uint16_t reading11,
+    uint16_t reading12,
+    uint16_t reading13,
+    uint16_t reading14,
+    uint16_t reading15,
+    uint16_t reading16,
+    uint16_t temp,
+    uint16_t moisture) {
+    AIPayload = F("[");
+    AIPayload += reading1;
+    AIPayload += F(",");
+    AIPayload += reading2;
+    AIPayload += F(",");
+    AIPayload += reading3;
+    AIPayload += F(",");
+    AIPayload += reading4;
+    AIPayload += F(",");
+    AIPayload += reading5;
+    AIPayload += F(",");
+    AIPayload += reading6;
+    AIPayload += F(",");
+    AIPayload += reading7;
+    AIPayload += F(",");
+    AIPayload += reading8;
+    AIPayload += F(",");
+    AIPayload += reading9;
+    AIPayload += F(",");
+    AIPayload += reading10;
+    AIPayload += F(",");
+    AIPayload += reading11;
+    AIPayload += F(",");
+    AIPayload += reading12;
+    AIPayload += F(",");
+    AIPayload += reading13;
+    AIPayload += F(",");
+    AIPayload += reading14;
+    AIPayload += F(",");
+    AIPayload += reading15;
+    AIPayload += F(",");
+    AIPayload += reading16;
+    AIPayload += F(",");
+    AIPayload += temp;
+    AIPayload += F(",");
+    AIPayload += moisture;
+    AIPayload += F("]");
   }
 
   void loop() {
@@ -116,6 +174,24 @@ public:
 
     /*=== Change IoT Payload ===*/
     mainSystem.buildPayloads();
+    this->buildAIPayload(reading1,
+                         reading2,
+                         reading3,
+                         reading4,
+                         reading5,
+                         reading6,
+                         reading7,
+                         reading8,
+                         reading9,
+                         reading10,
+                         reading11,
+                         reading12,
+                         reading13,
+                         reading14,
+                         reading15,
+                         reading16,
+                         temp,
+                         moisture);
     iot.buildMsg(DIPayload, DOPayload, AIPayload, AOPayload);
   }
 

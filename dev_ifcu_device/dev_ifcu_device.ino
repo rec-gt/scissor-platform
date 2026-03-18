@@ -1,29 +1,33 @@
-#include <HTTPClient.h>
 #include "Globals.h"
 #include "iFCUModbus.h"
-// #include "WiFiService.h"
+#include "WiFiService.h"
+#include "HttpService.h"
+#include "Utils.h"
 
-// WiFiService wifiService;
+Utils utils;
+
+WiFiService wifiService;
 
 iFCUModbus ifcuModbus;
+
+HttpService httpService;
 
 void setup() {
   Serial.begin(115200);
   ifcuModbus.init();
+  httpService.init();
 }
 
 void loop() {
-  // wifiService.loop();
-  // if (!wifiService.isConnected()) {
-  //   return;
-  // }
+  wifiService.loop();
 
-  while (Serial.available()) {
-    char c = Serial.read();
-    QUEUE += c;
+  if (!wifiService.isConnected()) {
+    return;
   }
 
-  // http.loop(); 
+  utils.listenSerial();
 
   ifcuModbus.loop();
+
+  httpService.loop();
 }

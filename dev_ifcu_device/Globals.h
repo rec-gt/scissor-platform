@@ -37,7 +37,6 @@ const char* gatewayHostname = "ifcuweb";
 String gatewayIPAddress = "";
 
 /* === HTTP Service === */
-HTTPClient http;
 
 String httpReqGetHR = "";
 String httpReqSetHR = "";

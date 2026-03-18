@@ -68,7 +68,7 @@ public:
       }
 
       for (size_t i = 0; i < HR_SIZE; i++) {
-        Serial.println(READ_DATA[i]);
+        // Serial.println(READ_DATA[i]);
       }
 
       this->errMsg = 0;

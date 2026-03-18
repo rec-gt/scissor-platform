@@ -4,11 +4,12 @@
 String jsonString = "";
 
 const int MAX_ROWS = 10;
-const int MAX_COLUMNS = 9;
+const int MAX_COLUMNS = 10;
 
+// { "id", "cmd", "onOff", "mode", "speed", "setTemp", "roomTemp", "isConn", "loading" ,"loadingCnt" },
 String database[MAX_ROWS][MAX_COLUMNS] = {
-  { "ifcu-001", "", "", "", "", "", "", "", "" },
-  { "ifcu-002", "", "", "", "", "", "", "", "" },
+  { "ifcu-001", "", "", "", "", "", "", "", "", "" },
+  { "ifcu-002", "", "", "", "", "", "", "", "", "" },
 };
 
 String* findRowByKey(String key) {
@@ -62,12 +63,32 @@ void handleDeviceGet() {
 
     String* row = findRowByKey(id);
     if (row != nullptr) {
+
       row[2] = onOff;
       row[3] = mode;
       row[4] = speed;
       row[5] = setTemp;
       row[6] = roomTemp;
       row[7] = isConn;
+
+      if (row[1] == "") {
+        if (row[9] == "5") {
+          row[9] = "4";
+        } else if (row[9] == "4") {
+          row[9] = "3";
+        } else if (row[9] == "3") {
+          row[9] = "2";
+        } else if (row[9] == "2") {
+          row[9] = "1";
+        } else if (row[9] == "1") {
+          row[9] = "0";
+        }
+
+        if (row[9] == "0") {
+          row[8] = "0";  // loading = false
+        }
+      }
+
       server.send(200, "text/plain", row[1]);
       row[1] = "";
     } else {
@@ -86,8 +107,10 @@ void handleBrowserSet() {
 
     String* row = findRowByKey(id);
     if (row != nullptr) {
-      row[1] = cmd;
-      server.send(200, "text/plain", "[" + row[2] + "]");
+      row[1] += cmd;
+      row[8] = "1";  // loading = true
+      row[9] = "5";
+      server.send(200, "text/plain", row[0]);
     } else {
       Serial.println("Key not found, cannot update!");
     }

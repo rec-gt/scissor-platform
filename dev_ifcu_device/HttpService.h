@@ -33,6 +33,7 @@ public:
     if (timer.autoTimeout(5000)) {
       this->buildPath();
       if (WiFi.status() == WL_CONNECTED) {
+        HTTPClient http;
         http.begin(serverPath.c_str());
         int httpResponseCode = http.GET();
 

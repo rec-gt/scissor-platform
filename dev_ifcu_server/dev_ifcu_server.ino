@@ -72,19 +72,14 @@ void handleDeviceGet() {
       row[7] = isConn;
 
       if (row[1] == "") {
-        if (row[9] == "5") {
-          row[9] = "4";
-        } else if (row[9] == "4") {
-          row[9] = "3";
-        } else if (row[9] == "3") {
-          row[9] = "2";
-        } else if (row[9] == "2") {
+
+        if (row[9] == "2") {
           row[9] = "1";
         } else if (row[9] == "1") {
-          row[9] = "0";
+          row[9] = "";
         }
 
-        if (row[9] == "0") {
+        if (row[9] == "") {
           row[8] = "0";  // loading = false
         }
       }
@@ -109,7 +104,7 @@ void handleBrowserSet() {
     if (row != nullptr) {
       row[1] += cmd;
       row[8] = "1";  // loading = true
-      row[9] = "5";
+      row[9] = "2";
       server.send(200, "text/plain", row[0]);
     } else {
       Serial.println("Key not found, cannot update!");

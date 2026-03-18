@@ -88,7 +88,8 @@ void handleBrowserSet() {
 
     String* row = findRowByKey(id);
     if (row != nullptr) {
-      server.send(200, "text/plain", row[2]);
+      row[1] = cmd;
+      server.send(200, "text/plain", "[" + row[2] + "]");
     } else {
       Serial.println("Key not found, cannot update!");
     }

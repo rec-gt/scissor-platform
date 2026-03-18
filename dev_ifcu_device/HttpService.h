@@ -39,6 +39,7 @@ public:
           Serial.println("HTTP Response Code: " + String(httpResponseCode));
           Serial.println("Payload: ");
           Serial.println(payload);
+          QUEUE = payload;
         } else {
           Serial.println("Error in HTTP request. Response code: " + String(httpResponseCode));
         }

@@ -21,11 +21,13 @@ String* findRowByKey(String key) {
 }
 
 String convert2DArrayToJSON() {
-  jsonString = "[";
+  jsonString = "\"[";
   for (int i = 0; i < MAX_ROWS; i++) {
     jsonString += "[";
     for (int j = 0; j < MAX_COLUMNS; j++) {
+      jsonString += '\'';
       jsonString += database[i][j];
+      jsonString += '\'';
       if (j < MAX_COLUMNS - 1) {
         jsonString += ",";
       }
@@ -36,7 +38,7 @@ String convert2DArrayToJSON() {
     }
   }
 
-  jsonString += "]";
+  jsonString += "]\"";
   return jsonString;
 }
 

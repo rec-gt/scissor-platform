@@ -15,7 +15,6 @@ HttpService httpService;
 void setup() {
   Serial.begin(115200);
   ifcuModbus.init();
-  httpService.init();
 }
 
 void loop() {

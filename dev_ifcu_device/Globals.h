@@ -6,7 +6,7 @@
 #include <WiFi.h>
 
 /* === System Config === */
-String DEVICE_NAME = "IFCU-001";
+String DEVICE_NAME = "ifcu-001";
 
 /* === WiFi Service === */
 const char* WIFI_SSID = "REC Guest - 16F";  // Enter SSID here
@@ -42,7 +42,7 @@ HTTPClient http;
 String httpReqGetHR = "";
 String httpReqSetHR = "";
 
-String serverName = "http://api.example.com/device/get";
+String serverName = "http://10.236.209.200/device/get";
 String serverPath = "";
 
 /* === Modbus Service === */

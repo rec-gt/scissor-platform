@@ -8,34 +8,44 @@ Timer timer;
 class HttpService {
 public:
   void init() {
-    http.begin(serverPath.c_str());
   }
 
   void buildPath() {
     serverPath = serverName;
-    serverName.concat(F("?id="));
-    serverName.concat(DEVICE_NAME);
-    serverName.concat(F("&onOff="));
-    serverName.concat(TMP_DATA[0]);
-    serverName.concat(F("&mode="));
-    serverName.concat(TMP_DATA[1]);
-    serverName.concat(F("&speed="));
-    serverName.concat(TMP_DATA[2]);
-    serverName.concat(F("&setTemp="));
-    serverName.concat(TMP_DATA[3]);
+    serverPath.concat(F("?id="));
+    serverPath.concat(DEVICE_NAME);
+    serverPath.concat(F("&onOff="));
+    serverPath.concat((READ_DATA[1] & (1 << 6)) ? 1 : 0);
+    serverPath.concat(F("&mode="));
+    serverPath.concat(READ_DATA[3]);
+    serverPath.concat(F("&speed="));
+    serverPath.concat(READ_DATA[4]);
+    serverPath.concat(F("&setTemp="));
+    serverPath.concat(READ_DATA[6]);
+    serverPath.concat(F("&isConn="));
+    serverPath.concat(IS_CONNECT);
+    Serial.println(serverPath);
   }
 
   void loop() {
     if (timer.autoTimeout(5000)) {
+      this->buildPath();
       if (WiFi.status() == WL_CONNECTED) {
-        if (http.connected()) {
-          int httpResponseCode = http.GET();
-          if (httpResponseCode > 0) {
-            String payload = http.getString();
-            Serial.println(payload);
-          }
-          http.end();
+        http.begin(serverPath.c_str());
+        int httpResponseCode = http.GET();
+
+        if (httpResponseCode > 0) {
+          String payload = http.getString();
+          Serial.println("HTTP Response Code: " + String(httpResponseCode));
+          Serial.println("Payload: ");
+          Serial.println(payload);
+        } else {
+          Serial.println("Error in HTTP request. Response code: " + String(httpResponseCode));
         }
+
+        http.end();
+      } else {
+        Serial.println("wifi not connected");
       }
     }
   }

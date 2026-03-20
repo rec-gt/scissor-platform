@@ -25,7 +25,7 @@ public:
     serverPath.concat(READ_DATA[6]);
     serverPath.concat(F("&roomTemp="));
     serverPath.concat(READ_DATA[5]);
-    serverPath.concat(F("&isSynced="));
+    serverPath.concat(F("&isDeviceSynced="));
     serverPath.concat(isSynced);
     Serial.println(serverPath);
   }

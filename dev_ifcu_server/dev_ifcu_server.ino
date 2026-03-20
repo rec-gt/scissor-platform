@@ -15,7 +15,7 @@ public:
   String speed;
   String setTemp;
   String roomTemp;
-  String isSynced;
+  String isDeviceSynced;
   uint32_t lastCommAt;
   bool isConnected;
 
@@ -27,7 +27,7 @@ public:
          String speed = "",
          String setTemp = "",
          String roomTemp = "",
-         String isSynced = "",
+         String isDeviceSynced = "",
          uint32_t lastCommAt = millis(),
          bool isConnected = 0)
     : id(id),
@@ -38,7 +38,7 @@ public:
       speed(speed),
       setTemp(setTemp),
       roomTemp(roomTemp),
-      isSynced(isSynced),
+      isDeviceSynced(isDeviceSynced),
       lastCommAt(lastCommAt),
       isConnected(isConnected) {
   }
@@ -108,7 +108,7 @@ public:
       jsonString += ",";
 
       jsonString += '\"';
-      jsonString += (this->recordDatabase[i]).isSynced;
+      jsonString += (this->recordDatabase[i]).isDeviceSynced;
       jsonString += '\"';
       jsonString += ",";
 
@@ -145,7 +145,7 @@ void handleDeviceGet() {
     String speed = server.arg("speed");
     String setTemp = server.arg("setTemp");
     String roomTemp = server.arg("roomTemp");
-    String isSynced = server.arg("isSynced");
+    String isDeviceSynced = server.arg("isDeviceSynced");
 
     Record* record = recordDB.findDevice(id);
     if (record != nullptr) {
@@ -154,14 +154,10 @@ void handleDeviceGet() {
       record->speed = speed;
       record->setTemp = setTemp;
       record->roomTemp = roomTemp;
-      record->isSynced = isSynced;
+      record->isDeviceSynced = isDeviceSynced;
 
-      if (millis() - record->lastCommAt <= 10000) {
-        record->lastCommAt = millis();
-        record->isConnected = true;
-      } else {
-        record->isConnected = false;
-      }
+      record->isConnected = (millis() - record->lastCommAt <= 10000);
+      record->lastCommAt = millis();
 
       server.send(200, "text/plain", record->cmd);
       record->cmd = "";
@@ -181,6 +177,7 @@ void handleBrowserSet() {
     Record* record = recordDB.findDevice(id);
     if (record != nullptr) {
       record->cmd += cmd;
+      record->isDeviceSynced = false;
       server.send(200, "text/plain", record->id);
     } else {
       Serial.println("ID not found, cannot update!");

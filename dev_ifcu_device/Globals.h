@@ -21,7 +21,7 @@ enum WIFI_CONN_STATUS {
 byte wifiConnStatus = WIFI_DISCONNECTED;
 
 /* === HTTP Service === */
-String serverName = "http://10.236.209.200/device/get";
+String serverName = "http://10.236.209.246/device/get";
 String serverPath = "";
 
 /* === Modbus Service === */

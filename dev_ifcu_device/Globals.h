@@ -32,8 +32,11 @@ uint8_t mbResult = mbNode.ku8MBSuccess;
 /* === iFCU Parameters === */
 constexpr byte IR_SIZE = 10;
 uint16_t READ_DATA[IR_SIZE] = {};
-uint16_t WRITE_DATA[4] = {};
-uint16_t WRITE_DATA_BAK[4] = {};
+
+constexpr byte WRITE_DATA_SIZE = 6;
+uint16_t WRITE_DATA[WRITE_DATA_SIZE] = {};
+uint16_t WRITE_DATA_CMP[WRITE_DATA_SIZE] = {};
+
 String QUEUE = "";
 bool isSynced = false;  // remote ifcu status vs current ifcu status
 

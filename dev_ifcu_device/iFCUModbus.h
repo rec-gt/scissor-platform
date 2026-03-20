@@ -19,12 +19,29 @@ private:
     }
   }
 
+  bool compareArr(uint16_t *arr1, uint16_t *arr2, size_t size) {
+    for (size_t i = 0; i < size; i++) {
+      if (arr2[i] != arr1[i]) {
+        return false;
+      }
+    }
+    return true;
+  }
+
   bool hasQueue() {
     return QUEUE != F("");
   }
 
   void freeQueue() {
     QUEUE = F("");
+  }
+
+  void printModbusData() {
+    Serial.println("=== Data read from MODBUS ===");
+    for (size_t i = 0; i < IR_SIZE; i++) {
+      Serial.println(READ_DATA[i]);
+    }
+    Serial.println("=== End of read ===");
   }
 
   void printReadData() {
@@ -36,9 +53,9 @@ private:
   }
 
   void printWriteDataBak() {
-    Serial.println("=== WRITE_DATA_BAK ===");
+    Serial.println("=== WRITE_DATA_CMP ===");
     for (size_t i = 0; i < 4; i++) {
-      Serial.println(WRITE_DATA_BAK[i]);
+      Serial.println(WRITE_DATA_CMP[i]);
     }
   }
 
@@ -78,40 +95,6 @@ public:
     }
   }
 
-  void checkIsSynced() {
-    this->printReadData();
-
-    if ((((READ_DATA[1] & (1 << 6)) ? 1 : 0) == WRITE_DATA_BAK[0]) && (READ_DATA[3] == WRITE_DATA_BAK[1]) && (READ_DATA[4] == WRITE_DATA_BAK[2]) && (READ_DATA[6] == WRITE_DATA_BAK[3])) {
-      isSynced = true;
-    } else {
-      isSynced = false;
-    }
-
-    /*=== Force Sync ===*/
-    if (!isSynced) {
-      this->unSyncedCnt++;
-      if (this->unSyncedCnt >= 5) {
-        WRITE_DATA[0] = (READ_DATA[1] & (1 << 6)) ? 1 : 0;  // onOff
-        WRITE_DATA[1] = READ_DATA[3];                       // mode
-        WRITE_DATA[2] = READ_DATA[4];                       // speed
-        WRITE_DATA[3] = READ_DATA[6];                       // setTemp
-
-        WRITE_DATA_BAK[0] = (READ_DATA[1] & (1 << 6)) ? 1 : 0;  // onOff
-        WRITE_DATA_BAK[1] = READ_DATA[3];                       // mode
-        WRITE_DATA_BAK[2] = READ_DATA[4];                       // speed
-        WRITE_DATA_BAK[3] = READ_DATA[6];                       // setTemp
-
-        this->unSyncedCnt = 0;
-      }
-    }
-
-
-    Serial.print("isSynced: ");
-    Serial.println(isSynced);
-
-    this->printWriteDataBak();
-  }
-
   void readDataFromDevice() {
     mbResult = mbNode.readInputRegisters(30000, IR_SIZE);
     if (this->mbSuccess()) {
@@ -119,28 +102,34 @@ public:
         READ_DATA[i] = mbNode.getResponseBuffer(i);
       }
 
-      /*=== Debug Use ===*/
-      // Serial.println("=== Data read from MODBUS ===");
-      // for (size_t i = 0; i < IR_SIZE; i++) {
-      //   Serial.println(READ_DATA[i]);
-      // }
-      // Serial.println("=== End of read ===");
+      /*=== Init WRITE_DATA ===*/
+      WRITE_DATA[0] = (READ_DATA[1] & (1 << 6)) ? 1 : 0;  // onOff
+      WRITE_DATA[1] = READ_DATA[3];                       // mode
+      WRITE_DATA[2] = READ_DATA[4];                       // speed
+      WRITE_DATA[3] = READ_DATA[6];                       // setTemp
+      WRITE_DATA[4] = READ_DATA[9];                       // max adjustable setTemp
+      WRITE_DATA[5] = READ_DATA[10];                      // min adjustable setTemp
 
     } else {
       Serial.println("Cannot Fetch Device Data");
     }
   }
 
+  void checkIsSynced() {
+    isSynced = this->compareArr(WRITE_DATA, WRITE_DATA_CMP, WRITE_DATA_SIZE);
+
+    /*=== Protection: Force Sync after 5 conflict ===*/
+    if (!isSynced) {
+      this->unSyncedCnt++;
+      if (this->unSyncedCnt >= 5) {
+        this->copyArr(WRITE_DATA, WRITE_DATA_CMP, WRITE_DATA_SIZE);
+        this->unSyncedCnt = 0;
+      }
+    }
+  }
+
   void syncWithQueue() {
     if (this->hasQueue()) {
-      /*=== Init WRITE_DATA ===*/
-      WRITE_DATA[0] = (READ_DATA[1] & (1 << 6)) ? 1 : 0;  // onOff
-      WRITE_DATA[1] = READ_DATA[3];                       // mode
-      WRITE_DATA[2] = READ_DATA[4];                       // speed
-      WRITE_DATA[3] = READ_DATA[6];                       // setTemp
-      uint16_t maxAdjTemp = READ_DATA[9];                 // max adjustable setTemp
-      uint16_t minAdjTemp = READ_DATA[10];                // min adjustable setTemp
-
       /*=== Manipulation WRITE_DATA ===*/
       for (int i = 0; i < QUEUE.length(); i++) {
         char c = QUEUE[i];
@@ -172,18 +161,18 @@ public:
         } else if (c == 'H') {
           WRITE_DATA[2] = 2;
         } else if (c == 'I') {
-          if (WRITE_DATA[3] + 50 <= maxAdjTemp) {
+          if (WRITE_DATA[3] + 50 <= WRITE_DATA[4]) {
             WRITE_DATA[3] += 50;
           }
         } else if (c == 'J') {
-          if (minAdjTemp <= WRITE_DATA[3] - 50) {
+          if (WRITE_DATA[5] <= WRITE_DATA[3] - 50) {
             WRITE_DATA[3] -= 50;
           }
         }
       }
 
-      /*=== Make Copy of WRITE_DATA ===*/
-      this->copyArr(WRITE_DATA, WRITE_DATA_BAK, 4);
+      /*=== Make WRITE_DATA_CMP for sync ===*/
+      this->copyArr(WRITE_DATA, WRITE_DATA_CMP, WRITE_DATA_SIZE);
 
       /*=== Finish ===*/
       this->writeDataChanged = true;

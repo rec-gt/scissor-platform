@@ -4,54 +4,140 @@
 String jsonString = "";
 
 const int MAX_ROWS = 10;
-const int MAX_COLUMNS = 10;
 
-// { "id", "cmd", "onOff", "mode", "speed", "setTemp", "roomTemp", "isConn", "loading" ,"loadingCnt" },
-String database[MAX_ROWS][MAX_COLUMNS] = {
-  { "ifcu-001", "", "", "", "", "", "", "", "", "" },
-  { "ifcu-002", "", "", "", "", "", "", "", "", "" },
+class Record {
+public:
+  String id;
+  String name;
+  String cmd;
+  String onOff;
+  String mode;
+  String speed;
+  String setTemp;
+  String roomTemp;
+  String isSynced;
+  uint32_t lastCommAt;
+  bool isConnected;
+
+  Record(String id = "",
+         String name = "",
+         String cmd = "",
+         String onOff = "",
+         String mode = "",
+         String speed = "",
+         String setTemp = "",
+         String roomTemp = "",
+         String isSynced = "",
+         uint32_t lastCommAt = millis(),
+         bool isConnected = 0)
+    : id(id),
+      name(name),
+      cmd(cmd),
+      onOff(onOff),
+      mode(mode),
+      speed(speed),
+      setTemp(setTemp),
+      roomTemp(roomTemp),
+      isSynced(isSynced),
+      lastCommAt(lastCommAt),
+      isConnected(isConnected) {
+  }
 };
 
-String* findRowByKey(String key) {
-  for (int i = 0; i < MAX_COLUMNS; i++) {
-    if (database[i][0] == key) {
-      return database[i];
-    }
-  }
-  return nullptr;
-}
+class RecordDB {
+private:
+  Record recordDatabase[MAX_ROWS] = {
+    Record("ifcu-001", "IFCU-001", "", "", "", "", "", "", "", millis(), false),
+    Record("ifcu-002", "IFCU-002", "", "", "", "", "", "", "", millis(), false),
+  };
+public:
+  RecordDB() {}
 
-String convert2DArrayToJSON() {
-  jsonString = "[";
-  for (int i = 0; i < MAX_ROWS; i++) {
-    jsonString += "[";
-    for (int j = 0; j < MAX_COLUMNS; j++) {
+  Record* findDevice(String id) {
+    for (int i = 0; i < MAX_ROWS; i++) {
+      if ((this->recordDatabase[i]).id == id) {
+        return &this->recordDatabase[i];
+      }
+    }
+    return nullptr;
+  }
+
+  String toJSON() {
+    jsonString = "[";
+    for (size_t i = 0; i < MAX_ROWS; i++) {
+      jsonString += "[";
+
       jsonString += '\"';
-      jsonString += database[i][j];
+      jsonString += (this->recordDatabase[i]).id;
       jsonString += '\"';
-      if (j < MAX_COLUMNS - 1) {
+      jsonString += ",";
+
+      jsonString += '\"';
+      jsonString += (this->recordDatabase[i]).name;
+      jsonString += '\"';
+      jsonString += ",";
+
+      jsonString += '\"';
+      jsonString += (this->recordDatabase[i]).cmd;
+      jsonString += '\"';
+      jsonString += ",";
+
+      jsonString += '\"';
+      jsonString += (this->recordDatabase[i]).onOff;
+      jsonString += '\"';
+      jsonString += ",";
+
+      jsonString += '\"';
+      jsonString += (this->recordDatabase[i]).mode;
+      jsonString += '\"';
+      jsonString += ",";
+
+      jsonString += '\"';
+      jsonString += (this->recordDatabase[i]).speed;
+      jsonString += '\"';
+      jsonString += ",";
+
+      jsonString += '\"';
+      jsonString += (this->recordDatabase[i]).setTemp;
+      jsonString += '\"';
+      jsonString += ",";
+
+      jsonString += '\"';
+      jsonString += (this->recordDatabase[i]).roomTemp;
+      jsonString += '\"';
+      jsonString += ",";
+
+      jsonString += '\"';
+      jsonString += (this->recordDatabase[i]).isSynced;
+      jsonString += '\"';
+      jsonString += ",";
+
+      jsonString += '\"';
+      jsonString += (this->recordDatabase[i]).isConnected;
+      jsonString += '\"';
+
+      jsonString += "]";
+
+      if (i < MAX_ROWS - 1) {
         jsonString += ",";
       }
     }
-    jsonString += "]";
-    if (i < MAX_ROWS - 1) {
-      jsonString += ",";
-    }
-  }
 
-  jsonString += "]";
-  return jsonString;
-}
+    jsonString += "]";
+
+    Serial.println(jsonString);
+    return jsonString;
+  }
+};
+
+RecordDB recordDB;
 
 const char* ssid = "REC Guest - 16F";
 const char* password = "guest@@2022";
 
-// Create a WebServer object on port 80
 WebServer server(80);
 
-// Function to handle the /device/get/ endpoint
 void handleDeviceGet() {
-  // Check if parameters exist in the request
   if (server.hasArg("id")) {
     String id = server.arg("id");
     String onOff = server.arg("onOff");
@@ -59,38 +145,30 @@ void handleDeviceGet() {
     String speed = server.arg("speed");
     String setTemp = server.arg("setTemp");
     String roomTemp = server.arg("roomTemp");
-    String isConn = server.arg("isConn");
+    String isSynced = server.arg("isSynced");
 
-    String* row = findRowByKey(id);
-    if (row != nullptr) {
+    Record* record = recordDB.findDevice(id);
+    if (record != nullptr) {
+      record->onOff = onOff;
+      record->mode = mode;
+      record->speed = speed;
+      record->setTemp = setTemp;
+      record->roomTemp = roomTemp;
+      record->isSynced = isSynced;
 
-      row[2] = onOff;
-      row[3] = mode;
-      row[4] = speed;
-      row[5] = setTemp;
-      row[6] = roomTemp;
-      row[7] = isConn;
-
-      if (row[1] == "") {
-
-        if (row[9] == "2") {
-          row[9] = "1";
-        } else if (row[9] == "1") {
-          row[9] = "";
-        }
-
-        if (row[9] == "") {
-          row[8] = "0";  // loading = false
-        }
+      if (millis() - record->lastCommAt <= 10000) {
+        record->lastCommAt = millis();
+        record->isConnected = true;
+      } else {
+        record->isConnected = false;
       }
 
-      server.send(200, "text/plain", row[1]);
-      row[1] = "";
+      server.send(200, "text/plain", record->cmd);
+      record->cmd = "";
     } else {
-      Serial.println("Key not found, cannot update!");
+      Serial.println("ID not found, cannot update!");
     }
   } else {
-    // If parameters are missing, send an error response
     server.send(400, "text/plain", "Missing parameters.");
   }
 }
@@ -100,24 +178,20 @@ void handleBrowserSet() {
     String id = server.arg("id");
     String cmd = server.arg("cmd");
 
-    String* row = findRowByKey(id);
-    if (row != nullptr) {
-      row[1] += cmd;
-      row[8] = "1";  // loading = true
-      row[9] = "2";
-      server.send(200, "text/plain", row[0]);
+    Record* record = recordDB.findDevice(id);
+    if (record != nullptr) {
+      record->cmd += cmd;
+      server.send(200, "text/plain", record->id);
     } else {
-      Serial.println("Key not found, cannot update!");
+      Serial.println("ID not found, cannot update!");
     }
   } else {
-    // If parameters are missing, send an error response
     server.send(400, "text/plain", "Missing parameters.");
   }
 }
 
 void handleBrowserGet() {
-  convert2DArrayToJSON();
-  server.send(200, "application/json", jsonString);
+  server.send(200, "application/json", recordDB.toJSON());
 }
 
 void setup() {

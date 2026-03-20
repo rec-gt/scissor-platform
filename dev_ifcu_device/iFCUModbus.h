@@ -11,6 +11,7 @@ private:
   uint32_t prevMillis = millis();
   bool writeDataChanged = false;
   byte taskSwitch = 0;
+  byte unSyncedCnt = 0;
 
   void copyArr(uint16_t *arr1, uint16_t *arr2, size_t size) {
     for (size_t i = 0; i < size; i++) {
@@ -24,6 +25,14 @@ private:
 
   void freeQueue() {
     QUEUE = F("");
+  }
+
+  void printReadData() {
+    Serial.println("=== READ_DATA ===");
+    Serial.println((READ_DATA[1] & (1 << 6)) ? 1 : 0);
+    Serial.println(READ_DATA[3]);
+    Serial.println(READ_DATA[4]);
+    Serial.println(READ_DATA[6]);
   }
 
   void printWriteDataBak() {
@@ -41,8 +50,6 @@ private:
   }
 
 public:
-  bool deviceDisconnected = false;
-
   void init() {
     Serial2.begin(9600, SERIAL_8N1, RXD2, TXD2);
     mbNode.begin(IFCU_SLAVE_ID, Serial2);
@@ -72,6 +79,26 @@ public:
   }
 
   void checkIsSynced() {
+    if ((READ_DATA[1] & (1 << 6)) ? 1 : 0 == WRITE_DATA_BAK[0] && READ_DATA[3] == WRITE_DATA_BAK[1] && READ_DATA[4] == WRITE_DATA_BAK[2] && READ_DATA[6] == WRITE_DATA_BAK[3]) {
+      isSynced = true;
+    } else {
+      isSynced = false;
+    }
+
+    /*=== Rectify Sync ===*/
+    if (isSynced) {
+      this->unSyncedCnt = 0;
+    } else {
+      this->unSyncedCnt++;
+      if (unSyncedCnt >= 5) {
+        WRITE_DATA_BAK[0] = (READ_DATA[1] & (1 << 6)) ? 1 : 0;
+        WRITE_DATA_BAK[1] = READ_DATA[3];
+        WRITE_DATA_BAK[2] = READ_DATA[4];
+        WRITE_DATA_BAK[3] = READ_DATA[6];
+      }
+    }
+    Serial.print("isSynced: ");
+    Serial.println(isSynced);
   }
 
   void readDataFromDevice() {
@@ -82,11 +109,11 @@ public:
       }
 
       /*=== Debug Use ===*/
-      Serial.println("=== Data read from MODBUS ===");
-      for (size_t i = 0; i < IR_SIZE; i++) {
-        Serial.println(READ_DATA[i]);
-      }
-      Serial.println("=== End of read ===");
+      // Serial.println("=== Data read from MODBUS ===");
+      // for (size_t i = 0; i < IR_SIZE; i++) {
+      //   Serial.println(READ_DATA[i]);
+      // }
+      // Serial.println("=== End of read ===");
 
     } else {
       Serial.println("Cannot Fetch Device Data");

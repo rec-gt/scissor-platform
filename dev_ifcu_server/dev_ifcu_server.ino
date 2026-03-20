@@ -133,19 +133,17 @@ void setup() {
   }
   Serial.println("\nWi-Fi connected. IP Address: " + WiFi.localIP().toString());
 
-
   server.enableCORS();
-  // Define the route and bind it to the handler function
+
   server.on("/device/get", HTTP_GET, handleDeviceGet);
   server.on("/browser/set", HTTP_GET, handleBrowserSet);
   server.on("/browser/get", HTTP_GET, handleBrowserGet);
+  server.on("/", HTTP_GET, handleBrowserGet);
 
-  // Start the server
   server.begin();
   Serial.println("Web server started!");
 }
 
 void loop() {
-  // Handle incoming client requests
   server.handleClient();
 }

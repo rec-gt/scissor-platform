@@ -2,6 +2,7 @@
 #define HTTP_SERVICE_H
 
 #include "./Timer.h"
+#include "./iFCUModbus.h"
 
 Timer timer;
 
@@ -24,12 +25,18 @@ public:
     serverPath.concat(READ_DATA[6]);
     serverPath.concat(F("&roomTemp="));
     serverPath.concat(READ_DATA[5]);
-    serverPath.concat(F("&isConn="));
-    serverPath.concat(IS_CONNECT);
+    serverPath.concat(F("&isSynced="));
+    serverPath.concat(isSynced);
     Serial.println(serverPath);
   }
 
   void loop() {
+    /*=== Escape when iFCU Failure ===*/
+    if (!ifcuModbus.mbSuccess()) {
+      return;
+    }
+
+    /*=== 5s update ===*/
     if (timer.autoTimeout(5000)) {
       this->buildPath();
       if (WiFi.status() == WL_CONNECTED) {

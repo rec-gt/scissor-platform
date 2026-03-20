@@ -20,44 +20,21 @@ enum WIFI_CONN_STATUS {
 
 byte wifiConnStatus = WIFI_DISCONNECTED;
 
-/* === mDNS Service === */
-const char* mDNSHostname = "esp32";
-
-enum MDNS_CONN_STATUS {
-  MDNS_EMPTY,
-  MDNS_STARTED,
-  MDNS_PROBE,
-  MDNS_PROBE_FINISH,
-};
-
-byte mDNSStatus = MDNS_EMPTY;
-
-const char* gatewayHostname = "ifcuweb";
-
-String gatewayIPAddress = "";
-
 /* === HTTP Service === */
-
-String httpReqGetHR = "";
-String httpReqSetHR = "";
-
 String serverName = "http://10.236.209.200/device/get";
 String serverPath = "";
 
 /* === Modbus Service === */
 byte IFCU_SLAVE_ID = 1;
 ModbusMaster mbNode;
+uint8_t mbResult = mbNode.ku8MBSuccess;
 
 /* === iFCU Parameters === */
-constexpr byte IR_SIZE = 17;
-constexpr byte HR_SIZE = 17;
-uint16_t IR_DATABASE[IR_SIZE] = {};
-uint16_t HR_DATABASE[HR_SIZE] = {};
-
-String QUEUE = "";
-uint16_t READ_DATA[HR_SIZE] = {};
-uint16_t TMP_DATA[4] = {};
+constexpr byte IR_SIZE = 10;
+uint16_t READ_DATA[IR_SIZE] = {};
 uint16_t WRITE_DATA[4] = {};
-bool IS_CONNECT = false;
+uint16_t WRITE_DATA_BAK[4] = {};
+String QUEUE = "";
+bool isSynced = false;  // remote ifcu status vs current ifcu status
 
 #endif

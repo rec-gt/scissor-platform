@@ -6,14 +6,11 @@
 #define RXD2 16
 #define TXD2 17
 
-uint8_t result;
-
 class iFCUModbus {
 private:
   uint32_t prevMillis = millis();
-  byte errMsg = 0;
   bool writeDataChanged = false;
-  byte taskNo = 0;
+  byte taskSwitch = 0;
 
   void copyArr(uint16_t *arr1, uint16_t *arr2, size_t size) {
     for (size_t i = 0; i < size; i++) {
@@ -29,6 +26,20 @@ private:
     QUEUE = F("");
   }
 
+  void printWriteDataBak() {
+    Serial.println("=== WRITE_DATA_BAK ===");
+    for (size_t i = 0; i < 4; i++) {
+      Serial.println(WRITE_DATA_BAK[i]);
+    }
+  }
+
+  void printWriteData() {
+    Serial.println("=== WRITE_DATA ===");
+    for (size_t i = 0; i < 4; i++) {
+      Serial.println(WRITE_DATA[i]);
+    }
+  }
+
 public:
   bool deviceDisconnected = false;
 
@@ -39,62 +50,62 @@ public:
   }
 
   void loop() {
-    if (millis() - this->prevMillis > 333) {
-      if (this->taskNo == 0) {
+    if (millis() - this->prevMillis >= 250) {
+      if (this->taskSwitch == 0) {
         this->readDataFromDevice();
-      } else if (this->taskNo == 1) {
-        Serial.println(QUEUE);
+      } else if (this->taskSwitch == 1) {
+        this->checkIsSynced();
+      } else if (this->taskSwitch == 2) {
         this->syncWithQueue();
-        Serial.println(QUEUE);
-      } else if (this->taskNo == 2) {
+      } else if (this->taskSwitch == 3) {
         this->writeDataToDevice();
       }
 
-      if (this->taskNo == 2) {
-        this->taskNo = 0;
+      if (this->taskSwitch == 3) {
+        this->taskSwitch = 0;
       } else {
-        this->taskNo++;
+        this->taskSwitch++;
       }
 
       this->prevMillis = millis();
     }
   }
 
+  void checkIsSynced() {
+  }
+
   void readDataFromDevice() {
-    result = mbNode.readInputRegisters(30000, HR_SIZE);
-    if (result == mbNode.ku8MBSuccess) {
-      for (size_t i = 0; i < HR_SIZE; i++) {
+    mbResult = mbNode.readInputRegisters(30000, IR_SIZE);
+    if (this->mbSuccess()) {
+      for (size_t i = 0; i < IR_SIZE; i++) {
         READ_DATA[i] = mbNode.getResponseBuffer(i);
       }
 
-      for (size_t i = 0; i < HR_SIZE; i++) {
-        // Serial.println(READ_DATA[i]);
+      /*=== Debug Use ===*/
+      Serial.println("=== Data read from MODBUS ===");
+      for (size_t i = 0; i < IR_SIZE; i++) {
+        Serial.println(READ_DATA[i]);
       }
+      Serial.println("=== End of read ===");
 
-      this->errMsg = 0;
-      IS_CONNECT = true;
     } else {
-      this->errMsg = 1;
-      IS_CONNECT = false;
       Serial.println("Cannot Fetch Device Data");
     }
   }
 
   void syncWithQueue() {
     if (this->hasQueue()) {
-      TMP_DATA[0] = (READ_DATA[1] & (1 << 6)) ? 1 : 0;
-      TMP_DATA[1] = READ_DATA[3];
-      TMP_DATA[2] = READ_DATA[4];
-      TMP_DATA[3] = READ_DATA[6];
+      /*=== Init WRITE_DATA ===*/
+      WRITE_DATA[0] = (READ_DATA[1] & (1 << 6)) ? 1 : 0;  // onOff
+      WRITE_DATA[1] = READ_DATA[3];                       // mode
+      WRITE_DATA[2] = READ_DATA[4];                       // speed
+      WRITE_DATA[3] = READ_DATA[6];                       // setTemp
+      uint16_t maxAdjTemp = READ_DATA[9];                 // max adjustable setTemp
+      uint16_t minAdjTemp = READ_DATA[10];                // min adjustable setTemp
 
-      Serial.println("=== TMP_DATA ===");
-      for (size_t i = 0; i < 4; i++) {
-        Serial.println(TMP_DATA[i]);
-      }
-
+      /*=== Manipulation WRITE_DATA ===*/
       for (int i = 0; i < QUEUE.length(); i++) {
         char c = QUEUE[i];
-        Serial.println(c);
         // A = On.
         // B = Off.
         // C = Set Mode to 0.
@@ -107,58 +118,60 @@ public:
         // J = Decrease Set Temp.
 
         if (c == 'A') {
-          TMP_DATA[0] = 1;
+          WRITE_DATA[0] = 1;
         } else if (c == 'B') {
-          TMP_DATA[0] = 0;
+          WRITE_DATA[0] = 0;
         } else if (c == 'C') {
-          TMP_DATA[1] = 0;
+          WRITE_DATA[1] = 0;
         } else if (c == 'D') {
-          TMP_DATA[1] = 1;
+          WRITE_DATA[1] = 1;
         } else if (c == 'E') {
-          TMP_DATA[1] = 2;
+          WRITE_DATA[1] = 2;
         } else if (c == 'F') {
-          TMP_DATA[2] = 0;
+          WRITE_DATA[2] = 0;
         } else if (c == 'G') {
-          TMP_DATA[2] = 1;
+          WRITE_DATA[2] = 1;
         } else if (c == 'H') {
-          TMP_DATA[2] = 2;
+          WRITE_DATA[2] = 2;
         } else if (c == 'I') {
-          TMP_DATA[3] += 50;
+          if (WRITE_DATA[3] + 50 <= maxAdjTemp) {
+            WRITE_DATA[3] += 50;
+          }
         } else if (c == 'J') {
-          TMP_DATA[3] -= 50;
+          if (minAdjTemp <= WRITE_DATA[3] - 50) {
+            WRITE_DATA[3] -= 50;
+          }
         }
       }
 
-      this->copyArr(TMP_DATA, WRITE_DATA, 4);
+      /*=== Make Copy of WRITE_DATA ===*/
+      this->copyArr(WRITE_DATA, WRITE_DATA_BAK, 4);
 
-      Serial.println("=== WRITE_DATA ===");
-      for (size_t i = 0; i < 4; i++) {
-        Serial.println(WRITE_DATA[i]);
-      }
-
+      /*=== Finish ===*/
       this->writeDataChanged = true;
       this->freeQueue();
     }
   }
 
   void writeDataToDevice() {
-    if (!this->writeDataChanged) { return; };
-    this->writeDataChanged = false;
-
-    mbNode.setTransmitBuffer(0, WRITE_DATA[0]);
-    mbNode.setTransmitBuffer(1, 0);
-    mbNode.setTransmitBuffer(2, WRITE_DATA[1]);
-    mbNode.setTransmitBuffer(3, WRITE_DATA[2]);
-    mbNode.setTransmitBuffer(4, WRITE_DATA[3]);
-    result = mbNode.writeMultipleRegisters(40000, 5);
-    if (result == mbNode.ku8MBSuccess) {
-      this->errMsg = 0;
-      IS_CONNECT = true;
+    if (!this->writeDataChanged) {
+      return;
     } else {
-      this->errMsg = 1;
-      IS_CONNECT = false;
-      Serial.println("Cannot Write Data to Device");
+      this->writeDataChanged = false;
+
+      mbNode.setTransmitBuffer(0, WRITE_DATA[0]);
+      mbNode.setTransmitBuffer(2, WRITE_DATA[1]);
+      mbNode.setTransmitBuffer(3, WRITE_DATA[2]);
+      mbNode.setTransmitBuffer(4, WRITE_DATA[3]);
+      mbResult = mbNode.writeMultipleRegisters(40000, 5);
+      if (mbResult != mbNode.ku8MBSuccess) {
+        Serial.println("Cannot Write Data to Device");
+      }
     }
+  }
+
+  bool mbSuccess() {
+    return mbResult == mbNode.ku8MBSuccess;
   }
 };
 

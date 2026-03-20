@@ -74,9 +74,8 @@ void handleGet() {
   jsonStr += ":";
 
   jsonStr += '\"';
-  jsonStr += isDeviceSynced;
+  jsonStr += isSynced;
   jsonStr += '\"';
-  jsonStr += ",";
 
   jsonStr += "}";
 

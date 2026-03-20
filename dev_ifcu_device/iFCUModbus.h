@@ -79,26 +79,37 @@ public:
   }
 
   void checkIsSynced() {
-    if ((READ_DATA[1] & (1 << 6)) ? 1 : 0 == WRITE_DATA_BAK[0] && READ_DATA[3] == WRITE_DATA_BAK[1] && READ_DATA[4] == WRITE_DATA_BAK[2] && READ_DATA[6] == WRITE_DATA_BAK[3]) {
+    this->printReadData();
+
+    if ((((READ_DATA[1] & (1 << 6)) ? 1 : 0) == WRITE_DATA_BAK[0]) && (READ_DATA[3] == WRITE_DATA_BAK[1]) && (READ_DATA[4] == WRITE_DATA_BAK[2]) && (READ_DATA[6] == WRITE_DATA_BAK[3])) {
       isSynced = true;
     } else {
       isSynced = false;
     }
 
-    /*=== Rectify Sync ===*/
-    if (isSynced) {
-      this->unSyncedCnt = 0;
-    } else {
+    /*=== Force Sync ===*/
+    if (!isSynced) {
       this->unSyncedCnt++;
-      if (unSyncedCnt >= 5) {
-        WRITE_DATA_BAK[0] = (READ_DATA[1] & (1 << 6)) ? 1 : 0;
-        WRITE_DATA_BAK[1] = READ_DATA[3];
-        WRITE_DATA_BAK[2] = READ_DATA[4];
-        WRITE_DATA_BAK[3] = READ_DATA[6];
+      if (this->unSyncedCnt >= 5) {
+        WRITE_DATA[0] = (READ_DATA[1] & (1 << 6)) ? 1 : 0;  // onOff
+        WRITE_DATA[1] = READ_DATA[3];                       // mode
+        WRITE_DATA[2] = READ_DATA[4];                       // speed
+        WRITE_DATA[3] = READ_DATA[6];                       // setTemp
+
+        WRITE_DATA_BAK[0] = (READ_DATA[1] & (1 << 6)) ? 1 : 0;  // onOff
+        WRITE_DATA_BAK[1] = READ_DATA[3];                       // mode
+        WRITE_DATA_BAK[2] = READ_DATA[4];                       // speed
+        WRITE_DATA_BAK[3] = READ_DATA[6];                       // setTemp
+
+        this->unSyncedCnt = 0;
       }
     }
+
+
     Serial.print("isSynced: ");
     Serial.println(isSynced);
+
+    this->printWriteDataBak();
   }
 
   void readDataFromDevice() {

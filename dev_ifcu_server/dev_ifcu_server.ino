@@ -1,5 +1,6 @@
 #include <WiFi.h>
 #include <WebServer.h>
+#include "Globals.h"
 
 String jsonString = "";
 
@@ -132,9 +133,6 @@ public:
 
 RecordDB recordDB;
 
-const char* ssid = "REC Guest - 16F";
-const char* password = "guest@@2022";
-
 WebServer server(80);
 
 void handleDeviceGet() {
@@ -155,8 +153,7 @@ void handleDeviceGet() {
       record->setTemp = setTemp;
       record->roomTemp = roomTemp;
       record->isDeviceSynced = isDeviceSynced;
-
-      record->isConnected = (millis() - record->lastCommAt <= 10000);
+      record->isConnected = ((millis() - (record->lastCommAt)) <= 10000);
       record->lastCommAt = millis();
 
       server.send(200, "text/plain", record->cmd);
@@ -177,7 +174,6 @@ void handleBrowserSet() {
     Record* record = recordDB.findDevice(id);
     if (record != nullptr) {
       record->cmd += cmd;
-      record->isDeviceSynced = false;
       server.send(200, "text/plain", record->id);
     } else {
       Serial.println("ID not found, cannot update!");
@@ -196,7 +192,7 @@ void setup() {
   Serial.begin(115200);
 
   // Connect to Wi-Fi
-  WiFi.begin(ssid, password);
+  WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
   Serial.print("Connecting to Wi-Fi");
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);

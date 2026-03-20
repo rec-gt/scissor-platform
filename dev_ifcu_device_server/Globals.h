@@ -9,10 +9,10 @@
 String DEVICE_NAME = "ifcu-001";
 
 /* === WiFi Service === */
-const char* WIFI_SSID = "ASUS_A6";
-const char* WIFI_PASSWORD = "n5npy#6gfe";
-// const char* WIFI_SSID = "REC Guest - 16F";  // Enter SSID here
-// const char* WIFI_PASSWORD = "guest@@2022";  // Enter Password here
+// const char* WIFI_SSID = "ASUS_A6";
+// const char* WIFI_PASSWORD = "n5npy#6gfe";
+const char* WIFI_SSID = "REC Guest - 16F";  // Enter SSID here
+const char* WIFI_PASSWORD = "guest@@2022";  // Enter Password here
 
 enum WIFI_CONN_STATUS {
   WIFI_DISCONNECTED,
@@ -33,6 +33,7 @@ uint8_t mbResult = mbNode.ku8MBSuccess;
 
 /* === WebServer Service === */
 bool restartServerFlag = true;
+String jsonStr = "";
 
 /* === iFCU Parameters === */
 constexpr byte IR_SIZE = 10;

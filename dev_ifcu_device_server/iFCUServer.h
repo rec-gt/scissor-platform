@@ -16,7 +16,71 @@ void handleSet() {
 }
 
 void handleGet() {
-  server.send(200, "application/json", "{\"mode\":\"0\",\"isSynced\":\"0\"}");
+  jsonStr = "{";
+
+  jsonStr += '\"';
+  jsonStr += "onOff";
+  jsonStr += '\"';
+  jsonStr += ":";
+
+  jsonStr += '\"';
+  jsonStr += WRITE_DATA[0];
+  jsonStr += '\"';
+  jsonStr += ",";
+
+  jsonStr += '\"';
+  jsonStr += "mode";
+  jsonStr += '\"';
+  jsonStr += ":";
+
+  jsonStr += '\"';
+  jsonStr += WRITE_DATA[1];
+  jsonStr += '\"';
+  jsonStr += ",";
+
+  jsonStr += '\"';
+  jsonStr += "speed";
+  jsonStr += '\"';
+  jsonStr += ":";
+
+  jsonStr += '\"';
+  jsonStr += WRITE_DATA[2];
+  jsonStr += '\"';
+  jsonStr += ",";
+
+  jsonStr += '\"';
+  jsonStr += "setTemp";
+  jsonStr += '\"';
+  jsonStr += ":";
+
+  jsonStr += '\"';
+  jsonStr += WRITE_DATA[3];
+  jsonStr += '\"';
+  jsonStr += ",";
+
+  jsonStr += '\"';
+  jsonStr += "roomTemp";
+  jsonStr += '\"';
+  jsonStr += ":";
+
+  jsonStr += '\"';
+  jsonStr += WRITE_DATA[4];
+  jsonStr += '\"';
+  jsonStr += ",";
+
+  jsonStr += '\"';
+  jsonStr += "isSynced";
+  jsonStr += '\"';
+  jsonStr += ":";
+
+  jsonStr += '\"';
+  jsonStr += isDeviceSynced;
+  jsonStr += '\"';
+  jsonStr += ",";
+
+  jsonStr += "}";
+
+  server.send(200, "application/json", jsonStr);
 }
 
 class iFCUServer {

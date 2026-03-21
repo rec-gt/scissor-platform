@@ -33,7 +33,8 @@ uint16_t READ_DATA[IR_SIZE] = {};
 
 constexpr byte WRITE_DATA_SIZE = 6;
 uint16_t WRITE_DATA[WRITE_DATA_SIZE] = {};
-uint16_t WRITE_DATA_CMP[WRITE_DATA_SIZE] = {};
+uint16_t WRITE_DATA_1[WRITE_DATA_SIZE] = {};
+uint16_t WRITE_DATA_2[WRITE_DATA_SIZE] = {};
 
 String QUEUE = "";
 bool isSynced = false;  // remote ifcu status vs current ifcu status

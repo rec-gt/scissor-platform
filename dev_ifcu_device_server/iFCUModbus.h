@@ -52,13 +52,6 @@ private:
     Serial.println(READ_DATA[6]);
   }
 
-  void printWriteDataBak() {
-    Serial.println("=== WRITE_DATA_CMP ===");
-    for (size_t i = 0; i < 4; i++) {
-      Serial.println(WRITE_DATA_CMP[i]);
-    }
-  }
-
   void printWriteData() {
     Serial.println("=== WRITE_DATA ===");
     for (size_t i = 0; i < 4; i++) {
@@ -78,9 +71,9 @@ public:
       if (this->taskSwitch == 0) {
         this->readDataFromDevice();
       } else if (this->taskSwitch == 1) {
-        this->checkIsSynced();
-      } else if (this->taskSwitch == 2) {
         this->syncWithQueue();
+      } else if (this->taskSwitch == 2) {
+        this->checkIsSynced();
       } else if (this->taskSwitch == 3) {
         this->writeDataToDevice();
       }
@@ -109,33 +102,18 @@ public:
       WRITE_DATA[3] = READ_DATA[6];                       // setTemp
       WRITE_DATA[4] = READ_DATA[9];                       // max adjustable setTemp
       WRITE_DATA[5] = READ_DATA[10];                      // min adjustable setTemp
-      Serial.println(WRITE_DATA[4]);
-      Serial.println(WRITE_DATA[5]);
     } else {
       Serial.println("Cannot Fetch Device Data");
     }
   }
 
-  void checkIsSynced() {
-    isSynced = this->compareArr(WRITE_DATA, WRITE_DATA_CMP, WRITE_DATA_SIZE);
-
-    /*=== Protection: Force Sync after 5 conflict ===*/
-    if (!isSynced) {
-      this->unSyncedCnt++;
-      if (this->unSyncedCnt >= 5) {
-        this->copyArr(WRITE_DATA, WRITE_DATA_CMP, WRITE_DATA_SIZE);
-        this->unSyncedCnt = 0;
-      }
-    }
-  }
-
   void syncWithQueue() {
-    if (this->hasQueue()) {
-      if (!isSynced) {
-        return;
-      }
+    if (!isSynced) {
+      return;
+    }
 
-      Serial.print("Queue before synced: ");
+    if (this->hasQueue()) {
+      Serial.print("Queue consumpted: ");
       Serial.println(QUEUE);
       /*=== Manipulation WRITE_DATA ===*/
       for (int i = 0; i < QUEUE.length(); i++) {
@@ -172,7 +150,6 @@ public:
             WRITE_DATA[3] += 50;
           }
         } else if (c == 'J') {
-          Serial.println(WRITE_DATA[5]);
           if (WRITE_DATA[5] <= WRITE_DATA[3] - 50) {
             WRITE_DATA[3] -= 50;
           }
@@ -180,14 +157,24 @@ public:
       }
 
       /*=== Make WRITE_DATA_CMP for sync ===*/
-      this->copyArr(WRITE_DATA, WRITE_DATA_CMP, WRITE_DATA_SIZE);
+      this->copyArr(WRITE_DATA, WRITE_DATA_1, WRITE_DATA_SIZE);
 
       /*=== Finish ===*/
       this->writeDataChanged = true;
       this->freeQueue();
+    }
+  }
 
-      Serial.print("Queue after synced: ");
-      Serial.println(QUEUE);
+  void checkIsSynced() {
+    isSynced = this->compareArr(WRITE_DATA_1, WRITE_DATA_2, WRITE_DATA_SIZE);
+
+    /*=== Protection: Force Sync after 5 conflict ===*/
+    if (!isSynced) {
+      this->unSyncedCnt++;
+      if (this->unSyncedCnt >= 5) {
+        this->copyArr(WRITE_DATA_1, WRITE_DATA_2, WRITE_DATA_SIZE);
+        this->unSyncedCnt = 0;
+      }
     }
   }
 

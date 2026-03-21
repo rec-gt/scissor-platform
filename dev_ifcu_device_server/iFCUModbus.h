@@ -109,7 +109,8 @@ public:
       WRITE_DATA[3] = READ_DATA[6];                       // setTemp
       WRITE_DATA[4] = READ_DATA[9];                       // max adjustable setTemp
       WRITE_DATA[5] = READ_DATA[10];                      // min adjustable setTemp
-
+      Serial.println(WRITE_DATA[4]);
+      Serial.println(WRITE_DATA[5]);
     } else {
       Serial.println("Cannot Fetch Device Data");
     }
@@ -130,6 +131,12 @@ public:
 
   void syncWithQueue() {
     if (this->hasQueue()) {
+      if (!isSynced) {
+        return;
+      }
+
+      Serial.print("Queue before synced: ");
+      Serial.println(QUEUE);
       /*=== Manipulation WRITE_DATA ===*/
       for (int i = 0; i < QUEUE.length(); i++) {
         char c = QUEUE[i];
@@ -165,6 +172,7 @@ public:
             WRITE_DATA[3] += 50;
           }
         } else if (c == 'J') {
+          Serial.println(WRITE_DATA[5]);
           if (WRITE_DATA[5] <= WRITE_DATA[3] - 50) {
             WRITE_DATA[3] -= 50;
           }
@@ -177,6 +185,9 @@ public:
       /*=== Finish ===*/
       this->writeDataChanged = true;
       this->freeQueue();
+
+      Serial.print("Queue after synced: ");
+      Serial.println(QUEUE);
     }
   }
 

@@ -9,6 +9,8 @@ void handleSet() {
   if (server.hasArg("cmd")) {
     String cmd = server.arg("cmd");
     QUEUE += cmd;
+    Serial.print("Queue received: ");
+    Serial.println(QUEUE);
     server.send(200, "text/plain", "OK");
   } else {
     server.send(400, "text/plain", "Missing parameters.");
@@ -75,6 +77,16 @@ void handleGet() {
 
   jsonStr += '\"';
   jsonStr += isSynced;
+  jsonStr += '\"';
+  jsonStr += ",";
+
+  jsonStr += '\"';
+  jsonStr += "modbusComm";
+  jsonStr += '\"';
+  jsonStr += ":";
+
+  jsonStr += '\"';
+  jsonStr += ifcuModbus.mbSuccess();
   jsonStr += '\"';
 
   jsonStr += "}";

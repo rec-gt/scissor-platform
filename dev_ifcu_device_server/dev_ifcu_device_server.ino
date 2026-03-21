@@ -2,14 +2,12 @@
 #include "iFCUModbus.h"
 #include "iFCUServer.h"
 #include "WiFiService.h"
-#include "HttpService.h"
 #include "Utils.h"
 
 Utils utils;
 WiFiService wifiService;
 iFCUModbus ifcuModbus;
 iFCUServer ifcuServer;
-HttpService httpService;
 
 void setup() {
   Serial.begin(115200);
@@ -17,13 +15,12 @@ void setup() {
 }
 
 void loop() {
-  wifiService.loop();
+  utils.listenSerial();
 
+  wifiService.loop();
   if (!wifiService.isConnected()) {
     return;
   }
-
-  utils.listenSerial();
 
   ifcuModbus.loop();
   ifcuServer.loop();

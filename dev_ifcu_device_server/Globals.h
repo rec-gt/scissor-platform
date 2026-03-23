@@ -5,10 +5,10 @@
 #include <WiFi.h>
 
 /* === WiFi Service === */
-// const char* WIFI_SSID = "ASUS_A6";
-// const char* WIFI_PASSWORD = "n5npy#6gfe";
-const char* WIFI_SSID = "REC Guest - 16F";
-const char* WIFI_PASSWORD = "guest@@2022";
+const char* WIFI_SSID = "ASUS_A6";
+const char* WIFI_PASSWORD = "n5npy#6gfe";
+// const char* WIFI_SSID = "REC Guest - 16F";
+// const char* WIFI_PASSWORD = "guest@@2022";
 
 enum WIFI_CONN_STATUS {
   WIFI_DISCONNECTED,
@@ -31,13 +31,12 @@ String jsonStr = "";
 constexpr byte IR_SIZE = 11;
 uint16_t READ_DATA[IR_SIZE] = {};
 
-constexpr byte WRITE_DATA_SIZE = 6;
+constexpr byte WRITE_DATA_SIZE = 7;
 uint16_t WRITE_DATA[WRITE_DATA_SIZE] = {};
 uint16_t WRITE_DATA_1[WRITE_DATA_SIZE] = {};
 uint16_t WRITE_DATA_2[WRITE_DATA_SIZE] = {};
 
 String QUEUE = "";
 bool isSynced = false;  // remote ifcu status vs current ifcu status
-uint32_t lastCommAt = millis();
 
 #endif

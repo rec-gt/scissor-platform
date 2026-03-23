@@ -88,6 +88,16 @@ void handleGet() {
   jsonStr += '\"';
   jsonStr += ifcuModbus.mbSuccess();
   jsonStr += '\"';
+  jsonStr += ",";
+
+  jsonStr += '\"';
+  jsonStr += "queueLen";
+  jsonStr += '\"';
+  jsonStr += ":";
+
+  jsonStr += '\"';
+  jsonStr += QUEUE.length();
+  jsonStr += '\"';
 
   jsonStr += "}";
 

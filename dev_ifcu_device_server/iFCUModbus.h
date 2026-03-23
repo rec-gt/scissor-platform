@@ -49,6 +49,7 @@ private:
     Serial.println((READ_DATA[1] & (1 << 6)) ? 1 : 0);
     Serial.println(READ_DATA[3]);
     Serial.println(READ_DATA[4]);
+    Serial.println(READ_DATA[5]);
     Serial.println(READ_DATA[6]);
   }
 
@@ -100,8 +101,9 @@ public:
       WRITE_DATA[1] = READ_DATA[3];                       // mode
       WRITE_DATA[2] = READ_DATA[4];                       // speed
       WRITE_DATA[3] = READ_DATA[6];                       // setTemp
-      WRITE_DATA[4] = READ_DATA[9];                       // max adjustable setTemp
-      WRITE_DATA[5] = READ_DATA[10];                      // min adjustable setTemp
+      WRITE_DATA[4] = READ_DATA[5];                       // roomTemp
+      WRITE_DATA[5] = READ_DATA[9];                       // max adjustable setTemp
+      WRITE_DATA[6] = READ_DATA[10];                      // min adjustable setTemp
     } else {
       Serial.println("Cannot Fetch Device Data");
     }
@@ -146,11 +148,11 @@ public:
         } else if (c == 'H') {
           WRITE_DATA[2] = 2;
         } else if (c == 'I') {
-          if (WRITE_DATA[3] + 50 <= WRITE_DATA[4]) {
+          if (WRITE_DATA[3] + 50 <= WRITE_DATA[5]) {
             WRITE_DATA[3] += 50;
           }
         } else if (c == 'J') {
-          if (WRITE_DATA[5] <= WRITE_DATA[3] - 50) {
+          if (WRITE_DATA[6] <= WRITE_DATA[3] - 50) {
             WRITE_DATA[3] -= 50;
           }
         }

@@ -4,7 +4,8 @@
 #ifndef HardWatchdog_h
 #define HardWatchdog_h
 
-Timer oneDayTimer(86400000);
+Timer oneDayTimer(10000);
+// Timer oneDayTimer(86400000);
 
 class HardWatchdog {
 public:

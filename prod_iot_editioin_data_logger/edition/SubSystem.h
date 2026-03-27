@@ -8,7 +8,7 @@
 
 SubRS485 subRS485;
 Timer subSysTimer;
-DataLogger logger;
+DataLogger dataLogger;
 
 class SubSystem {
 public:
@@ -20,10 +20,10 @@ public:
   }
 
   void loop() {
-    
     /*=== Register the Data Logger ===*/
-    if (subSysTimer.autoTimeout(1000)) {
-      logger.log(mqttPublMsgPayload);
+    if (subSysTimer.autoTimeout(5000)) {
+      Serial.println(mqttPublMsgPayload);
+      dataLogger.log(mqttPublMsgPayload);
     }
   }
 

@@ -72,6 +72,6 @@ public:
   ~SubRS485() {}
 };
 
-extern SubRS485 rStd485;
+extern SubRS485 subRS485;
 
 #endif

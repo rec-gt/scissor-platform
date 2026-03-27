@@ -10,7 +10,7 @@ public:
   DataLogger(void) {}
 
   void log(String& data) {
-    rStd485.write(data);
+    subRS485.write(data);
   }
 
   ~DataLogger() {}

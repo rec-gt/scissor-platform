@@ -4,6 +4,7 @@
 #include <ModbusMaster.h>
 #include <WiFi.h>
 #include <EEPROM.h>
+#include <WebServer.h>
 #include "Memory.h"
 
 #define WIFI_SSID_ADDRESS 0

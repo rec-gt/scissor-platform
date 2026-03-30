@@ -9,7 +9,7 @@
 #include "./Toggle.h"
 #include "./Timer.h"
 #include "./Counter.h"
-#include "./Watchdog.h"
+#include "./SoftWatchdog.h"
 
 /*=== Main System ===*/
 #define DI_PIN_1 32
@@ -209,8 +209,8 @@ enum IOT_CONN_STATE {
   IOT_CONN_END_OF_STATE,
 };
 
+/* === MQTT Message State Management === */
 enum IOT_MQTT_MSG_STATE {
-  /* === MQTT Message State Management === */
   IOT_MQTT_MSG_LOOP_START,
   IOT_MQTT_MSG_WAITING_PUBLISH,
   IOT_MQTT_MSG_WAITING_PUBLISH_ACK,
@@ -251,7 +251,7 @@ Timer iotModuleTimer;
 Timer iotStateTimer;
 Timer iotQueryTimer;
 
-Watchdog iotSoftWatchdog(45000UL);
+SoftWatchdog iotWatchdog;
 
 /*=== rs485 ===*/
 String rs485SerialRecv = "";

@@ -47,6 +47,12 @@ public:
     return wifiConnStatus == WIFI_CONNECTED;
   }
 
+  void setAP() {
+    WiFi.mode(WIFI_AP);
+    WiFi.softAPConfig(IPAddress(192, 168, 1, 1), IPAddress(192, 168, 1, 1), IPAddress(255, 255, 255, 0));
+    WiFi.softAP("RGT-IFCU-DEVICE-001", "RECrec26198888");
+  }
+
   ~WiFiService() {}
 };
 

@@ -1,7 +1,7 @@
 #include <WiFi.h>
 #include <WebServer.h>
 
-const char* ssid = "ASUS_A6";
+const char* ssid = "RGT-iFCU-Remote-Controller-16F";
 const char* password = "n5npy#6gfe";
 
 // Create a web server on port 80

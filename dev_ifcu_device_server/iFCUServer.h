@@ -104,6 +104,65 @@ void handleGet() {
   server.send(200, "application/json", jsonStr);
 }
 
+void handleSettingPage() {
+  const char settingPage[] PROGMEM = R"rawliteral(
+
+ <!doctype html>
+<html>
+  <body>
+    <input type="text" id="ssid" name="input1" placeholder="New SSID" />
+    <br />
+    <br />
+    <input type="text" id="password" name="input2" placeholder="New Password" />
+    <br />
+    <br />
+    <button onclick="submit()">Submit</button>
+    <br />
+    <br />
+    <div id="result"></div>
+  </body>
+  <script>
+    const submit = () => {
+      const ssid = document.getElementById("ssid").value;
+      const password = document.getElementById("password").value;
+      fetch(`http://192.168.1.1/wifi/set?ssid=${ssid}&password=${password}`, {
+        method: "GET",
+      })
+        .then(() => {
+          document.getElementById("result").innerHTML = "OK";
+        })
+        .catch(() => {
+          document.getElementById("result").innerHTML = "FAIL";
+        });
+    };
+  </script>
+</html>
+
+)rawliteral";
+
+  server.send(200, "text/html", settingPage);
+}
+
+void handleWiFiSet() {
+  if (server.hasArg("ssid") && server.hasArg("password")) {
+    String ssid = server.arg("ssid");
+    String password = server.arg("password");
+
+    memory.setStr(WIFI_SSID_ADDRESS, WIFI_SSID_LEN, ssid);
+    memory.setStr(WIFI_PASSWORD_ADDRESS, WIFI_PASSWORD_LEN, password);
+
+    memory.getStr(WIFI_SSID_ADDRESS, WIFI_SSID_LEN, WIFI_SSID);
+    memory.getStr(WIFI_PASSWORD_ADDRESS, WIFI_PASSWORD_LEN, WIFI_PASSWORD);
+
+    Serial.println(WIFI_SSID);
+    Serial.println(WIFI_PASSWORD);
+
+    server.send(200, "text/plain", "OK");
+  } else {
+    server.send(400, "text/plain", "Missing parameters.");
+  }
+}
+
 class iFCUServer {
 
 private:
@@ -115,6 +174,9 @@ private:
     server.enableCORS();
     server.on("/set", HTTP_GET, handleSet);
     server.on("/get", HTTP_GET, handleGet);
+    server.on("/setting", HTTP_GET, handleSettingPage);
+    // http://192.168.1.1/wifi/set?ssid=123123&password=123123
+    server.on("/wifi/set", HTTP_GET, handleWiFiSet);
     server.begin();
     Serial.println("Web server started!");
   }

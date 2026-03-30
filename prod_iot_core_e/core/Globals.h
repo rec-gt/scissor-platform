@@ -260,4 +260,7 @@ String rs485SerialRecv = "";
 String debugStr = "";
 String serialInputCmd = "";
 
+/*=== Main System ===*/
+Timer oneDayTimer(86400000);
+
 #endif

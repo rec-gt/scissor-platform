@@ -12,7 +12,7 @@ SubSystem subSystem;
 DisplayClient displayClient;
 IoT iot;
 Utils utils;
-HardWatchdog watchdog;
+HardWatchdog hardWatchdog;
 
 void setup() {
   Serial.begin(9600);
@@ -46,11 +46,11 @@ void setup() {
   subSystem.init();
 
   /*=== Watchdog ===*/
-  watchdog.init();
+  hardWatchdog.init();
 }
 
 void loop() {
-  utils.serialInput();
+  // utils.serialInput();
 
   /*=== Register MainSystem ===*/
   mainSystem.loop();
@@ -64,8 +64,8 @@ void loop() {
   /*=== Register IoT ===*/
   iot.loop();
 
-  /*=== Pet the dog ===*/
-  watchdog.loop();
+  /*=== Register ===*/
+  hardWatchdog.loop();
 
   delay(10);
 }

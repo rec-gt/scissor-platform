@@ -1,23 +1,22 @@
-#include "./Timer.h"
+#include "./Globals.h"
 #include <avr/wdt.h>
 
 #ifndef HardWatchdog_h
 #define HardWatchdog_h
-
-Timer oneDayTimer(10000);
-// Timer oneDayTimer(86400000);
 
 class HardWatchdog {
 public:
   HardWatchdog(){};
 
   void init() {
-    wdt_enable(WDTO_8S);  // 8秒内無feed即重啓
+    wdt_enable(WDTO_8S);  // 若8秒内無feed(死機)，即重啓
   }
 
   void loop() {
-    if (!oneDayTimer.isExpired()) {  // 每24小時重啓一次
-      wdt_reset();                   // feed the dog
+    if (oneDayTimer.isExpired()) {  // 超過24小時，自殺
+      return;
+    } else {
+      wdt_reset();  // 未過24小時，feed the dog
     }
   }
 

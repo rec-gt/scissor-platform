@@ -58,6 +58,12 @@ void handleWiFiSet() {
     Serial.println(WIFI_SSID);
     Serial.println(WIFI_PASSWORD);
 
+    memory.readStr(WIFI_SSID_ADDRESS, WIFI_SSID_LEN, WIFI_SSID);
+    memory.readStr(WIFI_PASSWORD_ADDRESS, WIFI_PASSWORD_LEN, WIFI_PASSWORD);
+
+    Serial.println(WIFI_SSID);
+    Serial.println(WIFI_PASSWORD);
+
     server2.send(200, "text/plain", "OK");
   } else {
     server2.send(400, "text/plain", "Missing parameters.");

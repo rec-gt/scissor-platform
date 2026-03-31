@@ -8,17 +8,19 @@
 #include "Memory.h"
 
 #define WIFI_SSID_ADDRESS 0
-#define WIFI_SSID_LEN 33  // 1 for NULL determinator
+#define WIFI_SSID_LEN 32  // 0-31
 #define WIFI_PASSWORD_ADDRESS 32
-#define WIFI_PASSWORD_LEN 33  // 1 for NULL determinator
+#define WIFI_PASSWORD_LEN 32  // 32-63
 
 /* === WiFi Service === */
 // const char* WIFI_SSID = "RGT-iFCU-Remote-Controller-16F";
 // const char* WIFI_PASSWORD = "n5npy#6gfe";
 // const char* WIFI_SSID = "REC Guest - 16F";
 // const char* WIFI_PASSWORD = "guest@@2022";
-String WIFI_SSID = "RGT-iFCU-Remote-Controller-16F";
-String WIFI_PASSWORD = "n5npy#6gfe";
+// String WIFI_SSID = "RGT-iFCU-Remote-Controller-16F";
+// String WIFI_PASSWORD = "n5npy#6gfe";
+String WIFI_SSID = "";
+String WIFI_PASSWORD = "";
 
 enum WIFI_CONN_STATUS {
   WIFI_DISCONNECTED,

@@ -9,6 +9,7 @@ public:
     for (size_t i = 0; i < len; i++) {
       EEPROM.write(addr + i, i > strLen - 1 ? '\0' : str[i]);
     }
+    EEPROM.commit();
   }
 
   void readStr(size_t addr, size_t len, String& target) {
@@ -17,6 +18,8 @@ public:
       char c = EEPROM.read(addr + i);
       if (c != '\0') {
         target += c;
+      } else {
+        break;
       }
     }
   }

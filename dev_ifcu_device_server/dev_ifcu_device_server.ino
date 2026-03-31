@@ -18,12 +18,11 @@ void setup() {
   ifcuModbus.init();
 
   utils.printMACAddress();
-  wifiService.setAP();
-
-  // memory.readStr(WIFI_SSID_ADDRESS, WIFI_SSID_LEN, WIFI_SSID);
-  // memory.readStr(WIFI_PASSWORD_ADDRESS, WIFI_PASSWORD_LEN, WIFI_PASSWORD);
+  wifiService.init();
 
   backendServer.init();
+
+
 }
 
 void loop() {
@@ -37,4 +36,6 @@ void loop() {
 
   ifcuModbus.loop();
   ifcuServer.loop();
+
+  delay(1);
 }

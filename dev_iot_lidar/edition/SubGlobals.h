@@ -3,17 +3,11 @@
 
 #include <ArduinoRS485.h>
 #include <ArduinoModbus.h>
-#include "../core/Globals.h"
-#include "../core/Toggle.h"
-#include <EEPROM.h>
 
 #define RS485Serial Serial3
 #define RS485_RE_DE_PIN 22
 
-/*=== For Controller ===*/
-Toggle rs485Lock;
-
-/*=== Configuration - AI Resolution ===*/
+/*=== Config AI Resolution ===*/
 void configAnalogInputResolution(bool r = 0) {  // 0 = 1024, 1 = 4096
   for (size_t i = 0; i < AI_NUMS; i++) {
     analogInputs[i].setResolution(r);
@@ -22,8 +16,7 @@ void configAnalogInputResolution(bool r = 0) {  // 0 = 1024, 1 = 4096
 
 /*=== For Modbus ===*/
 RS485Class recommendedStandard485(RS485Serial, 0, 0, RS485_RE_DE_PIN);
-ModbusRTUClientClass mbClient(recommendedStandard485);
+ModbusRTUClientClass mbRtuClient(recommendedStandard485);
 // ModbusRTUServerClass mbServer(recommendedStandard485);
-
 
 #endif

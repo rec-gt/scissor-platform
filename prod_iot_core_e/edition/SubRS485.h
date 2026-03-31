@@ -9,12 +9,12 @@ class SubRS485 {
 private:
   void prepareRecv() {
     digitalWrite(RS485_RE_DE_PIN, LOW);  // HIGH = send, LOW = receive
-    delay(1);
+    delay(2);
   }
 
   void prepareSend() {
     digitalWrite(RS485_RE_DE_PIN, HIGH);  // HIGH = send, LOW = receive
-    delay(1);
+    delay(2);
   }
 
   void clear() {
@@ -25,7 +25,7 @@ private:
     this->prepareSend();
     RS485Serial.println(cmd);
     RS485Serial.flush();
-    delay(1);
+    delay(2);
   }
 
 public:
@@ -34,8 +34,8 @@ public:
   void init() {
     pinMode(RS485_RE_DE_PIN, OUTPUT);
     this->prepareRecv();
-    // RS485Serial.begin(9600, SERIAL_8N1);
-    RS485Serial.begin(115200, SERIAL_8N1);
+    RS485Serial.begin(9600, SERIAL_8N1);
+    rs485Lock.lock();
   }
 
   void loop() {
@@ -44,24 +44,110 @@ public:
 
   void listen() {
     this->prepareRecv();
+
     while (RS485Serial.available()) {
       char c = RS485Serial.read();
 
       if (c != '\r' && c != '\n') {
         rs485SerialRecv += c;
       }
+
       if (c == '\r') {
-        this->answer();
-        this->clear();
+        break;
       }
     }
+
+    this->answer();
+    this->clear();
   }
 
   void answer() {
-    int idx = rs485SerialRecv.indexOf(F("AT"));
+    if (rs485SerialRecv == F("AT+UNLOCK=RGT@2011")) {
+      rs485Lock.release();
+      this->printlnFlush(F("MODULE UNLOCKED"));
+    }
 
-    if (idx > -1) {
-      this->printlnFlush(F("[Hello from REC-GT]"));
+    if (rs485Lock.isReleased()) {
+      /* === Distance === */
+      if (rs485SerialRecv == F("AT+ALL=600")) {
+        sensorThresholdDistance = 600;
+        EEPROM.put(EEP_ADDR_THRESHOLD_DISTANCE, 6);
+        this->printlnFlush(F("OK, THRESHOLD: 600"));
+      }
+
+      else if (rs485SerialRecv == F("AT+ALL=800")) {
+        sensorThresholdDistance = 800;
+        EEPROM.put(EEP_ADDR_THRESHOLD_DISTANCE, 8);
+        this->printlnFlush(F("OK, THRESHOLD: 800"));
+      }
+
+      else if (rs485SerialRecv == F("AT+ALL=1000")) {
+        sensorThresholdDistance = 1000;
+        EEPROM.put(EEP_ADDR_THRESHOLD_DISTANCE, 10);
+        this->printlnFlush(F("OK, THRESHOLD: 1000"));
+      }
+
+      else if (rs485SerialRecv == F("AT+ALL=1200")) {
+        sensorThresholdDistance = 1200;
+        EEPROM.put(EEP_ADDR_THRESHOLD_DISTANCE, 12);
+        this->printlnFlush(F("OK, THRESHOLD: 1200"));
+      }
+
+      /* === Escape Timeout === */
+      else if (rs485SerialRecv == F("AT+ESCAPE=5")) {
+        escapeCountDown = 5;
+        EEPROM.put(EEP_ADDR_ESCAPE_COUNT_DOWN, 5);
+        this->printlnFlush(F("OK, ESCAPE COUNTDOWN: 5s"));
+      }
+
+      else if (rs485SerialRecv == F("AT+ESCAPE=10")) {
+        escapeCountDown = 10;
+        EEPROM.put(EEP_ADDR_ESCAPE_COUNT_DOWN, 10);
+        this->printlnFlush(F("OK, ESCAPE COUNTDOWN: 10s"));
+      }
+
+      else if (rs485SerialRecv == F("AT+ESCAPE=15")) {
+        escapeCountDown = 15;
+        EEPROM.put(EEP_ADDR_ESCAPE_COUNT_DOWN, 15);
+        this->printlnFlush(F("OK, ESCAPE COUNTDOWN: 15s"));
+      }
+
+      /* === Trigger Duration === */
+      else if (rs485SerialRecv == F("AT+TRIGGER=2")) {
+        triggerDuration = 200;
+        EEPROM.put(EEP_ADDR_TRIGGER_DURATION, 2);
+        this->printlnFlush(F("OK, TRIGGER DURATION: 200ms"));
+      }
+
+      else if (rs485SerialRecv == F("AT+TRIGGER=5")) {
+        triggerDuration = 500;
+        EEPROM.put(EEP_ADDR_TRIGGER_DURATION, 5);
+        this->printlnFlush(F("OK, TRIGGER DURATION: 500ms"));
+      }
+
+      else if (rs485SerialRecv == F("AT+TRIGGER=10")) {
+        triggerDuration = 1000;
+        EEPROM.put(EEP_ADDR_TRIGGER_DURATION, 10);
+        this->printlnFlush(F("OK, TRIGGER DURATION: 1000ms"));
+      }
+
+      else if (rs485SerialRecv == F("AT+TRIGGER=15")) {
+        triggerDuration = 1500;
+        EEPROM.put(EEP_ADDR_TRIGGER_DURATION, 15);
+        this->printlnFlush(F("OK, TRIGGER DURATION: 1500ms"));
+      }
+
+      else if (rs485SerialRecv == F("AT+TRIGGER=20")) {
+        triggerDuration = 2000;
+        EEPROM.put(EEP_ADDR_TRIGGER_DURATION, 20);
+        this->printlnFlush(F("OK, TRIGGER DURATION: 2000ms"));
+      }
+
+      /* === Lock === */
+      else if (rs485SerialRecv == F("AT+LOCK")) {
+        rs485Lock.lock();
+        this->printlnFlush(F("OK, MODULE LOCKED"));
+      }
     }
   }
 
@@ -69,5 +155,5 @@ public:
 };
 
 extern SubRS485 subRS485;
-
+// 4:57
 #endif

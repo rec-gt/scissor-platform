@@ -8,7 +8,7 @@ private:
   void listen() {
     while (SerialIoT.available() > 0) {
       char c = SerialIoT.read();
-      // Serial.print(c);
+      Serial.print(c);
 
       if (c != '\r' && c != '\n') {
         iotSerialRecv += c;
@@ -132,12 +132,12 @@ private:
     }
 
     if (iotModuleState == IOT_MODULE_WAITING_RESET) {
-      SerialIoT.begin(iotSerialBaudRates[iotSerialBaudRateIdx]);
-
+      SerialIoT.end();
       digitalWrite(IOT_MODULE_RESET_PIN, LOW);
       if (iotModuleTimer.autoTimeout(2000)) {
         digitalWrite(IOT_MODULE_RESET_PIN, HIGH);
         iotModuleState = IOT_MODULE_WAITING_RESET_HARDWARE;
+        SerialIoT.begin(iotSerialBaudRates[iotSerialBaudRateIdx]);
       }
     }
 

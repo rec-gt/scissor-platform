@@ -71,13 +71,7 @@ public:
     uint16_t reading9,
     uint16_t reading10,
     uint16_t reading11,
-    uint16_t reading12,
-    uint16_t reading13,
-    uint16_t reading14,
-    uint16_t reading15,
-    uint16_t reading16,
-    uint16_t temp,
-    uint16_t moisture) {
+    uint16_t reading12) {
     AIPayload = F("[");
     AIPayload += reading1;
     AIPayload += F(",");
@@ -102,19 +96,23 @@ public:
     AIPayload += reading11;
     AIPayload += F(",");
     AIPayload += reading12;
-    AIPayload += F(",");
-    AIPayload += reading13;
-    AIPayload += F(",");
-    AIPayload += reading14;
-    AIPayload += F(",");
-    AIPayload += reading15;
-    AIPayload += F(",");
-    AIPayload += reading16;
-    AIPayload += F(",");
-    AIPayload += temp;
-    AIPayload += F(",");
-    AIPayload += moisture;
     AIPayload += F("]");
+  }
+
+  void buildAOPayload(
+    uint16_t reading1,
+    uint16_t reading2,
+    uint16_t reading3,
+    uint16_t reading4) {
+    AOPayload = F("[");
+    AOPayload += reading1;
+    AOPayload += F(",");
+    AOPayload += reading2;
+    AOPayload += F(",");
+    AOPayload += reading3;
+    AOPayload += F(",");
+    AOPayload += reading4;
+    AOPayload += F("]");
   }
 
   void loop() {
@@ -137,61 +135,44 @@ public:
     s15.loop();
     s16.loop();
 
-    uint16_t reading1 = 1023 - constrain(s1.reading, 0, 1023);
-    uint16_t reading2 = 1023 - constrain(s2.reading, 0, 1023);
-    uint16_t reading3 = 1023 - constrain(s3.reading, 0, 1023);
-    uint16_t reading4 = 1023 - constrain(s4.reading, 0, 1023);
-    uint16_t reading5 = 1023 - constrain(s5.reading, 0, 1023);
-    uint16_t reading6 = 1023 - constrain(s6.reading, 0, 1023);
-    uint16_t reading7 = 1023 - constrain(s7.reading, 0, 1023);
-    uint16_t reading8 = 1023 - constrain(s8.reading, 0, 1023);
-    uint16_t reading9 = 1023 - constrain(s9.reading, 0, 1023);
-    uint16_t reading10 = 1023 - constrain(s10.reading, 0, 1023);
-    uint16_t reading11 = 1023 - constrain(s11.reading, 0, 1023);
-    uint16_t reading12 = 1023 - constrain(s12.reading, 0, 1023);
-    uint16_t reading13 = 1023 - constrain(s13.reading, 0, 1023);
-    uint16_t reading14 = 1023 - constrain(s14.reading, 0, 1023);
-    uint16_t reading15 = 1023 - constrain(s15.reading, 0, 1023);
-    uint16_t reading16 = 1023 - constrain(s16.reading, 0, 1023);
-
     /*=== Change Display Value ===*/
-    analogInputs[0].value = reading1;
-    analogInputs[1].value = reading2;
-    analogInputs[2].value = reading3;
-    analogInputs[3].value = reading4;
-    analogInputs[4].value = reading5;
-    analogInputs[5].value = reading6;
-    analogInputs[6].value = reading7;
-    analogInputs[7].value = reading8;
-    analogInputs[8].value = reading9;
-    analogInputs[9].value = reading10;
-    analogInputs[10].value = reading11;
-    analogInputs[11].value = reading12;
-    analogOutputs[0].value = reading13;
-    analogOutputs[1].value = reading14;
-    analogOutputs[2].value = reading15;
-    analogOutputs[3].value = reading16;
+    analogInputs[0].value = s1.calibratedReading;
+    analogInputs[1].value = s2.calibratedReading;
+    analogInputs[2].value = s3.calibratedReading;
+    analogInputs[3].value = s4.calibratedReading;
+    analogInputs[4].value = s5.calibratedReading;
+    analogInputs[5].value = s6.calibratedReading;
+    analogInputs[6].value = s7.calibratedReading;
+    analogInputs[7].value = s8.calibratedReading;
+    analogInputs[8].value = s9.calibratedReading;
+    analogInputs[9].value = s10.calibratedReading;
+    analogInputs[10].value = s11.calibratedReading;
+    analogInputs[11].value = s12.calibratedReading;
+    analogOutputs[0].value = s13.calibratedReading;
+    analogOutputs[1].value = s14.calibratedReading;
+    analogOutputs[2].value = temp;
+    analogOutputs[3].value = moisture;
 
     /*=== Change IoT Payload ===*/
     mainSystem.buildPayloads();
-    this->buildAIPayload(reading1,
-                         reading2,
-                         reading3,
-                         reading4,
-                         reading5,
-                         reading6,
-                         reading7,
-                         reading8,
-                         reading9,
-                         reading10,
-                         reading11,
-                         reading12,
-                         reading13,
-                         reading14,
-                         reading15,
-                         reading16,
+    this->buildAIPayload(s1.calibratedReading,
+                         s2.calibratedReading,
+                         s3.calibratedReading,
+                         s4.calibratedReading,
+                         s5.calibratedReading,
+                         s6.calibratedReading,
+                         s7.calibratedReading,
+                         s8.calibratedReading,
+                         s9.calibratedReading,
+                         s10.calibratedReading,
+                         s11.calibratedReading,
+                         s12.calibratedReading);
+
+    this->buildAOPayload(s13.calibratedReading,
+                         s14.calibratedReading,
                          temp,
                          moisture);
+
     iot.buildMsg(DIPayload, DOPayload, AIPayload, AOPayload);
   }
 

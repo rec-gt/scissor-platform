@@ -13,8 +13,13 @@ private:
     return avg / 64;
   }
 
+  uint16_t calibrate() {
+    return 1023 - constrain(this->reading, 0, 1023);
+  }
+
 public:
   uint16_t reading = 0;
+  uint16_t calibratedReading = 0;
 
   Sensor(byte pin)
     : pin(pin) {
@@ -23,6 +28,7 @@ public:
 
   void loop() {
     this->reading = this->avgRead();
+    this->calibratedReading = this->calibrate();
   }
 
   ~Sensor(){};

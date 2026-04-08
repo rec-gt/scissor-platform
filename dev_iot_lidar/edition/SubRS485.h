@@ -49,7 +49,7 @@ public:
       if (c != '\r' && c != '\n') {
         rs485SerialRecv += c;
       }
-      
+
       if (c == '\r') {
         this->answer();
         this->clear();
@@ -58,22 +58,25 @@ public:
   }
 
   void answer() {
-    int idx = rs485SerialRecv.indexOf(F("AT"));
+    Serial.print(rs485SerialRecv);
 
-    if (idx > -1) {
-      this->printlnFlush(F("[Hello from REC-GT]"));
-    }
-
-    idx = rs485SerialRecv.indexOf(F("1"));
+    int idx = rs485SerialRecv.indexOf(F("1"));
 
     if (idx > -1) {
       Serial.print("received 1");
+      digitalOutputs[0].connect();
+    }
+
+    idx = rs485SerialRecv.indexOf(F("0"));
+
+    if (idx > -1) {
+      digitalOutputs[0].cut();
     }
   }
 
   ~SubRS485() {}
 };
 
-extern SubRS485 rStd485;
+extern SubRS485 subRS485;
 
 #endif

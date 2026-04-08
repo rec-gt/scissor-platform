@@ -150,8 +150,8 @@ public:
     analogInputs[11].value = s12.calibratedReading;
     analogOutputs[0].value = s13.calibratedReading;
     analogOutputs[1].value = s14.calibratedReading;
-    analogOutputs[2].value = temp;
-    analogOutputs[3].value = moisture;
+    analogOutputs[2].value = temp / 10;
+    analogOutputs[3].value = moisture / 10;
 
     /*=== Change IoT Payload ===*/
     mainSystem.buildPayloads();
@@ -170,8 +170,8 @@ public:
 
     this->buildAOPayload(s13.calibratedReading,
                          s14.calibratedReading,
-                         temp,
-                         moisture);
+                         temp / 10,
+                         moisture / 10);
 
     iot.buildMsg(DIPayload, DOPayload, AIPayload, AOPayload);
   }

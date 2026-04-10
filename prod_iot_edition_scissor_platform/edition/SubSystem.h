@@ -55,6 +55,12 @@ private:
 
   unsigned long tenSecondTimer = 0;
 
+  void forceInitEEP() {
+    EEPROM.put(EEP_ADDR_THRESHOLD_DISTANCE, 12);
+    EEPROM.put(EEP_ADDR_ESCAPE_COUNT_DOWN, 10);
+    EEPROM.put(EEP_ADDR_TRIGGER_DURATION, 5);
+  }
+
   void initThresholdDistance() {
     int prevSensorThresholdDistance = 0;
     prevSensorThresholdDistance = EEPROM.read(EEP_ADDR_THRESHOLD_DISTANCE);
@@ -62,7 +68,7 @@ private:
       sensorThresholdDistance = prevSensorThresholdDistance * 100;
     } else {
       sensorThresholdDistance = 1000;
-      EEPROM.put(EEP_ADDR_THRESHOLD_DISTANCE, 5);
+      EEPROM.put(EEP_ADDR_THRESHOLD_DISTANCE, 10);
     }
 
     Serial.print(F("THRESHOLD: "));
@@ -75,15 +81,15 @@ private:
     if (prevEscapeCountdown == 5 || prevEscapeCountdown == 10 || prevEscapeCountdown == 15) {
       escapeCountDown = prevEscapeCountdown;
     } else {
-      escapeCountDown = 5;
-      EEPROM.put(EEP_ADDR_ESCAPE_COUNT_DOWN, 5);
+      escapeCountDown = 10;
+      EEPROM.put(EEP_ADDR_ESCAPE_COUNT_DOWN, 10);
     }
 
     Serial.print(F("ESCAPE COUNTDOWN: "));
     Serial.println(escapeCountDown);
   }
 
-  void initTriggerDuration() {
+  void initTriggerDuration() {  // 防抖
     int prevTriggerDuration = 0;
     prevTriggerDuration = EEPROM.read(EEP_ADDR_TRIGGER_DURATION);
     if (prevTriggerDuration == 2 || prevTriggerDuration == 5 || prevTriggerDuration == 10 || prevTriggerDuration == 15 || prevTriggerDuration == 20) {
@@ -154,7 +160,7 @@ private:
 
   bool isFailure() {
     bool flag = false;
-    for (size_t i = 0; i < 10; i++) {
+    for (size_t i = 0; i < sensorNum; i++) {
       if (analogInputs[i].value < 50) {
         flag = true;
       }
@@ -170,6 +176,7 @@ public:
     configAnalogInputResolution(0);
     this->status = SYS_RUNNING;
     rStd485.init();
+    // this->forceInitEEP();
     this->initThresholdDistance();
     this->initEscapeCountdown();
     this->initTriggerDuration();
@@ -252,7 +259,7 @@ public:
   }
 
   bool isOneDetected() {
-    for (size_t i = 0; i < 10; i++) {
+    for (size_t i = 0; i < sensorNum; i++) {
       uint16_t distance = map(constrain(analogInputs[i].value, 195, 1000), 195, 1000, 0, 1800);
       uint16_t thresholdDistance = sensorThresholdDistance;
       if (distance <= thresholdDistance) {
@@ -264,7 +271,7 @@ public:
 
   bool areAllEscaped() {
     bool flag = true;
-    for (size_t i = 0; i < 10; i++) {
+    for (size_t i = 0; i < sensorNum; i++) {
       uint16_t distance = map(constrain(analogInputs[i].value, 195, 1000), 195, 1000, 0, 1800);
       uint16_t thresholdDistance = sensorThresholdDistance + 25;
       if (distance <= thresholdDistance) {
@@ -277,7 +284,7 @@ public:
   void debug(int i = -1) {
     Serial.println(F("======= DEBUG ======="));
     if (i < 0) {
-      for (size_t nth = 0; nth < 10; nth++) {
+      for (size_t nth = 0; nth < sensorNum; nth++) {
         this->printOneSensor(nth);
       }
     } else {

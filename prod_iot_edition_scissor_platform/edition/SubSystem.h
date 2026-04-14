@@ -56,7 +56,7 @@ private:
   unsigned long tenSecondTimer = 0;
 
   void forceInitEEP() {
-    EEPROM.put(EEP_ADDR_THRESHOLD_DISTANCE, 12);
+    EEPROM.put(EEP_ADDR_THRESHOLD_DISTANCE, 8);
     EEPROM.put(EEP_ADDR_ESCAPE_COUNT_DOWN, 10);
     EEPROM.put(EEP_ADDR_TRIGGER_DURATION, 5);
   }
@@ -185,14 +185,12 @@ public:
   void loop() {
     powerLight.connect();
 
-    if (this->isFailure()) {
-      this->status = SYS_FAILURE;
-    } else {
-      this->status = th…is->prevStatus;
-    }
-
     if (this->status == SYS_RUNNING) {
       this->prevStatus = SYS_RUNNING;
+
+      if (this->isFailure()) {
+        this->status = SYS_FAILURE;
+      }
 
       relay.connect();
       alarm.cut();
@@ -246,8 +244,14 @@ public:
         this->status = SYS_RUNNING;
       }
     } else if (this->status == SYS_FAILURE) {
+      this->prevStatus = SYS_FAILURE;
+
+      if (!this->isFailure()) {
+        this->status = SYS_RUNNING;
+      }
+
       relay.cut();
-      trafficGreen.connect();
+      trafficGreen.cut();
       trafficYellow.connect();
       trafficRed.connect();
     }

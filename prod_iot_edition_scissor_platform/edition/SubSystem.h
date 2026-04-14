@@ -185,11 +185,11 @@ public:
   void loop() {
     powerLight.connect();
 
-    // if (this->isFailure()) {
-    //   this->status = SYS_FAILURE;
-    // } else {
-    //   this->status = this->prevStatus;
-    // }
+    if (this->isFailure()) {
+      this->status = SYS_FAILURE;
+    } else {
+      this->status = th…is->prevStatus;
+    }
 
     if (this->status == SYS_RUNNING) {
       this->prevStatus = SYS_RUNNING;
@@ -245,6 +245,11 @@ public:
       if ((millis() - this->tenSecondTimer) >= escapeCountDown * 1000) {
         this->status = SYS_RUNNING;
       }
+    } else if (this->status == SYS_FAILURE) {
+      relay.cut();
+      trafficGreen.connect();
+      trafficYellow.connect();
+      trafficRed.connect();
     }
 
     if (alarmTimer.autoTimeout(10000)) {

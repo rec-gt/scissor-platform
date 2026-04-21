@@ -72,105 +72,125 @@ public:
 
       u8g2.drawLine(0, 8, 128, 8);
 
-      /*=== DI ===*/
-      y = 17;
+      /*=== Current ===*/
+      y = 18;
       u8g2.setCursor(0, y);
-      u8g2.print(F("Di"));
-      for (size_t i = 0; i < 8; i++) {
-        u8g2.setCursor(12 + 5 * i, y);
-        u8g2.print(bitRead(diValue, i) ? F("1") : F("0"));
+      u8g2.print(F("CURRENT:"));
+      u8g2.setCursor(40, y);
+      u8g2.print(ai12 / 10., 1);
+      u8g2.print(F("A"));
+
+      /*=== Zone ===*/
+      for (size_t i = 0; i < 4; i++) {
+        y = 19 + ((i + 1) * 8);
+
+        u8g2.setCursor(0, y);
+        u8g2.print(F("ZONE 0"));
+        u8g2.print(i + 1);
+        u8g2.print(F(":"));
+        u8g2.setCursor(41, y);
+        u8g2.print(bitRead(diValue, i) ? F("ON") : F("OFF"));
+
+        u8g2.setCursor(72, y);
+        u8g2.print(F("ZONE 0"));
+        u8g2.print(i + 5);
+        u8g2.print(F(":"));
+        u8g2.setCursor(113, y);
+        u8g2.print(bitRead(diValue, i + 4) ? F("ON") : F("OFF"));
       }
 
-      /*=== DO ===*/
-      u8g2.setCursor(75, y);
-      u8g2.print(F("Do"));
-      for (size_t i = 0; i < 8; i++) {
-        u8g2.setCursor(87 + 5 * i, y);
-        u8g2.print(bitRead(doValue, i) ? F("1") : F("0"));
-      }
-      u8g2.drawLine(0, 18, 128, 18);
+      // /*=== DO ===*/
+      // u8g2.setCursor(75, y);
+      // u8g2.print(F("Do"));
+      // for (size_t i = 0; i < 8; i++) {
+      //   u8g2.setCursor(87 + 5 * i, y);
+      //   u8g2.print(bitRead(doValue, i) ? F("1") : F("0"));
+      // }
+      // u8g2.drawLine(0, 18, 128, 18);
 
-      /*=== AI ===*/
-      y = 27;
-      u8g2.setCursor(0, y);
-      u8g2.print(F("Ai"));
+      // /*=== AI ===*/
+      // y = 27;
+      // u8g2.setCursor(0, y);
+      // u8g2.print(F("Ai"));
 
-      u8g2.setCursor(12, y);
-      u8g2.print(F("A"));
-      u8g2.setCursor(17, y);
-      u8g2.print(ai1);
+      // u8g2.setCursor(12, y);
+      // u8g2.print(F("A"));
+      // u8g2.setCursor(17, y);
+      // u8g2.print(ai1);
 
-      u8g2.setCursor(42, y);
-      u8g2.print(F("A"));
-      u8g2.setCursor(47, y);
-      u8g2.print(ai2);
+      // u8g2.setCursor(42, y);
+      // u8g2.print(F("A"));
+      // u8g2.setCursor(47, y);
+      // u8g2.print(ai2);
 
-      u8g2.setCursor(72, y);
-      u8g2.print(F("A"));
-      u8g2.setCursor(77, y);
-      u8g2.print(ai3);
+      // u8g2.setCursor(72, y);
+      // u8g2.print(F("A"));
+      // u8g2.setCursor(77, y);
+      // u8g2.print(ai3);
 
-      u8g2.setCursor(102, y);
-      u8g2.print(F("A"));
-      u8g2.setCursor(107, y);
-      u8g2.print(ai4);
+      // u8g2.setCursor(102, y);
+      // u8g2.print(F("A"));
+      // u8g2.setCursor(107, y);
+      // u8g2.print(ai4);
 
-      y = 35;
-      u8g2.setCursor(12, y);
-      u8g2.print(F("A"));
-      u8g2.setCursor(17, y);
-      u8g2.print(ai5);
+      // y = 35;
+      // u8g2.setCursor(12, y);
+      // u8g2.print(F("A"));
+      // u8g2.setCursor(17, y);
+      // u8g2.print(ai5);
 
-      u8g2.setCursor(42, y);
-      u8g2.print(F("A"));
-      u8g2.setCursor(47, y);
-      u8g2.print(ai6);
+      // u8g2.setCursor(42, y);
+      // u8g2.print(F("A"));
+      // u8g2.setCursor(47, y);
+      // u8g2.print(ai6);
 
-      u8g2.setCursor(72, y);
-      u8g2.print(F("A"));
-      u8g2.setCursor(77, y);
-      u8g2.print(ai7);
+      // u8g2.setCursor(72, y);
+      // u8g2.print(F("A"));
+      // u8g2.setCursor(77, y);
+      // u8g2.print(ai7);
 
-      u8g2.setCursor(102, y);
-      u8g2.print(F("A"));
-      u8g2.setCursor(107, y);
-      u8g2.print(ai8);
+      // u8g2.setCursor(102, y);
+      // u8g2.print(F("A"));
+      // u8g2.setCursor(107, y);
+      // u8g2.print(ai8);
 
-      y = 43;
-      u8g2.setCursor(12, y);
-      u8g2.print(F("A"));
-      u8g2.setCursor(17, y);
-      u8g2.print(ai9);
+      // y = 43;
+      // u8g2.setCursor(12, y);
+      // u8g2.print(F("A"));
+      // u8g2.setCursor(17, y);
+      // u8g2.print(ai9);
 
-      u8g2.setCursor(42, y);
-      u8g2.print(F("A"));
-      u8g2.setCursor(47, y);
-      u8g2.print(ai10);
+      // u8g2.setCursor(42, y);
+      // u8g2.print(F("A"));
+      // u8g2.setCursor(47, y);
+      // u8g2.print(ai10);
 
-      u8g2.setCursor(72, y);
-      u8g2.print(F("A"));
-      u8g2.setCursor(77, y);
-      u8g2.print(ai11);
+      // u8g2.setCursor(72, y);
+      // u8g2.print(F("A"));
+      // u8g2.setCursor(77, y);
+      // u8g2.print(ai11);
 
-      u8g2.setCursor(102, y);
-      u8g2.print(F("A"));
-      u8g2.setCursor(107, y);
-      u8g2.print(ai12);
+      // u8g2.setCursor(102, y);
+      // u8g2.print(F("A"));
+      // u8g2.setCursor(107, y);
+      // u8g2.print(ai12);
 
-      u8g2.drawLine(0, 44, 128, 44);
+      // u8g2.drawLine(0, 44, 128, 44);
 
-      /*=== AO ===*/
-      y = 53;
-      u8g2.setCursor(0, y);
-      u8g2.print(F("Ao"));
-      u8g2.setCursor(12, y);
-      u8g2.print(ao1);
-      u8g2.setCursor(42, y);
-      u8g2.print(ao2);
-      u8g2.setCursor(72, y);
-      u8g2.print(ao3);
-      u8g2.setCursor(102, y);
-      u8g2.print(ao4);
+      // /*=== AO ===*/
+      // y = 53;
+      // u8g2.setCursor(0, y);
+      // u8g2.print(F("Ao"));
+      // u8g2.setCursor(12, y);
+      // u8g2.print(ao1);
+      // u8g2.setCursor(42, y);
+      // u8g2.print(ao2);
+      // u8g2.setCursor(72, y);
+      // u8g2.print(ao3);
+      // u8g2.setCursor(102, y);
+      // u8g2.print(ao4);
+
+      /*=== Footer ===*/
       u8g2.drawLine(0, 54, 128, 54);
 
       y = 63;

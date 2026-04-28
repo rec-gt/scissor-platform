@@ -1,3 +1,4 @@
+#include <stdint.h>
 #ifndef SubSystem_H
 #define SubSystem_H
 
@@ -19,15 +20,17 @@ DigitalInput &di6 = digitalInputs[5];        // spare or depends on application
 DigitalInput &di7 = digitalInputs[6];        // spare or depends on application
 DigitalInput &di8 = digitalInputs[7];        // spare or depends on application
 
-AnalogInput &current = analogInputs[0];  // 三相電電流
+AnalogInput &current = analogInputs[0];      // 三相電電流 reading
+AnalogInput &ampere1000 = analogInputs[11];  // 三相電電流 ampere
 
 
 class SubSystem {
 private:
-  double ampere = 0.0;
+  uint16_t ampere = 0;
 
-  void convertToAmpere() {
-    this->ampere = map(constrain(current.getValue(), 196, 996), 196, 996, 0, 100);
+  void convertToAmpere1000() {
+    this->ampere = map(constrain(current.getValue(), 196, 996), 196, 996, 0, 1000);
+    ampere1000.value = this->ampere;
   }
 
 public:
@@ -41,10 +44,11 @@ public:
   void loop() {
     subRS485.loop();
 
-    this->convertToAmpere();
-    Serial.println(this->ampere);
+    this->convertToAmpere1000();
+
     /*=== overwrite mqtt payloads in subSystem ===*/
     mainSystem.buildPayloads();
+    iot.buildMsg(DIPayload, DOPayload, AIPayload, AOPayload);
 
     /*=== log data locally ===*/
     if (subSystemTimer.autoTimeout(5000)) {

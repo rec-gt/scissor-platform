@@ -62,17 +62,28 @@ public:
   }
 
   void answer() {
-    if (rs485SerialRecv == F("AT+UNLOCK=RGT@2011")) {
-      rs485Lock.release();
-      this->printlnFlush(F("MODULE UNLOCKED"));
-    }
-
     if (rs485Lock.isReleased()) {
+      /* === Module Unlocked === */
+      if (rs485SerialRecv == F("AT")) {
+        this->printlnFlush(F("AT OK"));
+      }
+
       /* === Lock & Auto Lock === */
+      if (rs485LockTimer.autoTimeout(5000)) {
+        rs485Lock.lock();
+        this->printlnFlush(F("TIMEOUT, MODULE AUTO LOCKED"));
+      }
 
       if (rs485SerialRecv == F("AT+LOCK")) {
         rs485Lock.lock();
         this->printlnFlush(F("OK, MODULE LOCKED"));
+      }
+    } else {
+      /* === Module Locked === */
+      if (rs485SerialRecv == F("AT+UNLOCK=RGT@2011")) {
+        rs485Lock.release();
+        rs485LockTimer.refresh();
+        this->printlnFlush(F("MODULE UNLOCKED"));
       }
     }
   }

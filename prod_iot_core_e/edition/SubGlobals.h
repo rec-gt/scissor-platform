@@ -12,6 +12,7 @@
 
 /*=== For Controller ===*/
 Toggle rs485Lock;
+Timer rs485LockTimer;
 
 /*=== Configuration - AI Resolution ===*/
 void configAnalogInputResolution(bool r = 0) {  // 0 = 1024, 1 = 4096

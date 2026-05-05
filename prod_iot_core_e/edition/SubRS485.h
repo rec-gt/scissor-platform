@@ -1,8 +1,10 @@
+#include "Arduino.h"
 #ifndef SubRS485_H
 #define SubRS485_H
 
 #include "../core/Globals.h"
 #include "./SubGlobals.h"
+#include "./Memory.h"
 
 class SubRS485 {
 
@@ -70,13 +72,10 @@ public:
 
       /* === Config Host === */
       if (rs485SerialRecv.indexOf(F("AT+HOST=")) > -1) {
-        byte len = rs485SerialRecv.length();
-        Serial.println(len);
-        
-        // for (size_t i = 0; i < len; i++) {
-        //   Serial.println(rs485SerialRecv.charAt(i));
-        // }
-        Serial.println(rs485SerialRecv);
+        memory.writeStr(0, 32, rs485SerialRecv);
+        String target = "";
+        memory.readStr(0, 32, target);
+        Serial.println(target);
       }
 
       /* === Lock & Auto Lock === */

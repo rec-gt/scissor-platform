@@ -1,5 +1,6 @@
 #ifndef MEMORY_H
 #define MEMORY_H
+#include <EEPROM.h>
 #include "./SubGlobals.h"
 
 class Memory {
@@ -7,9 +8,8 @@ public:
   void writeStr(size_t addr, size_t len, const String& str) {
     size_t strLen = str.length();
     for (size_t i = 0; i < len; i++) {
-      EEPROM.write(addr + i, i > strLen - 1 ? '\0' : str[i]);
+      EEPROM.put(addr + i, i > strLen - 1 ? '\0' : str[i]);
     }
-    EEPROM.commit();
   }
 
   void readStr(size_t addr, size_t len, String& target) {

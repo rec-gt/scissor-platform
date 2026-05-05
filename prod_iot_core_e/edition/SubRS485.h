@@ -66,17 +66,21 @@ public:
       /* === Module Unlocked === */
       if (rs485SerialRecv == F("AT")) {
         this->printlnFlush(F("AT OK"));
+      } else if (rs485SerialRecv.indexOf(F("AT+HOST=")) > -1) {
+        while (rs485SerialRecv.available()) {
+          Serial.print(rs485SerialRecv.read());
+        }
       }
 
       /* === Lock & Auto Lock === */
-      if (rs485LockTimer.autoTimeout(5000)) {
-        rs485Lock.lock();
-        this->printlnFlush(F("TIMEOUT, MODULE AUTO LOCKED"));
-      }
-
       if (rs485SerialRecv == F("AT+LOCK")) {
         rs485Lock.lock();
         this->printlnFlush(F("OK, MODULE LOCKED"));
+      }
+
+      if (rs485LockTimer.autoTimeout(10000)) {
+        rs485Lock.lock();
+        this->printlnFlush(F("TIMEOUT, MODULE AUTO LOCKED"));
       }
     } else {
       /* === Module Locked === */

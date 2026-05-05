@@ -67,8 +67,9 @@ public:
       if (rs485SerialRecv == F("AT")) {
         this->printlnFlush(F("AT OK"));
       } else if (rs485SerialRecv.indexOf(F("AT+HOST=")) > -1) {
-        while (rs485SerialRecv.available()) {
-          Serial.print(rs485SerialRecv.read());
+        byte len = rs485SerialRecv.length();
+        for (size_t i = 0; i < len; i++) {
+          Serial.print(rs485SerialRecv.charAt(i));
         }
       }
 

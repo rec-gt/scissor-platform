@@ -23,6 +23,18 @@ public:
       }
     }
   }
+
+  void readStrRange(size_t addr_s, size_t addr_e, String& target) {
+    target = F("");
+    for (size_t i = addr_s; i < addr_e; i++) {
+      char c = EEPROM.read(i);
+      if (c != '\0') {
+        target += c;
+      } else {
+        break;
+      }
+    }
+  }
 };
 
 extern Memory memory;

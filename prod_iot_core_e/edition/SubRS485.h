@@ -11,12 +11,10 @@ class SubRS485 {
 private:
   void prepareRecv() {
     digitalWrite(RS485_RE_DE_PIN, LOW);  // HIGH = send, LOW = receive
-    delay(2);
   }
 
   void prepareSend() {
     digitalWrite(RS485_RE_DE_PIN, HIGH);  // HIGH = send, LOW = receive
-    delay(2);
   }
 
   void clear() {
@@ -27,7 +25,6 @@ private:
     this->prepareSend();
     RS485Serial.println(cmd);
     RS485Serial.flush();
-    delay(2);
   }
 
 public:
@@ -36,7 +33,7 @@ public:
   void init() {
     pinMode(RS485_RE_DE_PIN, OUTPUT);
     this->prepareRecv();
-    RS485Serial.begin(9600, SERIAL_8N1);
+    RS485Serial.begin(115200, SERIAL_8N1);
     rs485Lock.lock();
   }
 
@@ -68,13 +65,42 @@ public:
       /* === Module Unlocked === */
       if (rs485SerialRecv == F("AT")) {
         this->printlnFlush(F("AT OK"));
+        String target = "";
+        memory.readStrRange(0, 32, target);
+        Serial.println(target);
+        memory.readStrRange(32, 37, target);
+        Serial.println(target);
       }
 
       /* === Config Host === */
       if (rs485SerialRecv.indexOf(F("AT+HOST=")) > -1) {
-        memory.writeStr(0, 32, rs485SerialRecv);
+        memory.writeStr(0, 32, rs485SerialRecv.substring(8, 8 + 32));
         String target = "";
         memory.readStr(0, 32, target);
+        Serial.println(target);
+      }
+
+      /* === Config Port === */
+      if (rs485SerialRecv.indexOf(F("AT+PORT=")) > -1) {
+        memory.writeStr(32, 8, rs485SerialRecv.substring(8, 8 + 8));
+        String target = "";
+        memory.readStr(32, 8, target);
+        Serial.println(target);
+      }
+
+      /* === Config Username === */
+      if (rs485SerialRecv.indexOf(F("AT+USERNAME=")) > -1) {
+        memory.writeStr(40, 16, rs485SerialRecv.substring(12, 12 + 16));
+        String target = "";
+        memory.readStr(40, 16, target);
+        Serial.println(target);
+      }
+
+      /* === Config Password === */
+      if (rs485SerialRecv.indexOf(F("AT+PASSWORD=")) > -1) {
+        memory.writeStr(56, 16, rs485SerialRecv.substring(12, 12 + 16));
+        String target = "";
+        memory.readStr(56, 16, target);
         Serial.println(target);
       }
 
@@ -84,7 +110,7 @@ public:
         this->printlnFlush(F("OK, MODULE LOCKED"));
       }
 
-      if (rs485LockTimer.autoTimeout(10000)) {
+      if (rs485LockTimer.autoTimeout(30000)) {
         rs485Lock.lock();
         this->printlnFlush(F("TIMEOUT, MODULE AUTO LOCKED"));
       }

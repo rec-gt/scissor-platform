@@ -52,7 +52,7 @@ public:
   }
 
   void readIn1000ms() {
-    mbRtuClient.requestFrom(this->slaveId, HOLDING_REGISTERS, 0, 10);
+    mbRtuClient.requestFrom(this->slaveId, HOLDING_REGISTERS, 9820, 1);
 
     for (size_t i = 0; i < PARAMETERS_SIZE; i++) {
       holdingRegisterValues[i] = (uint32_t)mbRtuClient.read();

@@ -52,21 +52,24 @@ public:
   }
 
   void readIn1000ms() {
-    mbRtuClient.requestFrom(this->slaveId, HOLDING_REGISTERS, 9820, 1);
+    mbRtuClient.requestFrom(this->slaveId, HOLDING_REGISTERS, 0, 10);
 
     for (size_t i = 0; i < PARAMETERS_SIZE; i++) {
       holdingRegisterValues[i] = (uint32_t)mbRtuClient.read();
     }
 
-    if (mbRtuClient.lastError()) {
-      modbusCounter.accu();
-    }
+    // if (mbRtuClient.lastError()) {
+    //   Serial.println(mbRtuClient.lastError());
+    //   modbusCounter.accu();
+    // }
 
-    if (modbusCounter.over(3)) {
-      // reconnect modbus
-      mbRtuClient.end();
-      mbRtuClient.begin(9600);
-    }
+    // if (modbusCounter.over(3)) {
+    //   Serial.println("Modbus Client End");
+    //   RS485Serial.end();
+    //   if (deviceTimer.autoTimeout(3000)) {
+    //     RS485Serial.begin(9600, SERIAL_8N1);
+    //   }
+    // }
   }
 
   void showData() {

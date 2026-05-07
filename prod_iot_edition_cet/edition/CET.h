@@ -3,7 +3,7 @@
 #ifndef CET_H
 #define CET_H
 
-#define PARAMETERS_SIZE 10
+#define PARAMETERS_SIZE 4
 
 class CET {
 private:
@@ -12,16 +12,10 @@ private:
   float holdingRegisterValues[PARAMETERS_SIZE];
 
   char* holdingRegisterDescription[PARAMETERS_SIZE] = {
-    (char*)"HR_01 ",
-    (char*)"HR_02 ",
-    (char*)"HR_03 ",
-    (char*)"HR_04 ",
-    (char*)"HR_05 ",
-    (char*)"HR_06 ",
-    (char*)"HR_07 ",
-    (char*)"HR_08 ",
-    (char*)"HR_09 ",
-    (char*)"HR_10 ",
+    (char*)"V",
+    (char*)"I",
+    (char*)"kW",
+    (char*)"kW Total",
   };
 
   float IEEEfloat(uint32_t uint32) {
@@ -54,22 +48,15 @@ public:
   void readIn1000ms() {
     mbRtuClient.requestFrom(this->slaveId, HOLDING_REGISTERS, 0, 10);
 
-    for (size_t i = 0; i < PARAMETERS_SIZE; i++) {
-      holdingRegisterValues[i] = (uint32_t)mbRtuClient.read();
-    }
+    mbRtuClient.read();  // ignore
+    holdingRegisterValues[0] = (uint32_t)mbRtuClient.read();
+    mbRtuClient.read();  // ignore
+    holdingRegisterValues[1] = (uint32_t)mbRtuClient.read();
+    mbRtuClient.read();  // ignore
+    holdingRegisterValues[2] = (uint32_t)mbRtuClient.read();
 
-    // if (mbRtuClient.lastError()) {
-    //   Serial.println(mbRtuClient.lastError());
-    //   modbusCounter.accu();
-    // }
-
-    // if (modbusCounter.over(3)) {
-    //   Serial.println("Modbus Client End");
-    //   RS485Serial.end();
-    //   if (deviceTimer.autoTimeout(3000)) {
-    //     RS485Serial.begin(9600, SERIAL_8N1);
-    //   }
-    // }
+    mbRtuClient.requestFrom(this->slaveId, HOLDING_REGISTERS, 101, 1);
+    holdingRegisterValues[3] = (uint32_t)mbRtuClient.read();
   }
 
   void showData() {
@@ -79,10 +66,6 @@ public:
       Serial.print(holdingRegisterDescription[i]);
       Serial.print(F(": "));
       Serial.println((uint32_t)holdingRegisterValues[i]);
-    }
-
-    if (mbRtuClient.lastError()) {
-      Serial.println(mbRtuClient.lastError());
     }
   }
 };

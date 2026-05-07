@@ -14,13 +14,12 @@ public:
 
   void init() {
     configAnalogInputResolution(0);
-    subRS485.init();
     cet.init();
   }
 
   void loop() {
-    subRS485.loop();
     cet.loop();
+    this->handlePublishPayloads();
   }
 
   ~SubSystem() {}

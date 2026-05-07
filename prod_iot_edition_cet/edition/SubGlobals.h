@@ -24,4 +24,14 @@ Counter modbusCounter;
 /*=== For sub system ===*/
 Timer deviceTimer;
 
+#define PARAMETERS_SIZE 4
+float holdingRegisterValues[PARAMETERS_SIZE];
+
+char* holdingRegisterDescription[PARAMETERS_SIZE] = {
+  (char*)"V",
+  (char*)"I",
+  (char*)"kW",
+  (char*)"kW Total",
+};
+
 #endif

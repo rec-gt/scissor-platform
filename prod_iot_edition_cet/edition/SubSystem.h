@@ -9,6 +9,22 @@ SubRS485 subRS485;
 CET cet(46);
 
 class SubSystem {
+private:
+  void handlePublishPayloads() {
+    /*=== AI Payload ===*/
+    AIPayload = F("[");
+    AIPayload += holdingRegisterValues[0];
+    AIPayload += F(",");
+    AIPayload += holdingRegisterValues[1];
+    AIPayload += F(",");
+    AIPayload += holdingRegisterValues[2];
+    AIPayload += F(",");
+    AIPayload += holdingRegisterValues[3];
+    AIPayload += F("]");
+
+    iot.buildMsg(0, 0, AIPayload, F("[]"));
+  }
+
 public:
   SubSystem(void) {}
 

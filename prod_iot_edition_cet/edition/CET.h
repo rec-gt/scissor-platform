@@ -3,20 +3,10 @@
 #ifndef CET_H
 #define CET_H
 
-#define PARAMETERS_SIZE 4
 
 class CET {
 private:
   byte slaveId;
-
-  float holdingRegisterValues[PARAMETERS_SIZE];
-
-  char* holdingRegisterDescription[PARAMETERS_SIZE] = {
-    (char*)"V",
-    (char*)"I",
-    (char*)"kW",
-    (char*)"kW Total",
-  };
 
   float IEEEfloat(uint32_t uint32) {
     union {

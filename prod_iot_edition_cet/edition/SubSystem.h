@@ -6,7 +6,7 @@
 #include "./CET.h"
 
 SubRS485 subRS485;
-CET cet(46);
+CET cet(12);
 
 class SubSystem {
 private:

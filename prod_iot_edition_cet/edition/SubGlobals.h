@@ -31,7 +31,7 @@ char* holdingRegisterDescription[PARAMETERS_SIZE] = {
   (char*)"V",
   (char*)"I",
   (char*)"kW",
-  (char*)"kW Total",
+  (char*)"kWh Total",
 };
 
 #endif

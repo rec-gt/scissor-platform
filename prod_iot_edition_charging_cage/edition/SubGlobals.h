@@ -20,7 +20,7 @@ ModbusRTUClientClass mbRtuClient(recommendedStandard485);
 // ModbusRTUServerClass mbServer(recommendedStandard485);
 
 /*=== For Subsystem ===*/
-#define PARAMETERS_SIZE 6
+#define PARAMETERS_SIZE 16
 uint16_t holdingRegisterValues[PARAMETERS_SIZE] = {};
 
 

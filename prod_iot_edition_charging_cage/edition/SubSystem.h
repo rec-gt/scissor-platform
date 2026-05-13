@@ -18,6 +18,16 @@ KPS kps3;
 KPS kps4;
 KPS kps5;
 KPS kps6;
+KPS kps7;
+KPS kps8;
+KPS kps9;
+KPS kps10;
+KPS kps11
+  KPS kps12;
+KPS kps13;
+KPS kps14;
+KPS kps15;
+KPS kps16;
 
 DigitalOutput &powerRelay = digitalOutputs[0];
 DigitalOutput &alarmRelay = digitalOutputs[1];
@@ -160,17 +170,29 @@ public:
   }
 
   void loop() {
+    /*=== Read Data ===*/
     if (deviceTimer.autoTimeout(500)) {
       this->readIn500ms();
 
-      kps1.set(holdingRegisterValues[0]);
+      kps1.set(holdingRegisterValues[0]);  // fixed as environment temperature
       kps2.set(holdingRegisterValues[1]);
       kps3.set(holdingRegisterValues[2]);
       kps4.set(holdingRegisterValues[3]);
       kps5.set(holdingRegisterValues[4]);
       kps6.set(holdingRegisterValues[5]);
+      kps7.set(holdingRegisterValues[6]);
+      kps8.set(holdingRegisterValues[7]);
+      kps9.set(holdingRegisterValues[8]);
+      kps10.set(holdingRegisterValues[9]);
+      kps11.set(holdingRegisterValues[10]);
+      kps12.set(holdingRegisterValues[11]);
+      kps13.set(holdingRegisterValues[12]);
+      kps14.set(holdingRegisterValues[13]);
+      kps15.set(holdingRegisterValues[14]);
+      kps16.set(holdingRegisterValues[15]);
     }
 
+    /*=== Handle Logic ===*/
     if (this->sysHealth == SUBSYS_FAILURE) {
       Serial.println(F("SYSTEM FAILURE"));
       powerRelay.cut();

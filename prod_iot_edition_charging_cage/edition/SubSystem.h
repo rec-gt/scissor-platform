@@ -22,8 +22,8 @@ KPS kps7;
 KPS kps8;
 KPS kps9;
 KPS kps10;
-KPS kps11
-  KPS kps12;
+KPS kps11;
+KPS kps12;
 KPS kps13;
 KPS kps14;
 KPS kps15;
@@ -174,7 +174,7 @@ public:
     if (deviceTimer.autoTimeout(500)) {
       this->readIn500ms();
 
-      kps1.set(holdingRegisterValues[0]);  // fixed as environment temperature
+      kps1.set(holdingRegisterValues[0]);  // preserved as environment temperature
       kps2.set(holdingRegisterValues[1]);
       kps3.set(holdingRegisterValues[2]);
       kps4.set(holdingRegisterValues[3]);

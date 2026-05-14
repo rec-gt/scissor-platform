@@ -6,7 +6,12 @@
 #include "./CET.h"
 
 SubRS485 subRS485;
+
 CET cet(12);
+
+Timer debouncer;
+
+Toggle eventTriggerFlag;
 
 class SubSystem {
 private:
@@ -25,6 +30,16 @@ private:
     iot.buildMsg(0, 0, AIPayload, F("[]"));
   }
 
+  void debouncedEventTrigger() {
+    // if (eventTriggerFlag.isReleased()) {
+    //   if (debouncer.autoTimeout(1000)) {
+    //     Serial.println(F("Event Trigger - Force Publish"));
+    //     iot.forcePublish();
+    //     eventTriggerFlag.lock();
+    //   }
+    // }
+  }
+
 public:
   SubSystem(void) {}
 
@@ -36,6 +51,7 @@ public:
   void loop() {
     cet.loop();
     this->handlePublishPayloads();
+    this->debouncedEventTrigger();
   }
 
   ~SubSystem() {}

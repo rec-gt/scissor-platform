@@ -41,7 +41,7 @@ public:
     holdingRegisterValues[2] = IEEEfloat(((uint32_t)mbRtuClient.read() << 16) | mbRtuClient.read());
 
     mbRtuClient.requestFrom(this->slaveId, HOLDING_REGISTERS, 46, 2);
-    holdingRegisterValues[3] = IEEEfloat(((uint32_t)mbRtuClient.read() << 16) | mbRtuClient.read());
+    holdingRegisterValues[3] = (((uint32_t)mbRtuClient.read() << 16) | mbRtuClient.read()) * 0.01;
   }
 
   void showData() {

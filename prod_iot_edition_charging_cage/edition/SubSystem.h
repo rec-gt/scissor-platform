@@ -9,8 +9,7 @@
 
 Timer deviceTimer(10000UL);
 
-uint16_t THRESHOLD_DANGEROUS = 310;
-uint16_t THRESHOLD_SAFE = THRESHOLD_DANGEROUS - 30;
+
 
 KPS kps1;
 KPS kps2;
@@ -46,12 +45,29 @@ private:
   };
 
   byte sysHealth = SUBSYS_HEALTHY;
+
   byte sysStatus = SUBSYS_RUNNING;
 
   byte channelNumber = PARAMETERS_SIZE;  // by default 16
 
   void setChannelNumber(byte num) {
     this->channelNumber = num;
+  }
+
+  void isStatus(byte status) {
+    return this->sysStatus == status;
+  }
+
+  void isHealth(byte health) {
+    return this->sysHealth == health;
+  }
+
+  void setStatus(byte status) {
+    return this->sysStatus = status;
+  }
+
+  void setHealth(byte health) {
+    return this->sysHealth = health;
   }
 
   void valueChecker() {
@@ -171,9 +187,10 @@ public:
   void init() {
     if (!mbRtuClient.begin(9600)) {
       Serial.println(F("Failed to start Modbus RTU Client!"));
-      this->sysHealth = SUBSYS_FAILURE;
+      this->setHealth(SUBSYS_FAILURE);
     }
-    this->setChannelNumber(12);
+
+    this->setChannelNumber(TARGET_CHANNEL_SIZE);
   }
 
   void loop() {
@@ -183,15 +200,14 @@ public:
     }
 
     /*=== Handle Logic ===*/
-    if (this->sysHealth == SUBSYS_FAILURE) {
+    if (this->isHealth(SUBSYS_FAILURE)) {
       Serial.println(F("SYSTEM FAILURE"));
       powerRelay.cut();
       alarmRelay.connect();
-    } else if (this->sysHealth == SUBSYS_HEALTHY) {
-
+    } else {
       this->monitorCommHealth();
 
-      if (this->sysStatus == SUBSYS_RUNNING) {
+      if (this->isStatus(SUBSYS_RUNNING)) {
         // logic
         if (kps1.isOverheat(THRESHOLD_DANGEROUS)
             || kps2.isOverheat(THRESHOLD_DANGEROUS)
@@ -200,7 +216,7 @@ public:
             || kps5.isOverheat(THRESHOLD_DANGEROUS)
             || kps6.isOverheat(THRESHOLD_DANGEROUS)) {
           this->sysStatus = SUBSYS_STOPPED;
-          iot.forcePublish();
+          iot.forcePublish();  // force publish is required
         }
         Serial.println(F("SUBSYS_RUNNING"));
 

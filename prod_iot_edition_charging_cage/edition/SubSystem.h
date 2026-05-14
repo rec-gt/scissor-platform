@@ -48,10 +48,16 @@ private:
   byte sysHealth = SUBSYS_HEALTHY;
   byte sysStatus = SUBSYS_RUNNING;
 
+  byte channelNumber = PARAMETERS_SIZE;  // by default 16
+
+  void setChannelNumber(byte num) {
+    this->channelNumber = num;
+  }
+
   void valueChecker() {
     bool flag = true;  // flag = true 等於系統正常
 
-    for (size_t i = 0; i < PARAMETERS_SIZE; i++) {
+    for (size_t i = 0; i < this->channelNumber; i++) {
       if (holdingRegisterValues[i] > 2000 * 10) {
         flag = false;
       }
@@ -60,14 +66,45 @@ private:
     this->sysHealth = flag ? SUBSYS_HEALTHY : SUBSYS_FAILURE;
   }
 
-  void readIn500ms() {
+  bool spikeFilter() {
+    bool flag = true;  // flag = true 等於系統正常
+
+    for (size_t i = 0; i < this->channelNumber; i++) {
+      if (holdingRegisterValues[i] > 2000 * 10) {
+        flag = false;
+      }
+    }
+
+    return flag;
+  }
+
+  void readTempIn500ms() {
     mbRtuClient.requestFrom(1, HOLDING_REGISTERS, 0, PARAMETERS_SIZE);
 
     for (size_t i = 0; i < PARAMETERS_SIZE; i++) {
       holdingRegisterValues[i] = (uint32_t)mbRtuClient.read();
     }
 
-    this->valueChecker();
+    kps1.set(holdingRegisterValues[0]);  // preserved as environment temperature
+    kps2.set(holdingRegisterValues[1]);
+    kps3.set(holdingRegisterValues[2]);
+    kps4.set(holdingRegisterValues[3]);
+    kps5.set(holdingRegisterValues[4]);
+    kps6.set(holdingRegisterValues[5]);
+    kps7.set(holdingRegisterValues[6]);
+    kps8.set(holdingRegisterValues[7]);
+    kps9.set(holdingRegisterValues[8]);
+    kps10.set(holdingRegisterValues[9]);
+    kps11.set(holdingRegisterValues[10]);
+    kps12.set(holdingRegisterValues[11]);
+    kps13.set(holdingRegisterValues[12]);
+    kps14.set(holdingRegisterValues[13]);
+    kps15.set(holdingRegisterValues[14]);
+    kps16.set(holdingRegisterValues[15]);
+
+    for (size_t i = 0; i < PARAMETERS_SIZE; i++) {
+      // Serial.println(holdingRegisterValues[i]);
+    }
   }
 
   void monitorCommHealth() {
@@ -128,37 +165,6 @@ private:
     AOPayload += F("]");
   }
 
-  void handleSubscribeContent() {
-    if (mqttSubsMsgContent.length() <= 0) {
-      return;
-    }
-
-    byte b0 = 0;
-    byte b1 = 0;
-    byte b2 = 0;
-    byte b3 = 0;
-
-    {
-      b0 = mqttSubsMsgContent.charAt(0);
-      b1 = mqttSubsMsgContent.charAt(1);
-      b2 = mqttSubsMsgContent.charAt(2);
-      b3 = mqttSubsMsgContent.charAt(3);
-    }
-
-    Serial.println(b0);
-    Serial.println(b1);
-    Serial.println(b2);
-    Serial.println(b3);
-
-    if (b0 == 68) {    // D
-      if (b1 == 51) {  // DO4 only
-        b3 == 48 ? digitalOutputs[3].cut() : digitalOutputs[3].connect();
-      }
-    }
-
-    mqttSubsMsgContent = F("");
-  }
-
 public:
   SubSystem(void) {}
 
@@ -167,29 +173,13 @@ public:
       Serial.println(F("Failed to start Modbus RTU Client!"));
       this->sysHealth = SUBSYS_FAILURE;
     }
+    this->setChannelNumber(12);
   }
 
   void loop() {
     /*=== Read Data ===*/
     if (deviceTimer.autoTimeout(500)) {
-      this->readIn500ms();
-
-      kps1.set(holdingRegisterValues[0]);  // preserved as environment temperature
-      kps2.set(holdingRegisterValues[1]);
-      kps3.set(holdingRegisterValues[2]);
-      kps4.set(holdingRegisterValues[3]);
-      kps5.set(holdingRegisterValues[4]);
-      kps6.set(holdingRegisterValues[5]);
-      kps7.set(holdingRegisterValues[6]);
-      kps8.set(holdingRegisterValues[7]);
-      kps9.set(holdingRegisterValues[8]);
-      kps10.set(holdingRegisterValues[9]);
-      kps11.set(holdingRegisterValues[10]);
-      kps12.set(holdingRegisterValues[11]);
-      kps13.set(holdingRegisterValues[12]);
-      kps14.set(holdingRegisterValues[13]);
-      kps15.set(holdingRegisterValues[14]);
-      kps16.set(holdingRegisterValues[15]);
+      this->readTempIn500ms();
     }
 
     /*=== Handle Logic ===*/
@@ -240,8 +230,6 @@ public:
 
     this->updateDisplayContent();
     this->updateMQTTContent();
-
-    this->handleSubscribeContent();
   }
 
 

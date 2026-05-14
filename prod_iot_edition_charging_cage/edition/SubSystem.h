@@ -54,14 +54,6 @@ private:
     this->channelNumber = num;
   }
 
-  void isStatus(byte status) {
-    return this->sysStatus == status;
-  }
-
-  void isHealth(byte health) {
-    return this->sysHealth == health;
-  }
-
   void setStatus(byte status) {
     return this->sysStatus = status;
   }
@@ -70,7 +62,15 @@ private:
     return this->sysHealth = health;
   }
 
-  void valueChecker() {
+  bool isStatus(byte status) {
+    return this->sysStatus == status;
+  }
+
+  bool isHealth(byte health) {
+    return this->sysHealth == health;
+  }
+
+  void valueCheck() {
     bool flag = true;  // flag = true 等於系統正常
 
     for (size_t i = 0; i < this->channelNumber; i++) {
@@ -79,7 +79,7 @@ private:
       }
     }
 
-    this->sysHealth = flag ? SUBSYS_HEALTHY : SUBSYS_FAILURE;
+    this->setHealth(flag ? SUBSYS_HEALTHY : SUBSYS_FAILURE);
   }
 
   bool spikeFilter() {
@@ -198,6 +198,9 @@ public:
     if (deviceTimer.autoTimeout(500)) {
       this->readTempIn500ms();
     }
+
+    /*=== Check Data ===*/
+    this->valueCheck();
 
     /*=== Handle Logic ===*/
     if (this->isHealth(SUBSYS_FAILURE)) {

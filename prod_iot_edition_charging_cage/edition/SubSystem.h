@@ -12,6 +12,23 @@ Timer deviceTimer(10000UL);
 
 KPS tempSensors[PARAMETERS_SIZE];
 
+KPS kps1;
+KPS kps2;
+KPS kps3;
+KPS kps4;
+KPS kps5;
+KPS kps6;
+KPS kps7;
+KPS kps8;
+KPS kps9;
+KPS kps10;
+KPS kps11;
+KPS kps12;
+KPS kps13;
+KPS kps14;
+KPS kps15;
+KPS kps16;
+
 DigitalOutput &powerRelay = digitalOutputs[0];
 DigitalOutput &alarmRelay = digitalOutputs[1];
 DigitalOutput &commRelay = digitalOutputs[2];
@@ -72,17 +89,17 @@ private:
     this->setHealth(flag ? SUBSYS_HEALTHY : SUBSYS_FAILURE);
   }
 
-  void readTempIn1000ms() {
-    // mbRtuClient.requestFrom(1, HOLDING_REGISTERS, 0, PARAMETERS_SIZE);
+  void readTempIn500ms() {
+    mbRtuClient.requestFrom(1, HOLDING_REGISTERS, 0, PARAMETERS_SIZE);
 
-    // for (size_t i = 0; i < PARAMETERS_SIZE; i++) {
-    //   holdingRegisterValues[i] = mbRtuClient.read();
-    //   tempSensors[i].set(holdingRegisterValues[i]);
-    // }
+    for (size_t i = 0; i < PARAMETERS_SIZE; i++) {
+      holdingRegisterValues[i] = (uint32_t)mbRtuClient.read();
+      tempSensors[i].set(holdingRegisterValues[i]);
+    }
 
-    // for (size_t i = 0; i < PARAMETERS_SIZE; i++) {
-    //   Serial.println(holdingRegisterValues[i]);
-    // }
+    for (size_t i = 0; i < PARAMETERS_SIZE; i++) {
+      Serial.println(holdingRegisterValues[i]);
+    }
   }
 
   void monitorCommHealth() {
@@ -95,7 +112,7 @@ private:
       analogInputs[i].value = holdingRegisterValues[i] / 10;
     }
     for (size_t i = 0; i < 4; i++) {
-      analogOutputs[i].value = holdingRegisterValues[12 + i] / 10;
+      analogOutputs[i].value = holdingRegisterValues[PARAMETERS_SIZE + i] / 10;
     }
   }
 
@@ -164,8 +181,8 @@ public:
     }
 
     /*=== Read Data ===*/
-    if (deviceTimer.autoTimeout(1000)) {
-      this->readTempIn1000ms();
+    if (deviceTimer.autoTimeout(500)) {
+      this->readTempIn500ms();
     }
 
     /*=== Check Data ===*/
@@ -206,16 +223,14 @@ public:
         for (uint8_t i = 0; i < this->channelNumber; i++) {
           if (!tempSensors[i].isSafe(THRESHOLD_DANGEROUS)) {
             isAllSafe = false;
+            this->setStatus(SUBSYS_RUNNING);
             break;
           };
         }
 
         // control
-        if (isAllSafe) {
-          this->setStatus(SUBSYS_RUNNING);
-          powerRelay.cut();
-          alarmRelay.connect();
-        }
+        powerRelay.cut();
+        alarmRelay.connect();
       }
     }
 

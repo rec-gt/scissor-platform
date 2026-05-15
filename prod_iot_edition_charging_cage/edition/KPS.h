@@ -3,7 +3,7 @@
 #define HISTORY_SIZE 3
 
 #include "./SubGlobals.h"
-
+#include <HardwareSerial.h>
 class KPS {
 private:
   uint16_t reading = 250;

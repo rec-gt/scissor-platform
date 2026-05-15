@@ -22,7 +22,7 @@ ModbusRTUClientClass mbRtuClient(recommendedStandard485);
 /*=== For Subsystem ===*/
 #define PARAMETERS_SIZE 16
 uint16_t holdingRegisterValues[PARAMETERS_SIZE] = {};
-#define TARGET_CHANNEL_SIZE 1  // Note: 12個籠 + 1個環境溫度 = 13
+#define TARGET_CHANNEL_SIZE 12  // 12個籠 + 1個環境溫度
 uint16_t THRESHOLD_DANGEROUS = 600;
 uint16_t THRESHOLD_SAFE = THRESHOLD_DANGEROUS - 30;
 

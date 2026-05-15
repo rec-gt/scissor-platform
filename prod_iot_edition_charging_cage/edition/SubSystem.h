@@ -213,7 +213,7 @@ public:
         // recover logic
         allSensorSafe.setToTrue();
         for (uint8_t i = 0; i < this->channelNumber; i++) {
-          if (!tempSensors[i].isSafe(THRESHOLD_DANGEROUS)) {
+          if (!tempSensors[i].isSafe(THRESHOLD_SAFE)) {
             allSensorSafe.setToFalse();
           };
         }

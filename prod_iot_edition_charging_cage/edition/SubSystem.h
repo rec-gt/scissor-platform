@@ -72,17 +72,17 @@ private:
     this->setHealth(flag ? SUBSYS_HEALTHY : SUBSYS_FAILURE);
   }
 
-  void readTempIn500ms() {
-    mbRtuClient.requestFrom(1, HOLDING_REGISTERS, 0, PARAMETERS_SIZE);
+  void readTempIn1000ms() {
+    // mbRtuClient.requestFrom(1, HOLDING_REGISTERS, 0, PARAMETERS_SIZE);
 
-    for (size_t i = 0; i < PARAMETERS_SIZE; i++) {
-      holdingRegisterValues[i] = (uint32_t)mbRtuClient.read();
-      tempSensors[i].set(holdingRegisterValues[i]);
-    }
+    // for (size_t i = 0; i < PARAMETERS_SIZE; i++) {
+    //   holdingRegisterValues[i] = mbRtuClient.read();
+    //   tempSensors[i].set(holdingRegisterValues[i]);
+    // }
 
-    for (size_t i = 0; i < PARAMETERS_SIZE; i++) {
-      Serial.println(holdingRegisterValues[i]);
-    }
+    // for (size_t i = 0; i < PARAMETERS_SIZE; i++) {
+    //   Serial.println(holdingRegisterValues[i]);
+    // }
   }
 
   void monitorCommHealth() {
@@ -164,8 +164,8 @@ public:
     }
 
     /*=== Read Data ===*/
-    if (deviceTimer.autoTimeout(500)) {
-      this->readTempIn500ms();
+    if (deviceTimer.autoTimeout(1000)) {
+      this->readTempIn1000ms();
     }
 
     /*=== Check Data ===*/

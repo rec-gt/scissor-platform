@@ -95,10 +95,12 @@ private:
 
   void updateDisplayContent() {
     for (size_t i = 0; i < PARAMETERS_SIZE - 4; i++) {
-      analogInputs[i].value = holdingRegisterValues[i] / 10;
+      analogInputs[i].value = 23.5;
+      // analogInputs[i].value = holdingRegisterValues[i] / 10;
     }
     for (size_t i = 0; i < 4; i++) {
-      analogOutputs[i].value = holdingRegisterValues[12 + i] / 10;
+      analogOutputs[i].value = 23.5;
+      // analogOutputs[i].value = holdingRegisterValues[12 + i] / 10;
     }
   }
 
@@ -110,8 +112,8 @@ private:
   void overwriteMQTTPayloads() {
     /*=== DI Payload ===*/
     DIPayload = 0;
-    DIPayload |= (this->isStatus(SUBSYS_STOPPED) ? 1 : 0) << 0;
-    DIPayload |= (this->isHealth(SUBSYS_FAILURE) ? 1 : 0) << 1;
+    DIPayload |= (this->isStatus(SUBSYS_STOPPED) ? 1 : 0) << 0;  // DI1
+    DIPayload |= (this->isHealth(SUBSYS_FAILURE) ? 1 : 0) << 1;  // DI2
     DIPayload |= 0 << 2;
     DIPayload |= 0 << 3;
     DIPayload |= 0 << 4;

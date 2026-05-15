@@ -24,6 +24,6 @@ ModbusRTUClientClass mbRtuClient(recommendedStandard485);
 uint16_t holdingRegisterValues[PARAMETERS_SIZE] = {};
 #define TARGET_CHANNEL_SIZE 1  // 12個籠 + 1個環境溫度
 uint16_t THRESHOLD_DANGEROUS = 300;
-uint16_t THRESHOLD_SAFE = THRESHOLD_DANGEROUS - 30;
+uint16_t THRESHOLD_SAFE = THRESHOLD_DANGEROUS - 20;
 
 #endif

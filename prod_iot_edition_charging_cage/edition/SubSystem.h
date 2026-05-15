@@ -7,9 +7,10 @@
 #include "./SubGlobals.h"
 #include "./KPS.h"
 
+Timer warmUpTimer(5000UL);
 Timer deviceTimer(10000UL);
 
-
+KPS tempSensors[PARAMETERS_SIZE];
 
 KPS kps1;
 KPS kps2;
@@ -50,16 +51,22 @@ private:
 
   byte channelNumber = PARAMETERS_SIZE;  // by default 16
 
-  void setChannelNumber(byte num) {
+  void initChannelNumber(byte num) {
     this->channelNumber = num;
   }
 
+  void initTempSensors() {
+    for (byte i = 0; i < this->channelNumber; i++) {
+      tempSensors[i] = KPS();
+    }
+  }
+
   void setStatus(byte status) {
-    return this->sysStatus = status;
+    this->sysStatus = status;
   }
 
   void setHealth(byte health) {
-    return this->sysHealth = health;
+    this->sysHealth = health;
   }
 
   bool isStatus(byte status) {
@@ -82,44 +89,16 @@ private:
     this->setHealth(flag ? SUBSYS_HEALTHY : SUBSYS_FAILURE);
   }
 
-  bool spikeFilter() {
-    bool flag = true;  // flag = true 等於系統正常
-
-    for (size_t i = 0; i < this->channelNumber; i++) {
-      if (holdingRegisterValues[i] > 2000 * 10) {
-        flag = false;
-      }
-    }
-
-    return flag;
-  }
-
   void readTempIn500ms() {
     mbRtuClient.requestFrom(1, HOLDING_REGISTERS, 0, PARAMETERS_SIZE);
 
     for (size_t i = 0; i < PARAMETERS_SIZE; i++) {
       holdingRegisterValues[i] = (uint32_t)mbRtuClient.read();
+      tempSensors[i].set(holdingRegisterValues[i]);
     }
 
-    kps1.set(holdingRegisterValues[0]);  // preserved as environment temperature
-    kps2.set(holdingRegisterValues[1]);
-    kps3.set(holdingRegisterValues[2]);
-    kps4.set(holdingRegisterValues[3]);
-    kps5.set(holdingRegisterValues[4]);
-    kps6.set(holdingRegisterValues[5]);
-    kps7.set(holdingRegisterValues[6]);
-    kps8.set(holdingRegisterValues[7]);
-    kps9.set(holdingRegisterValues[8]);
-    kps10.set(holdingRegisterValues[9]);
-    kps11.set(holdingRegisterValues[10]);
-    kps12.set(holdingRegisterValues[11]);
-    kps13.set(holdingRegisterValues[12]);
-    kps14.set(holdingRegisterValues[13]);
-    kps15.set(holdingRegisterValues[14]);
-    kps16.set(holdingRegisterValues[15]);
-
     for (size_t i = 0; i < PARAMETERS_SIZE; i++) {
-      // Serial.println(holdingRegisterValues[i]);
+      Serial.println(holdingRegisterValues[i]);
     }
   }
 
@@ -129,12 +108,12 @@ private:
   }
 
   void updateDisplayContent() {
-    analogInputs[0].value = holdingRegisterValues[0];
-    analogInputs[1].value = holdingRegisterValues[1];
-    analogInputs[2].value = holdingRegisterValues[2];
-    analogInputs[3].value = holdingRegisterValues[3];
-    analogInputs[4].value = holdingRegisterValues[4];
-    analogInputs[5].value = holdingRegisterValues[5];
+    for (size_t i = 0; i < PARAMETERS_SIZE - 4; i++) {
+      analogInputs[i].value = holdingRegisterValues[i] / 10;
+    }
+    for (size_t i = 0; i < 4; i++) {
+      analogOutputs[i].value = holdingRegisterValues[PARAMETERS_SIZE + i] / 10;
+    }
   }
 
   void updateMQTTContent() {
@@ -190,10 +169,17 @@ public:
       this->setHealth(SUBSYS_FAILURE);
     }
 
-    this->setChannelNumber(TARGET_CHANNEL_SIZE);
+    this->initChannelNumber(TARGET_CHANNEL_SIZE);
+
+    warmUpTimer.refresh();
   }
 
   void loop() {
+    /*=== Async Warm Up ===*/
+    if (!warmUpTimer.isExpired()) {
+      return;
+    }
+
     /*=== Read Data ===*/
     if (deviceTimer.autoTimeout(500)) {
       this->readTempIn500ms();
@@ -211,35 +197,36 @@ public:
       this->monitorCommHealth();
 
       if (this->isStatus(SUBSYS_RUNNING)) {
-        // logic
-        if (kps1.isOverheat(THRESHOLD_DANGEROUS)
-            || kps2.isOverheat(THRESHOLD_DANGEROUS)
-            || kps3.isOverheat(THRESHOLD_DANGEROUS)
-            || kps4.isOverheat(THRESHOLD_DANGEROUS)
-            || kps5.isOverheat(THRESHOLD_DANGEROUS)
-            || kps6.isOverheat(THRESHOLD_DANGEROUS)) {
-          this->sysStatus = SUBSYS_STOPPED;
-          iot.forcePublish();  // force publish is required
-        }
         Serial.println(F("SUBSYS_RUNNING"));
+
+        // logic
+        for (uint8_t i = 0; i < this->channelNumber; i++) {
+          if (tempSensors[i].isOverheat(THRESHOLD_DANGEROUS)) {
+            this->setStatus(SUBSYS_STOPPED);
+            Serial.println(this->sysStatus);
+            Serial.println("CUT SUBSYS_STOPPED");
+            iot.forcePublish();  // force publish is required
+            break;
+          };
+        }
 
         // control
         powerRelay.connect();
         alarmRelay.cut();
       }
 
-      if (this->sysStatus == SUBSYS_STOPPED) {
-        // logic
-        if (kps1.isSafe(THRESHOLD_SAFE)
-            && kps2.isSafe(THRESHOLD_SAFE)
-            && kps3.isSafe(THRESHOLD_SAFE)
-            && kps4.isSafe(THRESHOLD_SAFE)
-            && kps5.isSafe(THRESHOLD_SAFE)
-            && kps6.isSafe(THRESHOLD_SAFE)) {
-          this->sysStatus = SUBSYS_RUNNING;
-        }
-
+      if (this->isStatus(SUBSYS_STOPPED)) {
         Serial.println(F("SUBSYS_STOPPED"));
+
+        // logic
+        bool isAllSafe = true;
+        for (uint8_t i = 0; i < this->channelNumber; i++) {
+          if (!tempSensors[i].isSafe(THRESHOLD_DANGEROUS)) {
+            isAllSafe = false;
+            this->setStatus(SUBSYS_RUNNING);
+            break;
+          };
+        }
 
         // control
         powerRelay.cut();
@@ -250,7 +237,6 @@ public:
     this->updateDisplayContent();
     this->updateMQTTContent();
   }
-
 
   ~SubSystem() {}
 };

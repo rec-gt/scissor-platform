@@ -12,23 +12,6 @@ Timer deviceTimer(10000UL);
 
 KPS tempSensors[PARAMETERS_SIZE];
 
-KPS kps1;
-KPS kps2;
-KPS kps3;
-KPS kps4;
-KPS kps5;
-KPS kps6;
-KPS kps7;
-KPS kps8;
-KPS kps9;
-KPS kps10;
-KPS kps11;
-KPS kps12;
-KPS kps13;
-KPS kps14;
-KPS kps15;
-KPS kps16;
-
 DigitalOutput &powerRelay = digitalOutputs[0];
 DigitalOutput &alarmRelay = digitalOutputs[1];
 DigitalOutput &commRelay = digitalOutputs[2];

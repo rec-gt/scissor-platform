@@ -95,7 +95,7 @@ private:
       analogInputs[i].value = holdingRegisterValues[i] / 10;
     }
     for (size_t i = 0; i < 4; i++) {
-      analogOutputs[i].value = holdingRegisterValues[PARAMETERS_SIZE + i] / 10;
+      analogOutputs[i].value = holdingRegisterValues[12 + i] / 10;
     }
   }
 
@@ -206,14 +206,16 @@ public:
         for (uint8_t i = 0; i < this->channelNumber; i++) {
           if (!tempSensors[i].isSafe(THRESHOLD_DANGEROUS)) {
             isAllSafe = false;
-            this->setStatus(SUBSYS_RUNNING);
             break;
           };
         }
 
         // control
-        powerRelay.cut();
-        alarmRelay.connect();
+        if (isAllSafe) {
+          this->setStatus(SUBSYS_RUNNING);
+          powerRelay.cut();
+          alarmRelay.connect();
+        }
       }
     }
 

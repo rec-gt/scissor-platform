@@ -95,11 +95,11 @@ private:
 
   void updateDisplayContent() {
     for (size_t i = 0; i < PARAMETERS_SIZE - 4; i++) {
-      analogInputs[i].value = 23.5;
-      // analogInputs[i].value = holdingRegisterValues[i] / 10;
+      // analogInputs[i].value = 23.5;
+      analogInputs[i].value = holdingRegisterValues[i] / 10;
     }
     for (size_t i = 0; i < 4; i++) {
-      analogOutputs[i].value = 23.5;
+      // analogOutputs[i].value = 23.5;
       // analogOutputs[i].value = holdingRegisterValues[12 + i] / 10;
     }
   }

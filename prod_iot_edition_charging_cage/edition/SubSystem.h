@@ -111,7 +111,7 @@ private:
     /*=== DI Payload ===*/
     DIPayload = 0;
     DIPayload |= (this->isStatus(SUBSYS_STOPPED) ? 1 : 0) << 0;
-    DIPayload |= (this->isStatus(SUBSYS_FAILURE) ? 1 : 0) << 1;
+    DIPayload |= (this->isHealth(SUBSYS_FAILURE) ? 1 : 0) << 1;
     DIPayload |= 0 << 2;
     DIPayload |= 0 << 3;
     DIPayload |= 0 << 4;
@@ -186,7 +186,7 @@ public:
       this->monitorCommHealth();
 
       if (this->isStatus(SUBSYS_RUNNING)) {
-        Serial.println(F("SUBSYS_RUNNING"));
+        Serial.println(F("SUBSYS RUNNING"));
         powerRelay.connect();
         alarmRelay.cut();
 

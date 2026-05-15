@@ -12,26 +12,12 @@ Timer deviceTimer(10000UL);
 
 KPS tempSensors[PARAMETERS_SIZE];
 
-KPS kps1;
-KPS kps2;
-KPS kps3;
-KPS kps4;
-KPS kps5;
-KPS kps6;
-KPS kps7;
-KPS kps8;
-KPS kps9;
-KPS kps10;
-KPS kps11;
-KPS kps12;
-KPS kps13;
-KPS kps14;
-KPS kps15;
-KPS kps16;
-
 DigitalOutput &powerRelay = digitalOutputs[0];
 DigitalOutput &alarmRelay = digitalOutputs[1];
 DigitalOutput &commRelay = digitalOutputs[2];
+
+Toggle allSensorSafe;
+Toggle anySensorOver;
 
 class SubSystem {
 private:
@@ -89,7 +75,7 @@ private:
     this->setHealth(flag ? SUBSYS_HEALTHY : SUBSYS_FAILURE);
   }
 
-  void readTempIn500ms() {
+  void readTempIn1000ms() {
     mbRtuClient.requestFrom(1, HOLDING_REGISTERS, 0, PARAMETERS_SIZE);
 
     for (size_t i = 0; i < PARAMETERS_SIZE; i++) {
@@ -112,7 +98,7 @@ private:
       analogInputs[i].value = holdingRegisterValues[i] / 10;
     }
     for (size_t i = 0; i < 4; i++) {
-      analogOutputs[i].value = holdingRegisterValues[PARAMETERS_SIZE + i] / 10;
+      analogOutputs[i].value = holdingRegisterValues[12 + i] / 10;
     }
   }
 
@@ -171,6 +157,9 @@ public:
 
     this->initChannelNumber(TARGET_CHANNEL_SIZE);
 
+    allSensorSafe.setToFalse();
+    anySensorOver.setToTrue();
+
     warmUpTimer.refresh();
   }
 
@@ -182,7 +171,7 @@ public:
 
     /*=== Read Data ===*/
     if (deviceTimer.autoTimeout(500)) {
-      this->readTempIn500ms();
+      this->readTempIn1000ms();
     }
 
     /*=== Check Data ===*/
@@ -198,39 +187,40 @@ public:
 
       if (this->isStatus(SUBSYS_RUNNING)) {
         Serial.println(F("SUBSYS_RUNNING"));
+        powerRelay.connect();
+        alarmRelay.cut();
 
-        // logic
+        // overheat logic
+        anySensorOver.setToFalse();
+
         for (uint8_t i = 0; i < this->channelNumber; i++) {
           if (tempSensors[i].isOverheat(THRESHOLD_DANGEROUS)) {
-            this->setStatus(SUBSYS_STOPPED);
-            Serial.println(this->sysStatus);
-            Serial.println("CUT SUBSYS_STOPPED");
-            iot.forcePublish();  // force publish is required
-            break;
+            anySensorOver.setToTrue();
           };
         }
 
-        // control
-        powerRelay.connect();
-        alarmRelay.cut();
+        if (anySensorOver.isTrue()) {
+          this->setStatus(SUBSYS_STOPPED);
+          iot.forcePublish();  // force publish is required
+        }
       }
 
       if (this->isStatus(SUBSYS_STOPPED)) {
         Serial.println(F("SUBSYS_STOPPED"));
+        powerRelay.cut();
+        alarmRelay.connect();
 
-        // logic
-        bool isAllSafe = true;
+        // recover logic
+        allSensorSafe.setToTrue();
         for (uint8_t i = 0; i < this->channelNumber; i++) {
           if (!tempSensors[i].isSafe(THRESHOLD_DANGEROUS)) {
-            isAllSafe = false;
-            this->setStatus(SUBSYS_RUNNING);
-            break;
+            allSensorSafe.setToFalse();
           };
         }
 
-        // control
-        powerRelay.cut();
-        alarmRelay.connect();
+        if (allSensorSafe.isTrue()) {
+          this->setStatus(SUBSYS_RUNNING);
+        }
       }
     }
 

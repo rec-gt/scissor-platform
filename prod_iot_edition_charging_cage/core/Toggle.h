@@ -9,6 +9,23 @@ public:
   /* === for better semantic understanding, function in different name with the same usage are used. === */
   Toggle(){};
 
+  /* === "T/F" Semantic === */
+  void setToTrue() {
+    this->_toggle = true;
+  }
+
+  void setToFalse() {
+    this->_toggle = false;
+  }
+
+  bool isTrue() {
+    return this->_toggle;
+  }
+
+  bool isFalse() {
+    return !this->_toggle;
+  }
+
   /* === "Lock" Semantic === */
   void lock() {
     this->_toggle = true;

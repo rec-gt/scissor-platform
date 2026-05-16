@@ -3,9 +3,16 @@
 
 #include <ArduinoRS485.h>
 #include <ArduinoModbus.h>
+#include "../core/Globals.h"
+#include "../core/Toggle.h"
+#include <EEPROM.h>
 
 #define RS485Serial Serial3
 #define RS485_RE_DE_PIN 22
+
+/*=== For Controller ===*/
+Toggle rs485Lock;
+Timer rs485LockTimer;
 
 /*=== Config AI Resolution ===*/
 void configAnalogInputResolution(bool r = 0) {  // 0 = 1024, 1 = 4096

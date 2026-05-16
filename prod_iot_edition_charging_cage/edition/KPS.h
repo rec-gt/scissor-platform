@@ -32,17 +32,26 @@ public:
   }
 
   bool isOverheat(uint16_t setTemp) {
-    bool flag = false;  // flag == true 等於過熱
     for (int i = 0; i < HISTORY_SIZE; i++) {
-      flag = this->readingHistory[i] > setTemp;
+      if (this->readingHistory[i] >= setTemp) {
+        return true;  // 但凡其中一個sample過熱，都算過熱
+      }
     }
-    return flag;
+    return false;
   }
 
-  bool isSafe(uint16_t setTemp) {
+  bool isSafe(uint16_t setTemp) {  // 所有sample都低溫，才算低溫
     bool flag = false;  // flag == true 等於低溫
+    uint8_t counter = 0;
+
     for (int i = 0; i < HISTORY_SIZE; i++) {
-      flag = this->readingHistory[i] < setTemp;
+      if (this->readingHistory[i] < setTemp) {
+        counter++;
+      }
+    }
+
+    if (counter == HISTORY_SIZE) {
+      flag = true;
     }
 
     return flag;

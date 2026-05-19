@@ -153,16 +153,17 @@ private:
 
 public:
   SubSystem(void) {
-    configAnalogInputResolution(0);
+  }
+
+  void init() {
     subRS485.init();
+    configAnalogInputResolution(0);
 
     relay1.cut();
     relay2.cut();
     relay3.cut();
     relay4.cut();
   }
-
-  void init() {}
 
   void loop() {
     running.listen();

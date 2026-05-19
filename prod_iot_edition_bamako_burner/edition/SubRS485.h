@@ -34,7 +34,7 @@ public:
   void init() {
     pinMode(RS485_RE_DE_PIN, OUTPUT);
     this->prepareRecv();
-    RS485Serial.begin(9600, SERIAL_8N1);
+    RS485Serial.begin(115200, SERIAL_8N1);
   }
 
   void loop() {

@@ -9,6 +9,7 @@
 #include "../core/Globals.h"
 #include "../core/Timer.h"
 #include "./SubGlobals.h"
+#include "./DataLogger.h"
 
 #ifndef SubSystem_H
 #define SubSystem_H
@@ -52,6 +53,9 @@ AnalogOutput &ao2 = analogOutputs[1];
 AnalogOutput &ao3 = analogOutputs[2];
 
 Timer evMonitorTimer;
+
+DataLogger dataLogger;
+Timer dataLoggerTimer;
 
 class SubSystem {
 private:
@@ -150,6 +154,7 @@ private:
 public:
   SubSystem(void) {
     configAnalogInputResolution(0);
+    subRS485.init();
 
     relay1.cut();
     relay2.cut();
@@ -173,6 +178,12 @@ public:
     this->handleTemperature();
     this->handlePowerLossForcePublish();
     this->handleEV();
+
+    /*=== Register the Data Logger ===*/
+    if (dataLoggerTimer.autoTimeout(5000)) {
+      Serial.println(mqttPublMsgPayload);
+      dataLogger.log(mqttPublMsgPayload);
+    }
   }
 
   ~SubSystem() {}

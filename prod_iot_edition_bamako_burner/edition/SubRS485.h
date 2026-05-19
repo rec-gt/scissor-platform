@@ -57,17 +57,21 @@ public:
   }
 
   void answer() {
-    cmpStr = F("AT");
-    int idx = rs485SerialRecv.indexOf(cmpStr);
+    int idx = rs485SerialRecv.indexOf(F("AT"));
 
     if (idx > -1) {
       this->printlnFlush(F("[Hello from REC-GT]"));
     }
   }
 
+  void write(const String& data) {
+    this->printlnFlush(data);
+    this->prepareRecv();
+  }
+
   ~SubRS485() {}
 };
 
-extern SubRS485 rStd485;
+extern SubRS485 subRS485;
 
 #endif

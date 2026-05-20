@@ -21,18 +21,18 @@ public:
 
   void read() {
     for (byte i = 0; i < TEMPERATURE_CHANNEL_SIZE; i++) {
-      this->sensors[i].set(analogInput[i].value);
+      this->sensors[i].set(analogInputs[i].value);
     }
   }
 
   void loop() {
-    if (kpsMngrTimer.autoExpire(500)) {
+    if (kpsMngrTimer.autoTimeout(500)) {
       this->read();
     }
   }
 
   bool anyOverheat() {
-    bool flag = THRESHOLD_DANGEROUS;  // THRESHOLD_DANGEROUS = assume all overheat by default
+    byte flag = THRESHOLD_DANGEROUS;  // THRESHOLD_DANGEROUS = assume all overheat by default
 
     for (byte i = 0; i < TEMPERATURE_CHANNEL_SIZE; i++) {
       if (this->sensors[i].isOverheat(THRESHOLD_DANGEROUS) == false) {
@@ -48,10 +48,10 @@ public:
   }
 
   bool allSafe() {
-    bool flag = 0;  // 0 = assume not all safe
+    byte flag = 0;  // 0 = assume not all safe
 
     for (byte i = 0; i < TEMPERATURE_CHANNEL_SIZE; i++) {
-      if (this->sensors[i].isSage(THRESHOLD_DANGEROUS) == false) {
+      if (this->sensors[i].isSafe(THRESHOLD_DANGEROUS) == false) {
         flag++;  // prove that each sensor is safe
       };
     }

@@ -29,14 +29,7 @@ private:
   }
 
   void updateDisplayContent() {
-    if (PARAMETERS_SIZE > 12) {
-      for (size_t i = 0; i < PARAMETERS_SIZE - 4; i++) {
-        analogInputs[i].value = holdingRegisterValues[i] / 10;
-      }
-      for (size_t i = 0; i < 4; i++) {
-        analogOutputs[i].value = holdingRegisterValues[12 + i] / 10;
-      }
-    }
+    analogOutputs[0].value = holdingRegisterValues[0];
   }
 
   void updateMQTTContent() {
@@ -121,7 +114,7 @@ public:
         powerRelay.connect();
         alarmRelay.cut();
 
-        if (kpsManager.anyOverHeat()) {
+        if (kpsManager.anyOverheat()) {
           sysMonitor.setStatus(SUBSYS_STOPPED);
           iot.forcePublish();  // force publish is required
         }

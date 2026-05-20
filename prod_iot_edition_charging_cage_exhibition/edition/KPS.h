@@ -24,7 +24,6 @@ public:
     this->appendTempHistory(this->readingHistory, this->reading);
   }
 
-
   void debug() {
     for (int i = 0; i < HISTORY_SIZE; i++) {
       Serial.println(this->readingHistory[i]);

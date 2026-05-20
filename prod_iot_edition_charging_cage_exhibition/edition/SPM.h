@@ -1,8 +1,8 @@
-#include "./SubGlobals.h"
-Timer spmTimer(10000UL);
-
 #ifndef SPM_H
 #define SPM_H
+#include "./SubGlobals.h"
+
+Timer spmTimer(10000UL);
 
 class SPM {
 private:
@@ -31,18 +31,18 @@ public:
 
   void loop() {
     if (spmTimer.autoTimeout(1000)) {
-      this->readIn1000ms();
-      this->showData();
+      this->read();
+      // this->debug();
     }
   }
 
-  void readIn1000ms() {
+  void read() {
     mbRtuClient.requestFrom(this->slaveId, HOLDING_REGISTERS, 1006, 2);
     holdingRegisterValues[0] = IEEEfloat(((uint32_t)mbRtuClient.read() << 16) | mbRtuClient.read());
   }
 
-  void showData() {
-    Serial.println(F("\r\n>>> Print Data\r\n"));
+  void debug() {
+    Serial.println(F("\r\n >>> DEBUG: \r\n"));
 
     for (byte i = 0; i < PARAMETERS_SIZE; i++) {
       Serial.print(holdingRegisterDescription[i]);

@@ -26,17 +26,21 @@ ModbusRTUClientClass mbRtuClient(recommendedStandard485);
 // ModbusRTUServerClass mbServer(recommendedStandard485);
 
 /*=== For Subsystem ===*/
-#define PARAMETERS_SIZE 2
-uint16_t holdingRegisterValues[PARAMETERS_SIZE] = {};
-
-enum SUBSYS_HEALTH {
-  SUBSYS_HEALTHY,
-  SUBSYS_FAILURE,
+#define PARAMETERS_SIZE 3
+uint16_t holdingRegisterValues[PARAMETERS_SIZE] = {
+  // Current,
+  // Temperature 1,
+  // Temperature 2
 };
 
 enum SUBSYS_STATUS {
   SUBSYS_RUNNING,
   SUBSYS_STOPPED,
+};
+
+enum SUBSYS_HEALTH {
+  SUBSYS_HEALTHY,
+  SUBSYS_FAILURE,
 };
 
 class SysMonitor {
@@ -70,9 +74,8 @@ char* holdingRegisterDescription[PARAMETERS_SIZE] = {
   (char*)"Current",
 };
 
-
 /*=== Charging Cage Config ===*/
-#define TARGET_CHANNEL_SIZE 2  // 目前只有兩個籠
+#define TEMPERATURE_CHANNEL_SIZE 2  // 目前只有兩個籠
 uint16_t THRESHOLD_DANGEROUS = 600;
 uint16_t THRESHOLD_SAFE = THRESHOLD_DANGEROUS - 30;
 

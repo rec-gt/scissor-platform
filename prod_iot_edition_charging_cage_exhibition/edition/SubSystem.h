@@ -17,17 +17,11 @@ KPS tempSensors[PARAMETERS_SIZE];
 SPM currentReader(247);
 KPSManager kpsManager;
 
-DigitalOutput &powerRelay = digitalOutputs[0];
-DigitalOutput &alarmRelay = digitalOutputs[1];
-DigitalOutput &commRelay = digitalOutputs[2];
+DigitalOutput &highTempRelay = digitalOutputs[0];
+DigitalOutput &sirenRelay = digitalOutputs[1];
 
 class SubSystem {
 private:
-  void monitorCommunication() {
-    byte iotState = iotModuleState + iotConnState + iotMqttMsgState;
-    iotState >= 30 ? commRelay.connect() : commRelay.cut();
-  }
-
   void updateDisplayContent() {
     analogOutputs[0].value = holdingRegisterValues[0];
   }
@@ -48,12 +42,6 @@ private:
     DIPayload |= 0 << 5;
     DIPayload |= 0 << 6;
     DIPayload |= 0 << 7;
-
-    /*=== DO Payload ===*/
-    DOPayload = 0;
-    for (size_t i = 0; i < DO_NUMS; i++) {
-      DOPayload |= digitalOutputs[i].getState() << i;
-    }
 
     /*=== AI Payload ===*/
     AIPayload = F("[");
@@ -99,20 +87,19 @@ public:
 
     /*=== Read Temperature Sensors ===*/
     kpsManager.loop();
+    kpsManager.debug();
 
-    /*=== Read Online Status ===*/
-    this->monitorCommunication();
 
     /*=== Handle Logic ===*/
     if (sysMonitor.isHealth(SUBSYS_FAILURE)) {
       Serial.println(F("SYSTEM FAILURE"));
-      powerRelay.cut();
-      alarmRelay.connect();
+      highTempRelay.cut();
+      sirenRelay.connect();
     } else {
       if (sysMonitor.isStatus(SUBSYS_RUNNING)) {
         Serial.println(F("SUBSYS RUNNING"));
-        powerRelay.connect();
-        alarmRelay.cut();
+        highTempRelay.connect();
+        sirenRelay.cut();
 
         if (kpsManager.anyOverheat()) {
           sysMonitor.setStatus(SUBSYS_STOPPED);
@@ -122,8 +109,8 @@ public:
 
       if (sysMonitor.isStatus(SUBSYS_STOPPED)) {
         Serial.println(F("SUBSYS_STOPPED"));
-        powerRelay.cut();
-        alarmRelay.connect();
+        highTempRelay.cut();
+        sirenRelay.connect();
 
         if (kpsManager.allSafe()) {
           sysMonitor.setStatus(SUBSYS_RUNNING);

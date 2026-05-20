@@ -63,6 +63,12 @@ public:
     return false;
   }
 
+  void debug() {
+    for (byte i = 0; i < TEMPERATURE_CHANNEL_SIZE; i++) {
+      Serial.println(this->sensors[i].getReading());
+    }
+  }
+
   ~KPSManager() {}
 };
 

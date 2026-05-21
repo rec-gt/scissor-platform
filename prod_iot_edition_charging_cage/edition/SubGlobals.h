@@ -5,14 +5,11 @@
 #include <ArduinoModbus.h>
 #include "../core/Globals.h"
 #include "../core/Toggle.h"
-#include <EEPROM.h>
 
 #define RS485Serial Serial3
 #define RS485_RE_DE_PIN 22
 
 /*=== For Controller ===*/
-Toggle rs485Lock;
-Timer rs485LockTimer;
 
 /*=== Config AI Resolution ===*/
 void configAnalogInputResolution(bool r = 0) {  // 0 = 1024, 1 = 4096
@@ -30,9 +27,47 @@ ModbusRTUClientClass mbRtuClient(recommendedStandard485);
 #define PARAMETERS_SIZE 16
 uint16_t holdingRegisterValues[PARAMETERS_SIZE] = {};
 
+enum SUBSYS_STATUS {
+  SUBSYS_RUNNING,
+  SUBSYS_STOPPED,
+};
+
+enum SUBSYS_HEALTH {
+  SUBSYS_HEALTHY,
+  SUBSYS_FAILURE,
+};
+
+class SysMonitor {
+private:
+  byte sysStatus;
+  byte sysHealth;
+public:
+  SysMonitor(void) {
+    this->sysStatus = SUBSYS_RUNNING;
+    this->sysHealth = SUBSYS_HEALTHY;
+  };
+
+  void setStatus(byte status) {
+    this->sysStatus = status;
+  }
+
+  bool isStatus(byte status) {
+    return this->sysStatus == status;
+  }
+
+  void setHealth(byte health) {
+    this->sysHealth = health;
+  }
+
+  bool isHealth(byte health) {
+    return this->sysHealth == health;
+  }
+};
+
 /*=== Charging Cage Config ===*/
-#define TARGET_CHANNEL_SIZE 1  // 12個籠 + 1個環境溫度
-uint16_t THRESHOLD_DANGEROUS = 300;
+#define TEMPERATURE_CHANNEL_SIZE 13  // 1個環境溫度 + 12個籠
+uint16_t THRESHOLD_DANGEROUS = 360;  // 36°C
 uint16_t THRESHOLD_SAFE = THRESHOLD_DANGEROUS - 20;
 
+extern SysMonitor sysMonitor;
 #endif

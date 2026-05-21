@@ -24,7 +24,6 @@ public:
     this->appendTempHistory(this->readingHistory, this->reading);
   }
 
-
   void debug() {
     for (int i = 0; i < HISTORY_SIZE; i++) {
       Serial.println(this->readingHistory[i]);
@@ -41,7 +40,7 @@ public:
   }
 
   bool isSafe(uint16_t setTemp) {  // 所有sample都低溫，才算低溫
-    bool flag = false;  // flag == true 等於低溫
+    bool flag = false;             // flag == true 等於低溫
     uint8_t counter = 0;
 
     for (int i = 0; i < HISTORY_SIZE; i++) {
@@ -64,6 +63,10 @@ public:
     }
 
     return flag;
+  }
+
+  uint16_t getReading() {
+    return this->reading;
   }
 
   ~KPS() {}

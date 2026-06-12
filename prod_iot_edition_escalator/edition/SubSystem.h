@@ -18,6 +18,7 @@ class SubSystem {
 private:
   uint16_t ampere = 0;
 
+  // for 0-10V
   void convertToAmpere500() {
     this->ampere = map(constrain(current.getValue(), 0, 1023), 0, 1023, 0, 500);
     ampere500.value = this->ampere;

@@ -284,12 +284,14 @@ private:
     if (iotConnState == IOT_CONN_FINISH_CEREG) {
       if (iotModel == IOT_MODEL_EC800K) {
         if (iotStateTimer.autoTimeout(1000)) {
-          this->printlnFlush(F("AT+QMTOPEN=0,iot.rec-gt.com,1880"));
+          // this->printlnFlush(F("AT+QMTOPEN=0,iot.rec-gt.com,1880"));
+          this->printlnFlush(F("AT+QMTOPEN=0,tsd-le.rec-gt.com,1880"));
           iotConnState = IOT_CONN_WAITING_OPEN_MQTT;
         }
       } else if (iotModel == IOT_MODEL_BC260Y_CN) {
         if (iotStateTimer.autoTimeout(1000)) {
           // this->printlnFlush(F("AT+QMTOPEN=0,iot.rec-gt.com,1880"));
+          // this->printlnFlush(F("AT+QMTOPEN=0,8.210.84.24,1880"));
           this->printlnFlush(F("AT+QMTOPEN=0,8.210.84.24,1880"));
           iotConnState = IOT_CONN_WAITING_OPEN_MQTT;
         }

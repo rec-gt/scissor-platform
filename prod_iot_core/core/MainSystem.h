@@ -106,11 +106,11 @@ public:
         bitRead(finalByte, 5) == 0 ? digitalOutputs[2].cut() : digitalOutputs[2].connect();
         bitRead(finalByte, 6) == 0 ? digitalOutputs[1].cut() : digitalOutputs[1].connect();
         bitRead(finalByte, 7) == 0 ? digitalOutputs[0].cut() : digitalOutputs[0].connect();
-      } else if (49 <= b1 && b1 <= 56) {  // 1-8
+      } else if (48 <= b1 && b1 <= 55) {  // 1-8
         if (b3 == 48) {                   // 0
-          digitalOutputs[b1 - 49].cut();
+          digitalOutputs[b1 - 48].cut();
         } else {
-          digitalOutputs[b1 - 49].connect();
+          digitalOutputs[b1 - 48].connect();
         }
       }
     } else if (b0 == 65) {  // A

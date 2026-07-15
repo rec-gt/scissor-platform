@@ -23,10 +23,6 @@ private:
     ampere500.value = this->ampere;
   }
 
-  void checkMaintenanceButton() {
-    Serial.println(analogInputs[1].getValue());
-  }
-
 public:
   SubSystem(void) {
     analogOutputs[1].set(255);  // 拉高AO2，放10V
@@ -41,6 +37,9 @@ public:
     subRS485.loop();
 
     this->convertToAmpere500();
+
+    /*=== if state change detected ===*/
+    
 
     /*=== overwrite mqtt payloads in subSystem ===*/
     mainSystem.buildPayloads();

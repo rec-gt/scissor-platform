@@ -47,8 +47,18 @@ public:
     }
   }
 
+  bool areAllValid() {
+    for (byte i = 0; i < TEMPERATURE_CHANNEL_SIZE; i++) {
+      if (this->sensors[i].isValid() == false) {
+        return false;
+      };
+    }
+
+    return true;
+  }
+
   bool anyOverheat() {
-    byte flag = TEMPERATURE_CHANNEL_SIZE;  // THRESHOLD_DANGEROUS = assume all overheat by default
+    byte flag = TEMPERATURE_CHANNEL_SIZE;  // TEMPERATURE_CHANNEL_SIZE = assume all overheat by default
 
     for (byte i = 0; i < TEMPERATURE_CHANNEL_SIZE; i++) {
       if (this->sensors[i].isOverheat(THRESHOLD_DANGEROUS) == false) {

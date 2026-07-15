@@ -18,20 +18,19 @@ class SubSystem {
 private:
   uint16_t ampere = 0;
 
-  // for 0-10V
   void convertToAmpere500() {
     this->ampere = map(constrain(current.getValue(), 0, 1023), 0, 1023, 0, 500);
     ampere500.value = this->ampere;
   }
 
-  // for 4-20mA
-  // void convertToAmpere500() {
-  //   this->ampere = map(constrain(current.getValue(), 196, 996), 196, 996, 0, 1000);
-  //   ampere500.value = this->ampere;
-  // }
+  void checkMaintenanceButton() {
+    Serial.println(analogInputs[1].getValue());
+  }
 
 public:
-  SubSystem(void) {}
+  SubSystem(void) {
+    analogOutputs[1].set(255);  // 拉高AO2，放出10V
+  }
 
   void init() {
     configAnalogInputResolution(0);

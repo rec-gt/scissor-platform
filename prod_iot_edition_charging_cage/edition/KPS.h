@@ -56,8 +56,8 @@ public:
     return flag;
   }
 
-  bool isFailure() {
-    bool flag = false;  // flag == true 等於異常
+  bool isValid() {
+    bool flag = true; // flag == true 等於assume正常
     for (int i = 0; i < HISTORY_SIZE; i++) {
       flag = this->readingHistory[i] > 20000;  // 異常讀數
     }

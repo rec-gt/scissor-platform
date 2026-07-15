@@ -103,9 +103,11 @@ public:
         powerRelay.connect();
         alarmRelay.cut();
 
-        if (kpsManager.anyOverheat()) {
-          sysMonitor.setStatus(SUBSYS_STOPPED);
-          iot.forcePublish();  // force publish is required
+        if (kpsManager.areAllValid()) {
+          if (kpsManager.anyOverheat()) {
+            sysMonitor.setStatus(SUBSYS_STOPPED);
+            iot.forcePublish();  // force publish is required
+          }
         }
       }
 

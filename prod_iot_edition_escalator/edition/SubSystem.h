@@ -29,7 +29,7 @@ private:
 
 public:
   SubSystem(void) {
-    analogOutputs[1].set(255);  // 拉高AO2，放出10V
+    analogOutputs[1].set(255);  // 拉高AO2，放10V
   }
 
   void init() {

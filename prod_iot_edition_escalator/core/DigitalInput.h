@@ -5,6 +5,7 @@ class DigitalInput {
 private:
   byte pin;
   byte state = LOW;
+  byte prevState = LOW;
   uint32_t prevMillis;
 
 public:
@@ -20,6 +21,7 @@ public:
 
     if (reading != this->state) {
       if ((millis() - this->prevMillis) > 50) {
+        this->prevState = this->state;
         this->state = reading;
       }
     } else {
@@ -29,6 +31,10 @@ public:
 
   byte getState() {
     return !this->state;
+  }
+
+  byte getPrevState() {
+    return !this->prevState;
   }
 };
 

@@ -23,6 +23,11 @@ private:
     ampere500.value = this->ampere;
   }
 
+  void overwriteMQTT() {
+    mainSystem.buildPayloads();
+    iot.buildMsg(DIPayload, DOPayload, AIPayload, AOPayload);
+  }
+
 public:
   SubSystem(void) {
     analogOutputs[1].set(255);  // 拉高AO2，放10V
@@ -38,12 +43,17 @@ public:
 
     this->convertToAmpere500();
 
-    /*=== if state change detected ===*/
-    
+    /*=== if state-change detected ===*/
+    for (uint8_t i = 0; i < DI_NUMS; i++) {
+      if (digitalInputs[i].hasStateChange()) {
+        this->overwriteMQTT();
+        iot.forcePublish();
+        break;
+      }
+    }
 
     /*=== overwrite mqtt payloads in subSystem ===*/
-    mainSystem.buildPayloads();
-    iot.buildMsg(DIPayload, DOPayload, AIPayload, AOPayload);
+    this->overwriteMQTT();
 
     /*=== log data locally ===*/
     if (subSystemTimer.autoTimeout(5000)) {

@@ -34,7 +34,9 @@ public:
   }
 
   bool hasStateChange() {
-    return this->stateChanged;
+    bool res = this->stateChanged;
+    this->stateChanged = false;
+    return res;
   }
 };
 

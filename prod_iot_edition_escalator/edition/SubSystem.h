@@ -28,6 +28,16 @@ private:
     iot.buildMsg(DIPayload, DOPayload, AIPayload, AOPayload);
   }
 
+  void anyStateChange() {
+    bool flag = false;
+    for (uint8_t i = 0; i < DI_NUMS; i++) {
+      if (digitalInputs[i].hasStateChange()) {
+        this->overwriteMQTT();
+        flag = true;
+      }
+    }
+    return flag;
+  }
 public:
   SubSystem(void) {
     analogOutputs[1].set(255);  // 拉高AO2，放10V
@@ -44,12 +54,9 @@ public:
     this->convertToAmpere500();
 
     /*=== if state-change detected ===*/
-    for (uint8_t i = 0; i < DI_NUMS; i++) {
-      if (digitalInputs[i].hasStateChange()) {
-        this->overwriteMQTT();
-        iot.forcePublish();
-        break;
-      }
+    if (this->anyStateChange()) {
+      this->overwriteMQTT();
+      iot.forcePublish();
     }
 
     /*=== overwrite mqtt payloads in subSystem ===*/

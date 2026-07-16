@@ -33,7 +33,7 @@ public:
     return !this->state;
   }
 
-  bool hasStateChange() {
+  bool hasStateChange() {  // call了才會reset
     bool res = this->stateChanged;
     this->stateChanged = false;
     return res;

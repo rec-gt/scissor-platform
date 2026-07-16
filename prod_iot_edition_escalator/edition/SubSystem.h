@@ -28,7 +28,7 @@ private:
     iot.buildMsg(DIPayload, DOPayload, AIPayload, AOPayload);
   }
 
-  void anyStateChange() {
+  bool anyStateChange() {
     bool flag = false;
     for (uint8_t i = 0; i < DI_NUMS; i++) {
       if (digitalInputs[i].hasStateChange()) {

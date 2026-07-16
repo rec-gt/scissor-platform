@@ -38,6 +38,7 @@ private:
     }
     return flag;
   }
+  
 public:
   SubSystem(void) {
     analogOutputs[1].set(255);  // 拉高AO2，放10V

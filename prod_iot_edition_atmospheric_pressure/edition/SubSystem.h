@@ -47,8 +47,9 @@ public:
   }
 
   void loop() {
-    Serial.println(analogInputs[0].getValue());
-    Serial.println(analogInputs[1].getValue());
+    float v1 = (5 / 1023.) * analogInputs[0].getValue();
+    float v2 = (5 / 1023.) * analogInputs[1].getValue();
+    Serial.println(24 * v1 - 40);
   }
 
   ~SubSystem() {}

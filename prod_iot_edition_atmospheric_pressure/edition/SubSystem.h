@@ -7,9 +7,36 @@
 #include "./SubGlobals.h"
 #include "./SubRS485.h"
 
+Timer subSystemTimer;
+SubRS485 subRS485;
+
+AnalogInput &current = analogInputs[0];     // 三相電電流 reading
+AnalogInput &ampere500 = analogInputs[11];  // 三相電電流 ampere, 500 = 50.0A
 
 class SubSystem {
 private:
+  uint16_t ampere = 0;
+
+  void convertToAmpere500() {
+    this->ampere = map(constrain(current.getValue(), 0, 1023), 0, 1023, 0, 500);
+    ampere500.value = this->ampere;
+  }
+
+  void overwriteMQTT() {
+    mainSystem.buildPayloads();
+    iot.buildMsg(DIPayload, DOPayload, AIPayload, AOPayload);
+  }
+
+  bool anyStateChange() {
+    bool flag = false;
+    for (uint8_t i = 0; i < DI_NUMS; i++) {
+      if (digitalInputs[i].hasStateChange()) {
+        this->overwriteMQTT();
+        flag = true;
+      }
+    }
+    return flag;
+  }
   
 public:
   SubSystem(void) {
@@ -18,11 +45,27 @@ public:
 
   void init() {
     configAnalogInputResolution(0);
+    subRS485.init();
   }
 
   void loop() {
-    Serial.println(analogInputs[0].getValue());
-    Serial.println(analogInputs[1].getValue());
+    subRS485.loop();
+
+    this->convertToAmpere500();
+
+    /*=== if state-change detected ===*/
+    if (this->anyStateChange()) {
+      this->overwriteMQTT();
+      iot.forcePublish();
+    }
+
+    /*=== overwrite mqtt payloads in subSystem ===*/
+    this->overwriteMQTT();
+
+    /*=== log data locally ===*/
+    if (subSystemTimer.autoTimeout(1000)) {
+      Serial.println(current.getValue());
+    }
   }
 
   ~SubSystem() {}

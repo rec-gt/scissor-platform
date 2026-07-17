@@ -37,35 +37,18 @@ private:
     }
     return flag;
   }
-  
+
 public:
   SubSystem(void) {
-    analogOutputs[1].set(255);  // 拉高AO2，放10V
   }
 
   void init() {
     configAnalogInputResolution(0);
-    subRS485.init();
   }
 
   void loop() {
-    subRS485.loop();
-
-    this->convertToAmpere500();
-
-    /*=== if state-change detected ===*/
-    if (this->anyStateChange()) {
-      this->overwriteMQTT();
-      iot.forcePublish();
-    }
-
-    /*=== overwrite mqtt payloads in subSystem ===*/
-    this->overwriteMQTT();
-
-    /*=== log data locally ===*/
-    if (subSystemTimer.autoTimeout(1000)) {
-      Serial.println(current.getValue());
-    }
+    Serial.println(analogInputs[0].getValue());
+    Serial.println(analogInputs[1].getValue());
   }
 
   ~SubSystem() {}

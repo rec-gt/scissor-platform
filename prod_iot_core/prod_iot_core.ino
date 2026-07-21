@@ -16,7 +16,7 @@ Utils utils;
 
 SubSystem subSystem;
 
-Timer systemTimer(86400000);
+Timer systemTimer(86400000);  // 24 * 60 * 60 * 1000, 1 day in ms
 
 void setup() {
   Serial.begin(9600);

@@ -30,7 +30,7 @@ enum EEPROM_ADDRESS {
 /*=== For SubSystem ===*/
 uint8_t sensorNum = 8;                   // max 12
 uint16_t sensorThresholdDistance = 1000;  // in mm, e.g., 1000mm
-uint16_t escapeCountDown = 5;             // in s, e.g., 5s
+uint16_t escapeCountDown = 10;             // in s, e.g., 10s
 uint16_t triggerDuration = 500;           // in ms, e.g., 500ms
 
 #endif

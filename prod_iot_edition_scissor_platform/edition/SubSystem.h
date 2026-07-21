@@ -42,6 +42,10 @@ private:
 
   byte thresholdDistance = ALL_1000;
 
+  DryContact &dc1 = dryContacts[0];
+  DryContact &dc2 = dryContacts[1];
+  DryContact &dc3 = dryContacts[2];
+
   DigitalOutput &relay = digitalOutputs[0];
   DigitalOutput &alarm = digitalOutputs[1];
   DigitalOutput &powerLight = digitalOutputs[2];
@@ -59,6 +63,21 @@ private:
     EEPROM.put(EEP_ADDR_THRESHOLD_DISTANCE, 8);
     EEPROM.put(EEP_ADDR_ESCAPE_COUNT_DOWN, 10);
     EEPROM.put(EEP_ADDR_TRIGGER_DURATION, 5);
+  }
+
+  void initSensorNum() {
+    if (dc1.isConnected()) {
+      sensorNum = 8;
+    }
+    if (dc2.isConnected()) {
+      sensorNum = 10;
+    }
+    if (dc3.isConnected()) {
+      sensorNum = 12;
+    }
+
+    Serial.print(F("SENSOR NUM: "));
+    Serial.println(sensorNum);
   }
 
   void initThresholdDistance() {
@@ -176,7 +195,8 @@ public:
     configAnalogInputResolution(0);
     this->status = SYS_RUNNING;
     rStd485.init();
-    // this->forceInitEEP();
+    // this->forceInitEEP(); // ignore it, obsolete
+    this->initSensorNum();
     this->initThresholdDistance();
     this->initEscapeCountdown();
     this->initTriggerDuration();

@@ -69,10 +69,21 @@ private:
     AOPayload += F("]");
   }
 
+  void initNumOfTempSensor() {
+    uint8_t numOfSensor = 0;
+    for (uint8_t i = 0; i < DRY_CONTACT_NUMS; i++) {
+      numOfSensor |= dryContacts[i].isConnected() << i;
+    }
+    TEMPERATURE_CHANNEL_SIZE = numOfSensor;
+    Serial.print("channel size: ");
+    Serial.println(TEMPERATURE_CHANNEL_SIZE);
+  }
+
 public:
   SubSystem(void) {}
 
   void init() {
+    this->initNumOfTempSensor();
     if (!mbRtuClient.begin(9600)) {
       Serial.println(F("Failed to start Modbus RTU Client!"));
       sysMonitor.setHealth(SUBSYS_FAILURE);

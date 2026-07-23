@@ -8,7 +8,7 @@ Timer kpsMngrTimer(10000UL);
 
 class KPSManager {
 private:
-  KPS sensors[TEMPERATURE_CHANNEL_SIZE] = {};
+  KPS sensors[MAX_TEMPERATURE_CHANNEL_SIZE] = {};
 
 public:
   KPSManager(void) {}

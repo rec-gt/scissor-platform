@@ -65,9 +65,10 @@ public:
 };
 
 /*=== Charging Cage Config ===*/
-#define TEMPERATURE_CHANNEL_SIZE 13  // 10個籠 + 1個環境溫度 
-uint16_t THRESHOLD_DANGEROUS = 600;  // 60°C
-uint16_t THRESHOLD_SAFE = THRESHOLD_DANGEROUS - 20;
+const uint16_t MAX_TEMPERATURE_CHANNEL_SIZE = 16;
+uint16_t TEMPERATURE_CHANNEL_SIZE = 13;              // e.g., 12個籠 + 1個環境溫度
+uint16_t THRESHOLD_DANGEROUS = 600;                  // e.g., 60°C
+uint16_t THRESHOLD_SAFE = THRESHOLD_DANGEROUS - 20;  // e.g., 600 - 20 = 580 => 58°C
 
 extern SysMonitor sysMonitor;
 #endif

@@ -114,9 +114,9 @@ public:
         }
       }
     } else if (b0 == 65) {  // A
-      if (49 <= b1 && b1 <= 53) {
-        byte finalByte = (utils.hexCharToByte(b3) << 4) | utils.hexCharToByte(b4);  // hex -> dec -> byte
-        analogOutputs[b1 - 49].set(finalByte);
+      if (48 <= b1 && b1 <= 52) {
+        byte finalByte = (utils.hexCharToByte(b3) << 4) | utils.hexCharToByte(b4);  // hex -> byte
+        analogOutputs[b1 - 48].set(finalByte);
       }
     }
 

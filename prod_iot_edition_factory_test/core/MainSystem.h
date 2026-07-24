@@ -84,20 +84,21 @@ public:
 
     byte b0 = 0;
     byte b1 = 0;
-    // byte b2 = 0; // b2 is useless
+    byte b2 = 0;
     byte b3 = 0;
     byte b4 = 0;
 
     {
       b0 = mqttSubsMsgContent.charAt(0);
       b1 = mqttSubsMsgContent.charAt(1);
+      b2 = mqttSubsMsgContent.charAt(2);
       b3 = mqttSubsMsgContent.charAt(3);
       b4 = mqttSubsMsgContent.charAt(4);
     }
 
     if (b0 == 68) {                                                                   // D
       if (b1 == 58) {                                                                 // :
-        byte finalByte = (utils.hexCharToByte(b3) << 4) | (utils.hexCharToByte(b4));  // hex -> dec -> byte
+        byte finalByte = (utils.hexCharToByte(b2) << 4) | (utils.hexCharToByte(b3));  // hex -> byte
         bitRead(finalByte, 0) == 0 ? digitalOutputs[7].cut() : digitalOutputs[7].connect();
         bitRead(finalByte, 1) == 0 ? digitalOutputs[6].cut() : digitalOutputs[6].connect();
         bitRead(finalByte, 2) == 0 ? digitalOutputs[5].cut() : digitalOutputs[5].connect();
@@ -106,17 +107,17 @@ public:
         bitRead(finalByte, 5) == 0 ? digitalOutputs[2].cut() : digitalOutputs[2].connect();
         bitRead(finalByte, 6) == 0 ? digitalOutputs[1].cut() : digitalOutputs[1].connect();
         bitRead(finalByte, 7) == 0 ? digitalOutputs[0].cut() : digitalOutputs[0].connect();
-      } else if (49 <= b1 && b1 <= 56) {  // 1-8
+      } else if (48 <= b1 && b1 <= 55) {  // 1-8
         if (b3 == 48) {                   // 0
-          digitalOutputs[b1 - 49].cut();
+          digitalOutputs[b1 - 48].cut();
         } else {
-          digitalOutputs[b1 - 49].connect();
+          digitalOutputs[b1 - 48].connect();
         }
       }
     } else if (b0 == 65) {  // A
-      if (49 <= b1 && b1 <= 53) {
-        byte finalByte = (utils.hexCharToByte(b3) << 4) | utils.hexCharToByte(b4);  // hex -> dec -> byte
-        analogOutputs[b1 - 49].set(finalByte);
+      if (48 <= b1 && b1 <= 52) {
+        byte finalByte = (utils.hexCharToByte(b3) << 4) | utils.hexCharToByte(b4);  // hex -> byte
+        analogOutputs[b1 - 48].set(finalByte);
       }
     }
 

@@ -84,20 +84,21 @@ public:
 
     byte b0 = 0;
     byte b1 = 0;
-    // byte b2 = 0; // actually b2 is useless, but 是9但啦...
+    byte b2 = 0;
     byte b3 = 0;
     byte b4 = 0;
 
     {
       b0 = mqttSubsMsgContent.charAt(0);
       b1 = mqttSubsMsgContent.charAt(1);
+      b2 = mqttSubsMsgContent.charAt(2);
       b3 = mqttSubsMsgContent.charAt(3);
       b4 = mqttSubsMsgContent.charAt(4);
     }
 
     if (b0 == 68) {                                                                   // D
       if (b1 == 58) {                                                                 // :
-        byte finalByte = (utils.hexCharToByte(b3) << 4) | (utils.hexCharToByte(b4));  // hex -> byte
+        byte finalByte = (utils.hexCharToByte(b2) << 4) | (utils.hexCharToByte(b3));  // hex -> byte
         bitRead(finalByte, 0) == 0 ? digitalOutputs[7].cut() : digitalOutputs[7].connect();
         bitRead(finalByte, 1) == 0 ? digitalOutputs[6].cut() : digitalOutputs[6].connect();
         bitRead(finalByte, 2) == 0 ? digitalOutputs[5].cut() : digitalOutputs[5].connect();

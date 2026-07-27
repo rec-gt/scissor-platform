@@ -3,42 +3,29 @@
 #ifndef CET_H
 #define CET_H
 
-#define PARAMETERS_SIZE 10
+/*=== Derek, please config modbus here ===*/
+constexpr uint16_t SLAVE_ID = 1;
+constexpr uint16_t MB_BAUD_RATE = 9600;
+constexpr uint16_t MB_SERIAL_CONFIG = SERIAL_8E1;  // e.g., SERIAL_8E1, SERIAL_8N1
+
+/*=== End of config ===*/
 
 class CET {
 private:
-  byte slaveId;
-
-  float holdingRegisterValues[PARAMETERS_SIZE];
-
-  char* holdingRegisterDescription[PARAMETERS_SIZE] = {
-    (char*)"HR_01 ",
-    (char*)"HR_02 ",
-    (char*)"HR_03 ",
-    (char*)"HR_04 ",
-    (char*)"HR_05 ",
-    (char*)"HR_06 ",
-    (char*)"HR_07 ",
-    (char*)"HR_08 ",
-    (char*)"HR_09 ",
-    (char*)"HR_10 ",
-  };
-
-  float IEEEfloat(uint32_t uint32) {
+  float IEEEfloat(uint32_t val) {
     union {
       uint32_t i;
       float f;
     } u;
-    u.i = uint32;
+    u.i = val;
     return u.f;
   }
 
 public:
-  CET(byte slaveId)
-    : slaveId(slaveId){};
+  CET(void) {}
 
   void init() {
-    if (!mbRtuClient.begin(9600)) {
+    if (!mbRtuClient.begin(MB_BAUD_RATE, MB_SERIAL_CONFIG)) {
       Serial.println(F("Failed to start Modbus RTU Client!"));
       while (1) {};
     }
@@ -52,21 +39,13 @@ public:
   }
 
   void readIn1000ms() {
-    mbRtuClient.requestFrom(this->slaveId, HOLDING_REGISTERS, 9820, 1);
+    mbRtuClient.requestFrom(SLAVE_ID, HOLDING_REGISTERS, 0, 6);
+    holdingRegisterValues[0] = IEEEfloat(((uint32_t)mbRtuClient.read() << 16) | mbRtuClient.read());
+    holdingRegisterValues[1] = IEEEfloat(((uint32_t)mbRtuClient.read() << 16) | mbRtuClient.read());
+    holdingRegisterValues[2] = IEEEfloat(((uint32_t)mbRtuClient.read() << 16) | mbRtuClient.read());
 
-    for (size_t i = 0; i < PARAMETERS_SIZE; i++) {
-      holdingRegisterValues[i] = (uint32_t)mbRtuClient.read();
-    }
-
-    if (mbRtuClient.lastError()) {
-      modbusCounter.accu();
-    }
-
-    if (modbusCounter.over(3)) {
-      // reconnect modbus
-      mbRtuClient.end();
-      mbRtuClient.begin(9600);
-    }
+    mbRtuClient.requestFrom(SLAVE_ID, HOLDING_REGISTERS, 46, 2);
+    holdingRegisterValues[3] = (((uint32_t)mbRtuClient.read() << 16) | mbRtuClient.read()) * 0.01;
   }
 
   void showData() {
@@ -75,11 +54,7 @@ public:
     for (byte i = 0; i < PARAMETERS_SIZE; i++) {
       Serial.print(holdingRegisterDescription[i]);
       Serial.print(F(": "));
-      Serial.println((uint32_t)holdingRegisterValues[i]);
-    }
-
-    if (mbRtuClient.lastError()) {
-      Serial.println(mbRtuClient.lastError());
+      Serial.println(holdingRegisterValues[i], 4);
     }
   }
 };

@@ -19,5 +19,6 @@ void configAnalogInputResolution(bool r = 0) {  // 0 = 1024, 1 = 4096
 RS485Class recommendedStandard485(RS485Serial, 0, 0, RS485_RE_DE_PIN);
 ModbusRTUClientClass mbRtuClient(recommendedStandard485);
 // ModbusRTUServerClass mbServer(recommendedStandard485);
+Timer mbTimer;
 
 #endif

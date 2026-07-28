@@ -16,9 +16,9 @@ uint8_t mbReadConfig[MB_DATA_SIZE][3] = {
   // 有連續的data盡量在最右邊的位置寫下有多少個連續數據，這是性能考量
   // { HOLDING_REGISTERS, 0, 6 },   // 等於從address 0開始，連續讀取6個數據，也就是read: 0, 1, 2, 3, 4, 5
   // { HOLDING_REGISTERS, 46, 2 },  // 等於從address 46開始，連續讀取2個數據，也就是read: 46, 47
-  // { INPUT_REGISTERS, i, n },
-  // { COILS, i, n },
-  // { DISCRETE_INPUTS, i, n },
+  // { INPUT_REGISTERS, i, n },     // 根據需求及產品Modbus Table説明而定，請自行研究
+  // { COILS, i, n },               // 根據需求及產品Modbus Table説明而定，請自行研究
+  // { DISCRETE_INPUTS, i, n },     // 根據需求及產品Modbus Table説明而定，請自行研究
 
   { HOLDING_REGISTERS, 0, 6 },   // 根據CET Modbus Table, HR addr 從 0 讀取, 連續讀取6個數據
   { HOLDING_REGISTERS, 46, 2 },  // 根據CET Modbus Table, HR addr 從 46 讀取, 連續讀取2個數據
@@ -29,7 +29,7 @@ uint8_t mbReadConfig[MB_DATA_SIZE][3] = {
 uint8_t mbNumOfConfig = 0;
 uint8_t mbNumOfConfigSwitch = 0;
 uint8_t mbNumOfData = 0;
-uint8_t mbNumOfDataSwitch = 0;
+uint8_t mbDataPtr = 0;
 uint32_t mbHrData[MB_DATA_SIZE] = {};
 
 class CET {
@@ -66,19 +66,18 @@ public:
 
   void loop() {
     if (mbTimer.autoTimeout(1000)) {
-      this->readIn500ms();
+      this->autoFill();
       // this->debug();
     }
   }
 
-  void readIn500ms() {  // it is a loop
+  void autoFill() {  // it is a loop
     if (mbNumOfConfigSwitch >= mbNumOfConfig) {
+      /*=== End of an epoch ===*/
+      mbDataPtr = 0;
       mbNumOfConfigSwitch = 0;
       return;
     }
-
-    Serial.print("Switch Idx: ");
-    Serial.println(mbNumOfConfigSwitch);
 
     uint8_t mbDataType = mbReadConfig[mbNumOfConfigSwitch][0];
     uint8_t mbDataStartIdx = mbReadConfig[mbNumOfConfigSwitch][1];
@@ -87,31 +86,22 @@ public:
     mbRtuClient.requestFrom(SLAVE_ID, mbDataType, mbDataStartIdx, mbDataRange);
 
     for (uint8_t j = 0; j < mbDataRange; j++) {
-      Serial.println(mbRtuClient.read());
+      mbHrData[mbDataPtr] = mbRtuClient.read();
+      mbDataPtr++;
     }
 
     mbNumOfConfigSwitch++;
   }
 
-  // void readIn1000ms() {
-  //   mbRtuClient.requestFrom(SLAVE_ID, HOLDING_REGISTERS, 0, 6);
-  //   holdingRegisterValues[0] = IEEEfloat(((uint32_t)mbRtuClient.read() << 16) | mbRtuClient.read());
-  //   holdingRegisterValues[1] = IEEEfloat(((uint32_t)mbRtuClient.read() << 16) | mbRtuClient.read());
-  //   holdingRegisterValues[2] = IEEEfloat(((uint32_t)mbRtuClient.read() << 16) | mbRtuClient.read());
+  void debug() {
+    Serial.print(F("\r\n>>> Print Data\r\n"));
 
-  //   mbRtuClient.requestFrom(SLAVE_ID, HOLDING_REGISTERS, 46, 2);
-  //   holdingRegisterValues[3] = (((uint32_t)mbRtuClient.read() << 16) | mbRtuClient.read()) * 0.01;
-  // }
-
-  // void debug() {
-  //   Serial.println(F("\r\n>>> Print Data\r\n"));
-
-  //   for (byte i = 0; i < PARAMETERS_SIZE; i++) {
-  //     Serial.print(holdingRegisterDescription[i]);
-  //     Serial.print(F(": "));
-  //     Serial.println(holdingRegisterValues[i], 4);
-  //   }
-  // }
+    for (uint8_t i = 0; i < mbNumOfData; i++) {
+      Serial.print(i);
+      Serial.print(F(": "));
+      Serial.println(mbHrData[i]);
+    }
+  }
 };
 
 #endif

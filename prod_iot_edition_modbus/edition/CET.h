@@ -6,15 +6,13 @@
 
 /*=== @Derek. @Owen, @後人 請閲讀此説明，瞭解如何修改modbus config ===*/
 // 1. 你要先瞭解基礎modbus，至少要知道什麽是Holding Register
-// 2. 定義正確的modbus參數，注意是“正確的”，請參閲產品資料，取得slave id, baud rate, 8N1/8E1 這些資料，填錯資料讀不到的話別他媽怪我
+// 2. 定義正確的modbus參數，注意是“正確的”，請參閲產品資料，取得slave id, baud rate, 8N1/8E1 這些資料，填錯資料讀不到的話別怪我
 // 3. 定義你要讀取的範圍，
 // 3.1. 首先要知道自己查詢的數據類型是什麽，是Holding Register? coils? discrete input? 還是其他？
 // 3.2. 然後要知道自己查詢的地址是多少，是address 0-5？還是46-47？一定要清楚
 //     ***注意，絕大部分情況，address都是從0開始的，雜牌的modbus，例如RGT的iFCU,
-//     ***對，你沒看錯，我説的就是RGT的iFCU，它的modbus address (Input Register)，是他媽從30000開始算起
-//     ***沒錯，是他媽從30000開始算起，爲什麽？我不知道，我也不想去知道
-//     ***我只知道這他媽就叫驚喜
-// 4. 修改operate()裏面的代碼，來實現你需要的需求
+//     ***對，你沒看錯，我説的就是RGT的iFCU，它的modbus address (Input Register)，是從30000開始
+// 4. 修改operate()裏面的代碼，來實現需求
 
 
 
@@ -23,13 +21,13 @@
 constexpr uint16_t SLAVE_ID = 12;                  // target device 的 slave id
 constexpr uint16_t MB_BAUD_RATE = 9600;            // serial 的 baud rate, 根據產品修改參數
 constexpr uint16_t MB_SERIAL_CONFIG = SERIAL_8E1;  // e.g., SERIAL_8E1, SERIAL_8N1, 根據產品切換使用
-// 寫錯以上參數的，用錯Parity的，這是你的問題，用不了別他媽怪我
+// 寫錯以上參數的，用錯Parity的，這是你的問題，用不了別怪我
 constexpr uint8_t MB_DATA_SIZE = 100;  // 不要改了，就這樣
 
 /*=== ！！！@Derek, 請在這裏定義你要查找的範圍，不要超過100個config ===*/
 uint8_t mbReadConfig[MB_DATA_SIZE][3] = {
   // format: { modbus data type, modbus data address, number of consecutive data (default 2) }
-  // 通常read得最多的是HOLDING_REGISTERS，其他INPUT_REGISTERS、COILS、DISCRETE_INPUTS少機會用到，按需求自己開發
+  // 通常read得最多的是INPUT_REGISTERS、HOLDING_REGISTERS，其他COILS、DISCRETE_INPUTS少機會用到，按需求自己開發
   // 有連續的data的話，請盡量在寫下有多少個連續數據，能寫多少就多少，這是性能考量
   // { HOLDING_REGISTERS, 0, 6 },   // 從address 0開始，連續讀取6個數據，也就是讀取: 0, 1, 2, 3, 4, 5 位置的數據
   // { HOLDING_REGISTERS, 46, 2 },  // 從address 46開始，連續讀取2個數據，也就是讀取: 46, 47 位置的數據
@@ -46,7 +44,7 @@ uint8_t mbNumOfConfigSwitch = 0;
 uint8_t mbNumOfData = 0;
 uint8_t mbDataPtr = 0;
 uint32_t mbHrData[MB_DATA_SIZE] = {};
-uint32_t newPayload[16] = {};  // 這裏寫死16，不解釋，問就是Keith大哥的鍋
+uint32_t newPayload[16] = {};  // 這裏寫死16，不解釋，問就是找Keith大哥處理
 
 class CET {
 private:
@@ -89,9 +87,9 @@ private:
     // 順帶一提，雜牌的產品Modbus會有意想不到的驚喜問題，有問題的話，一定是其他牌子的問題，我話説完，不接受任何反駁
     // 例如: 我查詢著溫度，吃著火鍋還唱著歌，突然就變成65535了，所以，沒有bug的modbus，才是好modbus
 
-    // 根據CET説明書, Voltage由兩個Byte組成，而且其格式遵循IEEE float，因此操作如下：
+    // 根據CET説明書, Voltage由兩個Hex組成，而且其格式遵循IEEE float，因此操作如下：
 
-    // 1. 取得組成Voltage的兩個Byte
+    // 1. 取得組成Voltage的兩個Hex
     uint16_t b1 = mbHrData[0];
     uint16_t b2 = mbHrData[1];
 

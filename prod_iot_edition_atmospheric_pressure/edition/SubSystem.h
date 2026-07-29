@@ -10,17 +10,9 @@
 Timer subSystemTimer;
 SubRS485 subRS485;
 
-AnalogInput &current = analogInputs[0];     // 三相電電流 reading
-AnalogInput &ampere500 = analogInputs[11];  // 三相電電流 ampere, 500 = 50.0A
-
 class SubSystem {
 private:
   uint16_t ampere = 0;
-
-  void convertToAmpere500() {
-    this->ampere = map(constrain(current.getValue(), 0, 1023), 0, 1023, 0, 500);
-    ampere500.value = this->ampere;
-  }
 
   void overwriteMQTT() {
     mainSystem.buildPayloads();
@@ -49,7 +41,8 @@ public:
   void loop() {
     float v1 = (5 / 1023.) * analogInputs[0].getValue();
     float v2 = (5 / 1023.) * analogInputs[1].getValue();
-    Serial.println(24 * v1 - 40);
+    analogOutputs[0].value = v1 * 100;
+    analogOutputs[1].value = v2 * 100;
   }
 
   ~SubSystem() {}

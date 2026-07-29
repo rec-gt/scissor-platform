@@ -1,8 +1,8 @@
 #include <stdint.h>
 #include "./SubGlobals.h"
 
-#ifndef CET_H
-#define CET_H
+#ifndef MBCONFIG_H
+#define MBCONFIG_H
 
 /*=== @Derek. @Owen, @後人 請閲讀此説明，瞭解如何修改modbus config ===*/
 // 1. 你要先瞭解基礎modbus，至少要知道什麽是Holding Register
@@ -48,7 +48,7 @@ uint8_t mbDataPtr = 0;
 uint32_t mbHrData[MB_DATA_SIZE] = {};
 uint32_t newPayload[16] = {};  // 這裏寫死16，不解釋，問就是Keith大哥的鍋
 
-class CET {
+class MBConfig {
 private:
   float IEEEfloat(uint32_t val) {
     union {
@@ -161,7 +161,7 @@ private:
   //   }
   // }
 public:
-  CET(void) {}
+  MBConfig(void) {}
 
   void init() {
     if (!mbRtuClient.begin(MB_BAUD_RATE, MB_SERIAL_CONFIG)) {
@@ -186,6 +186,10 @@ public:
     this->build();
     // this->debug();
   }
+
+  ~MBConfig() {}
 };
+
+extern MBConfig mbConfig;
 
 #endif

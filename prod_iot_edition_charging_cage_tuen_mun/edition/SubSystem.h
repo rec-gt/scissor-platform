@@ -16,6 +16,7 @@ public:
   void init() {
     configAnalogInputResolution(0);
     subRS485.init();
+    relay1.connect();
   }
 
   void loop() {
